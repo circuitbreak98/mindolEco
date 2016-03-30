@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="ADMCNR00100">
+	<select id="getMethodRunTimeList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT x.menu_num
+,      x.method_nm
+,      x.method_id  
+,      x.menu_nm
+,      x.menu_group
+,      FBAS_GET_COMMCDNM_VAL('ZADM_C_00010', x.menu_group) menu_group_nm
+,      x.tot_run_cnt
+,      DECODE(tot_run_cnt, 0, 0, tot_runTime / tot_run_cnt) avgRunTm
+,      x.und2_cnt
+,      DECODE(tot_run_cnt, 0, 0,  x.und2_cnt / tot_run_cnt * 100) und2_rat
+,      x.ovr2_cnt
+,      DECODE(tot_run_cnt, 0, 0,  x.ovr2_cnt / tot_run_cnt * 100) ovr2_rat
+,      x.ovr3_cnt
+,      DECODE(tot_run_cnt, 0, 0,  x.ovr3_cnt / tot_run_cnt * 100) ovr3_rat
+,      x.ovr10_cnt
+,      DECODE(tot_run_cnt, 0, 0,  x.ovr10_cnt / tot_run_cnt * 100) ovr10_rat
+FROM ( 
+        SELECT
+        /*       log.seq          */
+        /*,      log.tran_dt      */
+        /*,      log.user_id      */
+        /*,      log.proc_st_tm   */
+        /*,      log.proc_ed_tm   */
+        /*,      log.proc_dur_tm  */
+        /*,      log.connect_ip   */
+                 log.method_id    
+          ,      log.menu_num     
+        /*,      log.org_id       */
+        /*,      log.agency_cd    */
+        /*,      log.org_area     */
+        /*,      log.day_cl       */
+        ,      mtd.method_nm
+        ,      mnu.menu_nm
+		,      mnu.menu_group
+        ,      SUM(1) tot_run_cnt /* 총처리건수*/
+        ,      SUM(proc_dur_tm) tot_runTime /* 총처리시간*/
+        ,      SUM(CASE WHEN proc_dur_tm < 2000 
+                     THEN 1
+        		 	 ELSE 0 END) as und2_cnt 
+        ,      SUM(CASE WHEN proc_dur_tm > 2000 AND proc_dur_tm < 3000 
+                     THEN 1
+        		 	 ELSE 0 END) as ovr2_cnt 
+        ,      SUM(CASE WHEN proc_dur_tm > 3000 AND proc_dur_tm < 10000 
+                     THEN 1
+        		 	 ELSE 0 END) as ovr3_cnt			 
+        ,      SUM(CASE WHEN proc_dur_tm > 10000 
+                     THEN 1
+        		 	 ELSE 0 END) as ovr10_cnt			 
+        FROM   tadm_connect_log log
+        ,      tadm_method_info mtd
+        ,      tadm_menu        mnu
+        ,      tbas_user_mgmt   usr
+        WHERE  1=1
+        AND    usr.user_id = log.user_id
+        AND    log.method_id = mtd.method_id(+)
+        AND    log.menu_num  = mnu.menu_num(+)
+		AND    log.tran_dt BETWEEN #runDtmFrom# AND #runDtmTo#
+]]>		<isNotEmpty prepend="AND" property="org_id">		
+<![CDATA[			   log.org_id = #org_id#
+]]>		</isNotEmpty>
+<![CDATA[]]>		<isNotEmpty prepend="AND" property="org_area">		
+<![CDATA[		       log.org_area  = #org_area#
+]]>		</isNotEmpty>
+<![CDATA[]]>		<isNotEmpty prepend="AND" property="day_cl">			
+<![CDATA[		       log.day_cl    = #day_cl#
+]]>		</isNotEmpty>
+<![CDATA[]]>		<isNotEmpty prepend="AND" property="menu_num">				
+<![CDATA[		       log.menu_num  = #menu_num#
+]]>		</isNotEmpty>
+<![CDATA[]]>		<isNotEmpty prepend="AND" property="user_id">				
+<![CDATA[		       log.user_id = #user_id#
+]]>		</isNotEmpty>				
+<![CDATA[]]>		<isNotEmpty prepend="AND" property="menu_group">				
+<![CDATA[		       mnu.menu_group = #menu_group#
+]]>		</isNotEmpty>		
+<![CDATA[]]>		<isNotEmpty prepend="AND" property="user_group">				
+<![CDATA[		       usr.user_grp = #user_group#
+]]>		</isNotEmpty>				
+<![CDATA[        GROUP BY log.method_id    
+        ,        log.menu_num
+        ,        mtd.method_nm
+        ,        mnu.menu_nm
+		,        mnu.menu_group		) x
+ORDER BY x.tot_run_cnt DESC
+,        x.menu_nm]]>
+	</select>
+</sqlMap>

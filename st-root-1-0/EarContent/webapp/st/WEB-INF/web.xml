@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+    <display-name>Nexcore Framework</display-name>
+    <description>Nexcore Framework Framework</description>
+
+    <!--
+        - Location of the XML file that defines the root application context.
+        - Applied by ContextLoaderServlet.
+        -
+        - Can include "/WEB-INF/dataAccessContext-local.xml" for a single-database
+        - context, or "/WEB-INF/dataAccessContext-jta.xml" for a two-database context.
+    -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            /WEB-INF/classes/config/component/**/*.xml
+        </param-value>
+    </context-param>
+    
+    <!-- Filters -->                    
+    
+    <!-- ################################################################## -->
+    <!-- ################################################################## -->
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+    <filter>
+        <filter-name>PsFilter</filter-name>
+        <filter-class>com.sktst.common.filter.PsFilter</filter-class>
+        <init-param>
+            <param-name>loginPagePaths</param-name>
+            <param-value>/login.xmi,/logout.xmi,/reset.xmi,/portal_login.xmi</param-value>
+        </init-param>
+    </filter>
+    
+   <filter-mapping>
+        <filter-name>PsFilter</filter-name>
+        <url-pattern>*.xmi</url-pattern>
+    </filter-mapping>
+
+    <!-- ################################## -->
+    <!-- ### Servlet Mapping Infomation ### -->
+    <!-- 
+    <servlet>
+        <servlet-name>StdWebFrontController</servlet-name>
+        <servlet-class>
+            nexcore.framework.online.channel.web.StdWebFrontController
+        </servlet-class>
+        <init-param>
+            <param-name>RequestHandlerId</param-name>
+            <param-value>nc.channel.IWebRequestHandler</param-value>
+        </init-param>
+        <init-param>
+            <param-name>ApplicationControllerId</param-name>
+            <param-value>nc.channel.web.IWebApplicationController</param-value>
+        </init-param>
+    </servlet>
+    -->
+    <servlet>
+        <servlet-name>StdXmlFrontController</servlet-name>
+        <servlet-class>
+            nexcore.framework.online.channel.web.StdWebFrontController
+        </servlet-class>
+        <init-param>
+            <param-name>RequestHandlerId</param-name>
+            <param-value>nc.channel.IXmlRequestHandler</param-value>
+        </init-param>
+        <init-param>
+            <param-name>ApplicationControllerId</param-name>
+            <param-value>nc.channel.web.IXmlApplicationController</param-value>
+        </init-param>
+    </servlet>
+    <servlet>
+        <servlet-name>StdXmiFrontController</servlet-name>
+        <servlet-class>
+            nexcore.framework.online.channel.web.StdWebFrontController
+        </servlet-class>
+        <init-param>
+            <param-name>RequestHandlerId</param-name>
+            <param-value>nc.channel.IXmiRequestHandler</param-value>
+        </init-param>
+        <init-param>
+            <param-name>ApplicationControllerId</param-name>
+            <param-value>nc.channel.web.IXmiApplicationController</param-value>
+        </init-param>
+    </servlet>
+
+    <!-- ################################## -->
+    <!-- ### Servlet Mapping Infomation ### -->
+    <!-- 
+    <servlet-mapping>
+        <servlet-name>StdWebFrontController</servlet-name>
+        <url-pattern>*.cmd</url-pattern>
+    </servlet-mapping>
+    -->
+    <servlet-mapping>
+        <servlet-name>StdXmlFrontController</servlet-name>
+        <url-pattern>*.xmd</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StdXmiFrontController</servlet-name>
+        <url-pattern>*.xmi</url-pattern>
+    </servlet-mapping>
+ 
+    <!-- ################################## -->
+    
+    <mime-mapping>
+        <extension>css</extension>
+        <mime-type>text/css</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>xls</extension>
+        <mime-type>application/vnd.ms-excel</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>swf</extension>
+        <mime-type>application/x-shockwave-flash</mime-type>
+    </mime-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/Error404.jsp</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/Error500.jsp</location>
+    </error-page>
+
+    <jsp-config>
+        <taglib>
+            <taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
+            <taglib-location>/WEB-INF/tlds/c.tld</taglib-location>
+        </taglib>
+
+        <taglib>
+            <taglib-uri>
+                http://java.sun.com/jsp/jstl/functions
+            </taglib-uri>
+            <taglib-location>/WEB-INF/tlds/fn.tld</taglib-location>
+        </taglib>
+
+        <taglib>
+            <taglib-uri>http://java.sun.com/jsp/jstl/fmt</taglib-uri>
+            <taglib-location>/WEB-INF/tlds/fmt.tld</taglib-location>
+        </taglib>
+
+        <taglib>
+            <taglib-uri>http://nexcore.skcc.com/ctl/ui</taglib-uri>
+            <taglib-location>/WEB-INF/tlds/ui.tld</taglib-location>
+        </taglib>
+
+        <taglib>
+            <taglib-uri>http://nexcore.skcc.com/ctl/mvc</taglib-uri>
+            <taglib-location>/WEB-INF/tlds/mvc.tld</taglib-location>
+        </taglib>
+    </jsp-config>
+
+    <resource-ref>
+        <res-ref-name>jdbc/DefaultDS</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+    <resource-ref>
+        <res-ref-name>jdbc/ProjectDS</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+    <resource-ref>
+        <res-ref-name>jdbc/PsmcsDB</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
+
+</web-app>

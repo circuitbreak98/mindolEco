@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="BASSDM00100" Left="8" OnLoadCompleted="BASSDM00100_OnLoadCompleted" PidAttrib="7" Title="영업일수&#32;관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="SALE_MTH" size="256" summ="default" type="STRING"/>
+					<record>
+						<SALE_MTH></SALE_MTH>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list" OnColumnChanged="ds_list_OnColumnChanged">
+				<Contents>
+					<colinfo id="FLAG" size="256" summ="default" type="STRING"/>
+					<colinfo id="TRAN_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="WEEKDAY" size="256" summ="default" type="STRING"/>
+					<colinfo id="DAY_CHECK" size="256" summ="default" type="STRING"/>
+					<colinfo id="HALF_CHECK" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<colinfo id="THR_CHECK" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="9" Style="sty_div_search" TabOrder="1" Text="질의내용" Top="10" Width="811">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="14" Style="sty_lb_Search" TabOrder="2" Text="영업월" Top="7" VAlign="Middle" Width="76"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="245" LeftMargin="5" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="7" Visible="FALSE" Width="60"></Button>
+				<Button Cursor="HAND" Height="24" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="200" OnClick="btn_monthCalendar_OnClick" TabOrder="3" Text="Button3" Top="7" Width="17"></Button>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="SALE_MTH" Height="20" Id="cal_acc_mth" Left="97" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="6" Type="STRING" Width="104"></MaskEdit>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" AutoScrollBar="FixedVert" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="562" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="506" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnHeadClick="f_allChecknSort" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="56" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="0"/>
+						<col width="97"/>
+						<col width="80"/>
+						<col width="37"/>
+						<col width="25"/>
+						<col width="37"/>
+						<col width="25"/>
+						<col width="37"/>
+						<col width="25"/>
+						<col width="262"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="일&#32;자"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="요일"/>
+						<cell bkcolor="user34" col="3" color="user35" colspan="2" cursor="hand" display="checkbox" edit="checkbox">
+							<cell col="0" color="user35" display="text" text="1일"/>
+							<cell col="1" color="user35" display="checkbox"/>
+						</cell>
+						<cell bkcolor="user34" col="5" color="user35" colspan="2" display="text">
+							<cell col="0" color="user35" display="text" text="0.5일"/>
+							<cell col="1" color="user35" display="checkbox"/>
+						</cell>
+						<cell bkcolor="user34" col="7" color="user35" colspan="2" display="text">
+							<cell col="0" color="user35" display="text" text="0.3일"/>
+							<cell col="1" color="user35" display="checkbox"/>
+						</cell>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="비고"/>
+					</head>
+					<body>
+						<cell col="0" display="text"/>
+						<cell col="1" colid="TRAN_DT" display="date"/>
+						<cell align="center" col="2" colid="WEEKDAY" display="text"/>
+						<cell col="3" colid="DAY_CHECK" colspan="2" display="checkbox" edit="checkbox"/>
+						<cell col="5" colid="HALF_CHECK" colspan="2" display="checkbox" edit="checkbox"/>
+						<cell col="7" colid="THR_CHECK" colspan="2" display="checkbox" edit="checkbox"/>
+						<cell align="left" col="9" colid="RMKS" display="text" edit="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="759" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="3" Text="저장" Top="569" Visible="FALSE" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : BASSDM00100
+* 업무명      : 기준정보- 영업일수관리 
+* 프로그램명  : 영업일수관리 
+--------------------------------------------------------------------------------
+* 작성자      : 전현주 
+* 작성일      : 2010.02.10
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_POS_AGENCY_ID;		// 대리점 코드
+var FV_POS_AGENCY_UKEY_ID;	// 대리점 UKey 코드
+var FV_POS_AGENCY_NM;		// 대리점명
+var FV_CLOSE_DT;
+
+/*******************************************************************************
+* 함수명 : BASSDM00100_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function BASSDM00100_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	div_search.cal_acc_mth.Value = substr(cf_getDate(),0,6);
+	
+}
+
+
+
+/*******************************************************************************
+* 함수명 : f_callBack
+* 기능명 : 트랜잭션 콜백
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "svcSearch")
+	{
+		return;
+	}
+	
+	if(sSvcID == "saveSaleday")
+	{
+		alert("저장되었습니다.");
+		f_search();
+	}
+	
+}
+
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_acc_mth);
+}
+
+
+/*******************************************************************************
+ * @description    :  영업일수 리스트 조회
+*******************************************************************************/
+function btn_search_OnClick(obj)
+{
+
+	f_search();
+}
+
+
+function f_search(){
+
+	 if(uf_CheckDate(div_search.cal_acc_mth.Text, "YYYYMM") == false)
+	{
+		alert(cf_getMessage(MSG_00047,"영업월을"));
+		div_search.cal_acc_mth.SetFocus();
+		return false;		
+	}	
+	
+	cf_setParam(ds_condition, "SALE_MTH", div_search.cal_acc_mth.Value); 
+	
+	var sSvcID = "getDisCmp";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=rs_list";
+	var sArg   = "sktst.bas.SDM#getSalesDayList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg,null,true,true);
+
+}
+/*******************************************************************************
+ * @description    :  영업일수 체크
+*******************************************************************************/
+function ds_list_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if ( strColumnID == "DAY_CHECK" ) {
+		
+		if(varNewValue == "1"){
+			ds_list.SetColumn(nRow,"HALF_CHECK","0");
+			ds_list.SetColumn(nRow,"THR_CHECK","0");
+			ds_list.SetColumn(nRow,"NON_CHECK","0");
+		}	
+	}
+	
+	if ( strColumnID == "HALF_CHECK" ) {
+		
+		if(varNewValue == "1"){
+			ds_list.SetColumn(nRow,"DAY_CHECK","0");
+			ds_list.SetColumn(nRow,"THR_CHECK","0");
+			ds_list.SetColumn(nRow,"NON_CHECK","0");
+		}	
+	}
+	
+	if ( strColumnID == "THR_CHECK" ) {
+		
+		if(varNewValue == "1"){
+			ds_list.SetColumn(nRow,"DAY_CHECK","0");
+			ds_list.SetColumn(nRow,"HALF_CHECK","0");
+			ds_list.SetColumn(nRow,"NON_CHECK","0");
+		}	
+	}
+	
+	if ( strColumnID == "NON_CHECK" ) {
+		
+		if(varNewValue == "1"){
+			ds_list.SetColumn(nRow,"DAY_CHECK","0");
+			ds_list.SetColumn(nRow,"HALF_CHECK","0");
+			ds_list.SetColumn(nRow,"THR_CHECK","0");
+		}	
+	}
+}
+
+
+function btn_save_OnClick(obj)
+{
+	if(ds_list.GetRowCount() >0){
+		
+		if(ds_list.GetUpdate()) {
+	
+			// 그리드 필수 항목 체크
+			for(var i=0; i<ds_list.GetRowCount(); i++)
+			{						
+				if(ds_list.GetColumn(i, "DAY_CHECK") == "0" && ds_list.GetColumn(i, "HALF_CHECK") == "0" && ds_list.GetColumn(i, "THR_CHECK") == "0")
+				{
+					alert(substr(ds_list.GetColumn(i, "TRAN_DT"),0,4) +"-"+ substr(ds_list.GetColumn(i, "TRAN_DT"),4,2)+"-"+ substr(ds_list.GetColumn(i, "TRAN_DT"),6,2) +"의 영업일을 체크하세요.");
+					return;														
+					
+				}						
+			}		
+				 
+			if(confirm("저장하시겠습니까?")){
+	 
+				var sSvcID = "saveSaleday";
+				var sInDs  = "rs_list=ds_list";
+				var sOutDs = "";
+				var sArg   = "sktst.bas.SDM#saveSalesDayList";
+				
+				cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+			}
+	 
+		} else {
+			alert(MSG_00133); //변경사항이 없습니다
+		}	
+	}
+}
+
+function f_allChecknSort(obj,nCell,nX,nY,nPivotIndex)
+{	
+	if(nCell == 3 ){
+		
+		var sValue = '0';
+		obj.Redraw = false;
+		
+		var sChkValue = obj.GetSubCellProp("head", nCell, 1, "text");	
+		
+		if (sChkValue == 1) sValue='0';
+		else sValue='1';		
+		
+		obj.SetSubCellProp("head", nCell, 1, "text", sValue);
+		
+		for (var i=0; i<ds_list.rowcount; i++)
+		{		
+			
+			if(sValue == "1"){
+				ds_list.SetColumn(i, "DAY_CHECK", "1");
+			}else if(sValue == "0"){
+				ds_list.SetColumn(i, "DAY_CHECK", "0");
+			}
+		}		
+		
+		obj.Redraw = true;
+	}else if(nCell == 4){
+		var sValue = '0';
+		obj.Redraw = false;
+		var sChkValue = obj.GetSubCellProp("head", nCell, 1, "text");		
+		
+		if (sChkValue == 1) sValue='0';
+		else sValue='1';		
+		
+		obj.SetSubCellProp("head", nCell, 1, "text", sValue);
+		
+		for (var i=0; i<ds_list.rowcount; i++)
+		{		
+			
+			if(sValue == "1"){
+				ds_list.SetColumn(i, "HALF_CHECK", "1");
+			}else if(sValue == "0"){
+				ds_list.SetColumn(i, "HALF_CHECK", "0");
+			}
+		}		
+		
+		obj.Redraw = true;
+	}else{		
+		cf_markGridSort(grd_list, nCell, nX, nY, nPivotIndex);
+	
+	}
+}
+
+function Button0_OnClick(obj)
+{
+	cf_debug("ds_list");
+}
+]]></Script>
+</Window>

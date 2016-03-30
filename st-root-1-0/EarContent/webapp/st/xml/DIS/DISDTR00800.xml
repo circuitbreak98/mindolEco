@@ -1,0 +1,815 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="DISDTR00800" Left="8" OnLoadCompleted="DISDTR00800_OnLoadCompleted" PidAttrib="7" Title="이동입고확정등록" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_movInFixProdList" OnColumnChanged="ds_movInFixProdList_OnColumnChanged">
+				<Contents>
+					<colinfo id="prod_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="out_fix_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_fix_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="ch_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="rmks" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_fix_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="bar_cd_typ" size="256" summ="default" type="STRING"/>
+					<record>
+						<bar_cd_typ></bar_cd_typ>
+						<ch_yn></ch_yn>
+						<color_cd></color_cd>
+						<in_fix_qty></in_fix_qty>
+						<in_fix_yn></in_fix_yn>
+						<mfact_id></mfact_id>
+						<out_fix_qty></out_fix_qty>
+						<prod_cd></prod_cd>
+						<prod_cl></prod_cl>
+						<prod_nm></prod_nm>
+						<rmks></rmks>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_color"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodCl"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_in"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_inOut800"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_mfact"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_movInFixProdOrgList">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_copyList"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_rmks"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ret"></Dataset>
+			<Dataset CanColumnChange="ds_inFixDt_CanColumnChange" DataSetType="Dataset" Id="ds_inFixDt">
+				<Contents>
+					<colinfo id="in_fix_dt" size="256" summ="default" type="STRING"/>
+					<record>
+						<in_fix_dt></in_fix_dt>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="761" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="4" Text="저장" Top="565" Width="60"></Button>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_movInFixProdList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="489" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="401" Id="grd_movInFixProdList" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_movInFixProdList_OnCellDblClick" OnHeadClick="grd_movInFixProdList_OnHeadClick" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="62"/>
+						<col width="85"/>
+						<col width="151"/>
+						<col width="153"/>
+						<col width="107"/>
+						<col width="92"/>
+						<col width="91"/>
+						<col width="20"/>
+						<col width="55"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="상품구분"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="제조사"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="출고수량"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="입고수량"/>
+						<cell bkcolor="user34" col="7" color="user35" colspan="2" display="text">
+							<cell col="0" color="user35" display="checkbox" edit="checkbox" text="0"/>
+							<cell col="1" color="user35" display="text" text="일괄확정"/>
+						</cell>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="currow+1"/>
+						<cell align="center" col="1" colid="prod_cl" combocol="code" combodataset="ds_prodCl" combotext="value" display="combo"/>
+						<cell col="2" colid="mfact_id" combocol="code" combodataset="ds_mfact" combotext="value" display="combo"/>
+						<cell align="center" col="3" colid="prod_nm" display="text"/>
+						<cell align="center" col="4" colid="color_cd" combocol="code" combodataset="ds_color" combotext="value" display="combo"/>
+						<cell align="right" col="5" colid="out_fix_qty" display="number"/>
+						<cell align="right" col="6" colid="in_fix_qty" display="number" edit='expr:Iif(prod_cl==9,&quot;number&quot;,&quot;none&quot;)'/>
+						<cell bkcolor='expr:Iif(ch_yn==&quot;Y&quot;,&quot;user13&quot;,&quot;default&quot;)' col="7" colid="in_fix_yn" colspan="2" display="checkbox" edit="checkbox" expr="Iif(in_fix_qty==out_fix_qty,&#32;1,&#32;0)"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Height="25" Id="div_excel" Left="615" TabOrder="2" Text="Div2" Top="60" Width="213">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_excelDown" ImageID="btn_i_exceldown_w" Left="185" OnClick="div_excel_btn_excelDown_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Width="19"></Button>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="59" Id="div_rmks" Left="10" Style="sty_div_input" TabOrder="3" Text="Div0" Top="496" Width="810">
+			<Contents>
+				<TextArea Border="Flat" Height="39" Id="txa_rmks" Left="88" Style="sty_ipt_form" TabOrder="1" Top="7" VScroll="TRUE" Width="709"></TextArea>
+				<Static Align="Right" Height="20" Id="Static8" Left="24" Style="sty_lb_Basic" TabOrder="2" Text="비고" Top="7" VAlign="Middle" Width="60"></Static>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_input" TabOrder="5" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Calendar BindDataset="ds_inFixDt" Border="Flat" ButtonImageID="btn_i_calendar" Column="in_fix_dt" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_inFixDt" Left="110" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" OnChanged="div_search_cal_inFixDt_OnChanged" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="4" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_outPlcID" Left="451" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Visible="FALSE" Width="55"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="235" Style="sty_lb_Basic" TabOrder="2" Text="출고처" Top="7" VAlign="Middle" Width="68"></Static>
+				<Static Align="Right" Height="20" Id="Static3" Left="38" Style="sty_lb_Basic" TabOrder="3" Text="입고확정일" Top="7" VAlign="Middle" Width="68"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_outPlcNm" Left="306" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Width="144"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_inPlcID" Left="740" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Visible="FALSE" Width="55"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_inPlcNm" Left="595" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="7" Width="144"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="531" Style="sty_lb_Basic" TabOrder="7" Text="입고처" Top="7" VAlign="Middle" Width="60"></Static>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : DISDTR00800
+* 업무명      :  재고관리 - 재고이동
+* 프로그램명  : 이동입고확정등록
+--------------------------------------------------------------------------------
+* 작성자      : 김중일
+* 작성일      : 2009.02.03
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_ACT_FLAG = "";    // 업무구분코드
+var FV_STR_SCR_ID = "";
+var FV_EVENT_YN = "Y"; //Y인 경우 일자 onchagned evnet 체크 함.
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function DISDTR00800_OnLoadCompleted(obj)
+{
+    ds_inFixDt.FireEvent = false;
+    
+    http.Sync = true;
+    
+	// 전달 데이터셋
+	cf_copyDataSet(ds_inOut800, gds_temp);
+	gds_temp.Clear();
+	
+	// 기본값 셋팅
+	div_search.cal_inFixDt.Value = ds_inOut800.GetColumn(0, "out_fix_dt");
+    div_search.edt_outPlcID.Value = ds_inOut800.GetColumn(0, "out_plc_id");
+    div_search.edt_outPlcNm.Value = ds_inOut800.GetColumn(0, "out_plc_nm");
+    div_search.edt_inPlcID.Value = ds_inOut800.GetColumn(0, "in_plc_id");
+    div_search.edt_inPlcNm.Value = ds_inOut800.GetColumn(0, "in_plc_nm");
+    FV_STR_SCR_ID = ds_inOut800.GetColumn(0, "scr_id");
+    
+    // 공통 코드 조회
+	f_getCommCd("ds_prodCl", "ZBAS_C_00010");  // 상품구분
+	f_getCommCd("ds_color", "ZBAS_C_00040");   // 색상
+    
+    // 제조사 리스트 조회
+	f_getMfact();
+
+	// 비고 조회
+	f_getRmks();
+	
+    div_search.cal_inFixDt.SetFocus();
+    
+    f_getMovInFixProdOrgList();
+
+    if(ds_movInFixProdOrgList.CaseSum("in_fix_qty==\"1\"", "in_fix_qty") != 0
+            && ds_movInFixProdOrgList.CaseSum("in_fix_qty==\"1\"", "in_fix_qty")
+	        == ds_movInFixProdOrgList.CaseSum("ch_yn==\"Y\"", "in_fix_qty")
+	        && ds_movInFixProdOrgList.rowcount
+	        == ds_movInFixProdOrgList.CaseSum("ch_yn==\"Y\"", "in_fix_qty"))
+	{
+	    btn_save.Enable = "false";
+	}
+    else
+    {
+        btn_save.Enable = "true";
+    }
+    
+    http.Sync = false;
+    
+    // 사용자 조작 유무 체크
+    cf_setOrgDs(ds_movInFixProdOrgList);
+    
+    ds_inFixDt.FireEvent = true;
+}
+
+/*******************************************************************************
+ * @description    : 공통 코드 조회
+ * @param sOutDsID : 출력 데이터셋 아이디
+ *        sCommCd  : 공통 코드
+*******************************************************************************/
+function f_getCommCd(sOutDsID, sCommCd)
+{
+    // 입력 파라메터 셋팅
+    ds_in.Clear();
+    cf_setParam(ds_in, "comm_cd_id", sCommCd);
+    
+	// 트랜잭션 설정
+	var sSvcID = sOutDsID;
+	var sInDs = "nc_input_fieldDs=ds_in";
+	var sOutDs = sOutDsID + "=CommList";
+	var sArg = "sktst.dis.DCO#getCommList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 제조사 리스트 조회
+*******************************************************************************/
+function f_getMfact()
+{
+    // 입력 파라메터 셋팅
+    ds_in.ClearData();
+    ds_mfact.ClearData();
+    cf_setParam(ds_in, "deal_co_cl", "20"); 
+    
+	// 트랜잭션 설정
+	var sSvcID = "ds_mfact";
+	var sInDs = "nc_input_fieldDs=ds_in";
+	var sOutDs = "ds_mfact=DealCoList";
+	var sArg = "sktst.dis.DCO#getDealCoList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 입고 내역 리스트 조회
+*******************************************************************************/
+function f_getMovInFixProdOrgList()
+{
+    // 입력 파라메터 셋팅
+    ds_in.Clear();
+    ds_movInFixProdOrgList.Clear();
+    cf_setParam(ds_in, "out_mgmt_no", ds_inOut800.GetColumn(0, "out_mgmt_no"));
+    cf_setParam(ds_in, "out_plc_id", ds_inOut800.GetColumn(0, "out_plc_id")); 
+    cf_setParam(ds_in, "in_plc_id", ds_inOut800.GetColumn(0, "in_plc_id")); 
+    
+	// 트랜잭션 설정
+	var sSvcID = "svcMovInFixProdOrgList";
+	var sInDs = "nc_input_fieldDs=ds_in";
+	var sOutDs = "ds_movInFixProdOrgList=MovInFixProdOrgList";
+	var sArg = "sktst.dis.DTR#getMovInFixProdOrgList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 이동 입고 확정 등록
+*******************************************************************************/
+function f_saveMovInFixProd()
+{
+    ds_ret.Clear();
+    ds_in.Clear();
+    
+    cf_setParam(ds_in, "in_fix_dt", div_search.cal_inFixDt.Value);
+    
+	// 트랜잭션 설정
+	var sSvcID = "svcSaveMovInFixProd";
+	var sInDs = "ds_movInFixProdOrgList=ds_movInFixProdOrgList:U ds_in=ds_in";
+	var sOutDs = "ds_ret=";
+	var sArg = "sktst.dis.DTR#saveMovInFixProdList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 비고 조회
+*******************************************************************************/
+function f_getRmks()
+{   
+    ds_in.Clear();
+    ds_rmks.Clear();
+    
+    cf_setParam(ds_in, "out_mgmt_no", ds_inOut800.GetColumn(0, "out_mgmt_no"));
+    
+	// 트랜잭션 설정
+	var sSvcID = "svcGetRmks";
+	var sInDs = "nc_input_fieldDs=ds_in";
+	var sOutDs = "ds_rmks=nc_output_fieldDs";
+	var sArg = "sktst.dis.DTR#getRmksInfo";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 비고 저장
+*******************************************************************************/
+function f_saveRmks()
+{   
+    ds_in.Clear();
+    ds_ret.Clear();
+    
+    cf_setParam(ds_in, "out_mgmt_no", ds_inOut800.GetColumn(0, "out_mgmt_no"));
+    cf_setParam(ds_in, "rmks", div_rmks.txa_rmks.Text);
+    
+	// 트랜잭션 설정
+	var sSvcID = "svcSaveRmks";
+	var sInDs = "nc_input_fieldDs=ds_in";
+	var sOutDs = "ds_ret=";
+	var sArg = "sktst.dis.DTR#saveRmksInfo";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+    // 기본값 셋팅(공통 코드, 제조사)
+    if(Left(sSvcID, 3) == "ds_")
+    {
+        f_setDefault(sSvcID, "", "선택");
+    }
+    
+    // 확정내역원본리스트 조회
+    if(sSvcID == "svcMovInFixProdOrgList")
+    {
+        f_setGrpList();
+        cf_copyDataset(ds_copyList, ds_movInFixProdList);
+        
+        // 행타입을 normal로 강제 변경
+        ds_movInFixProdOrgList.SetUpdate(false);
+        for(var i=0; i<ds_movInFixProdOrgList.rowcount; i++)
+        {
+            ds_movInFixProdOrgList.SetRowType(i, "normal");
+        }
+        ds_movInFixProdOrgList.SetUpdate(true);
+    }
+    
+    // 이동 입고 확정 등록
+    if(sSvcID == "svcSaveMovInFixProd")
+    {
+        gf_movenCall(FV_STR_SCR_ID, "div_search_btn_search_OnClick");
+		// 사용자 조작 유무 체크
+		cf_setOrgDs(ds_movInFixProdOrgList);
+	    this.Close();   
+    }
+    
+    // 비고 조회
+    if(sSvcID == "svcGetRmks")
+    {
+        div_rmks.txa_rmks.Text = ds_rmks.GetColumn(0, "rmks");
+    }
+}
+
+/*******************************************************************************
+ * @description    : 기본값 셋팅
+ * @param sDsID    : 데이터셋 아이디
+ *        sCd      : 코드
+ *        sVal     : 값
+*******************************************************************************/
+function f_setDefault(sDsID, sCd, sVal)
+{
+    Object(sDsID).InsertRow(0);
+    Object(sDsID).SetColumn(0, "code", sCd);
+    Object(sDsID).SetColumn(0, "value", sVal);
+}
+
+/*******************************************************************************
+ 공통 스크립트 영역 끝
+*******************************************************************************/
+
+//==============================================================================
+// 기타 업무 메소드들
+//==============================================================================
+
+/*******************************************************************************
+ * @description    : 데이터셋 그루핑
+*******************************************************************************/
+function f_setGrpList()
+{    
+    ds_movInFixProdList.ClearData();
+
+	for(var j=0; j<ds_movInFixProdOrgList.rowcount; j++)
+	{
+		var sProdClJ = ds_movInFixProdOrgList.GetColumn(j, "prod_cl");
+		var sMfactIDJ = ds_movInFixProdOrgList.GetColumn(j, "mfact_id");
+		var sProdCdJ = ds_movInFixProdOrgList.GetColumn(j, "prod_cd");
+		var sColorCdJ = ds_movInFixProdOrgList.GetColumn(j, "color_cd");
+		var sInFixYnJ = ds_movInFixProdOrgList.GetColumn(j, "in_fix_yn");
+		var sOutPlcIDJ = ds_movInFixProdOrgList.GetColumn(j, "out_plc_id");
+		var sInPlcIDJ = ds_movInFixProdOrgList.GetColumn(j, "in_plc_id");
+		var sBadYnJ = ds_movInFixProdOrgList.GetColumn(j, "bad_yn");
+		var sDisBadYnJ = ds_movInFixProdOrgList.GetColumn(j, "dis_bad_yn");		
+		var sDisStJ = ds_movInFixProdOrgList.GetColumn(j, "dis_st");
+		var sDisDisStJ = ds_movInFixProdOrgList.GetColumn(j, "dis_dis_st");		
+		var sDisHldPlcIDJ = ds_movInFixProdOrgList.GetColumn(j, "dis_hld_plc_id");
+		var sDisLastInoutClJ = ds_movInFixProdOrgList.GetColumn(j, "dis_last_inout_cl");
+		var sDisLastInoutDtlClJ = ds_movInFixProdOrgList.GetColumn(j, "dis_last_inout_dtl_cl");
+
+		// 불량여부, 재고상태, 보유처, 최종입출고구분(300:재고이동), 최종입출고상세구분(302:이동입고) 등을
+		// 체크하여 변경 사항이 있으면 수정할 수 없도록 한다.
+		if(sProdClJ != "9" && sInFixYnJ == 'Y' && (sBadYnJ != sDisBadYnJ || sDisStJ != sDisDisStJ
+				|| sInPlcIDJ != sDisHldPlcIDJ || sDisLastInoutClJ != "300" 
+				|| sDisLastInoutDtlClJ != "302"))
+		{
+			ds_movInFixProdOrgList.SetColumn(j, "ch_yn", "Y");
+		}
+
+	}
+
+    for(var i=0; i<ds_movInFixProdOrgList.rowcount; i++)
+    {
+        var sProdClI = ds_movInFixProdOrgList.GetColumn(i, "prod_cl");
+        var sMfactIDI = ds_movInFixProdOrgList.GetColumn(i, "mfact_id");
+        var sProdCdI = ds_movInFixProdOrgList.GetColumn(i, "prod_cd");
+        var sProdNmI = ds_movInFixProdOrgList.GetColumn(i, "prod_nm");
+        var sColorCdI = ds_movInFixProdOrgList.GetColumn(i, "color_cd");
+        var sBarCdTypI = ds_movInFixProdOrgList.GetColumn(i, "bar_cd_typ");
+        
+        var nOutCnt = 0;
+        var nInCnt = 0;
+        
+        var bFlg = false;
+        var bChYn = false;
+        
+        // 변경 사항 여부 체크
+/*
+        for(var j=0; j<ds_movInFixProdOrgList.rowcount; j++)
+        {
+            var sProdClJ = ds_movInFixProdOrgList.GetColumn(j, "prod_cl");
+            var sMfactIDJ = ds_movInFixProdOrgList.GetColumn(j, "mfact_id");
+            var sProdCdJ = ds_movInFixProdOrgList.GetColumn(j, "prod_cd");
+            var sColorCdJ = ds_movInFixProdOrgList.GetColumn(j, "color_cd");
+            var sInFixYnJ = ds_movInFixProdOrgList.GetColumn(j, "in_fix_yn");
+            var sOutPlcIDJ = ds_movInFixProdOrgList.GetColumn(j, "out_plc_id");
+            var sInPlcIDJ = ds_movInFixProdOrgList.GetColumn(j, "in_plc_id");
+            var sBadYnJ = ds_movInFixProdOrgList.GetColumn(j, "bad_yn");
+            var sDisBadYnJ = ds_movInFixProdOrgList.GetColumn(j, "dis_bad_yn");
+            var sDisHldPlcIDJ = ds_movInFixProdOrgList.GetColumn(j, "dis_hld_plc_id");
+            var sDisLastInoutClJ = ds_movInFixProdOrgList.GetColumn(j, "dis_last_inout_cl");
+            var sDisLastInoutDtlClJ = ds_movInFixProdOrgList.GetColumn(j, "dis_last_inout_dtl_cl");
+
+            if(sProdClI == sProdClJ
+                    && sMfactIDI == sMfactIDJ
+                    && sProdCdI == sProdCdJ
+                    && sColorCdI == sColorCdJ)
+            {
+				// 불량여부, 보유처, 최종입출고구분(300:재고이동), 최종입출고상세구분(302:이동입고) 등을
+				// 체크하여 변경 사항이 있으면 수정할 수 없도록 한다.
+				if(sProdClJ != "9" && sInFixYnJ == 'Y' && (sBadYnJ != sDisBadYnJ 
+				        || sInPlcIDJ != sDisHldPlcIDJ || sDisLastInoutClJ != "300" 
+				        || sDisLastInoutDtlClJ != "302"))
+				{
+					bChYn = true;
+					ds_movInFixProdOrgList.SetColumn(j, "ch_yn", "Y");
+				}
+		    }
+        }
+*/
+        // 그리드 출력 데이터 셋에 중복된 행이 존재하는지 체크
+        for(var j=0; j<ds_movInFixProdList.rowcount; j++)
+        {
+            var sProdClJ = ds_movInFixProdList.GetColumn(j, "prod_cl");
+            var sMfactIDJ = ds_movInFixProdList.GetColumn(j, "mfact_id");
+            var sProdCdJ = ds_movInFixProdList.GetColumn(j, "prod_cd");
+            var sColorCdJ = ds_movInFixProdList.GetColumn(j, "color_cd");
+            
+            if(sProdClI == sProdClJ
+                    && sMfactIDI == sMfactIDJ
+                    && sProdCdI == sProdCdJ
+                    && sColorCdI == sColorCdJ)
+            {
+                bFlg = true;
+                break;
+            }
+        }
+        
+        if(bFlg)
+        {
+            continue;
+        }
+        
+        // 현재 행과 같은 상품의 카운트를 더한다.
+        for(var j=0; j<ds_movInFixProdOrgList.rowcount; j++)
+        {
+            var sProdClJ = ds_movInFixProdOrgList.GetColumn(j, "prod_cl");
+            var sMfactIDJ = ds_movInFixProdOrgList.GetColumn(j, "mfact_id");
+            var sProdCdJ = ds_movInFixProdOrgList.GetColumn(j, "prod_cd");
+            var sColorCdJ = ds_movInFixProdOrgList.GetColumn(j, "color_cd");
+            var sInFixYnJ = ds_movInFixProdOrgList.GetColumn(j, "in_fix_yn");
+
+            if(sProdClI == sProdClJ
+                    && sMfactIDI == sMfactIDJ
+                    && sProdCdI == sProdCdJ
+                    && sColorCdI == sColorCdJ)
+            {
+                nOutCnt += ToNumber(ds_movInFixProdOrgList.GetColumn(j, "out_fix_qty"));
+                nInCnt += ToNumber(ds_movInFixProdOrgList.GetColumn(j, "in_fix_qty"));
+            }
+        }
+
+		// 화면 표시 데이터셋에 추가	
+		ds_movInFixProdList.AddRow();
+		
+		ds_movInFixProdList.SetColumn(ds_movInFixProdList.rowcount-1, "prod_cl", sProdClI);
+		ds_movInFixProdList.SetColumn(ds_movInFixProdList.rowcount-1, "mfact_id", sMfactIDI);
+		ds_movInFixProdList.SetColumn(ds_movInFixProdList.rowcount-1, "prod_cd", sProdCdI);
+		ds_movInFixProdList.SetColumn(ds_movInFixProdList.rowcount-1, "prod_nm", sProdNmI);
+		ds_movInFixProdList.SetColumn(ds_movInFixProdList.rowcount-1, "color_cd", sColorCdI); 
+		ds_movInFixProdList.SetColumn(ds_movInFixProdList.rowcount-1, "out_fix_qty", nOutCnt);
+		ds_movInFixProdList.SetColumn(ds_movInFixProdList.rowcount-1, "in_fix_qty", nInCnt);
+		//ds_movInFixProdList.SetColumn(ds_movInFixProdList.rowcount-1, "ch_yn", Iif(bChYn, "Y", "N"));
+		ds_movInFixProdList.SetColumn(ds_movInFixProdList.rowcount-1, "ch_yn", Iif(ds_movInFixProdOrgList.GetColumn(i, "ch_yn")=="Y", "Y", "N"));
+        ds_movInFixProdList.SetColumn(ds_movInFixProdList.rowcount-1, "bar_cd_typ", sBarCdTypI);
+    }
+    
+    grd_movInFixProdList.SetFocus();
+    ds_movInFixProdList.row = 0;
+}
+
+/*******************************************************************************
+ * @description    : 일괄 확정(행별)
+*******************************************************************************/
+function f_setFix(sFixFlg, nRow)
+{
+    var sProdCl = ds_movInFixProdList.GetColumn(nRow, "prod_cl");
+    var sMfactID = ds_movInFixProdList.GetColumn(nRow, "mfact_id");
+    var sProdCd = ds_movInFixProdList.GetColumn(nRow, "prod_cd");
+    var sColorCd = ds_movInFixProdList.GetColumn(nRow, "color_cd");
+    var sOutFixQty = ds_movInFixProdList.GetColumn(nRow, "out_fix_qty");
+    var nInFixCnt = 0;
+    
+    for(var i=0; i<ds_movInFixProdOrgList.rowcount; i++)
+    {
+		var sProdClOrg = ds_movInFixProdOrgList.GetColumn(i, "prod_cl");
+		var sMfactIDOrg = ds_movInFixProdOrgList.GetColumn(i, "mfact_id");
+		var sProdCdOrg = ds_movInFixProdOrgList.GetColumn(i, "prod_cd");
+		var sColorCdOrg = ds_movInFixProdOrgList.GetColumn(i, "color_cd");
+		var sOutFixQtyOrg = ds_movInFixProdOrgList.GetColumn(i, "out_fix_qty");
+		var sChYn = ds_movInFixProdOrgList.GetColumn(i, "ch_yn");
+		
+		if(sProdCl == sProdClOrg && sMfactID == sMfactIDOrg
+		        && sProdCd == sProdCdOrg && sColorCd == sColorCdOrg)
+		{
+		    if(sChYn == "Y")
+		    {
+		        nInFixCnt += ToNumber(sOutFixQtyOrg);
+		    }
+		    else
+		    {
+		        if(sProdClOrg == "9")
+		        {
+		            ds_movInFixProdOrgList.SetColumn(i, "in_fix_qty", Decode(sFixFlg, "1", sOutFixQtyOrg, "0"));
+		        }
+		        else
+		        {
+		            ds_movInFixProdOrgList.SetColumn(i, "in_fix_qty", Decode(sFixFlg, "1", "1", "0"));
+		        }
+		        ds_movInFixProdOrgList.SetColumn(i, "in_fix_yn", Decode(sFixFlg, "1", "Y", "N"));
+		    }
+            
+		}
+    }
+    
+    ds_movInFixProdList.SetColumn(nRow, "in_fix_qty", Decode(sFixFlg, "1", sOutFixQty, nInFixCnt));
+}
+
+/*******************************************************************************
+ * @description    : 그리드 헤더 클릭 이벤트
+*******************************************************************************/
+function grd_movInFixProdList_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+    if(nCell == 7) 
+    { // 일괄 확정 클릭
+		if(grd_movInFixProdList.GetSubCellProp("Head", 7, 0, "text") == "0")
+		{
+			grd_movInFixProdList.SetSubCellProp("Head", 7, 0, "text", "1");
+			
+			for(var i=0; i<ds_movInFixProdList.rowcount; i++)
+			{
+			    if(ds_movInFixProdList.GetColumn(i, "ch_yn") == "N")
+			    {
+				    ds_movInFixProdList.SetColumn(i, "in_fix_yn", "1");
+				}
+			}
+		}
+		else
+		{
+			grd_movInFixProdList.SetSubCellProp("Head", 7, 0, "text", "0");
+			
+			for(var i=0; i<ds_movInFixProdList.rowcount; i++)
+			{
+			    if(ds_movInFixProdList.GetColumn(i, "ch_yn") == "N")
+			    {
+				    ds_movInFixProdList.SetColumn(i, "in_fix_yn", "0");
+				}
+			}
+		}
+    }
+}
+
+/*******************************************************************************
+ * @description    : 엑셀 다운 이벤트
+*******************************************************************************/
+function div_excel_btn_excelDown_OnClick(obj)
+{
+	cf_exportExcel(grd_movInFixProdList, 1);
+}
+
+/*******************************************************************************
+ * @description    : 셀 더블 클릭 이벤트
+*******************************************************************************/
+function grd_movInFixProdList_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+    if(ds_movInFixProdList.GetColumn(nRow, "prod_cl") != 9)
+    {
+	    var nRet = Dialog("DIS::DISDTR00900.xml", "", 830, 600);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 저장 버튼 클릭 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+    // 비고 변경유무 체크
+    if(ds_rmks.rowcount > 0 && ds_rmks.GetColumn(0, "rmks") != div_rmks.txa_rmks.Text)
+    {
+        f_saveRmks();
+    }
+    
+	if(div_search.cal_inFixDt.value < ds_inOut800.GetColumn(0, "out_fix_dt")){
+		alert("입고확정일은 출고확정일["+ds_inOut800.GetColumn(0, "out_fix_dt")+"] 보다 과거로 입력할 수 없습니다.");
+		return;		
+	}    
+	
+	cf_CheckCloseDay('01',div_search.cal_inFixDt.value,"입고확정일"); // 01 : 재고
+	if(FV_BOOLEAN_CLOSE) {
+		div_search.cal_inFixDt.SetFocus();
+		return; // 입력한 일자가 마감 되었을 경우 '1'(true) 리턴.        
+	}
+	
+	if( div_search.cal_inFixDt.value > AddDate(Mid(cf_getDate(),0,8),30) ){
+		
+		//입고확정일은 현재일자보다 + 30일 이상 일자는 선택 할 수 없습니다.
+		alert(cf_getMessage(MSG_00099, "입고확정일")); 
+		div_search.cal_inFixDt.SetFocus();
+		return;
+	}	
+	
+
+    for(var i=0; i<ds_movInFixProdList.rowcount; i++)
+    {
+        var nOutFixQty = ToNumber(ds_movInFixProdList.GetColumn(i, "out_fix_qty"));
+        var nInFixQty = ToNumber(ds_movInFixProdList.GetColumn(i, "in_fix_qty"));
+        
+        if(nOutFixQty < nInFixQty)
+        {
+            alert((i+1)+"행의 "+cf_getMessage(MSG_00096, "이동입고확정수량;이동출고확정수량"));
+            grd_movInFixProdList.SetCellPos(6);
+            grd_movInFixProdList.SetFocus();
+            ds_movInFixProdList.row = i;
+            return;
+        }
+    }
+    
+    // 기타상품 이동입고수량 계산
+    for(var i=0; i<ds_movInFixProdList.rowcount; i++)
+    {
+        var sProdCl = ds_movInFixProdList.GetColumn(i, "prod_cl");
+	    var sProdCd = ds_movInFixProdList.GetColumn(i, "prod_cd");
+	    var sMfactID = ds_movInFixProdList.GetColumn(i, "mfact_id");
+	    var sColorCd = ds_movInFixProdList.GetColumn(i, "color_cd");
+	    
+	    if(sProdCl == "9")
+	    {
+			var sCond = "prod_cl==9&&mfact_id==\"" + sMfactID
+					  + "\"&&prod_cd==\"" + sProdCd + "\"&&color_cd==\"" + sColorCd + "\"";
+			
+			var nIdx = ds_copyList.SearchRow(sCond);
+			var nIdxSet = ds_movInFixProdOrgList.SearchRow(sCond);
+			
+			if(nIdx != -1)
+			{
+			    var nCntOrg = ToNumber(ds_copyList.GetColumn(nIdx, "in_fix_qty"));
+			    var nCnt = ToNumber(ds_movInFixProdList.GetColumn(i, "in_fix_qty"));
+			    var nFixCnt = nCnt - nCntOrg;
+			    
+			    if(nCntOrg != nCnt)
+			    {
+			        ds_movInFixProdOrgList.UpdateControl = false;
+			        ds_movInFixProdOrgList.SetRowType(nIdxSet, "update");
+				    ds_movInFixProdOrgList.SetColumn(nIdxSet, "in_fix_qty", nFixCnt);
+				}
+			}
+	    }
+    }
+    
+    // 업무처리구분 결정
+	for(var i=0; i<ds_movInFixProdOrgList.rowcount; i++)
+	{
+	    if(ToUpper(ds_movInFixProdOrgList.GetRowType(i)) == "NORMAL")
+        {
+              continue;
+        }
+
+		if(ds_movInFixProdOrgList.GetColumn(i, "prod_cl") == "9")
+		{             
+			if(ToNumber(ds_movInFixProdOrgList.GetColumn(i, "in_fix_qty")) < 0)
+			{
+			    ds_movInFixProdOrgList.SetColumn(i, "act_flag", "IC");
+			}
+			else
+			{
+			    ds_movInFixProdOrgList.SetColumn(i, "act_flag", "IF");
+			}
+		}
+		else
+		{
+			if(ds_movInFixProdOrgList.GetColumn(i, "in_fix_yn") == "Y")
+			{
+			    ds_movInFixProdOrgList.SetColumn(i, "act_flag", "IF");
+			}
+			else
+			{
+			    ds_movInFixProdOrgList.SetColumn(i, "act_flag", "IC");
+			}
+		}
+	}
+
+	f_saveMovInFixProd();
+}
+
+/*******************************************************************************
+ * @description    :  공통 폼 재호출 함수
+ * @param sArg     : 파라메터
+*******************************************************************************/
+function df_reSet(sArg)
+{
+    div_search.edt_inPlcID.Value = "";
+    div_search.edt_inPlcNm.Value = "";
+    div_search.edt_outPlcID.Value = "";
+    div_search.edt_outPlcNm.Value = "";
+    
+    div_search.cal_inFixDt.Enable = "true";
+    
+    ds_movInFixProdList.ClearData();
+    ds_movInFixProdOrgList.ClearData();
+    
+	DISDTR00800_OnLoadCompleted();
+}
+
+/*******************************************************************************
+ * @description    : 데이터셋 변경 이벤트
+*******************************************************************************/
+function ds_movInFixProdList_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if(strColumnID == "in_fix_yn")
+	{
+	    f_setFix(varNewValue, nRow);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 확정일 변경 이벤트
+*******************************************************************************/
+function ds_inFixDt_CanColumnChange(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+    if(ds_movInFixProdOrgList.GetUpdate() > 0)
+    {
+        alert(cf_getMessage(MSG_00137, "확정일이 적용된 건이 존재하므로 변경할 수"));
+        div_search.cal_inFixDt.SetFocus();
+	    return false;
+	}
+}
+
+/*******************************************************************************
+ * @description    : 입고확정일 OnChanged 이벤트
+*******************************************************************************/
+function div_search_cal_inFixDt_OnChanged(obj,strOldText,strNewText)
+{
+	// 최초 화면 입장 시 현재일자를 셋팅 할때는 제외.
+	if( !uf_IsNull(div_search.cal_inFixDt.value) && FV_EVENT_YN == "Y"){
+	
+		if(strNewText < ds_inOut800.GetColumn(0, "out_fix_dt")){
+			alert("입고확정일은 출고확정일["+ds_inOut800.GetColumn(0, "out_fix_dt")+"] 보다 과거로 입력할 수 없습니다.");
+			div_search.cal_inFixDt.value = strOldText;
+			return;		
+		}
+	
+		// 마감월 체크
+		cf_CheckCloseDay('01',div_search.cal_inFixDt.value,"입고확정일"); // 01 : 재고 
+		
+		if(FV_BOOLEAN_CLOSE) {
+			div_search.cal_inFixDt.value = "";
+			div_search.cal_inFixDt.SetFocus();
+			return; // 입력한 일자가 마감 되었을 경우 '1'(true) 리턴.
+		}		
+	}	
+}
+]]></Script>
+</Window>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08310">
+	<select id="getDealList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        select
+		    distinct stl_plc as lifnr, '' result
+		from tsal_general_sale
+		where sale_chg_dtm >= '20090801000000'
+	]]>
+	</select>
+	<delete id="deleteDealList" parameterClass="map" >
+	<![CDATA[
+		DELETE
+  		FROM TSAC_CUST_CHECK
+   	]]>
+	</delete>
+	<insert id="insertDeal" parameterClass="map">
+	<![CDATA[
+		insert into tsac_cust_check
+		(
+		    pos_agency,
+		    deal_co_cd,
+		    check_dt,
+		    check_result
+		) values
+		( (SELECT /*+ index_desc (x XBAS_DEAL_CO_MGMT_PK) */
+		      pos_agency
+		 FROM tbas_deal_co_mgmt x
+		WHERE 1=1
+		  AND TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS') BETWEEN eff_sta_dtm AND eff_end_dtm
+		  AND del_yn = 'N'
+		  AND x.deal_co_cd = #LIFNR#
+		  AND ROWNUM = 1)
+		, #LIFNR#
+		, TO_CHAR(SYSDATE,'YYYYMMDD')
+		, #RESULT#)
+	]]>
+	</insert>
+</sqlMap>

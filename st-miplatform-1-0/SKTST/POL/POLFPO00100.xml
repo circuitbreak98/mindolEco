@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnLoadCompleted="POLFPO00100_OnLoadCompleted" PidAttrib="7" Title="운영모델단가표&#32;관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_pol_uplst">
+				<Contents>
+					<colinfo id="UPLST_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="POL_YM" size="256" summ="default" type="STRING"/>
+					<colinfo id="POL_TS" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_STA_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_END_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEL_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRD_MD_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="HST_FLAG" size="256" summ="default" type="STRING"/>
+					<colinfo id="CRUD_FLAG" size="256" summ="default" type="STRING"/>
+					<colinfo id="DIS_CMP_FNSH_YN" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="POL_YM" size="256" summ="default" type="STRING"/>
+					<record>
+						<POL_YM></POL_YM>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_uplst_cnt">
+				<Contents>
+					<colinfo id="uplst_id_cnt" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="질의내용" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="22" Style="sty_lb_Search" TabOrder="1" Text="조회년월" Top="7" VAlign="Middle" Width="76"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="234" LeftMargin="5" OnClick="df_search" Style="sty_btn_a" TabOrder="2" Text="조회" Top="7" Width="60"></Button>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="POL_YM" Height="20" Id="cal_polYm" Left="104" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Type="STRING" Width="77"></MaskEdit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="181" OnClick="btn_monthCalendar_OnClick" TabOrder="3" TabStop="FALSE" Text="Button3" Top="7" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_pol_uplst" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="545" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="485" Id="grd_pol_uplst" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_pol_uplst_OnCellDblClick" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="60" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="40"/>
+						<col width="100"/>
+						<col width="40"/>
+						<col width="150"/>
+						<col width="150"/>
+						<col width="229"/>
+						<col width="120"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="적용년월"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="차수"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="적용시작일시"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="적용종료일시"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="비고"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="상품관리&#32;변경여부"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell align="center" col="1" colid="POL_YM" color="expr:uf_GetColor(PRD_MD_YN)" display="text" Mask="@@@@-@@"/>
+						<cell align="center" col="2" colid="POL_TS" display="text" expr='POL_TS&#32;+&#32;&quot;차&quot;'/>
+						<cell align="center" col="3" colid="APLY_STA_DTM" color="expr:uf_GetColor(PRD_MD_YN)" display="text" Mask="@@@@-@@-@@&#32;@@:@@"/>
+						<cell align="center" col="4" colid="APLY_END_DTM" color="expr:uf_GetColor(PRD_MD_YN)" display="text" Mask="@@@@-@@-@@&#32;@@:@@"/>
+						<cell col="5" colid="RMKS" color="expr:uf_GetColor(PRD_MD_YN)" display="text"/>
+						<cell align="center" col="6" color="expr:uf_GetColor(PRD_MD_YN)" display="text" expr="DECODE(PRD_MD_YN,&apos;U&apos;,&apos;변경발생&apos;,&apos;&apos;)"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Height="25" Id="btn_add" ImageID="btn_e_4" Left="10" LeftMargin="15" OnClick="df_insert" Style="sty_btn_e" TabOrder="3" Text="신규등록" Top="565" Width="85"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Height="25" Id="btn_mdl" ImageID="btn_e_4" Left="100" LeftMargin="15" OnClick="btn_Search_OnClick" Style="sty_btn_e" TabOrder="4" Text="상품관리" Top="565" Width="85"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : POLFPO00100
+* 업무명      : 정책관리
+* 프로그램명  : 운영모델단가표 관리
+--------------------------------------------------------------------------------
+* 작성자      : 전승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_STR_NAME; // 사용자 이름
+
+/*******************************************************************************
+* 함수명 : POLFPO00100_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function POLFPO00100_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_pol_uplst);	// 그리드 정렬
+	
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	div_search.cal_polYm.Value = substr(Today(),0,6);
+	
+	df_search();
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	
+	if(sSvcID == "svcSearchUplstIdCnt")
+	{
+		return;
+	}
+	
+	if(sSvcID == "svcSearch")
+	{
+		f_getUplstIdCnt();
+		
+		return;
+	}
+	
+	
+}
+
+/*******************************************************************************
+* 함수명 : df_search
+* 기능명 : 공통 조회 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function df_search(sButtonID)
+{
+	
+	var sSvcID = "svcSearch";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_pol_uplst=ds_pol_uplst";
+	var sArg = "sktst.pol.FPO#getPolUpLstByPolYm";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	
+}
+
+/*******************************************************************************
+* 함수명 : df_insert
+* 기능명 : 공통 신규 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function df_insert(sButtonID)
+{
+	if(ds_uplst_cnt.GetColumn(0,"uplst_id_cnt") > 0){
+		
+		alert(cf_getMessage(MSG_00130, "운영 모델 단가표"));//이미 등록된 운영 모델 단가표가 있습니다.
+		return;
+		
+	}
+	
+	var sArg = "";
+
+	sArg = "uplst_id="+quote("");
+	sArg += " POL_YM="+quote(ds_condition.getColumn(0,"POL_YM"));
+	sArg += " HST_FLAG=" + quote("Y");
+	sArg += " CRUD_FLAG=" + quote("N");
+	sArg += " POP_FLAG=" + quote("N");
+	sArg += " RMKS=" + quote("");
+	sArg += " DIS_CMP_FNSH_YN=" + quote("N");
+	
+	gf_openWindow("100000130", sArg);
+	
+}
+
+/*******************************************************************************
+* 함수명 : df_close
+* 기능명 : 화면 종료
+*******************************************************************************/
+function df_close(sButtonID)
+{
+	this.close();
+}
+
+/*******************************************************************************
+* 함수명 : f_getUplstIdCnt
+* 기능명 : 공통 조회 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function f_getUplstIdCnt()
+{
+	var sSvcID = "svcSearchUplstIdCnt";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_uplst_cnt=ds_uplst_cnt";
+	var sArg = "sktst.pol.FPO#getUplstIdCntByPolYm";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * Desc   : 운영모델 단가표 리스트 클릭시 이벤트 발생
+ * Auth   : 전승호 (2009.01.15) 
+*******************************************************************************/
+function grd_pol_uplst_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	var oGrdDs = object(obj.BindDataset); 
+	
+	if(oGrdDs.getColumn(nRow,"prd_md_yn") == "U"){
+	
+		var sArg  = "UPLST_ID="+quote(oGrdDs.getColumn(nRow,"UPLST_ID"));
+		    sArg += " POL_YM=" + quote(oGrdDs.getColumn(nRow,"POL_YM")); 
+		    sArg += " POL_TS=" + quote(oGrdDs.getColumn(nRow,"POL_TS")); 
+		    sArg += " APLY_STA_DTM=" + quote(oGrdDs.getColumn(nRow,"APLY_STA_DTM"));
+		    sArg += " APLY_END_DTM=" + quote(oGrdDs.getColumn(nRow,"APLY_END_DTM"));
+		    sArg += " HST_FLAG=" + quote(oGrdDs.getColumn(nRow,"HST_FLAG"));
+		    sArg += " CRUD_FLAG=" + quote(oGrdDs.getColumn(nRow,"CRUD_FLAG"));
+		    sArg += " RMKS=" + quote(oGrdDs.getColumn(nRow,"RMKS"));
+		    sArg += " DIS_CMP_FNSH_YN=" + quote(oGrdDs.getColumn(nRow,"DIS_CMP_FNSH_YN"));
+		    sArg += " POP_FLAG=" + quote("N");
+		  
+		dialog("POL::POLFPO00200.xml", sArg, 336, 128); 
+		
+	}else{
+		var sArg  = "UPLST_ID="+quote(ds_pol_uplst.getColumn(nRow,"UPLST_ID"));
+			sArg += " POL_YM=" + quote(ds_pol_uplst.getColumn(nRow,"POL_YM")); 
+			sArg += " POL_TS=" + quote(ds_pol_uplst.getColumn(nRow,"POL_TS")); 
+			sArg += " APLY_STA_DTM=" + quote(ds_pol_uplst.getColumn(nRow,"APLY_STA_DTM"));
+			sArg += " APLY_END_DTM=" + quote(ds_pol_uplst.getColumn(nRow,"APLY_END_DTM"));
+			sArg += " HST_FLAG=" + quote(ds_pol_uplst.getColumn(nRow,"HST_FLAG"));
+			sArg += " CRUD_FLAG=" + quote(oGrdDs.getColumn(nRow,"CRUD_FLAG"));
+			sArg += " RMKS=" + quote(ds_pol_uplst.getColumn(nRow,"RMKS"));
+			sArg += " DIS_CMP_FNSH_YN=" + quote(oGrdDs.getColumn(nRow,"DIS_CMP_FNSH_YN"));
+			sArg += " POP_FLAG=" + quote("N");
+			
+		gf_openWindow("100000130", sArg);
+	}
+}
+
+
+
+/*******************************************************************************
+* 함수명 : btn_Search_OnClick
+* 기능명 : 상품관리 화면 팝업 호출
+*******************************************************************************/
+function btn_Search_OnClick(obj)
+{
+	var sArg  = "";
+	gf_openWindow("100000010", sArg);
+}
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_polYm);
+	
+	f_getUplstIdCnt();
+}
+
+]]></Script>
+</Window>

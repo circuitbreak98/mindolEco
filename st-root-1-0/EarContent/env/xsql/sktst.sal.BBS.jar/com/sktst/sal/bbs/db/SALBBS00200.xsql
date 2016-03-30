@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="SALBBS00200">
+<select id="getSaleMgmtSeq" resultClass="hmap" fetchSize="50" ><![CDATA[
+SELECT /*+ SALBBS00200_getSaleMgmtSeq-전희경 */
+       #mgmtCd#||to_char(TSAL_S_SEQ.nextval,'FM0000000000') saleMgmtNo
+FROM   dual]]>
+	</select>
+<insert id="addGnrlSale" parameterClass="map" ><![CDATA[INSERT INTO /*+ SALBBS00200_addGnrlSale-전희경 */
+ TSAL_GNRL_SALE (
+  GNRL_SALE_NO, 
+  GNRL_SALE_CHG_SEQ, 
+  SALE_DTM, 
+  SALE_CHGRG_ID, 
+  SALE_CHG_HST_CL, 
+  ACC_CHG_HST_CL, 
+  SALE_CHG_DTM,
+  SALE_MOD_USER_ID,
+  STL_PLC, 
+  DIS_HLD_PLC, 
+  SALE_PLC, 
+  CUST_CL, 
+  CUST_NM, 
+  CUST_BIZ_NUM, 
+  SETTL_COND, 
+  SALE_CNCL_YN,
+  SALE_CNCL_DTM,
+  SALE_CNCL_CL,
+  DT_CLS_YN, 
+  RMKS, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_USER_ID, 
+  INS_DTM, 
+  MOD_USER_ID,
+  MOD_DTM, 
+  SALE_TYP_CD
+)
+values
+(
+  #gnrl_sale_no#, 
+  #gnrl_sale_chg_seq#, 
+  #sale_dtm#, 
+  #sale_chgrg_id#, 
+  #sale_chg_hst_cl#, 
+  #acc_chg_hst_cl#, 
+  #sale_chg_dtm#,
+  #sale_chg_chgrg_id#,
+  #stl_plc#, 
+  #dis_hld_plc#, 
+  #sale_plc#, 
+  '', 
+  '', 
+  '', 
+  #settl_cond#, 
+  #sale_cncl_yn#,
+  #sale_cncl_dtm#,
+  #sale_cncl_cl#,
+  'N', 
+  #rmks#, 
+  'N', 
+  1, 
+  #onlineContext.userInfo.loginId#, 
+  TO_CHAR(sysdate, 'yyyyMMddhh24miss'), 
+  #onlineContext.userInfo.loginId#, 
+  TO_CHAR(sysdate, 'yyyyMMddhh24miss'), 
+  #sale_typ_cd#
+)]]>
+	</insert>
+	<insert id="addSaleAmt" parameterClass="map" ><![CDATA[INSERT INTO /*+ SALBBS00200_addSaleAmt-전희경 */
+	TSAL_SALE_AMT (
+	GNRL_SALE_NO, 
+  	GNRL_SALE_CHG_SEQ, 
+  	BF_DIS_AMT, 
+	DIS_AMT, 
+  	BF_MAR_AMT,
+  	MAR_AMT,
+  	BF_CMMS_AMT, 
+  	CMMS_AMT, 
+  	BF_VAT_AMT, 
+  	VAT_AMT, 
+  	BF_SALE_AMT,
+  	SALE_AMT,
+  	DEL_YN, 
+  	UPD_CNT, 
+  	INS_USER_ID, 
+  	INS_DTM, 
+  	MOD_USER_ID,
+  	MOD_DTM
+	)
+	values
+	(
+	#gnrl_sale_no#, 
+  	#gnrl_sale_chg_seq#, 
+  	#bf_dis_amt#, 
+	#chg_dis_amt#, 
+  	#bf_mar_amt#,
+  	#chg_mar_amt#,
+  	#bf_cmms_amt#, 
+  	#chg_cmms_amt#, 
+  	#bf_vat_amt#, 
+  	#chg_vat_amt#, 
+  	#bf_sale_amt#,
+  	#chg_sale_amt#, 
+	'N', 
+  	1, 
+  	#onlineContext.userInfo.loginId#,
+  	TO_CHAR(sysdate, 'yyyyMMddhh24miss'), 
+  	#onlineContext.userInfo.loginId#,
+  	TO_CHAR(sysdate, 'yyyyMMddhh24miss')
+	)
+	]]>
+	</insert>
+<insert id="addPayment" parameterClass="map" ><![CDATA[INSERT INTO /*+ SALBBS00200_addPayment-전희경 */
+	TSAL_PAYMENT (
+	GNRL_SALE_NO, 
+	GNRL_SALE_CHG_SEQ,
+	BF_CASH_PAY_AMT, 
+	BF_CRDTCRD_CORP1, 
+	BF_CRDTCRD_PAY_AMT1, 
+	BF_CRDTCRD_CORP2, 
+	BF_CRDTCRD_PAY_AMT2,
+	CASH_PAY_AMT, 
+	CRDTCRD_CORP1, 
+	CRDTCRD_PAY_AMT1, 
+	CRDTCRD_CORP2, 
+	CRDTCRD_PAY_AMT2, 
+	DEL_YN, 
+	UPD_CNT, 
+	INS_USER_ID, 
+	INS_DTM, 
+  	MOD_USER_ID,
+  	MOD_DTM
+)
+values
+(
+	#gnrl_sale_no#, 
+	#gnrl_sale_chg_seq#,
+	#bf_cash_pay_amt#, 
+	#bf_crdtcrd_corp1#, 
+	#bf_crdtcrd_pay_amt1#, 
+	#bf_crdtcrd_corp2#, 
+	#bf_crdtcrd_pay_amt2#,
+	#chg_cash_pay_amt#, 
+	#crdtcrd_corp1#, 
+	#chg_crdtcrd_pay_amt1#, 
+	#crdtcrd_corp2#, 
+	#chg_crdtcrd_pay_amt2#, 
+	'N', 
+ 	1, 
+ 	#onlineContext.userInfo.loginId#,
+ 	TO_CHAR(sysdate, 'yyyyMMddhh24miss'), 
+  	#onlineContext.userInfo.loginId#,
+  	TO_CHAR(sysdate, 'yyyyMMddhh24miss')
+)]]>
+</insert>
+<insert id="addEquipmentSale" parameterClass="map" ><![CDATA[INSERT INTO /*+ SALBBS00200_addEquipmentSale-전희경 */
+	TSAL_EQUIPMENT_SALE (
+	GNRL_SALE_NO, 
+	GNRL_SALE_CHG_SEQ,
+	SALE_SEQ, 
+	EQP_SER_NUM, 
+	EQP_MDL_CD, 
+	EQP_COLOR_CD, 
+	PROD_SER_NUM,
+	DEL_YN, 
+	UPD_CNT, 
+	INS_USER_ID, 
+	INS_DTM, 
+  	MOD_USER_ID,
+  	MOD_DTM
+)
+(select
+	#gnrl_sale_no# GNRL_SALE_NO, 
+	#gnrl_sale_chg_seq# GNRL_SALE_CHG_SEQ,
+	NVL((SELECT max(sale_seq)
+      	FROM TSAL_EQUIPMENT_SALE
+          WHERE gnrl_sale_no = #gnrl_sale_no#
+              AND gnrl_sale_chg_seq = #gnrl_sale_chg_seq#), 0)+1 sale_seq,
+	#old_ser_num#, 
+	#prod_cd#, 
+	#color_cd#, 
+ 	#ser_num#,
+ 	'N', 
+ 	1, 
+ 	#onlineContext.userInfo.loginId#,
+ 	TO_CHAR(sysdate, 'yyyyMMddhh24miss'), 
+  	#onlineContext.userInfo.loginId#,
+  	TO_CHAR(sysdate, 'yyyyMMddhh24miss')
+from dual
+)	]]>
+</insert>
+<select id="getSaleMaster" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALBBS00200_getSaleMaster-전희경 */
+	tgs.gnrl_sale_no
+	,tgs.gnrl_sale_chg_seq
+    ,tgs.sale_typ_cd
+    ,tgs.sale_dtm
+    ,tgs.sale_chgrg_id
+    ,tgs.sale_chg_hst_cl
+    ,tgs.sale_chg_dtm
+    ,tgs.sale_mod_user_id AS sale_chg_chgrg_id
+    ,tgs.stl_plc
+    ,stl.deal_co_nm stl_plc_nm
+    ,tgs.dis_hld_plc
+    , ag.deal_co_cd agency_cd
+	, ag.deal_co_nm agency_cd_nm
+    ,tgs.sale_plc
+    , sale.deal_co_nm sale_plc_nm
+    ,tgs.sale_chg_plc
+    ,tgs.settl_cond
+    ,tgs.rmks
+    ,tgs.dt_cls_yn
+    ,tgs.gnrl_sale_chg_seq AS MAX
+    ,'' flag
+FROM TSAL_GNRL_SALE tgs
+    , tbas_deal_co_mgmt sale /* 판매처*/
+    , tbas_deal_co_mgmt stl /* 정산처*/
+	, tbas_deal_co_mgmt ag  /* 대리점*/
+WHERE tgs.gnrl_sale_no = #gnrl_sale_no#
+	AND tgs.gnrl_sale_chg_seq = (SELECT MAX(gnrl_sale_chg_seq) gnrl_sale_chg_seq
+							    	FROM TSAL_GNRL_SALE tgs
+							        WHERE gnrl_sale_no = #gnrl_sale_no#)
+    AND tgs.sale_plc = sale.deal_co_cd 
+  AND tgs.sale_dtm >= sale.eff_sta_dtm  
+  AND tgs.sale_dtm <= sale.eff_end_dtm
+  AND    sale.pos_agency = ag.deal_co_cd 
+  AND tgs.sale_dtm >= ag.eff_sta_dtm  
+  AND tgs.sale_dtm <= ag.eff_end_dtm      
+  AND tgs.stl_plc = stl.deal_co_cd 
+  AND tgs.sale_dtm >= stl.eff_sta_dtm  
+  AND tgs.sale_dtm <= stl.eff_end_dtm   
+  AND tgs.del_yn    = 'N'
+  AND sale.del_yn = 'N'
+  AND stl.del_yn  = 'N'
+ORDER BY gnrl_sale_no, gnrl_sale_chg_seq ]]>
+</select>
+<select id="getEquipSaleDtList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALBBS00200_getEquipSaleDtList-전희경 */
+	tgs.gnrl_sale_no as gnrl_sale_no
+          , tgs.gnrl_sale_chg_seq as gnrl_sale_chg_seq
+          , tes.sale_seq
+		  , tgs.sale_dtm as sale_dtm
+		  , tgs.sale_chg_hst_cl  as sale_chg_hst_cl
+    	  , '1' as prod_cl
+    	  , tes.eqp_mdl_cd as prod_cd
+    	  , tpm.prod_nm
+          , (SELECT mfact_id 
+              FROM   tbas_prod_mgmt
+              WHERE  prod_cd =tes.eqp_mdl_cd) as mfact_id	/* 제조사ID */
+          , (SELECT deal_co_nm 
+              FROM   tbas_deal_co_mgmt
+              WHERE  deal_co_cd = (SELECT mfact_id
+                                   FROM   tbas_prod_mgmt
+                                   WHERE  prod_cd = tes.eqp_mdl_cd)
+              AND    eff_sta_dtm <= tgs.sale_dtm
+              AND    eff_end_dtm >= tgs.sale_dtm) as mfact_id_nm	/* 제조사명 	 */	 
+    	  , tes.eqp_color_cd as color_cd
+          , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040',tes.eqp_color_cd) color_cd_nm /* 색상명*/
+    	  , 0 as sale_unit_prc
+    	  , 0 as sale_prc
+    	  , 0 as sale_mar
+    	  , 0 as sale_cmms
+    	  , '' as splst_yn
+    	  , 0 as sale_vat_prc
+    	  , tes.eqp_ser_num as old_ser_num
+          , tes.prod_ser_num AS ser_num
+    	  , 1 as sale_qty 
+    	  , hld.deal_co_cd as hld_plc
+    	  , hld.deal_co_nm as hld_plc_nm
+    	  ,tgs.gnrl_sale_chg_seq as max
+    	  , 0 as sale_amt
+    	  , (select tpod.out_mgmt_no
+    	  		from TDIS_PROD_OUT_M tpom
+    	  			,TDIS_PROD_OUT_DTL_D tpod
+    	  		where tpom.gnrl_sale_no = tgs.gnrl_sale_no
+    	  			and tpom.gnrl_sale_chg_seq = tgs.gnrl_sale_chg_seq
+    	  			and tpom.out_mgmt_no = tpod.out_mgmt_no
+    	  			and tpod.prod_cd = tes.eqp_mdl_cd
+    	  			and tpod.color_cd = tes.eqp_color_cd
+    	  			and tpod.ser_num = tes.prod_ser_num
+    	  			and nvl(tpod.cncl_yn, 'N') = 'N'
+    	  			and tpod.del_yn = 'N'
+    	  			and tpom.del_yn = 'N') as out_mgmt_no
+    FROM   tsal_gnrl_sale tgs
+         , TSAL_EQUIPMENT_SALE tes
+         , tbas_prod_mgmt tpm
+         , tbas_deal_co_mgmt hld /* 보유처 */			  
+    WHERE  tgs.gnrl_sale_no      = tes.gnrl_sale_no
+    AND    tgs.gnrl_sale_chg_seq = tes.gnrl_sale_chg_seq
+    AND    tgs.gnrl_sale_chg_seq = (SELECT MAX(gnrl_sale_chg_seq) as max
+                                FROM   tsal_gnrl_sale
+                                WHERE  gnrl_sale_no = #gnrl_sale_no#
+                                AND    del_yn = 'N')
+    AND    tgs.gnrl_sale_no      = #gnrl_sale_no#
+    AND	   tes.eqp_mdl_cd = tpm.prod_cd
+    AND    tgs.dis_hld_plc = hld.deal_co_cd	/* 보유처 */
+    AND    tgs.sale_dtm >= hld.eff_sta_dtm  
+    AND    tgs.sale_dtm <= hld.eff_end_dtm 
+    AND    tgs.del_yn = 'N'
+    AND    tes.del_yn = 'N'
+ORDER BY tgs.gnrl_sale_no
+       , tgs.gnrl_sale_chg_seq]]>
+</select>
+<select id="getSalePayment" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALBBS00200_getSalePayment-전희경 */
+	tgs.gnrl_sale_no
+     , tgs.gnrl_sale_chg_seq
+     , tp.cash_pay_amt 			as	bf_cash_pay_amt  
+     , tp1.cash_pay_amt			as	cash_pay_amt
+     , 0 						AS 	chg_cash_pay_amt
+     , tp.crdtcrd_corp1
+     , tp.crdtcrd_corp1  		as	bf_crdtcrd_corp1
+     , tp.crdtcrd_pay_amt1 		as	bf_crdtcrd_pay_amt1
+     , tp1.crdtcrd_pay_amt1 	as	crdtcrd_pay_amt1
+     , 0 						AS 	chg_crdtcrd_pay_amt1
+     , tp.crdtcrd_pay_fix_yn1
+     , tp.crdtcrd_pay_fix_dt1     
+     , tp.crdtcrd_corp2
+     , tp.crdtcrd_corp2  		as	bf_crdtcrd_corp2
+     , tp.crdtcrd_pay_amt2 		as	bf_crdtcrd_pay_amt2
+     , tp1.crdtcrd_pay_amt2 	as	crdtcrd_pay_amt2
+     , 0 						AS 	chg_crdtcrd_pay_amt2
+     , tp.crdtcrd_pay_fix_yn2
+     , tp.crdtcrd_pay_fix_dt2
+     , tsa.dis_amt				as 	bf_dis_amt 
+	 , tsa1.dis_amt 			as 	dis_amt
+	 , 0						as 	chg_dis_amt
+  	 , tsa.mar_amt				as 	bf_mar_amt
+  	 , tsa1.mar_amt				as 	mar_amt
+  	 , 0						as 	chg_mar_amt
+  	 , tsa.cmms_amt				as	bf_cmms_amt 
+  	 , tsa1.cmms_amt			as	cmms_amt
+  	 , 0						as	chg_cmms_amt 
+  	 , tsa.vat_amt				as	bf_vat_amt 
+  	 , tsa1.vat_amt 			as 	vat_amt
+  	 , 0						as 	chg_vat_amt
+  	 , tsa.sale_amt				as 	bf_sale_amt
+  	 , tsa1.sale_amt			as 	sale_amt
+  	 , 0						as	chg_sale_amt
+FROM   tsal_gnrl_sale tgs
+     , tsal_payment tp
+     ,(SELECT gnrl_sale_no 
+     		,SUM(cash_pay_amt) cash_pay_amt
+     		,SUM(crdtcrd_pay_amt1) crdtcrd_pay_amt1
+            ,SUM(crdtcrd_pay_amt2) crdtcrd_pay_amt2
+       FROM TSAL_PAYMENT
+       WHERE gnrl_sale_no = #gnrl_sale_no#
+       		AND del_yn = 'N'
+       GROUP BY gnrl_sale_no) tp1
+      ,TSAL_SALE_AMT tsa
+      ,(SELECT gnrl_sale_no 
+     		,SUM(dis_amt) dis_amt
+     		,SUM(mar_amt) mar_amt
+            ,SUM(cmms_amt) cmms_amt
+            ,SUM(vat_amt) vat_amt
+            ,SUM(sale_amt) sale_amt
+       FROM TSAL_SALE_AMT
+       WHERE gnrl_sale_no = #gnrl_sale_no#
+       		AND del_yn = 'N'
+       GROUP BY gnrl_sale_no) tsa1
+WHERE  tgs.gnrl_sale_no      = tp.gnrl_sale_no
+AND    tgs.gnrl_sale_chg_seq = tp.gnrl_sale_chg_seq
+AND    tgs.gnrl_sale_chg_seq = (SELECT MAX(gnrl_sale_chg_seq)
+                                 FROM   tsal_gnrl_sale
+                                 WHERE  gnrl_sale_no = #gnrl_sale_no#
+                                )
+AND    tgs.gnrl_sale_no = #gnrl_sale_no#
+AND    tgs.gnrl_sale_no = tp1.gnrl_sale_no
+AND	   tgs.gnrl_sale_no = tsa.gnrl_sale_no
+AND    tgs.gnrl_sale_chg_seq = tsa.gnrl_sale_chg_seq
+AND	   tsa.gnrl_sale_no = tsa1.gnrl_sale_no
+AND    tgs.del_yn = 'N'
+AND    tp.del_yn = 'N'
+AND    tsa.del_yn = 'N']]>
+	</select>
+</sqlMap>

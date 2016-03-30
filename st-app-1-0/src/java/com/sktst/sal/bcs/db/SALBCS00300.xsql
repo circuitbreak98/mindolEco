@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALBCS00300">
+	<select id="getSaleProdByExcel" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "SALBCS00300_getSaleProdByExcel_전미량" */
+       A.PROD_CL,
+       (SELECT COMM_CD_VAL_NM
+       FROM TBAS_COMM_CD_DTL
+       WHERE COMM_CD_ID = 'ZBAS_C_00010'
+       AND   COMM_CD_VAL = A.PROD_CL) AS PROD_CL_NM,
+       A.MFACT_ID,
+       (SELECT B.DEAL_CO_NM FROM TBAS_DEAL_CO_MGMT B
+        WHERE  B.DEAL_CO_CD = A.MFACT_ID AND B.DEAL_CO_CL1 = '20' AND ROWNUM = 1) AS MFACT_NM,
+       A.PROD_NM,
+       A.PROD_CD,
+       A.RMKS,
+       A.BAR_CD_TYP,
+       E.COLOR_CD,
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040',E.COLOR_CD) COLOR_NM ,
+       E.SER_NUM,
+       E.OLD_SER_NUM,
+       E.EQP_ST,
+       E.DIS_ST,
+       E.HLD_PLC_ID,
+       HLD.DEAL_CO_NM AS HLD_PLC_NM,
+       A.MKTG_DT,
+       '1' MOV_QTY,
+       E.UPD_CNT,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,A.PROD_CD,E.SER_NUM,'1','U') AS SALE_UNIT_PRC,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,A.PROD_CD,E.SER_NUM,'1','D') AS SALE_PRC,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,A.PROD_CD,E.SER_NUM,'1','M') AS SALE_MAR,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,A.PROD_CD,E.SER_NUM,'1','S') AS SALE_CMMS,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,A.PROD_CD,E.SER_NUM,'1','Y') AS SPLST_YN,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,A.PROD_CD,E.SER_NUM,'1','V') AS SALE_VAT_PRC,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,A.PROD_CD,E.SER_NUM,'1','SA') AS SALE_AMT
+FROM   TBAS_PROD_MGMT A,
+       TDIS_PROD_DIS E,
+       TBAS_DEAL_CO_MGMT HLD /* 보유처 */
+WHERE A.DEL_YN = 'N'
+AND   A.PROD_CD  = #prod_cd#
+AND   A.PROD_CD  = E.PROD_CD
+AND   E.SER_NUM  = #ser_num#
+AND   E.DEL_YN   = 'N'
+AND   E.DIS_ST   = '01'
+AND   E.HLD_PLC_ID = #out_plc_id#
+AND   E.HLD_PLC_ID = HLD.DEAL_CO_CD	/* 보유처 */ ]]>
+	</select>
+	<select id="getProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "SALBCS00300_getProdList_전미량" */
+       A.PROD_CD,
+       A.PROD_NM,
+       DECODE(A.DEL_YN, 'N', 'Y', 'N') USE_YN,  
+       A.PROD_CL,
+       (SELECT COMM_CD_VAL_NM
+          FROM TBAS_COMM_CD_DTL
+         WHERE COMM_CD_VAL = A.PROD_CL
+           AND COMM_CD_ID = 'ZBAS_C_00010') AS PROD_CL_NM,
+       A.MFACT_ID,
+       FBAS_GET_DEAL_NM(A.MFACT_ID,'') AS MFACT_NM,
+       A.BAR_CD_TYP
+  FROM TBAS_PROD_MGMT A
+ WHERE A.DEL_YN  = 'N']]>
+	</select>
+	<select id="getColorList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "SALBCS00300_getColorList_전미량" */
+       B.PROD_CD,
+       B.COLOR_CD,
+       (SELECT COMM_CD_VAL_NM
+          FROM TBAS_COMM_CD_DTL
+         WHERE COMM_CD_VAL = B.COLOR_CD
+           AND COMM_CD_ID = 'ZBAS_C_00040') AS COLOR_NM         
+  FROM TBAS_PROD_COLOR B
+ WHERE B.DEL_YN  = 'N']]>
+	</select>
+	<select id="getUserNm" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "SALBCS00300_getUserNm_전미량" */
+       USER_NM
+  FROM TBAS_USER_MGMT
+ WHERE USER_ID = #user_id#
+   AND EFF_USER_YN = 'Y' 
+   AND DEL_YN = 'N' 
+]]><isNotEmpty prepend="AND" property="sale_plc">  
+<![CDATA[   ORG_AREA = #sale_plc#
+]]></isNotEmpty>
+	</select>
+</sqlMap>

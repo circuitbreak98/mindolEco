@@ -1,0 +1,1002 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="POLPSM00110" Left="8" OnLoadCompleted="POLPSM00110_OnLoadCompleted" PidAttrib="7" Title="판매가격표&#32;조회&#32;(부가세&#32;신고용)" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_polSplstTmp"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="SEARCH_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEARCH_HOUR" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEARCH_MINUTE" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_NET_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="AGRMT_PRD_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_ID" size="256" summ="default" type="STRING"/>
+					<record>
+						<AGRMT_PRD_CD></AGRMT_PRD_CD>
+						<COMM_CD_ID></COMM_CD_ID>
+						<ORG_ID></ORG_ID>
+						<SEARCH_DTM></SEARCH_DTM>
+						<SEARCH_HOUR></SEARCH_HOUR>
+						<SEARCH_MINUTE></SEARCH_MINUTE>
+						<SL_NET_CD></SL_NET_CD>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_orgNm">
+				<Contents>
+					<colinfo id="ORG_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_saleTypCdMin">
+				<Contents>
+					<colinfo id="COMM_CD_VAL" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_slNetCd">
+				<Contents>
+					<colinfo id="COMM_CD_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_00101"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_00102"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_00103"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_00104"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_agrmtPrd">
+				<Contents>
+					<colinfo id="COMM_CD_VAL" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_amtUnit">
+				<Contents>
+					<colinfo id="COMM_CD_VAL" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="256" summ="default" type="STRING"/>
+					<record>
+						<COMM_CD_VAL>10000</COMM_CD_VAL>
+						<COMM_CD_VAL_NM>만원</COMM_CD_VAL_NM>
+					</record>
+					<record>
+						<COMM_CD_VAL>1000</COMM_CD_VAL>
+						<COMM_CD_VAL_NM>천원</COMM_CD_VAL_NM>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dsNet">
+				<Contents>
+					<colinfo id="COMM_CD_VAL" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_00105"></Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="질의내용" Top="10" Width="1004">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static3" Left="238" Style="sty_lb_Search" TabOrder="5" Text="대리점" Top="7" VAlign="Middle" Width="66"></Static>
+				<Static Align="Right" Height="20" Id="Static2" Left="425" Style="sty_lb_Search" TabOrder="4" Text="영업망" Top="7" VAlign="Middle" Width="76"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" CodeColumn="COMM_CD_VAL" Column="SL_NET_CD" DataColumn="COMM_CD_VAL_NM" Height="20" Id="cmb_slNetCd" InnerDataset="ds_slNetCd" Left="501" OnChanged="div_search_cmb_slNetCd_OnChanged" Style="sty_ipt_form" TabOrder="5" Top="7" UserData="영업망" Width="100"></Combo>
+				<Static Align="Right" Height="20" Id="Static6" Left="22" Style="sty_lb_Search" TabOrder="1" Text="조회기준일시" Top="7" VAlign="Middle" Width="76"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="923" LeftMargin="5" OnClick="df_search" Style="sty_btn_a" TabOrder="1" Text="조회" Top="7" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static0" Left="594" Style="sty_lb_Search" TabOrder="4" Text="약정기간" Top="7" VAlign="Middle" Width="76"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" CodeColumn="COMM_CD_VAL" Column="AGRMT_PRD_CD" DataColumn="COMM_CD_VAL_NM" Height="20" Id="cmb_agrmtPrd" InnerDataset="ds_agrmtPrd" Left="673" Style="sty_ipt_form" TabOrder="6" Top="7" UserData="유통망" Width="75"></Combo>
+				<Calendar BindDataset="ds_condition" Border="Flat" ButtonImageID="btn_i_calendar" Column="SEARCH_DTM" DateColumn="SEARCH_DTM" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_searchDtm" Left="102" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="2" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="98"></Calendar>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="SEARCH_HOUR" Cursor="IBEAM" Height="20" Id="edt_hour" Left="201" LeftMargin="2" MaxLength="2" OnChanged="div_search_edt_hour_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Value="MaskEdit0" Width="20"></MaskEdit>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="SEARCH_MINUTE" Cursor="IBEAM" Height="20" Id="edt_min" Left="222" LeftMargin="2" MaxLength="2" OnChanged="div_search_edt_min_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" Value="MaskEdit0" Width="20"></MaskEdit>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="253" TabOrder="11" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Button Cursor="HAND" Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="425" OnClick="div_search_btn_agency_OnClick" TabOrder="12" Text="Button0" Top="7" Width="19"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="ORG_ID" Height="20" Id="edt_posAgencyId" Left="445" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="13" Top="7" Visible="FALSE" Width="10"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_posAgencyNm" Left="306" LeftMargin="2" OnCharChanged="div_search_edt_posAgencyNm_OnCharChanged" OnKeyDown="div_search_edt_posAgencyNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="14" Top="7" Width="121"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="740" Style="sty_lb_Search" TabOrder="15" Text="금액단위" Top="7" VAlign="Middle" Width="76"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" CodeColumn="COMM_CD_VAL" DataColumn="COMM_CD_VAL_NM" Height="20" Id="cmb_amtUnit" InnerDataset="ds_amtUnit" Left="819" Style="sty_ipt_form" TabOrder="16" Top="7" UserData="유통망" Width="75"></Combo>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_polSplst" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="574" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="486" Id="grd_polSplst" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" Right="1012" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="60"/>
+						<col fix="left" width="60"/>
+						<col fix="left" width="50"/>
+						<col fix="left" width="50"/>
+						<col fix="left" width="50"/>
+						<col fix="left" width="60"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="30"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,8" rowspan="3" text="제조사"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,8" rowspan="3" text="모델"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,8" rowspan="3" text="상품&#10;특성1" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,8" rowspan="3" text="상품&#10;특성2" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,8" rowspan="3" text="할부&#10;원금" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,8" rowspan="3" text="위탁&#10;판매&#10;수수료"/>
+						<cell bkcolor="user34" col="6" color="user35" colspan="2" display="text" font="돋움,8"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,8" row="1" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,8" row="1" text="위탁" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="6" color="user35" colspan="2" display="text" font="돋움,8" row="2"/>
+						<cell bkcolor="user34" col="8" color="user35" colspan="2" display="text" font="돋움,8" text="T기본약정"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,8" row="1" text="신규" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="8" color="user35" colspan="2" display="text" font="돋움,8" row="2" text="약정금액"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" font="돋움,8" row="1" text="기변" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="10" color="user35" colspan="7" display="text" font="돋움,8" text="T할부지원"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" font="돋움,8" row="1" text="010신규" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" font="돋움,8" row="1" text="KMNP" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" font="돋움,8" row="1" text="LMNP&#32;" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="13" color="user35" display="text" font="돋움,8" row="1" text="법인기변" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="14" color="user35" display="text" font="돋움,8" row="1" text="보상기변" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="15" color="user35" display="text" font="돋움,8" row="1" text="행복기변" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="16" color="user35" display="text" font="돋움,8" row="1" text="일반기변" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="17" color="user35" colspan="14" display="text" font="돋움,8" text="T기본약정"/>
+						<cell bkcolor="user34" col="17" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="010신규"/>
+						<cell bkcolor="user34" col="19" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="K-MNP"/>
+						<cell bkcolor="user34" col="21" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="L-MNP"/>
+						<cell bkcolor="user34" col="23" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="보상기변"/>
+						<cell bkcolor="user34" col="25" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="법인기변"/>
+						<cell bkcolor="user34" col="27" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="행복기변"/>
+						<cell bkcolor="user34" col="29" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="일반기변"/>
+						<cell bkcolor="user34" col="31" color="user35" colspan="14" display="text" font="돋움,8" text="무약정"/>
+						<cell bkcolor="user34" col="31" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="010신규"/>
+						<cell bkcolor="user34" col="33" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="KMNP"/>
+						<cell bkcolor="user34" col="35" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="LMNP"/>
+						<cell bkcolor="user34" col="37" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="보상기변"/>
+						<cell bkcolor="user34" col="39" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="법인기변"/>
+						<cell bkcolor="user34" col="41" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="행복기변"/>
+						<cell bkcolor="user34" col="43" color="user35" colspan="2" display="text" font="돋움,8" row="1" text="일반기변"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="13" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="14" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="15" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="16" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="17" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="18" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="19" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="20" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="21" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="22" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="23" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="24" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="25" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="26" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="27" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="28" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="29" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="30" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="31" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="32" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="33" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="34" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="35" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="36" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="37" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="38" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="39" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="40" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="41" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="42" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="43" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+						<cell bkcolor="user34" col="44" color="user35" display="text" font="돋움,8" row="2" text="할부"/>
+						<cell bkcolor="user34" col="45" color="user35" display="text" font="돋움,8" row="2" text="현금"/>
+					</head>
+					<body>
+						<cell col="0" colid="DEAL_CO_NM" display="text" font="돋움,8"/>
+						<cell align="left" col="1" colid="PROD_NM" display="text" font="돋움,8"/>
+						<cell align="center" col="2" colid="PROD_CHRTIC_1" display="text" font="돋움,8" scrollbar="horz"/>
+						<cell align="center" col="3" colid="PROD_CHRTIC_2" display="text" font="돋움,8"/>
+						<cell align="center" col="4" colid="PROD_CHRTIC_2" display="text" font="돋움,8"/>
+						<cell col="5" colid="DEAL_CO_NM" display="text" font="돋움,8"/>
+						<cell align="right" col="6" display="text" font="돋움,8"/>
+						<cell align="right" col="7" display="text" font="돋움,8"/>
+						<cell align="right" col="8" display="text" font="돋움,8"/>
+						<cell align="right" col="9" display="text" font="돋움,8"/>
+						<cell align="right" col="10" display="text" font="돋움,8"/>
+						<cell align="right" col="11" display="text" font="돋움,8"/>
+						<cell align="right" col="12" display="text" font="돋움,8"/>
+						<cell align="right" col="13" display="text" font="돋움,8"/>
+						<cell align="right" col="14" display="text" font="돋움,8"/>
+						<cell align="right" col="15" display="text" font="돋움,8"/>
+						<cell align="right" col="16" display="text" font="돋움,8"/>
+						<cell align="right" col="17" display="text" font="돋움,8"/>
+						<cell align="right" col="18" display="text" font="돋움,8"/>
+						<cell align="right" col="19" display="text" font="돋움,8"/>
+						<cell align="right" col="20" display="text" font="돋움,8"/>
+						<cell align="right" col="21" display="text" font="돋움,8"/>
+						<cell align="right" col="22" display="text" font="돋움,8"/>
+						<cell align="right" col="23" display="text" font="돋움,8"/>
+						<cell align="right" col="24" display="text" font="돋움,8"/>
+						<cell align="right" col="25" display="text" font="돋움,8"/>
+						<cell align="right" col="26" display="text" font="돋움,8"/>
+						<cell align="right" col="27" display="text" font="돋움,8"/>
+						<cell align="right" col="28" display="text" font="돋움,8"/>
+						<cell align="right" col="29" display="text" font="돋움,8"/>
+						<cell align="right" col="30" display="text" font="돋움,8"/>
+						<cell align="right" col="31" display="text" font="돋움,8"/>
+						<cell align="right" col="32" display="text" font="돋움,8"/>
+						<cell align="right" col="33" display="text" font="돋움,8"/>
+						<cell align="right" col="34" display="text" font="돋움,8"/>
+						<cell align="right" col="35" display="text" font="돋움,8"/>
+						<cell align="right" col="36" display="text" font="돋움,8"/>
+						<cell align="right" col="37" display="text" font="돋움,8"/>
+						<cell align="right" col="38" display="text" font="돋움,8"/>
+						<cell align="right" col="39" display="text" font="돋움,8"/>
+						<cell align="right" col="40" display="text" font="돋움,8"/>
+						<cell align="right" col="41" display="text" font="돋움,8"/>
+						<cell align="right" col="42" display="text" font="돋움,8"/>
+						<cell align="right" col="43" display="text" font="돋움,8"/>
+						<cell align="right" col="44" display="text" font="돋움,8"/>
+						<cell align="right" col="45" display="text" font="돋움,8"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Height="21" Id="Div2" Left="993" TabOrder="3" Text="Div2" Top="60" Width="21">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_excelDown" ImageID="btn_i_exceldown_w" Left="2" OnClick="Div2_btn_excelDown_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Width="19"></Button>
+			</Contents>
+		</Div>
+		<Static Height="20" Id="Static2" Left="9" Style="sty_lb_Search" TabOrder="4" Text='&quot;할부&quot;&#32;금액은&#32;영업망이&#32;소매/온라인소매일&#32;경우&#32;&quot;할부판매가&quot;이고,&#32;도매/온라인도매일&#32;경우&#32;&quot;할부&#32;판매수수료&quot;임' Top="575" VAlign="Middle" Width="900"></Static>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : POLPSM00110
+* 업무명      : 정책관리
+* 프로그램명  : 판매가격표 조회 (부가세 신고용)
+--------------------------------------------------------------------------------
+* 작성자      : 원종윤
+* 작성일      : 2009.02.17
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_MENU_NO       = "100000072"; //메뉴번호 (100000072 : 판매가격표 조회)
+var FV_ORG_ID;	//조직코드
+var FV_ORG_CL;  //조직구분
+
+/*******************************************************************************
+* 함수명 : POLPSM00110_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function POLPSM00110_OnLoadCompleted(obj)
+{
+	// 조회기준일시 셋팅.
+	strDate = GetDate();	
+	div_search.cal_searchDtm.Text = Mid(strDate,0,8);
+	div_search.edt_hour.Value = Mid(strDate,8,2);	
+	div_search.edt_min.Value = Mid(strDate,10,2);
+	
+	// 권한.
+	cf_setAuth(FV_MENU_NO);
+	
+    // 세션정보 취득.
+    FV_ORG_ID = gds_session.GetColumn(0,"orgId");
+    FV_ORG_CL = gds_session.GetColumn(0,"orgCl");	
+	
+    http.Sync = true;
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	//cf_setCommonCode("div_search.cmb_dsNetCd", "ZPOL_C_00110", "선택"); //유통망
+
+	cf_setCommonCode("ds_00101",     "ZPOL_C_00101");  //영업망	 소매
+	cf_setCommonCode("ds_00102",     "ZPOL_C_00102");  //영업망	 도매 
+	cf_setCommonCode("ds_00103",     "ZPOL_C_00103");  //영업망	 온라인소매
+	cf_setCommonCode("ds_00104",     "ZPOL_C_00104");  //영업망	 온라인도매
+	cf_setCommonCode("ds_00105",     "ZPOL_C_00105");  //영업망	 M채널
+
+	cf_setCommonCode("ds_agrmtPrd",  "ZPOL_C_00230");  //약정기간
+	cf_setCommonCode("ds_dsNet",     "ZPOL_C_00110");  //유통망
+
+	//cf_setCommonCode("div_search.cmb_slNetCd", "ZPOL_C_00102", "선택"); //영업망
+	cf_checkCommonCode();
+	
+	//trace(ds_00101.SaveXML());
+	
+	ds_slNetCd.ClearData();
+	//ds_slNetCd.AddRow();
+	//ds_slNetCd.SetColumn(0,"COMM_CD_ID",""); 
+	//ds_slNetCd.SetColumn(0,"COMM_CD_VAL",""); 
+	//ds_slNetCd.SetColumn(0,"COMM_CD_VAL_NM","선택"); 
+	var sale_cl = sf_convertDealCoClToSlCl(gds_session.GetColumn(0, "orgareacl1"));
+    //alert(sale_cl);	
+    if(sale_cl=="01") {
+		ds_slNetCd.AppendDataset(ds_00101);
+    } else if(sale_cl=="02") {
+		ds_slNetCd.AppendDataset(ds_00102);
+    } else if(sale_cl=="03") {
+		ds_slNetCd.AppendDataset(ds_00103);
+    } else if(sale_cl=="04") {
+		ds_slNetCd.AppendDataset(ds_00104);
+    } else if(sale_cl=="05") {
+		ds_slNetCd.AppendDataset(ds_00105);
+    } else {
+		ds_slNetCd.AppendDataset(ds_00101);
+		ds_slNetCd.AppendDataset(ds_00102);
+		ds_slNetCd.AppendDataset(ds_00103);
+		ds_slNetCd.AppendDataset(ds_00104);
+		ds_slNetCd.AppendDataset(ds_00105);
+    }
+    
+
+	//trace(ds_00101.SaveXML());
+		
+	ds_agrmtPrd.DeleteRow(0);  //약정기간 없음 삭제
+	
+	div_search.cmb_slNetCd.Index = 0;    //영업망
+	div_search.cmb_agrmtPrd.Index = 0;    //약정기간
+	div_search.cmb_amtUnit.Index = 0;    //금액단위
+	http.Sync = false;
+	// 그리드 체크 박스 및 정렬 - 옵션
+	cf_setGrdChecknSortEvent(grd_polSplst);
+	
+	grd_polSplst.Format = "Default";
+	grd_polSplst.AutoFit = true;
+	
+	
+	
+	// 대리점 화면 권한 / 세션 값 설정
+	// @Param sDiv        : 대리점 컨트롤이 속한 DIV 컨트롤 아이디 문자열
+	// @Param sAgency     : 대리점명, 대리점코드, 대리점버튼 순의 아이디 문자열
+	// @Param sAgencyUkey : 대리점 Ukey 코드(생략가)
+
+	uf_enableAgencyByAuth("div_search", "edt_posAgencyNm,edt_posAgencyId,btn_agency");
+	
+	//alert(ds_slNetCd.GetColumn(0,"COMM_CD_ID"));
+	ds_condition.SetColumn(0,"COMM_CD_ID",ds_slNetCd.GetColumn(0,"COMM_CD_ID"));
+	//gds_session.GetColumn(0, "orgareacl1");	
+	
+		
+}
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	var sFilterDs = "";
+	var aDs = "ds_polSplst";
+	if(sSvcID == "svcSearch"){
+
+		grd_polSplst.Redraw = false;
+
+		f_drawGrid();
+		
+		
+	   if( IsValidObject(object(aDs)) == false )  // 데이타셋이 존재하지 않을때만 생성
+		{
+							Create("Dataset", aDs);
+							object(aDs).AddColumn("SORT_SEQ");
+							object(aDs).AddColumn("DS_NET_CD");
+							object(aDs).AddColumn("DEAL_CO_NM");
+							object(aDs).AddColumn("PROD_CD");
+							object(aDs).AddColumn("PROD_NM");
+							object(aDs).AddColumn("PROD_CL");
+							object(aDs).AddColumn("MFACT_ID");
+							object(aDs).AddColumn("PROD_CHRTIC_1");
+							object(aDs).AddColumn("PROD_CHRTIC_2");	
+							object(aDs).AddColumn("FIX_STRD_SALE_PRC");	
+							object(aDs).AddColumn("NEW_AGRMT_AMT");	
+							object(aDs).AddColumn("CHG_AGRMT_AMT");	
+				for( var nRow = 0; nRow < ds_dsNet.rowcount; nRow++ ) {
+				
+					for( iRow = 0; iRow < ds_saleTypCdMin.rowcount ; iRow++ ) {
+						if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "1") {  //T할부지원이면..
+							object(aDs).AddColumn("SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(iRow, "COMM_CD_VAL") + "_"+iRow);
+						} else {
+							object(aDs).AddColumn("SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(iRow, "COMM_CD_VAL") + "_"+iRow);
+							object(aDs).AddColumn("CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(iRow, "COMM_CD_VAL") + "_"+iRow);
+						}
+					
+					
+					}
+				}
+		} else {
+		       object(aDs).ClearData();
+		}
+		
+		//alert(div_search.cmb_amtUnit.value);
+		//SubStr(sFilterDs,0,Length(sFilterDs)-nAUnit)
+		
+		//alert(Floor(ToNumber(ToNumber("273000")-ToNumber("-28000"))/ToNumber("10000")));
+		
+		//가격표에 사용 된 모델 세팅
+		var nAUnit = div_search.cmb_amtUnit.value;
+		//부가세 신고용 가격표 조정금액
+		var nWeeAmt = 22000;
+		var nExistRow = 0;
+		for( nRow = 0; nRow < ds_dsNet.rowcount; nRow++ ) {
+		    
+			sFilterDs = "DS_NET_CD='" + ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") + "'";
+			ds_polSplstTmp.Filter(sFilterDs);
+	
+			for( iRow = 0; iRow < ds_polSplstTmp.rowcount; iRow++ ) {
+			
+
+			
+			    if ( nRow > 0 ) {
+					//임시 가격표 조회 테이블로 부터 세팅
+					nExistRow = object(aDs).FindRow("PROD_CD",ds_polSplstTmp.GetColumn(iRow,"PROD_CD"));	
+			    } else {
+			        nExistRow = -1;
+			    }
+				//for( var eRow = 0; eRow < object(aDs).rowcount ; eRow++ ) {
+				//  if(object(aDs).GetColumn(eRow,"PROD_CD") == ds_polSplstTmp.GetColumn(iRow,"PROD_CD")) {
+				//	  break;
+				//  }
+				//}
+//alert(nExistRow+" == "+ eRow);						
+				if( nExistRow == -1 ){
+					object(aDs).AddRow();
+					object(aDs).SetColumn(object(aDs).lastrow, "SORT_SEQ",          ds_polSplstTmp.GetColumn(iRow,"SORT_SEQ"));
+					object(aDs).SetColumn(object(aDs).lastrow, "DS_NET_CD",         ds_polSplstTmp.GetColumn(iRow,"DS_NET_CD"));
+					object(aDs).SetColumn(object(aDs).lastrow, "DEAL_CO_NM",        ds_polSplstTmp.GetColumn(iRow,"DEAL_CO_NM"));
+					object(aDs).SetColumn(object(aDs).lastrow, "PROD_CD",           ds_polSplstTmp.GetColumn(iRow,"PROD_CD"));
+					object(aDs).SetColumn(object(aDs).lastrow, "PROD_NM",           ds_polSplstTmp.GetColumn(iRow,"PROD_NM"));
+					object(aDs).SetColumn(object(aDs).lastrow, "PROD_CL",           ds_polSplstTmp.GetColumn(iRow,"PROD_CL"));
+					object(aDs).SetColumn(object(aDs).lastrow, "MFACT_ID",          ds_polSplstTmp.GetColumn(iRow,"MFACT_ID"));
+					object(aDs).SetColumn(object(aDs).lastrow, "PROD_CHRTIC_1",     ds_polSplstTmp.GetColumn(iRow,"PROD_CHRTIC_1"));
+					object(aDs).SetColumn(object(aDs).lastrow, "PROD_CHRTIC_2",     ds_polSplstTmp.GetColumn(iRow,"PROD_CHRTIC_2"));
+					//object(aDs).SetColumn(object(aDs).lastrow, "FIX_STRD_SALE_PRC", ds_polSplstTmp.GetColumn(iRow,"FIX_STRD_SALE_PRC"));
+					object(aDs).SetColumn(object(aDs).lastrow, "NEW_AGRMT_AMT", Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"NEW_AGRMT_AMT"))/ToNumber(nAUnit)));
+					object(aDs).SetColumn(object(aDs).lastrow, "CHG_AGRMT_AMT", Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"CHG_AGRMT_AMT"))/ToNumber(nAUnit)));
+					//if(object(aDs).GetColumn(object(aDs).lastrow, "NEW_AGRMT_AMT") == 0) {
+					//	 object(aDs).SetColumn(object(aDs).lastrow, "NEW_AGRMT_AMT","");
+					//}
+					//if(object(aDs).GetColumn(object(aDs).lastrow, "CHG_AGRMT_AMT") == 0) {
+					//	 object(aDs).SetColumn(object(aDs).lastrow, "CHG_AGRMT_AMT","");
+					//}
+
+
+					for( sRow = 0; sRow < ds_saleTypCdMin.rowcount ; sRow++ ) {
+					    //도매나 온라인도매인 경우는
+					    if(ds_condition.GetColumn(0,"COMM_CD_ID") == "ZPOL_C_00102" || ds_condition.GetColumn(0,"COMM_CD_ID") == "ZPOL_C_00104") {
+							if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "1") {  //T할부지원이면..
+								object(aDs).SetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,     Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"SALE_CMMS_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+								//if(object(aDs).GetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+							} else {
+								if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "0") {  //무약정이면...
+								    if(ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") == "S10101") {
+										//object(aDs).SetColumn(eRow, "FIX_STRD_SALE_PRC", ds_polSplstTmp.GetColumn(iRow,"ALLOT_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow));   //할부원금
+										if(ds_condition.GetColumn(0,"COMM_CD_ID") == "ZPOL_C_00102") {  //도매일때
+											object(aDs).SetColumn(object(aDs).lastrow, "FIX_STRD_SALE_PRC", ToNumber(ds_polSplstTmp.GetColumn(iRow,"FIX_STRD_SALE_PRC"))-ToNumber(ds_polSplstTmp.GetColumn(iRow,"SALE_CMMS_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))+ToNumber(nWeeAmt));   //할부원금
+										} else { //온라인도매일때
+											object(aDs).SetColumn(object(aDs).lastrow, "FIX_STRD_SALE_PRC", ds_polSplstTmp.GetColumn(iRow,"ALLOT_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow));   //할부원금
+										}
+								    }
+								}
+								object(aDs).SetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,     Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"SALE_CMMS_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+                                if(ds_condition.GetColumn(0,"COMM_CD_ID") == "ZPOL_C_00102") {  //도매일때
+                                    //alert(ds_polSplstTmp.GetColumn(iRow,"CASH_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow)+"==="+ds_polSplstTmp.GetColumn(iRow,"CASH_PR_MNY_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow)+"==="+nWeeAmt);
+									object(aDs).SetColumn(object(aDs).lastrow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow, Floor( (ToNumber(ds_polSplstTmp.GetColumn(iRow,"FIX_STRD_SALE_PRC"))-ToNumber(ds_polSplstTmp.GetColumn(iRow,"CASH_PR_MNY_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))-ToNumber(ds_polSplstTmp.GetColumn(iRow,"AGRMT_AMT_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))+ToNumber(nWeeAmt))/ToNumber(nAUnit) ));
+                                } else {  //온라인도매일때
+									object(aDs).SetColumn(object(aDs).lastrow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow, Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"CASH_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+                                }
+	
+								//if(object(aDs).GetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+								//if(object(aDs).GetColumn(object(aDs).lastrow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(object(aDs).lastrow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+							}
+					    } else {  //소매나 온라인소매인 경우는
+					              //"할부" 금액은 영업망이 소매/온라인소매일 경우 "할부판매가"이고, 
+					              //도매/온라인도매일 경우 "할부 판매수수료"임
+							if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "1") {  //T할부지원이면..
+								object(aDs).SetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,     Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"ALLOT_SALE_PRC_RET_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+								//if(object(aDs).GetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+							} else {
+								if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "0") {  //무약정이면...
+								    if(ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") == "S10101") {
+										//object(aDs).SetColumn(eRow, "FIX_STRD_SALE_PRC", ds_polSplstTmp.GetColumn(iRow,"ALLOT_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow));   //할부원금
+										object(aDs).SetColumn(object(aDs).lastrow, "FIX_STRD_SALE_PRC", ds_polSplstTmp.GetColumn(iRow,"ALLOT_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow));   //할부원금
+								    }
+								}
+								object(aDs).SetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,     Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"ALLOT_SALE_PRC_RET_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+								object(aDs).SetColumn(object(aDs).lastrow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow, Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"CASH_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+	
+								//if(object(aDs).GetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(object(aDs).lastrow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+								//if(object(aDs).GetColumn(object(aDs).lastrow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(object(aDs).lastrow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+							}
+					    }
+					
+					
+					}
+
+				
+				} else {
+				    eRow = nExistRow;
+
+					//for( var eRow = 0; eRow < object(aDs).rowcount ; eRow++ ) {
+					// if(object(aDs).GetColumn(eRow,"PROD_CD") == ds_polSplstTmp.GetColumn(iRow,"PROD_CD")) {
+					//      break;
+					//  }
+					//}
+					for( sRow = 0; sRow < ds_saleTypCdMin.rowcount ; sRow++ ) {
+					    //도매나 온라인도매인 경우는
+					    if(ds_condition.GetColumn(0,"COMM_CD_ID") == "ZPOL_C_00102" || ds_condition.GetColumn(0,"COMM_CD_ID") == "ZPOL_C_00104") {
+					
+							if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "1") {  //T할부지원이면..
+								object(aDs).SetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,     Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"SALE_CMMS_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+								//if(object(aDs).GetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+	
+							} else {
+								if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "0") {  //무약정이면...
+								    if(ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") == "S10101") {
+								        if(ds_condition.GetColumn(0,"COMM_CD_ID") == "ZPOL_C_00102") {  //도매일때
+											object(aDs).SetColumn(eRow, "FIX_STRD_SALE_PRC", ToNumber(ds_polSplstTmp.GetColumn(iRow,"FIX_STRD_SALE_PRC"))-ToNumber(ds_polSplstTmp.GetColumn(iRow,"SALE_CMMS_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))+ToNumber(nWeeAmt));   //할부원금
+								        } else {  //온라인도매일때
+											object(aDs).SetColumn(eRow, "FIX_STRD_SALE_PRC", ds_polSplstTmp.GetColumn(iRow,"ALLOT_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow));   //할부원금
+								        }
+								    }
+								}
+								object(aDs).SetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,     Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"SALE_CMMS_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+                                if(ds_condition.GetColumn(0,"COMM_CD_ID") == "ZPOL_C_00102") {  //도매일때
+									object(aDs).SetColumn(eRow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow, Floor( (ToNumber(ds_polSplstTmp.GetColumn(iRow,"CASH_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))-ToNumber(ds_polSplstTmp.GetColumn(iRow,"CASH_PR_MNY_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))-ToNumber(ds_polSplstTmp.GetColumn(iRow,"AGRMT_AMT_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))+ToNumber(nWeeAmt))/ToNumber(nAUnit) ));
+                                } else {  //온라인도매일때
+									object(aDs).SetColumn(eRow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow, Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"CASH_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+                                }
+
+	
+								//if(object(aDs).GetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+								//if(object(aDs).GetColumn(eRow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(eRow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+							}
+					    } else {  //소매나 온라인소매인 경우는
+					              //"할부" 금액은 영업망이 소매/온라인소매일 경우 "할부판매가"이고, 
+					              //도매/온라인도매일 경우 "할부 판매수수료"임
+					
+							if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "1") {  //T할부지원이면..
+								object(aDs).SetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,     Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"ALLOT_SALE_PRC_RET_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+								//if(object(aDs).GetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+	
+							} else {
+								if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "0") {  //무약정이면...
+								    if(ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") == "S10101") {
+										object(aDs).SetColumn(eRow, "FIX_STRD_SALE_PRC", ds_polSplstTmp.GetColumn(iRow,"ALLOT_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow));   //할부원금
+								    }
+								}
+								object(aDs).SetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,     , Floor( (ToNumber(ds_polSplstTmp.GetColumn(iRow,"FIX_STRD_SALE_PRC"))-ToNumber(ds_polSplstTmp.GetColumn(iRow,"CASH_PR_MNY_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))-ToNumber(ds_polSplstTmp.GetColumn(iRow,"AGRMT_AMT_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))+ToNumber(nWeeAmt))/ToNumber(nAUnit) ));
+								object(aDs).SetColumn(eRow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow, Floor(ToNumber(ds_polSplstTmp.GetColumn(iRow,"CASH_SALE_PRC_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow))/ToNumber(nAUnit)));
+	
+								//if(object(aDs).GetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(eRow, "SALE_CMMS_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+								//if(object(aDs).GetColumn(eRow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow) == 0) {
+								//	 object(aDs).SetColumn(eRow, "CASH_SALE_PRC_"+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+"_"+ ds_saleTypCdMin.GetColumn(sRow, "COMM_CD_VAL") + "_"+sRow,"");
+								//}
+							}
+					    }
+					
+					}
+				}
+			
+			}
+		}
+		
+		
+		//alert(ds_dsNet.GetColumn(0,"COMM_CD_VAL")+"=="+ds_dsNet.GetColumn(0,"COMM_CD_VAL_NM"));
+		//ds_dsNet.rowcount
+				
+		grd_polSplst.Format = "Default";
+		grd_polSplst.BindDataset = aDs;
+		object(aDs).Sort("SORT_SEQ"); 
+		grd_polSplst.Redraw = true;
+		
+		//object(aDs).row = 0;
+		//object(aDs).SelectRow(0,true);
+		//object(aDs).SelectRow(object(aDs).lastrow,false);
+		
+
+
+	}
+	
+}
+
+/*******************************************************************************
+* 함수명 : df_search
+* 기능명 : 공통 조회 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function df_search(sButtonID)
+{	
+	if(uf_IsNull(div_search.edt_posAgencyId.value)){
+	
+		alert(cf_getMessage(MSG_00121, "대리점;조회"));
+		div_search.edt_posAgencyNm.SetFocus();
+		return;
+	}		
+	
+	// 조회값 선택 여부 확인 
+	cf_checkObjValues(div_search);
+	
+
+
+	// 적용조직 가져오기
+	f_getSaleTypCdMin();
+
+	var sSvcID = "svcSearch";
+	var sInDs = "ds_condition=ds_condition";
+	var sOutDs = "ds_polSplstTmp=ds_polSplstTmp";
+	var sArg = "sktst.pol.PSM#getPolSpLstOrd";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+
+/*******************************************************************************
+ * @description    : excelDown 클릭- 이벤트
+*******************************************************************************/
+function Div2_btn_excelDown_OnClick(obj)
+{
+	cf_exportExcel(grd_polSplst);	
+}
+
+
+/*******************************************************************************
+* 함수명 : f_drawGrid
+* 기능명 : 판매가격표 리스트 그리기 생성 
+*******************************************************************************/
+function f_drawGrid()
+{
+	var grdName = "grd_polSplst";
+	var rCnt = ds_saleTypCdMin.rowcount;
+	var dCnt = ds_dsNet.rowcount;
+	var colNum = 0;
+	
+	var sContents = '<contents>\n';
+	sContents += '<format id="Default">\n';
+
+	var sContColums = '<columns>\n';
+		sContColums	+=	'<col width="70"/>\n';
+		sContColums	+=	'<col width="70"/>\n';
+		sContColums	+=	'<col width="60"/>\n';
+		sContColums	+=	'<col width="55"/>\n';
+		sContColums	+=	'<col width="75"/>\n';
+		sContColums	+=	'<col width="30"/>\n';
+		sContColums	+=	'<col width="30"/>\n';
+	
+	for( var nRow = 0; nRow < dCnt; nRow++ ) {
+		for( var iRow=0; iRow < rCnt; iRow++ ) {
+			if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "1") {  //T할부지원이면..
+				sContColums	+=	'<col width="30"/>\n';
+			} else {
+				sContColums	+=	'<col width="30"/>\n';
+				sContColums	+=	'<col width="30"/>\n';
+			}			
+		}
+	}
+		
+	sContColums	+=	'</columns>\n';
+	
+	sContents = sContents + sContColums;
+	
+	var sContHeads  = '<head>\n';
+		sContHeads += '<cell bkcolor="user34" col="0" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" rowspan="3" text="제조사"/>\n';
+		sContHeads += '<cell bkcolor="user34" col="1" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" rowspan="3" text="모델"/>\n';
+		sContHeads += '<cell bkcolor="user34" col="2" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" rowspan="3" text="상품&#10;특성1" wordwrap="exchar"/>\n';
+		sContHeads += '<cell bkcolor="user34" col="3" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" rowspan="3" text="상품&#10;특성2" wordwrap="exchar"/>\n';
+		sContHeads += '<cell bkcolor="user34" col="4" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" rowspan="3" text="할부&#10;원금" wordwrap="exchar"/>\n';
+		sContHeads += '<cell bkcolor="user34" col="5" FixedFont="돋움체,8" Font="돋움,8" color="user35" colspan="2" display="text" text="T기본약정"/>\n';
+		sContHeads += '<cell bkcolor="user34" col="5" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" row="1" text="신규" wordwrap="exchar"/>\n';
+		sContHeads += '<cell bkcolor="user34" col="5" FixedFont="돋움체,8" Font="돋움,8" color="user35" colspan="2" display="text" row="2" text="약정금액"/>\n';
+		sContHeads += '<cell bkcolor="user34" col="6" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" row="1" text="기변" wordwrap="exchar"/>\n';
+	
+	colNum = 7;
+	for( var nRow = 0; nRow < dCnt; nRow++ ) {
+	// 유통망 헤더 표시
+        if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "1") {  //T할부지원이면..
+			sContHeads += '<cell bkcolor="user34" col="'+colNum+'" FixedFont="돋움체,8" Font="돋움,8" color="user35" colspan="'+rCnt+'"   display="text" text="'+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL_NM")+'"/>\n';
+        } else {
+			sContHeads += '<cell bkcolor="user34" col="'+colNum+'" FixedFont="돋움체,8" Font="돋움,8" color="user35" colspan="'+rCnt*2+'" display="text" text="'+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL_NM")+'"/>\n';
+        }
+	for( iRow = 0; iRow < rCnt ; iRow++ ) {
+        if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "1") {  //T할부지원이면..
+			sContHeads	+=	'<cell bkcolor="user34" col="'+colNum+'" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" row="1" text="'+ds_saleTypCdMin.GetColumn(iRow, 1)+'" wordwrap="exchar"/>\n';
+			colNum++;
+        } else {
+			sContHeads	+=	'<cell bkcolor="user34" col="'+colNum+'" FixedFont="돋움체,8" Font="돋움,8" color="user35" colspan="2" display="text" row="1" text="'+ds_saleTypCdMin.GetColumn(iRow, 1)+'" wordwrap="exchar"/>\n';
+			colNum = colNum+2;
+        }
+	}
+	}
+
+	colNum = 7;
+	for( var nRow = 0; nRow < dCnt; nRow++ ) {
+	for( iRow = 0; iRow < rCnt ; iRow++ ) {
+        if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "1") {  //T할부지원이면..
+		sContHeads	+=	'<cell bkcolor="user34" col="'+colNum+'" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" row="2" text="할부" wordwrap="exchar"/>\n';
+        } else {
+		sContHeads	+=	'<cell bkcolor="user34" col="'+colNum+'" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" row="2" text="할부" wordwrap="exchar"/>\n';
+		colNum++;
+		sContHeads	+=	'<cell bkcolor="user34" col="'+colNum+'" FixedFont="돋움체,8" Font="돋움,8" color="user35" display="text" row="2" text="현금" wordwrap="exchar"/>\n';
+        }
+		colNum++;
+	}
+	}
+	
+		
+	sContHeads += '</head>\n';
+	
+	sContents = sContents + sContHeads;
+	
+	var sContBodys = '<body>\n';
+	sContBodys += '<cell col="0" colid="DEAL_CO_NM" FixedFont="돋움체,8" Font="돋움,8" display="text"/>\n';
+	sContBodys += '<cell align="left" col="1" colid="PROD_NM" FixedFont="돋움체,8" Font="돋움,8" display="text"/>\n';
+	sContBodys += '<cell align="left" col="2" colid="PROD_CHRTIC_1" FixedFont="돋움체,8" Font="돋움,8" display="text" scrollbar="horz"/>\n';
+	sContBodys += '<cell align="left" col="3" colid="PROD_CHRTIC_2" FixedFont="돋움체,8" Font="돋움,8" display="text"/>\n';
+	sContBodys += '<cell align="right" col="4" colid="FIX_STRD_SALE_PRC" FixedFont="돋움체,8" Font="돋움,8" display="number"/>\n';
+	sContBodys += '<cell align="right" col="5" colid="NEW_AGRMT_AMT" FixedFont="돋움체,8" Font="돋움,8" display="number"/>\n';
+	sContBodys += '<cell align="right" col="6" colid="CHG_AGRMT_AMT" FixedFont="돋움체,8" Font="돋움,8" display="number"/>	\n';
+	colNum = 7;
+	
+	for( var nRow = 0; nRow < dCnt; nRow++ ) {
+	
+	for( iRow = 0; iRow < rCnt ; iRow++ ) {
+		if(ds_dsNet.GetColumn(nRow,"COMM_CD_VAL") == "1") {  //T할부지원이면..
+		sContBodys += '<cell align="right" col="'+colNum+'" colid="SALE_CMMS_'+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+'_'+ ds_saleTypCdMin.GetColumn(iRow, "COMM_CD_VAL") + '_'+iRow+'" FixedFont="돋움체,8" Font="돋움,8" display="number"/>\n';
+		} else {
+		sContBodys += '<cell align="right" col="'+colNum+'" colid="SALE_CMMS_'+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+'_'+ ds_saleTypCdMin.GetColumn(iRow, "COMM_CD_VAL") + '_'+iRow+'" FixedFont="돋움체,8" Font="돋움,8" display="number"/>\n';
+		colNum++;
+		sContBodys += '<cell align="right" col="'+colNum+'" colid="CASH_SALE_PRC_'+ds_dsNet.GetColumn(nRow,"COMM_CD_VAL")+'_'+ ds_saleTypCdMin.GetColumn(iRow, "COMM_CD_VAL") + '_'+iRow+'" FixedFont="돋움체,8" Font="돋움,8" display="number"/>\n';
+		}
+		colNum++;
+
+	
+	}
+	}
+
+	
+
+
+	
+	//alert(sContBodys);
+
+/**
+	// 할부판매가 내용
+	for( nRow = 0; nRow < rCnt ; nRow++ ) {
+		sContBodys += '<cell align="right" col="'+colNum+'" colid="ALLOT_SALE_PRC_'+ ds_saleTypCdMin.GetColumn(nRow, "COMM_CD_VAL") + '_'+nRow+'" display="number"/>\n';
+		colNum++;
+	}
+	
+	// 할인한도(판매수수료) 내용
+	for( nRow = 0; nRow < rCnt ; nRow++ ) {
+		sContBodys += '<cell align="right" col="'+colNum+'" colid="SALE_CMMS_'+ ds_saleTypCdMin.GetColumn(nRow, "COMM_CD_VAL") + '_'+nRow+'" display="number"/>\n';
+		colNum++;
+	}
+	
+	// 현금판매가 내용
+	for( nRow = 0; nRow < rCnt ; nRow++ ) {
+		sContBodys += '<cell align="right" col="'+colNum+'" colid="CASH_SALE_PRC_'+ ds_saleTypCdMin.GetColumn(nRow, "COMM_CD_VAL") + '_'+nRow+'" display="number"/>\n';
+		colNum++;
+	}
+
+**/	
+	
+	sContBodys += '</body>\n';
+	
+	sContents = sContents + sContBodys;
+
+	sContents	+= '</format>\n';
+	sContents	+= '</contents>\n';
+	
+	var objGrid = object(grdName);
+	
+	objGrid.Contents = sContents;
+}
+function div_search_cmb_orgNm_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	grd_polSplst.Format = "Init";
+}
+
+
+/*******************************************************************************
+* 함수명 : f_getSaleTypCdMin
+* 기능명 : 세부판매유형 코드 조회
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function f_getSaleTypCdMin()
+{
+	var sSvcID = "svcSearchSaleTypCdMin";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_saleTypCdMin=ds_saleTypCdMin";
+	var sArg = "sktst.pol.PSM#getSaleTypCdMin";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+
+/*******************************************************************************
+ * @description    : 대리점 OnChar Changed 이벤트
+*******************************************************************************/
+function div_search_edt_posAgencyNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	if(strPreText != strPostText){
+		div_search.edt_posAgencyId.value = "";
+	}	
+}
+
+/*******************************************************************************
+ * @description    : 대리점 OnKeyDown 이벤트
+*******************************************************************************/
+function div_search_edt_posAgencyNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == "13"){
+		// org_id 와 org_cl 의 파라메터는 필수 입니다.
+		var sArg  = "org_id="+FV_ORG_ID; // 필수
+
+		cf_callAgencyPop(sArg, div_search, "edt_posAgencyNm,edt_posAgencyId");	
+	} 		
+}
+
+/*******************************************************************************
+ * @description    : 대리점 버튼 클릭 이벤트
+*******************************************************************************/
+function div_search_btn_agency_OnClick(obj)
+{
+	// org_id 와 org_cl 의 파라메터는 필수 입니다.
+	var sArg  = "org_id="+FV_ORG_ID; // 필수
+	cf_callAgencyPop(sArg, div_search, "edt_posAgencyNm,edt_posAgencyId");				
+}
+
+/*******************************************************************************
+* 함수명 : div_search_edt_hour_OnChanged
+* 기능명 :  조회기준일시 시간 변경시 
+*******************************************************************************/
+function div_search_edt_hour_OnChanged(obj,strText)
+{
+	if(uf_isNull(strText) == false){
+		
+		if(length(strText) !=2) {
+			
+			strText = Lpad(strText,"0",2);
+			ds_condition.SetColumn(0,"SEARCH_HOUR",strText);
+		}
+		
+		if(strText > 23){
+			ds_condition.SetColumn(0,"SEARCH_HOUR","00");
+			obj.SetFocus();
+			alert("23시를 초과할수 없습니다.");
+			return false;
+		}
+	}
+}
+
+/*******************************************************************************
+* 함수명 : div_search_edt_min_OnChanged
+* 기능명 :  조회기준일시 분 변경시 
+*******************************************************************************/
+function div_search_edt_min_OnChanged(obj,strText)
+{
+		if(uf_isNull(strText) == false){
+	
+		if(length(strText) !=2) {
+			strText = Lpad(strText,"0",2);
+			ds_condition.SetColumn(0,"SEARCH_MINUTE",strText);
+		}
+		
+		if(strText > 59){
+			ds_condition.SetColumn(0,"SEARCH_MINUTE","00");
+			obj.SetFocus();
+			alert("59분을 초과할수 없습니다.");
+			return false;
+		}
+	}
+}
+
+/*******************************************************************************
+* 함수명 : div_search_cmb_slNetCd_OnChanged
+* 기능명 :  영업망 변경시 조회조건에 영업구분 세팅
+*******************************************************************************/
+function div_search_cmb_slNetCd_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+    ds_condition.SetColumn(0,"COMM_CD_ID",ds_slNetCd.GetColumn(nNewIndex,"COMM_CD_ID"));
+	//alert(ds_slNetCd.GetColumn(nNewIndex,"COMM_CD_ID"));
+}
+
+
+
+/*******************************************************************************
+ * @description    :  거래처구분코드를 영업구분코드로 변환
+*******************************************************************************/
+function sf_convertDealCoClToSlCl(sDealCoCl)
+{
+	var sRetValue;
+	switch(sDealCoCl)
+	{
+	case "A2":
+		sRetValue = "01";
+		break;
+
+	case "A3":
+	case "A4":	
+		sRetValue = "02";
+		break;
+
+	case "B1":	
+		sRetValue = "03";
+		break;
+
+	case "B2":	
+		sRetValue = "04";
+		break;
+	
+	default:
+		break;
+	}
+	return sRetValue;
+}
+]]></Script>
+</Window>

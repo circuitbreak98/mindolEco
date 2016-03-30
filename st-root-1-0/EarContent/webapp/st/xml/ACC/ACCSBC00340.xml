@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="88" Id="ACCSBC00340" Left="8" OnLoadCompleted="ACCSBC00340_OnLoadCompleted" PidAttrib="7" Title="승인요청" Top="8" Ver="1.0" Width="288" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_resultPop">
+				<Contents>
+					<colinfo id="deal_sta_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="chrgr_user_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="ukey_agency_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="ukey_channel_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="grt_insu_co" size="256" summ="default" type="STRING"/>
+					<colinfo id="grt_insu_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="seq" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_crdt_lmt_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="insp_gua_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="crdt_lmt_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="rmn_crdt" size="256" summ="default" type="STRING"/>
+					<colinfo id="pct" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_pct" size="256" summ="default" type="STRING"/>
+					<colinfo id="avg_acc_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="pre_acc_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="to_acc_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="avg_new_sale_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="pre_new_sale_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="to_new_sale_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="avg_chg_sale_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="pre_chg_sale_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="to_chg_sale_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="avg_eqp_dis_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="pre_eqp_dis_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="to_eqp_dis_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="avg_usim_dis_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="pre_usim_dis_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="to_usim_dis_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="eqp_round_day" size="256" summ="default" type="STRING"/>
+					<colinfo id="avg_eqp_dis_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="pre_eqp_dis_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="to_eqp_dis_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="avg_usim_dis_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="pre_usim_dis_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="to_usim_dis_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="skt_chag_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="chag_dpst_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="chag_bond_bamt" size="256" summ="default" type="STRING"/>
+					<colinfo id="rmks" size="256" summ="default" type="STRING"/>
+					<colinfo id="open_yn" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="41" Id="div_input" Left="15" Style="sty_div_input" TabOrder="1" Text="Div0" Top="7" Width="257">
+			<Contents>
+				<Static Align="Center" Height="37" Id="st_sendSuccess" Left="27" Style="sty_lb_Basic" TabOrder="1" Text="승인요청중입니다" VAlign="Middle" Width="200"></Static>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button0" ImageID="btn_d_2" Left="114" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="2" Text="닫기" Top="54" Width="60"></Button>
+		<MSIE Bottom="72" Height="15" Id="MSIE0" Left="11" Right="46" TitleChange="MSIE0_TitleChange" Top="57" Width="35"></MSIE>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : login
+* 업무명      : 공통
+* 프로그램명  : 로그인
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+//==============================================================================
+// 폼 전역 변수 정의
+//==============================================================================
+//var msg_messageId; // 서버 메세지 전역 변수
+//var nc_serverDateTime; // 서버 시간 전역 변수
+//var strCookieId;
+
+//var FV_PWD_RESET_CHK = "N";
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+var ff;
+var ds_Parent = "";
+
+function ACCSBC00340_OnLoadCompleted(obj)
+{
+
+	ds_Parent =  eval("parent."+dsParent);
+	
+	cf_copyDataSet(ds_resultPop, ds_Parent);
+	
+	//var sInUserId = "999999";
+	var sInUserId = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"user_id");
+	var sInDealCoCd = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"deal_co_cd");
+	var sInSeq = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"seq");
+	//var sInSeq = 12;
+	var sInOpenYn = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"open_yn");
+	
+	var sTmpDealCoNm = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"deal_co_nm");
+	
+	if(sTmpDealCoNm.indexOf("&") >=0 ){
+		sTmpDealCoNm = replace(sTmpDealCoNm,'&','N');
+	}else{
+		sTmpDealCoNm = sTmpDealCoNm;
+	}
+	
+	var sInDealCoNm = urlEncodeUtf8(sTmpDealCoNm);
+	var sInSalePlcCnt = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"cnt");
+	var sInChrgrUserNm = urlEncodeUtf8(ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"chrgr_user_nm"));
+	var sInGrtInsuCo = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"grt_insu_co");
+	var sInGrtInsuNm = urlEncodeUtf8(ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"grt_insu_nm"));
+	var sInInspGuaAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"insp_gua_amt");
+	var sInBfCrdtLmtAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"bf_crdt_lmt_amt");
+	var sInLeftCrdtAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"rmn_crdt");
+	var sInAvgAccAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"avg_acc_amt");
+	var sInPreAccAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"pre_acc_amt");
+	var sInToAccAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"to_acc_amt");
+	var sInAvgNewSaleQty =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"avg_new_sale_qty");
+	var sInPreNewSaleQty =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"pre_new_sale_qty");
+	var sInToNewSaleQty = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"to_new_sale_qty");
+	var sInAvgChgSaleQty =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"avg_chg_sale_qty");
+	var sInPreChgSaleQty =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"pre_chg_sale_qty");
+	var sInToChgSaleQty = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"to_chg_sale_qty");
+	
+	
+	var sInSktChagAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"skt_chag_amt");
+	var sInChagDpstAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"chag_dpst_amt");
+	var sInChagBondBamt = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"chag_bond_bamt");
+	var sInAvgEqpDisQty =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"avg_eqp_dis_qty");
+	var sInPreEqpDisQty =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"pre_eqp_dis_qty");
+	var sInToEqpDisQty = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"to_eqp_dis_qty");
+	
+	
+	
+	var sInAvgUsimDisQty =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"avg_usim_dis_qty");
+	var sInPreUsimDisQty =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"pre_usim_dis_qty");
+	var sInToUsimDisQty = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"to_usim_dis_qty");
+	var sInAvgEqpDisAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"avg_eqp_dis_amt");
+	var sInPreEqpDisAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"pre_eqp_dis_amt");
+	var sInToEqpDisAmt = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"to_eqp_dis_amt");
+	
+	
+	var sInAvgUsimDisAmt = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"avg_usim_dis_amt");
+	var sInPreUsimDisAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"pre_usim_dis_amt");
+	var sInToUsimDisAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"to_usim_dis_amt");
+	var sInEqpRoundDay = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"eqp_round_day");
+	
+	var sInCrdtLmtAmt =ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"crdt_lmt_amt");
+	var sInRmks =urlEncodeUtf8(ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"rmks"));
+	var sInPct = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"pct");
+	var sInBfPct = ds_resultPop.GetColumn(ds_resultPop.rowcount-1,"bf_pct");
+	var sInMessage =urlEncodeUtf8("성공적으로 전송요청되었습니다.");
+	
+	var PageUrl = gv_url+"sso/ApprovalSendData.jsp?sUserId="+sInUserId+"&sDealCoCd="+sInDealCoCd+"&sSeq="+sInSeq+"&sOpenYn="+sInOpenYn+"&sDealCoNm="+sInDealCoNm+"&sSalePlcCnt="+sInSalePlcCnt+"&sChrgrUserNm="+sInChrgrUserNm+"&sGrtInsuCo="+sInGrtInsuCo+"&sGrtInsuNm="+sInGrtInsuNm+"&sInspGuaAmt="+sInInspGuaAmt+"&sBfCrdtLmtAmt="+sInBfCrdtLmtAmt+"&sLeftCrdtAmt="+sInLeftCrdtAmt+"&sAvgAccAmt="+sInAvgAccAmt+"&sPreAccAmt="+sInPreAccAmt+"&sToAccAmt="+sInToAccAmt+"&sAvgNewSaleQty="+sInAvgNewSaleQty+"&sPreNewSaleQty="+sInPreNewSaleQty+"&sToNewSaleQty="+sInToNewSaleQty+"&sAvgChgSaleQty="+sInAvgChgSaleQty+"&sPreChgSaleQty="+sInPreChgSaleQty+"&sToChgSaleQty="+sInToChgSaleQty+"&sSktChagAmt="+sInSktChagAmt+"&sChagDpstAmt="+sInChagDpstAmt+"&sChagBondBamt="+sInChagBondBamt+"&sAvgEqpDisQty="+sInAvgEqpDisQty+"&sPreEqpDisQty="+sInPreEqpDisQty+"&sToEqpDisQty="+sInToEqpDisQty+"&sAvgUsimDisQty="+sInAvgUsimDisQty+"&sPreUsimDisQty="+sInPreUsimDisQty+"&sToUsimDisQty="+sInToUsimDisQty+"&sAvgEqpDisAmt="+sInAvgEqpDisAmt+"&sPreEqpDisAmt="+sInPreEqpDisAmt+"&sToEqpDisAmt="+sInToEqpDisAmt+"&sAvgUsimDisAmt="+sInAvgUsimDisAmt+"&sPreUsimDisAmt="+sInPreUsimDisAmt+"&sToUsimDisAmt="+sInToUsimDisAmt+"&sEqpRoundDay="+sInEqpRoundDay+"&sCrdtLmtAmt="+sInCrdtLmtAmt+"&sPct="+sInPct+"&sBfPct="+sInBfPct+"&sRmks="+sInRmks+"&sMessage="+sInMessage;  
+	//var PageUrl = "http://localhost:8088/ps/ApprovalSendData.jsp?sUserId="+sInUserId+"&sDealCoCd="+sInDealCoCd+"&sSeq="+sInSeq+"&sOpenYn="+sInOpenYn+"&sDealCoNm="+sInDealCoNm+"&sSalePlcCnt="+sInSalePlcCnt+"&sChrgrUserNm="+sInChrgrUserNm+"&sGrtInsuCo="+sInGrtInsuCo+"&sGrtInsuNm="+sInGrtInsuNm+"&sInspGuaAmt="+sInInspGuaAmt+"&sBfCrdtLmtAmt="+sInBfCrdtLmtAmt+"&sLeftCrdtAmt="+sInLeftCrdtAmt+"&sAvgAccAmt="+sInAvgAccAmt+"&sPreAccAmt="+sInPreAccAmt+"&sToAccAmt="+sInToAccAmt+"&sAvgNewSaleQty="+sInAvgNewSaleQty+"&sPreNewSaleQty="+sInPreNewSaleQty+"&sToNewSaleQty="+sInToNewSaleQty+"&sAvgChgSaleQty="+sInAvgChgSaleQty+"&sPreChgSaleQty="+sInPreChgSaleQty+"&sToChgSaleQty="+sInToChgSaleQty+"&sSktChagAmt="+sInSktChagAmt+"&sChagDpstAmt="+sInChagDpstAmt+"&sChagBondBamt="+sInChagBondBamt+"&sAvgEqpDisQty="+sInAvgEqpDisQty+"&sPreEqpDisQty="+sInPreEqpDisQty+"&sToEqpDisQty="+sInToEqpDisQty+"&sAvgUsimDisQty="+sInAvgUsimDisQty+"&sPreUsimDisQty="+sInPreUsimDisQty+"&sToUsimDisQty="+sInToUsimDisQty+"&sAvgEqpDisAmt="+sInAvgEqpDisAmt+"&sPreEqpDisAmt="+sInPreEqpDisAmt+"&sToEqpDisAmt="+sInToEqpDisAmt+"&sAvgUsimDisAmt="+sInAvgUsimDisAmt+"&sPreUsimDisAmt="+sInPreUsimDisAmt+"&sToUsimDisAmt="+sInToUsimDisAmt+"&sEqpRoundDay="+sInEqpRoundDay+"&sCrdtLmtAmt="+sInCrdtLmtAmt+"&sPct="+sInPct+"&sBfPct="+sInBfPct+"&sRmks="+sInRmks+"&sMessage="+sInMessage;  
+	
+	MSIE0.Navigate(PageUrl);
+	
+	/*
+	//웹브라우저 URL 설정
+    WebBrowser0.PageUrl=gv_url+"sso/ApprovalSendData.jsp";
+    
+    
+    //WebBrowser0.PageUrl="http://localhost:8088/ps/ApprovalSendData.jsp";
+    var cookie = "sUserId="+sInUserId+"&sDealCoCd="+sInDealCoCd+"&sSeq="+sInSeq+"&sOpenYn="+sInOpenYn+"&sDealCoNm="+sInDealCoNm+"&sSalePlcCnt="+sInSalePlcCnt+"&sChrgrUserNm="+sInChrgrUserNm+"&sGrtInsuCo="+sInGrtInsuCo+"&sGrtInsuNm="+sInGrtInsuNm+"&sInspGuaAmt="+sInInspGuaAmt+"&sBfCrdtLmtAmt="+sInBfCrdtLmtAmt+"&sLeftCrdtAmt="+sInLeftCrdtAmt+"&sAvgAccAmt="+sInAvgAccAmt+"&sPreAccAmt="+sInPreAccAmt+"&sToAccAmt="+sInToAccAmt+"&sAvgNewSaleQty="+sInAvgNewSaleQty+"&sPreNewSaleQty="+sInPreNewSaleQty+"&sToNewSaleQty="+sInToNewSaleQty+"&sAvgChgSaleQty="+sInAvgChgSaleQty+"&sPreChgSaleQty="+sInPreChgSaleQty+"&sToChgSaleQty="+sInToChgSaleQty+"&sSktChagAmt="+sInSktChagAmt+"&sChagDpstAmt="+sInChagDpstAmt+"&sChagBondBamt="+sInChagBondBamt+"&sAvgEqpDisQty="+sInAvgEqpDisQty+"&sPreEqpDisQty="+sInPreEqpDisQty+"&sToEqpDisQty="+sInToEqpDisQty+"&sAvgUsimDisQty="+sInAvgUsimDisQty+"&sPreUsimDisQty="+sInPreUsimDisQty+"&sToUsimDisQty="+sInToUsimDisQty+"&sAvgEqpDisAmt="+sInAvgEqpDisAmt+"&sPreEqpDisAmt="+sInPreEqpDisAmt+"&sToEqpDisAmt="+sInToEqpDisAmt+"&sAvgUsimDisAmt="+sInAvgUsimDisAmt+"&sPreUsimDisAmt="+sInPreUsimDisAmt+"&sToUsimDisAmt="+sInToUsimDisAmt+"&sEqpRoundDay="+sInEqpRoundDay+"&sCrdtLmtAmt="+sInCrdtLmtAmt+"&sPct="+sInPct+"&sBfPct="+sInBfPct+"&sRmks="+sInRmks+"&sMessage="+sInMessage;   
+    
+    WebBrowser0.PostData = cookie;
+	WebBrowser0.run();
+	*/
+	
+}
+
+function btn_close_OnClick(obj)
+{
+	close();
+}
+
+function div2_findjm_btn_save_OnClick(obj)
+{
+	close();
+}
+
+function div_div_process_WebBrowser0_OnDocumentComplete(obj,strUrl)
+{
+	
+}
+
+
+
+
+
+var unreserved = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_.~";
+var reserved = "!*'();:@&=+$,/?%#[]";
+var allowed = unreserved + reserved;
+var hexchars = "0123456789ABCDEFabcdef";
+var decchars = "ABCDEF";
+
+function convert16To10(str)
+{
+	var sum=0;
+	
+	str = toUpper(str);
+	
+	var s = midb(str,0,1);
+	if ( s >= "A" && s <= "F" )
+	{
+		sum += (10+pos(decchars,s))*16;
+	} else if ( s >= "0" && s <= "9" ){
+		sum += (toNumber(s)*16);
+	}
+
+	s = midb(str,1,1);
+	if ( s >= "A" && s <= "F" )
+	{
+		sum += (10+pos(decchars,s));
+	} else if ( s >= "0" && s <= "9" ){
+		sum += toNumber(s);
+	}
+
+	trace("convert : " + sum);
+	return sum;
+}
+
+function gethex(decimal) 
+{
+  return "%" + charAt(hexchars,ext_getBitCalc(">>",decimal,4)) + 
+               charAt(hexchars,ext_getBitCalc("&",decimal,15));
+}
+
+function getdec(hexencoded) 
+{ 
+   if (length(hexencoded) == 3) 
+   { 
+     if (charAt(hexencoded,0) == "%") { 
+       if (indexOf(hexchars,charAt(hexencoded,1)) != -1 && indexOf(hexchars,charAt(hexencoded,2)) != -1) { 
+         return convert16To10(midb(hexencoded,1,2)); 
+       } 
+     } 
+   } 
+   return 256; 
+}
+
+function urlEncodeUtf8(decoded) 
+{
+  // Some variables:
+	var encoded = "";
+	
+	// ---------------- If UTF-8 character encoding was chosen: ----------------
+	
+	for (var i = 0; i < length(decoded); i++ ) 
+	{
+		var ch = charAt(decoded,i);
+		// Check if character is an unreserved character:
+		if (indexOf(unreserved,ch) != -1) {
+			encoded = encoded + ch;
+		} else {
+
+			// The position in the Unicode table tells us how many bytes are needed.
+			// Note that if we talk about first, second, etc. in the following, we are
+			// counting from left to right:
+			//
+			//   Position in   |  Bytes needed   | Binary representation
+			//  Unicode table  |   for UTF-8     |       of UTF-8
+			// ----------------------------------------------------------
+			//     0 -     127 |    1 byte       | 0XXX.XXXX
+			//   128 -    2047 |    2 bytes      | 110X.XXXX 10XX.XXXX
+			//  2048 -   65535 |    3 bytes      | 1110.XXXX 10XX.XXXX 10XX.XXXX
+			// 65536 - 2097151 |    4 bytes      | 1111.0XXX 10XX.XXXX 10XX.XXXX 10XX.XXXX
+	
+			var charcode = Asc(charAt(decoded,i));
+	
+			// Position 0 - 127 is equal to percent-encoding with an ASCII character encoding:
+			if (charcode < 128) {
+			  encoded = encoded + gethex(charcode);
+			}
+	
+			// Position 128 - 2047: two bytes for UTF-8 character encoding.
+			if (charcode > 127 && charcode < 2048) {
+			  // First UTF byte: Mask the first five bits of charcode with binary 110X.XXXX:
+			  encoded = encoded + gethex(ext_getBitCalc("|",ext_getBitCalc(">>",charcode,6),12));
+			  // Second UTF byte: Get last six bits of charcode and mask them with binary 10XX.XXXX:
+			  encoded = encoded + gethex(ext_getBitCalc("|",ext_getBitCalc("&",charcode,63),128));
+			}
+	
+			// Position 2048 - 65535: three bytes for UTF-8 character encoding.
+			if (charcode > 2047 && charcode < 65536) {
+			  // First UTF byte: Mask the first four bits of charcode with binary 1110.XXXX:
+			  encoded = encoded + gethex(ext_getBitCalc("|",ext_getBitCalc(">>",charcode,12),224));
+			  // Second UTF byte: Get the next six bits of charcode and mask them binary 10XX.XXXX:
+			  encoded = encoded + gethex(ext_getBitCalc("|",ext_getBitCalc("&",ext_getBitCalc(">>",charcode,6),63),128));
+			  // Third UTF byte: Get the last six bits of charcode and mask them binary 10XX.XXXX:
+			  encoded = encoded + gethex(ext_getBitCalc("|",ext_getBitCalc("&",charcode,63),128));
+			}
+	
+			// Position 65536 - : four bytes for UTF-8 character encoding.
+			if (charcode > 65535) {
+			  // First UTF byte: Mask the first three bits of charcode with binary 1111.0XXX:
+			  encoded = encoded + gethex(ext_getBitCalc("|",ext_getBitCalc(">>",charcode,18),240));
+			  // Second UTF byte: Get the next six bits of charcode and mask them binary 10XX.XXXX:
+			  encoded = encoded + gethex(ext_getBitCalc("|",ext_getBitCalc("&",ext_getBitCalc(">>",charcode,12),63),128));
+			  // Third UTF byte: Get the last six bits of charcode and mask them binary 10XX.XXXX:
+			  encoded = encoded + gethex(ext_getBitCalc("|",ext_getBitCalc("&",ext_getBitCalc(">>",charcode,6),63),128));
+			  // Fourth UTF byte: Get the last six bits of charcode and mask them binary 10XX.XXXX:
+			  encoded = encoded + gethex(ext_getBitCalc("|",ext_getBitCalc("&",charcode,63),128));
+			}
+		}
+
+	}  // end of for ...
+	return encoded;
+}
+
+
+function Button0_OnClick(obj)
+{
+	edit1.text = urlEncodeUtf8(Edit0.Text);
+}
+
+
+function Button1_OnClick(obj)
+{
+	edit2.text = urlDecodeUtf8(Edit1.text);
+}
+
+function MSIE0_TitleChange(obj,Text)
+{
+	if(Text.indexOf("jsp") <0){
+		
+		if(Text.indexOf("Success") >=0 ){
+			
+			http.Sync = true;
+			div_input.st_sendSuccess.Text = "성공적으로 전송요청되었습니다.";
+			http.Sync = false;
+			
+			parent.btn_save_OnClick();
+		
+			this.Close();
+		}else{
+			div_input.st_sendSuccess.Text = "전송요청이 실패되었습니다.";
+		}
+	}
+}
+]]></Script>
+</Window>

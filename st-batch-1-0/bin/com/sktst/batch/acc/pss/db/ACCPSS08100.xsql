@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ACCPSS08100">
+	<insert id="addAllotBondAccIF" parameterClass="hmap">
+	<![CDATA[
+	 
+	INSERT INTO /*+ ACCPSS08100_addAllotBondAccIF_양동석_심연정 */
+	tacc_allot_bond_acc_if
+	(
+	     deal_co_cd 
+	    ,deal_sub_cd
+	    ,acc_mth
+	    ,pay_new_allot_bond_pamt
+	    ,pay_chg_allot_bond_pamt
+	    ,rpay_new_allot_bond_pamt
+	    ,rpay_chg_allot_bond_pamt
+	    ,pay_usim_bond_pamt
+	    ,rpay_usim_bond_pamt
+	    ,pay_new_allot_vat
+	    ,pay_chg_allot_vat
+	    ,rpay_new_allot_vat
+	    ,rpay_chg_allot_vat
+	    ,dedt_allot_bond_pamt
+	    ,rpay_obj_amt         
+	    ,rpay_amt
+	    ,adpay_deal_co_amt
+	    ,aply_yn
+	    ,del_yn
+	    ,upd_cnt
+	    ,ins_dtm
+	    ,ins_user_id
+	    ,mod_dtm
+	    ,mod_user_id
+	    ,supl_pay_new_pamt
+	    ,supl_pay_chg_pamt
+	    ,supl_rpay_new_pamt
+	    ,supl_rpay_chg_pamt
+	    ,supl_pay_new_vat
+	    ,supl_pay_chg_vat
+	    ,supl_rpay_new_vat
+	    ,supl_rpay_chg_vat
+	)
+	VALUES
+	(
+	     TRIM(SUBSTRB(#REC_STR#,   3,  6))  /*대리점코드*/ 
+	    ,TRIM(SUBSTRB(#REC_STR#,   9,  4))  /*서브대리점코드*/ 
+	    ,TRIM(SUBSTRB(#REC_STR#,  13,  6))  /*정산년월*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  19, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  19, 15))),'-'))  /*신규할부채권매입금지급*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  34, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  34, 15))),'-'))  /*기변할부채권매입금지급*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  49, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  49, 15))),'-'))  /*신규할부채권매입금환수*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  64, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  64, 15))),'-'))  /*기변할부채권매입금환수*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  79, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  79, 15))),'-'))  /*USIM채권매입금지급*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  94, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  94, 15))),'-'))  /*USIM채권매입금환수*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 109, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 109, 15))),'-'))  /*신규할부이자부가세지급*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 124, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 124, 15))),'-'))  /*기변할부이자부가세지급*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 139, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 139, 15))),'-'))  /*신규할부이자부가세환수*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 154, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 154, 15))),'-'))  /*기할부이자부가세환수*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 169, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 169, 15))),'-'))  /*할부채권매입금공제*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 184, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 184, 15))),'-'))  /*상환대상금액*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 199, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 199, 15))),'-'))  /*상환액*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 214, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 214, 15))),'-'))  /*대리점선지급액*/ 
+	    ,'N'
+	    ,'N'
+	    ,1
+	    ,#OP_DT#
+	    ,#USER_ID#
+	    ,#OP_DT#
+	    ,#USER_ID#
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  229, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  229, 15))),'-'))  /*부가단말신규할부채권매입금지급*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  244, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  244, 15))),'-'))  /*부가단말기변할부채권매입금지급*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  259, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  259, 15))),'-'))  /*부가단말신규할부채권매입금환수*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  274, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  274, 15))),'-'))  /*부가단말기변할부채권매입금환수*/
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 289, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 289, 15))),'-'))  /*부가단말신규할부이자부가세지급*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 304, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 304, 15))),'-'))  /*부가단말기변할부이자부가세지급*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 319, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 319, 15))),'-'))  /*부가단말신규할부이자부가세환수*/ 
+	    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#, 334, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#, 334, 15))),'-'))  /*부가단말기변할부이자부가세환수*/
+	)
+
+    ]]>
+    </insert>
+
+</sqlMap>   

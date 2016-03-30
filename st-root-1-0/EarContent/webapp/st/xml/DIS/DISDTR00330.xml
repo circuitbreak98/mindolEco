@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="174" Id="DISDTR00330" Left="8" PidAttrib="7" Title="바코드&#32;리스트" Top="8" Ver="1.0" Width="600" WorkArea="true">
+		<Grid AutoFit="TRUE" BindDataset="ds_barList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="164" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="129" Id="grd_barList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_barList_OnCellDblClick" OnEnterDown="grd_barList_OnEnterDown" Right="590" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="35" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="580">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="52"/>
+						<col width="150"/>
+						<col width="150"/>
+						<col width="150"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="120"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="상품구분"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="바코드타입"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="전체길이"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="모델길이"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="색상길이"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="일련번호길이"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="currow+1"/>
+						<cell align="center" col="1" colid="prod_cl" combocol="code" combodataset="ds_prodCl" combotext="value" display="combo"/>
+						<cell align="center" col="2" colid="bar_cd_typ" display="text"/>
+						<cell align="center" col="3" colid="all_len_num" combocol="code" combodataset="ds_color" combotext="value" display="combo"/>
+						<cell align="center" col="4" colid="mdl_len_num" display="text"/>
+						<cell col="5" colid="color_len_num" display="text"/>
+						<cell col="6" colid="ser_num_len_num" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Checkbox FalseValue="N" Height="21" Id="chk_contYn" Left="10" LeftMargin="5" Style="sty_opt_input" TabOrder="2" Text="연속사용" Top="10" TrueValue="Y" Value="FALSE" Width="78"></Checkbox>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : DISDTR00330
+* 업무명      :  재고관리 - 재고이동
+* 프로그램명  :  바코드리스트
+--------------------------------------------------------------------------------
+* 작성자      : 김중일
+* 작성일      : 2009.01.19
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+//==============================================================================
+// 그리드 더블클릭 이벤트
+//==============================================================================
+function f_setDs()
+{
+    var oDs = Object(grd_barList.BindDataset);
+    
+    cf_setParam(ds_barInfo, "prod_cl", oDs.GetColumn(oDs.currow, "prod_cl"));
+    cf_setParam(ds_barInfo, "bar_cd_typ", oDs.GetColumn(oDs.currow, "bar_cd_typ"));
+    cf_setParam(ds_barInfo, "all_len_num", oDs.GetColumn(oDs.currow, "all_len_num"));
+    cf_setParam(ds_barInfo, "mdl_sta_len", oDs.GetColumn(oDs.currow, "mdl_sta_len"));
+    cf_setParam(ds_barInfo, "mdl_end_len", oDs.GetColumn(oDs.currow, "mdl_end_len"));
+    cf_setParam(ds_barInfo, "mdl_len_num", oDs.GetColumn(oDs.currow, "mdl_len_num"));
+    cf_setParam(ds_barInfo, "color_sta_len", oDs.GetColumn(oDs.currow, "color_sta_len"));
+    cf_setParam(ds_barInfo, "color_end_len", oDs.GetColumn(oDs.currow, "color_end_len"));
+    cf_setParam(ds_barInfo, "color_len_num", oDs.GetColumn(oDs.currow, "color_len_num"));
+    cf_setParam(ds_barInfo, "ser_num_sta_len", oDs.GetColumn(oDs.currow, "ser_num_sta_len"));
+    cf_setParam(ds_barInfo, "ser_num_end_len", oDs.GetColumn(oDs.currow, "ser_num_end_len"));
+    cf_setParam(ds_barInfo, "ser_num_len_num", oDs.GetColumn(oDs.currow, "ser_num_len_num"));
+    cf_setParam(ds_barInfo, "cont_yn", chk_contYn.Value);
+        
+    this.Close();
+}
+
+//==============================================================================
+// 그리드 더블클릭 이벤트
+//==============================================================================
+function grd_barList_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	f_setDs();
+}
+
+//==============================================================================
+// 그리드 엔터 키다운 이벤트
+//==============================================================================
+function grd_barList_OnEnterDown(obj,nRow,nCell,strVal,nPivotIndex)
+{
+	f_setDs();
+}
+]]></Script>
+</Window>

@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 프레임워크 웹 컴포넌트를 정의한다. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+    <bean id="nc.channel.web.ICommandProcessor"
+        class="nexcore.framework.online.channel.core.internal.DefaultCommandProcessor">
+        <description>
+            <![CDATA[표준 웹요청에서 사용하는 CommandProcessor임]]>
+        </description>
+    </bean>
+
+    <bean id="nc.channel.web.IResponseProcessor"
+        class="nexcore.framework.online.channel.core.DefaultResponseProcessor">
+        <description>
+            <![CDATA[표준 웹요청에서 사용하는 CommandProcessor임]]>
+        </description>
+    </bean>
+
+    <bean id="nc.channel.IValidationManager"
+        class="nexcore.framework.core.validation.internal.DefaultValidationManager"
+        init-method="init" destroy-method="destroy">
+        <description>요청 정보에 대한 검증(Validation 수행)</description>
+        <!-- <property name="registry"
+            ref="nc.core.IBizComponentMetaDataRegistry" />
+        -->
+        <property name="checkers">
+            <map>
+                <entry key="1">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.NullableMandatoryChecker" />
+                </entry>
+                <entry key="2">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.NotNullMandatoryChecker" />
+                </entry>
+                <entry key="3">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.CustomMandatoryChecker" />
+                </entry>
+            </map>
+        </property>
+        <property name="validators">
+            <map>
+                <entry key="00">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.NullValidator" />
+                </entry>
+                <entry key="AP">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.AlphabetValidator" />
+                </entry>
+                <entry key="AD">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.AlphaDigitValidator" />
+                </entry>
+                <entry key="MD">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.DateMdValidator" />
+                </entry>
+                <entry key="YM">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.DateYmValidator" />
+                </entry>
+                <entry key="DT">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.DateValidator" />
+                </entry>
+                <entry key="DZ">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.DigitValidator" />
+                </entry>
+                <entry key="TS">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.EnglishKoreanStringValidator" />
+                </entry>
+                <entry key="ES">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.EnglishStringValidator" />
+                </entry>
+                <entry key="HS">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.KoreanStringValidator" />
+                </entry>
+                <entry key="NR">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.RealNumberValidator" />
+                </entry>
+                <entry key="NI">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.IntegerValidator" />
+                </entry>
+                <entry key="MK">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.MaskValidator" />
+                </entry>
+                <entry key="MS">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.TimeMsValidator" />
+                </entry>
+                <entry key="HM">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.TimeHmValidator" />
+                </entry>
+                <entry key="TM">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.TimeValidator" />
+                </entry>
+                <entry key="DS">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.TimeStampValidator" />
+                </entry>
+                <entry key="DD">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.DetailTimeStampValidator" />
+                </entry>
+            </map>
+        </property>
+        <property name="limiters">
+            <map>
+                <entry key="00">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.NullLimiter" />
+                </entry>
+                <entry key="01">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.NumberInterLimiter" />
+                </entry>
+                <entry key="02">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.NumberOuterLimiter" />
+                </entry>
+                <entry key="03">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.DictionaryInterLimiter" />
+                </entry>
+                <entry key="04">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.DictionaryOuterLimiter" />
+                </entry>
+                <entry key="05">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.LetterAllowLimiter" />
+                </entry>
+                <entry key="06">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.LetterDenyLimiter" />
+                </entry>
+                <entry key="99">
+                    <bean
+                        class="nexcore.framework.core.validation.internal.CustomLogicLimiter" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="nc.channel.IFormattingManager"
+        class="nexcore.framework.core.formatting.internal.DefaultFormattingManager"
+        init-method="init">
+        <description>요청 정보에 대한 포매팅(Formatting 수행)</description>
+        <property name="formatters">
+            <map>
+                <entry key="00">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.NullFormatter" />
+                </entry>
+                <entry key="01">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.DateFormatter" />
+                </entry>
+                <entry key="02">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.DateYmFormatter" />
+                </entry>
+                <entry key="03">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.DateMdFormatter" />
+                </entry>
+                <entry key="04">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.TimeFormatter" />
+                </entry>
+                <entry key="05">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.TimeHmFormatter" />
+                </entry>
+                <entry key="06">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.TimeMsFormatter" />
+                </entry>
+                <entry key="07">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.DateTimeFormatter" />
+                </entry>
+                <entry key="08">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.DetailTimeStampFormatter" />
+                </entry>
+                <entry key="21">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.MaskFormatter" />
+                </entry>
+                <entry key="41">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.I18nDateFormatter" />
+                </entry>
+                <entry key="42">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.I18nDateYmFormatter" />
+                </entry>
+                <entry key="43">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.I18nDateMdFormatter" />
+                </entry>
+                <entry key="44">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.I18nTimeFormatter" />
+                </entry>
+                <entry key="45">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.I18nTimeHmFormatter" />
+                </entry>
+                <entry key="46">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.I18nTimeMsFormatter" />
+                </entry>
+                <entry key="47">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.I18nDateTimeFormatter" />
+                </entry>
+                <entry key="99">
+                    <bean
+                        class="nexcore.framework.core.formatting.internal.CustomLogicFormatter" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="nc.channel.IDataMappingManager"
+        class="nexcore.framework.online.channel.mapping.internal.DefaultDataMappingManager"
+        init-method="init" destroy-method="destroy">
+        <description>요청 정보에 대한 데이터 매핑(Data Mapping 수행)</description>
+        <property name="dataMappers">
+            <map>
+                <entry key="01">
+                    <bean
+                        class="nexcore.framework.online.channel.mapping.internal.NullMapper" />
+                </entry>
+                <entry key="02">
+                    <bean
+                        class="nexcore.framework.online.channel.mapping.internal.AssignedValueMapper" />
+                </entry>
+                <entry key="11">
+                    <bean
+                        class="nexcore.framework.online.channel.mapping.internal.SimpleCodeMapper" />
+                </entry>
+                <entry key="12">
+                    <bean
+                        class="nexcore.framework.online.channel.mapping.internal.TableCodeMapper" />
+                </entry>
+                <entry key="99">
+                    <bean
+                        class="nexcore.framework.online.channel.mapping.internal.CustomLogicMapper" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="nc.channel.IWebRequestHandler"
+        class="nexcore.framework.online.channel.handler.internal.StandardWebHandler">
+        <description>
+            <![CDATA[요청 URI에 따라 다른 IRequestHandler를 사용한다.]]>
+        </description>        
+    </bean>    
+    <bean id="nc.channel.IXmlRequestHandler"
+        class="nexcore.framework.online.channel.handler.internal.StandardXmlHandler">
+        <property name="description" 
+            value="표준 UI(XML) 요청 처리기" />
+    </bean>    
+    <bean id="nc.channel.IAxisRequestHandler"
+        class="nexcore.framework.online.channel.webservice.internal.SoapRequestHandler"
+        init-method="init" destroy-method="destroy">
+        <property name="description"
+            value="표준 Webservice 처리용" />
+        <property name="contextHandler">
+            <bean class="nexcore.framework.online.channel.webservice.internal.DefaultWsOnlineContextHandler" />
+        </property>
+    </bean>
+
+    <!-- ApplicationController 정의 부분 -->
+    <bean id="nc.channel.web.IWebApplicationController"
+        class="nexcore.framework.online.channel.core.internal.DefaultApplicationController">
+        <description>
+            <![CDATA[표준 웹요청에서 사용하는 ApplicationController임]]>
+        </description>
+        <property name="commandViewMapResolver" 
+            ref="nc.channel.web.IWebCommandViewMapResolver" />
+        <property name="commandProcessor"
+            ref="nc.channel.web.ICommandProcessor" />
+        <property name="responseProcessor" 
+            ref="nc.channel.web.IResponseProcessor">
+        </property>        
+        <property name="preCheckers">
+            <list>
+                <ref local="nc.channel.IValidationManager" />
+                <ref local="nc.channel.IFormattingManager" />
+                <ref local="nc.channel.IDataMappingManager" />                
+            </list>
+        </property>
+        <property name="postCheckers">
+            <list>
+                <ref local="nc.channel.IDataMappingManager" />
+                <ref local="nc.channel.IFormattingManager" />
+            </list>
+        </property>
+    </bean>
+    <bean id="nc.channel.web.IWebCommandViewMapResolver"
+        class="nexcore.framework.online.channel.core.internal.DefaultCommandViewMapResolver">
+        <description>
+            <![CDATA[표준 웹요청에서 사용하는 CommandViewMapResolver임]]>
+        </description>
+        <property name="defaultErrorView">
+            <ref local="nc.channel.web.DefaultWebErrorView" />
+        </property>
+        <property name="errorViewMap">
+            <map>
+                <entry key="NC_TrControlErr">
+                    <bean class="nexcore.framework.online.channel.web.RequestView">
+                        <constructor-arg value="/jsp/Test.jsp" />
+                    </bean>
+                </entry>
+                <entry key="NC_NoViewMap">
+                    <bean class="nexcore.framework.online.channel.web.RequestView">
+                        <constructor-arg value="/jsp/Test.jsp" />
+                    </bean>
+                </entry>
+                <entry key="NC_NoView">
+                    <bean class="nexcore.framework.online.channel.web.RequestView">
+                        <constructor-arg value="/jsp/Test.jsp" />
+                    </bean>
+                </entry>
+            </map>        
+        </property>
+        <property name="defaultCommandViewMap">
+            <bean class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                <!-- 커맨드 맵의 커맨드 정보 -->
+                <property name="command">
+                    <bean class="nexcore.framework.online.channel.core.command.StdCommand"></bean>
+                </property>
+                <!-- 커맨드 맵의 View 정보 -->
+                <property name="viewMap">
+                    <map>
+                        <entry key="SUCCESS">
+                            <bean class="nexcore.framework.online.channel.web.RequestView">
+                                <constructor-arg value="/jsp/Test.jsp" />
+                            </bean>
+                        </entry>
+                        <entry key="FAIL">
+                            <ref local="nc.channel.web.DefaultWebErrorView" />
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        
+        <!-- Command/View와 매핑되는 ICommandViewMap 로직을 설정한다.-->
+        <property name="commandViewMaps">
+            <map>
+                <!-- 표준 Web 요청 CommandViewMap  -->
+        <!--                         
+                <entry key="/standard.cmd">
+                    <bean class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                        <property name="command">
+                            <bean class="nexcore.framework.online.channel.core.command.StdCommand"></bean>
+                        </property>
+                        <property name="viewMap">
+                            <map>
+                                <entry key="SUCCESS">
+                                    <bean class="nexcore.framework.online.channel.web.RequestView">
+                                        <constructor-arg value="/jsp/Test.jsp" />
+                                    </bean>
+                                </entry>
+                                <entry key="FAIL">
+                                    <ref local="nc.channel.web.DefaultWebErrorView" />
+                                </entry>
+                            </map>
+                        </property>
+                    </bean>
+                </entry>
+        -->                                
+                <!-- filedownload -->
+               <entry key="/filedownload.cmd">
+                    <bean
+                        class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                        <property name="command">
+                            <bean
+                                class="nexcore.framework.online.channel.core.command.DownloadCommand">
+                            </bean>
+                        </property>
+                        <property name="viewMap">
+                            <map>
+                                <entry key="SUCCESS">
+                                    <bean
+                                        class="nexcore.framework.online.channel.web.HttpNullView">
+                                        <constructor-arg value="" />
+                                    </bean>
+                                </entry>
+                                <entry key="FAIL">
+                                    <ref local="nc.channel.web.DefaultWebErrorView" />
+                                </entry>
+                            </map>
+                        </property>
+                    </bean>
+                </entry>
+
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="nc.channel.web.DefaultWebErrorView"
+        class="nexcore.framework.online.channel.web.RequestView">
+        <description></description>
+        <constructor-arg value="/Error500.jsp" />
+    </bean>      
+
+    <bean id="nc.channel.web.IXmlApplicationController"
+        class="nexcore.framework.online.channel.core.internal.DefaultApplicationController">
+        <description>
+            <![CDATA[표준 웹-XML 요청에서 사용하는 ApplicationController임]]>
+        </description>
+        <property name="commandViewMapResolver" 
+            ref="nc.channel.web.IXmlCommandViewMapResolver" />
+        <property name="commandProcessor"
+            ref="nc.channel.web.ICommandProcessor" />
+        <property name="responseProcessor" 
+            ref="nc.channel.web.IResponseProcessor">
+        </property>
+        <!--         
+        <property name="preCheckers">
+            <list>
+                <ref local="nc.channel.IValidationManager" />
+                <ref local="nc.channel.IFormattingManager" />
+                <ref local="nc.channel.IDataMappingManager" />                
+            </list>
+        </property>
+        <property name="postCheckers">
+            <list>
+                <ref local="nc.channel.IDataMappingManager" />
+                <ref local="nc.channel.IFormattingManager" />
+            </list>
+        </property>
+        -->
+    </bean>
+    <bean id="nc.channel.web.IXmlCommandViewMapResolver"
+        class="nexcore.framework.online.channel.core.internal.DefaultCommandViewMapResolver">
+        <description>
+            <![CDATA[표준 웹-XML 요청에서 사용하는 CommandViewMapResolver임]]>
+        </description>
+        <property name="defaultErrorView">
+            <bean
+                class="nexcore.framework.online.channel.web.XMLView">
+                <constructor-arg value="text" />
+            </bean>
+        </property>
+        <property name="defaultCommandViewMap">
+            <bean class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                <!-- 커맨드 맵의 커맨드 정보 -->
+                <property name="command">
+                    <bean class="nexcore.framework.online.channel.core.command.StdCommand"></bean>
+                </property>
+                <!-- 커맨드 맵의 View 정보 -->
+                <property name="viewMap">
+                    <map>
+                        <entry key="SUCCESS">
+                            <bean
+                                class="nexcore.framework.online.channel.web.XMLView">
+                                <constructor-arg value="text" />
+                            </bean>
+                        </entry>
+                        <entry key="FAIL">
+                            <bean
+                                class="nexcore.framework.online.channel.web.XMLView">
+                                <constructor-arg value="text" />
+                            </bean>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="commandViewMaps">
+            <map>
+            	<entry key="/async.xmd">
+                    <bean
+                        class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                        <property name="command">
+                            <bean
+                                class="nexcore.framework.online.channel.core.command.AsyncCommand">
+                            </bean>
+                        </property>
+                        <property name="viewMap">
+                            <map>
+                                <entry key="SUCCESS">
+		                            <bean
+		                                class="nexcore.framework.online.channel.web.XMLView">
+		                                <constructor-arg value="text" />
+		                            </bean>
+		                        </entry>
+		                        <entry key="FAIL">
+		                            <bean
+		                                class="nexcore.framework.online.channel.web.XMLView">
+		                                <constructor-arg value="text" />
+		                            </bean>
+		                        </entry>
+                            </map>
+                        </property>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="nc.channel.web.IAxisApplicationController"
+        class="nexcore.framework.online.channel.core.internal.DefaultApplicationController">
+        <description>
+            <![CDATA[표준 웹서비스 요청에서 사용하는 ApplicationController임]]>
+        </description>
+        <property name="commandViewMapResolver" 
+            ref="nc.channel.web.IAxisCommandViewMapResolver" />
+        <property name="commandProcessor"
+            ref="nc.channel.web.ICommandProcessor" />
+        <property name="responseProcessor" 
+            ref="nc.channel.web.IResponseProcessor">
+        </property>
+        <!--         
+        <property name="preCheckers">
+            <list>
+                <ref local="nc.channel.IValidationManager" />
+                <ref local="nc.channel.IFormattingManager" />
+                <ref local="nc.channel.IDataMappingManager" />                
+            </list>
+        </property>
+        <property name="postCheckers">
+            <list>
+                <ref local="nc.channel.IDataMappingManager" />
+                <ref local="nc.channel.IFormattingManager" />
+            </list>
+        </property>
+        -->
+    </bean>
+    <bean id="nc.channel.web.IAxisCommandViewMapResolver"
+        class="nexcore.framework.online.channel.core.internal.DefaultCommandViewMapResolver">
+        <description>
+            <![CDATA[표준 웹서비스 요청에서 사용하는 CommandViewMapResolver임]]>
+        </description>
+        <property name="defaultErrorView">
+            <ref local="nc.channel.web.DefaultWebErrorView" />
+        </property>
+        <property name="defaultCommandViewMap">
+            <bean
+                class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                <property name="command">
+                    <bean
+                        class="nexcore.framework.online.channel.webservice.SoapCommand">
+                    </bean>
+                </property>
+                <property name="viewMap">
+                    <map>
+                        <entry key="SUCCESS">
+                            <bean
+                                class="nexcore.framework.online.channel.webservice.SoapView">
+                                <property name="namingRule">
+                                    <bean
+                                        class="nexcore.framework.online.channel.webservice.internal.DefaultWsdlNamingRule" />
+                                </property>
+                            </bean>
+                        </entry>
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <bean id="nc.channel.web.IBehindController"
+        class="nexcore.framework.online.channel.web.BehindController">
+        <description>
+            <![CDATA[Behind Tag를 이용한 MVC를 지원하는 web front controller]]>
+        </description>
+        <property name="applicationController" 
+            ref="nc.channel.web.IWebApplicationController" />
+        <property name="commandViewMapResolver"
+            ref="nc.channel.web.IWebCommandViewMapResolver" />
+    </bean>
+
+    <bean id="nc.channel.web.IPaginationManager"
+        class="nexcore.framework.online.ui.pagination.internal.PaginationManager">
+        <description>
+            <![CDATA[UI pagination 컴포넌트]]>
+        </description>
+        <property name="defaultFunction" value="new JNavigation().run"/>
+        <property name="defaultPageCountPerPagination" value="10"/>
+        <property name="baseType">
+            <bean
+                class="nexcore.framework.online.ui.pagination.internal.TextPaginationType" />
+        </property>
+        <property name="type">
+            <map>
+                <entry key="label">
+                    <bean
+                        class="nexcore.framework.online.ui.pagination.internal.LabelPaginationType" />
+                </entry>
+                <entry key="image">
+                    <bean
+                        class="nexcore.framework.online.ui.pagination.internal.ImagePaginationType" />
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <bean id="nc.channel.web.ITemplateManager"
+        class="nexcore.framework.online.ui.template.internal.PatternedTemplateManager"
+        init-method="init" destroy-method="destroy">
+        <description>
+            <![CDATA[표준 UI를 템플릿으로 구성할 수 있는 Template 기반 엔진.]]>
+        </description>
+        <property name="baseTemplate"
+            value="/template/BaseTemplate.jsp" />
+        <property name="mappings">
+            <list>
+                <value>
+                    /popup/**/*.jsp=/template/PopupTemplate.jsp
+                </value>
+                <value>
+                    /example/**/*.jsp=/template/ExampleTemplate.jsp
+                </value>
+            </list>
+        </property>
+    </bean>
+    
+</beans>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSMG00100">
+	<select id="getProdDisList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALSMG00100_getProdDisList_안희수 */
+		  a.prod_cd
+		, b.prod_nm
+		, b.grade_gb
+		, FBAS_GET_COMMCDNM_VAL('ZBAS_P_00090',b.grade_gb) grade_gb_nm
+		, b.mktg_dt
+		, b.mfact_id 
+		,(SELECT x.deal_co_nm 
+			FROM tbas_deal_co_mgmt x
+        	WHERE x.deal_co_cd = b.mfact_id 
+        	  AND x.deal_co_cl1 = '20' 
+        	  AND x.DEL_YN='N' 
+        	  AND x.DEAL_END_YN='N' 
+        	  AND rownum = 1) as mfact_nm
+		, b.prefer_cl
+		, FBAS_GET_COMMCDNM_VAL('ZBAS_P_00070',b.prefer_cl) prefer_cl_nm
+		, a.color_cd
+		, FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040',a.color_cd) color_nm
+		, a.ser_num
+		, FBAS_GET_AGENCY_NM(a.hld_plc_id, a.last_inout_dt) as agency_nm	/* 보유팀 */
+		, FBAS_GET_DEAL_NM(a.hld_plc_id, a.last_inout_dt) plc_nm			/* 보유처 */
+		, a.hld_plc_id
+		, a.eqp_st
+		, a.dis_st
+		, a.last_inout_dt
+		, a.last_inout_cl
+		, a.last_inout_dtl_cl
+		, FBAS_GET_COMMCDNM_VAL('ZDIS_C_00050',a.last_inout_dtl_cl) last_inout_dtl_cl_nm
+		, a.dis_amt
+		, a.fix_sale_amt
+		, a.fix_sale_dt
+		, a.rmks
+		, a.old_ser_num
+		, FBAS_GET_COMMCDNM_VAL('ZBAS_C_00440',b.com_mthd) com_mthd_nm		/* 통신방식 */
+		FROM tdis_prod_dis a, tbas_prod_mgmt b
+		WHERE last_inout_cl IN ('100','300')		/* 입고 / 재고이동 */
+		 AND a.del_yn = 'N'
+		 AND a.dis_st = '01'		/* 가용 */
+		 AND a.prod_cd = b.prod_cd
+		 AND b.del_yn = 'N'
+		 AND b.prod_cl ='1'
+		 ]]>
+<isNotEmpty prepend="AND" property="agency_cd">                       
+<![CDATA[    a.hld_plc_id IN ( SELECT deal_co_cd 
+		                       FROM tbas_deal_co_mgmt
+		                      WHERE del_yn = 'N'
+		                        AND deal_end_yn != 'Y'
+		                        AND deal_co_cl1 in ('A1','A2','Z1')
+		                        AND pos_agency = #agency_cd#
+		                        AND eff_end_dtm = '99991231235959')
+]]></isNotEmpty>		 
+<isNotEmpty prepend="AND" property="prod_cd">                       
+<![CDATA[    a.prod_cd  = #prod_cd#
+]]></isNotEmpty> 	
+<isNotEmpty prepend="AND" property="grade_gb">                       
+<![CDATA[    b.grade_gb  = #grade_gb#
+]]></isNotEmpty> 	
+<isNotEmpty prepend="AND" property="mfact_id">                       
+<![CDATA[    b.mfact_id  = #mfact_id#
+]]></isNotEmpty> 	
+<isNotEmpty prepend="AND" property="prefer_cl">                       
+<![CDATA[    b.prefer_cl  = #prefer_cl#
+]]></isNotEmpty> 	 
+	</select>
+	
+	<select id="getDealCoList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISDCO00100_selectDealCo_이문규 */
+		       deal_co_cd code,
+		       deal_co_nm value
+		FROM 
+		       tbas_deal_co_mgmt
+		WHERE  deal_co_cl1 = #deal_co_cl#
+		AND    del_yn = 'N']]>
+	</select>
+	
+</sqlMap>

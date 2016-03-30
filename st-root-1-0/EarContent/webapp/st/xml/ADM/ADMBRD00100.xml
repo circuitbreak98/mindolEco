@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="from" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="게시판" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="ctt" size="256" summ="default" type="STRING"/>
+					<colinfo id="title" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="user_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="org_id" size="256" summ="default" type="STRING"/>
+					<record>
+						<ctt></ctt>
+						<ins_user_id></ins_user_id>
+						<org_id></org_id>
+						<title></title>
+						<user_nm></user_nm>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_file">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset CanRowPosChange="ds_list_CanRowPosChange" DataSetType="Dataset" Id="ds_list"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_input"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_lvlSortSeqMax"></Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="647" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="7" Visible="FALSE" Width="60"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_title" ImeMode="native" Left="100" LeftMargin="2" OnKeyDown="div_search_common_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="169"></Edit>
+				<Static Align="Right" Height="20" Id="Static0" Left="21" Style="sty_lb_Search" TabOrder="3" Text="제목" Top="7" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="253" Style="sty_lb_Search" TabOrder="5" Text="내용" Top="7" VAlign="Middle" Width="76"></Static>
+				<Edit Border="Flat" Column="ctt" Height="20" Id="edt_ctt" ImeMode="native" Left="332" LeftMargin="2" OnKeyDown="div_search_common_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" Width="169"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="501" Style="sty_lb_Search" TabOrder="7" Text="작성자" Top="7" VAlign="Middle" Width="76"></Static>
+				<Edit Border="Flat" Column="user_nm" Height="20" Id="edt_userNm" ImeMode="native" Left="580" LeftMargin="2" OnKeyDown="div_search_common_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Width="57"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="384" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="296" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellPosChanged="grd_list_OnCellPosChanged" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="46"/>
+						<col width="482"/>
+						<col width="103"/>
+						<col width="135"/>
+						<col width="88"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="제목"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="작성자&#32;소속"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="작성자"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="작성일"/>
+					</head>
+					<body>
+						<cell align="right" col="0" display="text" expr="iif(board_lvl&#32;==&#32;1,&#32;board_num&#32;,&#32;&apos;&apos;)"/>
+						<cell align="left" col="1" colid="title" display="text" expr="f_displayReply(board_lvl,&#32;title&#32;)"/>
+						<cell align="left" col="2" colid="org_nm" display="text"/>
+						<cell align="left" col="3" colid="user_nm" display="text"/>
+						<cell align="center" col="4" colid="ins_dtm" display="date"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="게시판&#32;목록" Top="60" Width="192"></Image>
+		<Div Border="Raised" Height="152" Id="div_process" Left="8" Style="sty_div_input" TabOrder="4" Text="Div0" Top="408" Width="810">
+			<Contents>
+				<Edit BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="title" Height="20" Id="edt_title" ImeMode="native" Left="54" LeftMargin="2" MaxLength="100" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" UserData="제목" Width="472"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="-25" Style="sty_lb_Basic" TabOrder="2" Text="제목" Top="7" VAlign="Middle" Width="76"></Static>
+				<TextArea BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="ctt" Height="108" Id="edt_ctt" ImeMode="native" Left="54" MaxLength="4000" Style="sty_ipt_readonly" TabOrder="3" Top="30" UserData="내용" VScroll="TRUE" Width="472"></TextArea>
+				<Static Align="Right" Height="20" Id="Static1" Left="-25" Style="sty_lb_Basic" TabOrder="4" Text="내용" Top="30" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static7" Left="510" Style="sty_lb_Basic" TabOrder="5" Text="첨부파일" Top="6" VAlign="Middle" Width="76"></Static>
+				<Image Height="21" Id="Image3" ImageID="bul_mand" Left="10" TabOrder="6" Top="5" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="10" TabOrder="7" Top="28" Transparent="TRUE" Width="20"></Image>
+				<Grid AutoFit="TRUE" BindDataset="ds_file" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="139" Enable="true" EndLineColor="default" HeadBorder="Flat" HeadHeight="22" Height="109" Id="grd_file" InputPanel="FALSE" Left="534" LineColor="user33" MinWidth="100" OnCellClick="div_process_grd_file_OnCellClick" Right="774" RowHeight="21" Style="sty_Grid" TabOrder="8" TabStop="true" Top="30" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="240">
+					<contents>
+						<format id="Default">
+							<columns>
+								<col width="55"/>
+								<col width="347"/>
+								<col width="71"/>
+							</columns>
+							<head>
+								<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+								<cell bkcolor="user34" col="1" color="user35" display="text" text="파일명"/>
+								<cell bkcolor="user34" col="2" color="user35" display="text" text="크기"/>
+							</head>
+							<body>
+								<cell align="center" col="0" display="text" expr="row+1"/>
+								<cell col="1" colid="FILE_NM" cursor="expr:decode(FILE_PASS,null,&apos;arrow&apos;,&apos;hand&apos;)" display="text"/>
+								<cell align="center" col="2" colid="FILE_SIZE" display="text"/>
+							</body>
+						</format>
+					</contents>
+				</Grid>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_allDown" ImageID="btn_a_6" Left="662" LeftMargin="5" OnClick="btn_allDown_OnClick" Style="sty_btn_b" TabOrder="9" Text="전체다운로드" Top="6" Width="110"></Button>
+				<Button Cursor="HAND" Enable="FALSE" Height="21" Id="btn_delRow" ImageID="btn_i_subtract_w" Left="778" OnClick="btn_delRow_OnClick" TabOrder="11" Text="Button1" ToolTipText="추가된&#32;행삭제" Top="52" Width="19"></Button>
+				<Button Cursor="HAND" Enable="FALSE" Height="21" Id="btn_selectAttatchFiles" ImageID="btn_i_detail" Left="778" OnClick="div_process_btn_selectAttatchFiles_OnClick" TabOrder="10" ToolTipText="첨부파일선택" Top="28" Width="20"></Button>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="8" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="상세정보" Top="385" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="696" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="6" Text="저장" Top="568" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_new" ImageID="btn_e_4" Left="8" LeftMargin="15" OnClick="btn_new_OnClick" Style="sty_btn_e" TabOrder="7" Text="신규등록" Top="565" Visible="FALSE" Width="85"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_delete" ImageID="btn_d_2" Left="760" LeftMargin="5" OnClick="btn_del_OnClick" Style="sty_btn_d" TabOrder="8" Text="삭제" Top="568" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_reply" ImageID="btn_e_4" Left="96" LeftMargin="15" OnClick="btn_reply_OnClick" Style="sty_btn_e" TabOrder="9" Text="답변등록" Top="565" Width="85"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  ADMQNA00300
+* 업무명      :  Admin-Q&A 조회 
+* 프로그램명  :  Q&A 조회  
+--------------------------------------------------------------------------------
+* 작성자      : shimyunjung 
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 최승호
+수정일    : 2009.04.02
+수정 내역 : 사용자 데이터 변경 유무 체크 , 자료 삭제 기능, 첨부 파일 기능, 유효성 체크 
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_BOOLEAN_CHECK = true; // 필수 체크 통과 유무
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	ds_condition.AddRow();
+	// 정렬 기능
+	//cf_setGrdChecknSortEvent(grd_list);
+	
+	// 기본 조회
+	f_search();
+}
+
+function f_getAdmAuth()
+{
+	var sUserGrp   = gds_session.GetColumn(0, "usergrp");
+	
+	if(sUserGrp == "ADM" || sUserGrp == "P12" || sUserGrp == "P17")
+	{	// sAdm: 수퍼어디민, P12 : 어드민, P17:부어드민
+		return true;
+	}
+	return false;
+}
+
+/*******************************************************************************
+ * @description    : 조회 - 이벤트
+*******************************************************************************/
+function f_search()
+{
+	var sPosAgency = gds_session.GetColumn(0, "posAgencyId");
+	var sUserId    = gds_session.GetColumn(0, "loginid");
+	var sOrgArea = gds_session.GetColumn(0,"orgAreaId");
+	var sInOrgId = gds_session.GetColumn(0,"orgId");
+	var sUserGrp = gds_session.GetColumn(0,"usergrp");
+	
+	if(f_getAdmAuth() == true)
+	{
+		sPosAgency = "";
+	}
+	ds_condition.ClearData();
+	cf_setParam(ds_condition, "pos_agency"  , sPosAgency); 
+	cf_setParam(ds_condition, "title"  , div_search.edt_title.Text); 
+	cf_setParam(ds_condition, "ctt"    , div_search.edt_ctt.Text); 
+	cf_setParam(ds_condition, "user_nm", div_search.edt_userNm.Text); 
+	cf_setParam(ds_condition, "org_area", sOrgArea);
+	cf_setParam(ds_condition, "org_id", sInOrgId);
+	cf_setParam(ds_condition, "user_grp", sUserGrp);
+	
+	var sSvcID	= "getBoardList";
+	var sInDs 	= "nc_input_fieldDs=ds_condition";
+	var sOutDs	= "ds_list=List";
+	var sArg 	= "sktst.adm.BRD#getBoardList";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 조회 버튼 클릭 - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	f_search();
+}
+
+
+function f_validSave()
+{
+	if(uf_isNull(div_process.edt_title.Text) == true)
+	{
+		alert(cf_getMessage(MSG_00030, "제목"));
+		return false;
+	}
+
+	if(uf_isNull(div_process.edt_ctt.Text) == true)
+	{
+		alert(cf_getMessage(MSG_00030, "내용"));
+		return false;
+	}
+
+	return true;
+}
+
+var FV_CURROW = 0;
+
+/*******************************************************************************
+ * @description    : 저장 함수 - 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	if(ds_list.GetUpdate() == false && ds_file.GetUpdate() == false)
+	{
+		alert(cf_getMessage(MSG_00071,""));
+		return;
+	}
+	
+	if(f_validSave() == false) return;
+	
+	if(Confirm( "저장하시겠습니까?" ) == false) return;
+	
+	if(ds_file.GetRowCount() > 0)
+	{
+		ds_list.SetColumn(ds_list.currow, "file_yn" , "Y");
+	}
+	
+	// 저장 후 표시할 라인 셋팅.
+	FV_CURROW = ds_list.currow;
+	
+	var sSvcID	= "saveBoard";
+	var sInDs 	= "List=ds_list:U nc_fileDs=ds_file:U";
+	var sOutDs	= "";
+	var sArg 	= "sktst.adm.BRD#saveBoard";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+/*******************************************************************************
+ * @description    : 삭제 함수(현재 선택 건) - 이벤트
+*******************************************************************************/
+function btn_del_OnClick(obj)
+{
+	var nRow = ds_list.currow;
+	
+	if(nRow == -1) return;
+	
+	if(ds_list.GetRowType(nRow) == "insert")
+	{
+		ds_list.DeleteRow(nRow);
+		ds_file.DeleteAll();
+		return;
+	}
+	
+	
+	if(f_getAdmAuth() != true)
+	{
+		var sUserId = ds_list.GetColumn(nRow, "ins_user_id");	
+		if(sUserId != gds_session.GetColumn(0, "loginId"))
+		{
+			alert("해당 글의 작성자의 경우만 삭제가 가능합니다.");
+			return;
+		}
+	
+	}
+	
+	var sBrdNum = ds_list.GetColumn(nRow, "BOARD_NUM");		
+	if(ds_list.FindRow("SUP_BOARD_NUM", sBrdNum, nRow+1) != -1 )
+	{
+		alert("답변 존재시 삭제하실 수 없습니다.");
+		return;
+	}	
+	
+	if(confirm(cf_getMessage(MSG_00102,"")) == false) return;
+	
+	ds_condition.ClearData();
+	cf_setParam(ds_condition, "BOARD_NUM", ds_list.GetColumn(nRow, "BOARD_NUM")); 
+	cf_setParam(ds_condition, "UPD_CNT"  , ds_list.GetColumn(nRow, "UPD_CNT")); 
+	
+	ds_file.DeleteAll();
+	
+	var sSvcID	= "svcDel";
+	var sInDs 	= "nc_input_fieldDs=ds_condition  nc_fileDs=ds_file:U";
+	var sOutDs	= "";
+	var sArg 	= "sktst.adm.BRD#deleteBoard";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+function f_displayReply(sLev, sTitle)
+{
+	if(sLev > 1) sTitle =+ '[Re] ' + sTitle;
+	return Space( (toNumber(sLev) -1) * 4) + sTitle;
+}
+
+/*******************************************************************************
+ * @description    		: 첨부파일 정보 취득
+ * @param sDocId        : 문서번호
+*******************************************************************************/
+function f_getAttatchList(sDocId)
+{
+	// 조회를 위한 필수 인자 SCREEN_ID ,  DOC_ID
+	var sScreenId = substr(pFrmUrl, pFrmUrl.indexOf("::")+2);
+	
+	ds_condition.ClearData();
+	cf_setParam(ds_condition, "SCREEN_ID", sScreenId); 
+	cf_setParam(ds_condition, "DOC_ID"   , sDocId); 
+
+	// 트랜잭션 설정
+	var sSvcID = "svcAttatchList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_file=nc_fileDs";
+	var sArg = "sktst.adm.NTC#getAttatchList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+
+	switch(sSvcID)
+	{
+	case "getBoardList":
+		ds_list.row = FV_CURROW;
+		ds_lvlSortSeqMax.ClearData();
+		ds_lvlSortSeqMax.Copy(ds_list);
+		cf_setOrgDs(ds_list);
+		break;
+	case "saveBoard":
+		f_search();
+		//ds_list.row = 0;
+		break;
+	case "svcDel":
+		ds_list.ApplyChange();
+		f_search();
+		//ds_list.row = 0;
+	
+		break;
+	}	
+}
+
+ /*******************************************************************************
+ * @description    : 필수 체크 및 상세 내용 보기 - 이벤트
+*******************************************************************************/
+function grd_list_OnCellPosChanged(obj,nRow,nCell,nOldRow,nOldCell,nPivotIndex,nOldPivotIndex)
+{
+	if(nRow == -1) return;
+	
+	var sUserId = ds_list.GetColumn(nRow, "ins_user_id");	
+	if(sUserId == gds_session.GetColumn(0, "loginId"))
+	{	// 본인글에 대해서 
+		displayObject(false);
+	}
+	else
+	{
+		displayObject(true);
+	}	
+	
+	f_setAttachScreen();
+}
+
+ /*******************************************************************************
+ * @description    : 첨부 파일 정보 표시 
+*******************************************************************************/
+function f_setAttachScreen()
+{
+	var sDocId = ds_list.GetColumn(ds_list.currow, "doc_id");	
+	ds_file.ClearData();
+	
+	if(trim(sDocId).length  > 0)
+	{
+		f_getAttatchList(sDocId);
+	}
+}
+
+
+ /*******************************************************************************
+ * @description    : 오브젝트 상태 설정
+*******************************************************************************/
+function displayObject(bReadOnly)
+{
+	
+
+	if(bReadOnly == false)
+	{	// 읽기/쓰기
+		div_process.edt_title.Readonly = false;
+		div_process.edt_ctt.Readonly   = false;
+		
+		div_process.btn_selectAttatchFiles.Enable = true;
+		div_process.btn_delRow.Enable = true;
+		div_process.edt_title.Enable = true;
+		div_process.edt_ctt.Readonly = false;
+		div_process.edt_title.SetFocus();
+	} 
+	else 
+	{	// 읽기 전용
+		div_process.edt_title.Readonly = true;
+		div_process.edt_ctt.Readonly   = true;
+	
+		div_process.btn_selectAttatchFiles.Enable = false;
+		div_process.btn_delRow.Enable = false;
+		div_process.edt_title.Enable = false;
+		div_process.edt_ctt.Readonly = true;
+	}
+}
+
+/*******************************************************************************
+ * @description    : 신규등록   
+*******************************************************************************/
+function btn_new_OnClick(obj)
+{
+	var nRow = -1;
+	if(ds_list.GetUpdate() == true)
+	{
+		var nRow = ds_list.currow;
+		ds_list.SetColumn(nRow, "TITLE" , "");
+		ds_list.SetColumn(nRow, "CTT"   , "");
+		
+		return;
+	}
+	
+	var nRow = 0;
+	ds_file.Clear();
+	
+	ds_list.InsertRow(nRow);
+
+	ds_list.SetColumn(nRow, "BOARD_LVL" , 1);
+	ds_list.SetColumn(nRow, "LVL_SORT_SEQ" , 1);
+	ds_list.SetColumn(nRow, "org_nm" , gds_session.GetColumn(0, "orgnm"));
+	ds_list.SetColumn(nRow, "user_nm", gds_session.GetColumn(0, "usernm"));
+	ds_list.SetColumn(nRow, "ins_user_id", gds_session.GetColumn(0, "loginId"));
+	ds_list.SetColumn(nRow, "ins_dtm", today());
+	
+	displayObject(false);
+}
+
+/*******************************************************************************
+ * @description    : 답변등록   
+*******************************************************************************/
+function btn_reply_OnClick(obj)
+{
+	var nRow       = ds_list.currow;
+	var sBrdNum    = ds_list.GetColumn(nRow , "BOARD_NUM");	
+	var nBrdLv     = toNumber(ds_list.GetColumn(nRow , "BOARD_LVL"));
+	var sOrgBrdNum = ds_list.GetColumn(nRow , "ORG_BOARD_NUM");
+
+	if(uf_isNull(sBrdNum) == true)
+	{
+		alert("본문 글이 존재하지 않아 답변을 하실 수 없습니다.");
+		return;
+	}
+/*	
+	if(ds_list.FindRow("SUP_BOARD_NUM", sBrdNum, nRow+1) != -1 )
+	{
+		alert("동일한 레벨의 답변은 등록하실 수 없습니다.");
+		return;
+	}
+
+	if(nBrdLv > 3 )
+	{
+		alert("답변을 등록하실 수 없습니다.");
+		return;
+	}
+*/
+	if(ds_list.GetUpdate() == true)
+	{
+		var nRow = ds_list.currow;
+		ds_list.SetColumn(nRow, "TITLE" , "");
+		ds_list.SetColumn(nRow, "CTT"   , "");
+		return;
+	}	
+	
+	
+	var nAddRow    = ds_list.InsertRow(nRow+1);
+	var nLvlSortSeq = f_getLvlSortSeqMax(sBrdNum);
+
+	ds_list.SetColumn(nAddRow, "ORG_BOARD_NUM" , sOrgBrdNum);
+	ds_list.SetColumn(nAddRow, "SUP_BOARD_NUM" , sBrdNum);
+	ds_list.SetColumn(nAddRow, "BOARD_LVL"     , nBrdLv + 1);
+	ds_list.SetColumn(nAddRow, "LVL_SORT_SEQ" , nLvlSortSeq + 1);
+	
+	ds_list.SetColumn(nAddRow, "org_nm" , gds_session.GetColumn(0, "orgnm"));
+	ds_list.SetColumn(nAddRow, "ins_user_id", gds_session.GetColumn(0, "loginId"));
+	ds_list.SetColumn(nAddRow, "user_nm", gds_session.GetColumn(0, "usernm"));
+	ds_list.SetColumn(nAddRow, "ins_dtm", today());	
+	
+	displayObject(false);
+}
+
+
+/*******************************************************************************
+ * @description    : 리플 순번  맥스 구하기 
+*******************************************************************************/
+function f_getLvlSortSeqMax(sBoardNum)
+{
+	//ds_lvlSortSeqMax.UnFilter();
+	ds_lvlSortSeqMax.Filter("SUP_BOARD_NUM="+quote(sBoardNum));
+	
+	return toNumber(ds_lvlSortSeqMax.Max("LVL_SORT_SEQ"));
+}
+
+/*******************************************************************************
+ * @description    : 전체 다운로드 - 이벤트
+*******************************************************************************/
+function btn_allDown_OnClick(obj)
+{
+	cf_allDownLoad(ds_file);
+}
+
+/*******************************************************************************
+ * @description    : enter key 조회
+*******************************************************************************/
+function div_search_common_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{	
+	if (nChar==13) 
+	{
+		f_search();
+	}
+}
+
+
+
+/*******************************************************************************
+ * @description    : 첨부 파일 선택- 이벤트
+*******************************************************************************/
+function div_process_btn_selectAttatchFiles_OnClick(obj)
+{
+	var sDocId = ds_list.GetColumn(ds_list.currow, "DOC_ID");
+	cf_setUploadFile(ds_file, sDocId);
+}
+
+
+/*******************************************************************************
+ * @description    : 첨부 파일 삭제 - 이벤트
+*******************************************************************************/
+function btn_delRow_OnClick(obj)
+{
+	var oGrdDs = object(div_process.grd_file.BindDataset);
+	if(oGrdDs.getRowCount() < 1)
+	{
+		alert(cf_getMessage(MSG_00039,""));
+		return;
+	}
+	
+	if(oGrdDs.getRowType(oGrdDs.currow) == "insert")
+	{
+		oGrdDs.DeleteRow(oGrdDs.currow);
+	}
+	else
+	{
+		if(confirm(cf_getMessage(MSG_00102,"")) == true)
+		{
+			oGrdDs.DeleteRow(oGrdDs.currow);
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : 첨부 파일 내려 받기- 이벤트
+*******************************************************************************/
+function div_process_grd_file_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell != 1) return;
+	
+	var oGrdDs = object(obj.BindDataset);
+	var sScreenId = oGrdDs.getColumn(nRow, "SCREEN_ID");
+	var sDocId = oGrdDs.getColumn(nRow, "DOC_ID");
+	var sFileName = oGrdDs.getColumn(nRow, "FILE_NM");
+	var sFileType = oGrdDs.getColumn(nRow, "FILE_TYPE");
+	cf_downLoad(sScreenId, sDocId, sFileName, sFileType);	
+
+}
+
+
+
+function df_reSet(){
+}
+
+
+function ds_list_CanRowPosChange(obj,nOldRow,nRow)
+{
+	if(obj.GetUpdate() == true)
+	{
+		if(Confirm("변경된 내용이 존재합니다.\r\n계속 진행하시겠습니까?") == false)
+		{
+			return false;
+		}
+		else
+		{
+			obj.Reset();
+			return true;
+		}
+	}
+	return true;
+}
+
+
+]]></Script>
+</Window>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASPDM00700">
+	<select id="getUsedProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* 상품조회-BASPDM00600_getUserProdListByProdCl-이강수-전현주 */ 
+       prod_cl
+       ,mfact_id
+       ,mfact_nm
+       ,prod_nm
+       ,prod_cd
+       ,prod_chrtic_1
+       ,prod_chrtic_1_nm
+       ,prod_chrtic_2
+       ,prod_chrtic_2_nm
+       ,mktg_dt
+       ,end_dt
+       ,sale_yn
+       ,rgst_cl
+       ,ch_cnt
+       ,com_mthd
+       ,mst_prod_cd
+       ,mst_prod_nm
+FROM
+(
+    SELECT  a.prod_cl
+           ,a.mfact_id
+           ,fbas_get_deal_nm(a.mfact_id, '') as mfact_nm
+           ,a.prod_nm
+           ,a.prod_cd
+           ,a.prod_chrtic_1
+           ,(CASE WHEN a.prod_cl = '1'
+             THEN fbas_get_commcdnm_val('ZBAS_C_00020',a.prod_chrtic_1)
+             WHEN a.prod_cl = '3'
+             THEN fbas_get_commcdnm_val('ZBAS_C_00020', a.prod_chrtic_1)
+             ELSE ''
+             END ) as prod_chrtic_1_nm
+           , a.prod_chrtic_2
+           , (CASE WHEN a.prod_cl = '1'
+             THEN fbas_get_commcdnm_val('ZBAS_C_00030',a.prod_chrtic_2)
+             ELSE ''
+             END ) as prod_chrtic_2_nm
+           ,a.mktg_dt
+           ,a.end_dt
+           ,a.sale_yn
+           ,a.rgst_cl
+           ,a.mst_prod_cd
+           ,fbas_get_prod_nm(a.mst_prod_cd) mst_prod_nm
+           ,(
+             SELECT COUNT(*) 
+             FROM   tdis_dis tdd
+             WHERE  tdd.prod_cd = a.prod_cd
+             AND    tdd.del_yn = 'N'
+             AND    tdd.dis_st = '01' /* 가용 */
+             AND    a.sale_yn = 'N'
+            ) ch_cnt
+           ,a.com_mthd
+      FROM tbas_prod_mgmt a
+     WHERE a.del_yn = 'N'
+]]><isNotEqual prepend="" property="APP_POL" compareValue="Y">
+<![CDATA[]]>    <isNotEqual prepend="AND" property="SALE_YN" compareValue="">
+<![CDATA[	    a.sale_yn = #SALE_YN#
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="PROD_CD" compareValue="">
+<![CDATA[	    a.prod_cd LIKE '%'||#PROD_CD#||'%'
+]]>    </isNotEqual> 
+<![CDATA[]]>    <isNotEqual prepend="AND" property="PROD_CL" compareValue="">
+<![CDATA[	    a.prod_cl = #PROD_CL#
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="PROD_NM" compareValue="">
+<![CDATA[	    a.prod_nm LIKE '%'||#PROD_NM#||'%'
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="MFACT_ID" compareValue="">
+<![CDATA[	    a.mfact_id = #MFACT_ID#
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="PROD_CHRTIC_1" compareValue="">
+<![CDATA[    	a.prod_chrtic_1 = #PROD_CHRTIC_1#
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="PROD_CHRTIC_2" compareValue="">
+<![CDATA[	    a.prod_chrtic_2 = #PROD_CHRTIC_2#
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="COM_MTHD">
+<![CDATA[    	a.com_mthd = #COM_MTHD#
+]]>    </isNotEmpty>
+<![CDATA[]]></isNotEqual>
+<![CDATA[    ORDER BY a.mktg_dt DESC
+)
+]]><isEqual prepend="WHERE" property="APP_POL" compareValue="Y">
+<![CDATA[    ch_cnt > 0
+]]></isEqual>
+	</select>
+</sqlMap>

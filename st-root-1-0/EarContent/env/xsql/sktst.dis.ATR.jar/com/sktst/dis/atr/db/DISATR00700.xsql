@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="DISATR00700">
+	<select id="selectInProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[(SELECT /*+ "DISATR00700_selectInProdList_전희경" */
+       b.prod_cl,
+       b.mfact_id,
+       NVL((SELECT sort_seq 
+          FROM tbas_deal_co_mgmt
+         WHERE del_yn = 'N'
+           AND deal_end_yn != 'Y'
+           AND out_stop_yn = 'N'
+           AND deal_co_cd = b.mfact_id
+           AND eff_end_dtm = '99991231235959'
+           AND rownum = 1), '') sort_seq,
+       a.prod_cd,
+       b.prod_nm,
+       a.color_cd,
+       a.ser_num,
+       /*a.bad_yn,*/
+       a.eqp_st,
+       a.dis_st,
+       a.hld_plc_id,
+       a.old_ser_num,
+       b.mktg_dt,
+       '1' cur_cnt,
+       '1' mov_cnt,
+       '0' mov_chk,
+       'N' out_fix_yn,
+       'N' in_fix_yn,
+       '0' mov_seq,
+       a.upd_cnt,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','U') as sale_unit_prc,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','D') as sale_prc,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','M') as sale_mar,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','S') as sale_cmms,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','Y') as splst_yn,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','V') as sale_vat_prc,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','SA') as sale_amt        
+FROM   tdis_prod_dis a,
+       tbas_prod_mgmt b
+WHERE  a.prod_cd = b.prod_cd
+AND    a.del_yn = 'N'
+AND    a.dis_st = '01'
+AND    a.hld_plc_id = #out_plc_id#
+]]><isNotEmpty prepend="AND" property="ser_num">
+<![CDATA[       UPPER(a.ser_num) like '%' || UPPER(#ser_num#) || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="old_ser_num">
+<![CDATA[       UPPER(a.old_ser_num) like '%' || UPPER(#old_ser_num#) || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       UPPER(a.prod_cd) LIKE '%' || UPPER(#prod_cd#) || '%'
+]]></isNotEmpty>
+<![CDATA[AND    b.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[       b.mfact_id = #mfact_id#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="UNION" property="prod_cd">
+<![CDATA[SELECT b.prod_cl,
+       b.mfact_id,
+       NVL((SELECT sort_seq 
+          FROM tbas_deal_co_mgmt
+         WHERE del_yn = 'N'
+           AND deal_end_yn != 'Y'
+           AND out_stop_yn = 'N'
+           AND deal_co_cd = b.mfact_id
+           AND eff_end_dtm = '99991231235959'
+           AND rownum = 1), '') sort_seq,
+       a.prod_cd,
+       b.prod_nm,
+       a.color_cd,
+       a.ser_num,
+       /*a.bad_yn,*/
+       a.eqp_st,
+       a.dis_st,
+       a.hld_plc_id,
+       a.old_ser_num,
+       b.mktg_dt,
+       '1' cur_cnt,
+       '1' mov_cnt,
+       '0' mov_chk,
+       'N' out_fix_yn,
+       'N' in_fix_yn,
+       '0' mov_seq,
+       a.upd_cnt,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','U') as sale_unit_prc,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','D') as sale_prc,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','M') as sale_mar,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','S') as sale_cmms,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','Y') as splst_yn,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','V') as sale_vat_prc,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,a.ser_num,'1','SA') as sale_amt    
+FROM   tdis_prod_dis a,
+       tbas_prod_mgmt b
+WHERE  a.prod_cd = b.prod_cd
+AND    a.del_yn = 'N'
+AND    a.dis_st = '01'
+AND    a.hld_plc_id = #out_plc_id#
+]]><isNotEmpty prepend="AND" property="ser_num">
+<![CDATA[       UPPER(a.ser_num) like '%' || UPPER(#ser_num#) || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       UPPER(b.prod_nm) LIKE '%' || UPPER(#prod_cd#) || '%'
+]]></isNotEmpty>
+<![CDATA[AND    b.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[       b.mfact_id = #mfact_id#
+]]></isNotEmpty>
+<![CDATA[]]></isNotEmpty>
+<![CDATA[)]]>
+	</select>
+	<select id="getMovColorList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISATR00700_getMovColorList_이정현_이정현" */
+       b.prod_cd,
+       b.color_cd,
+       (SELECT comm_cd_val_nm
+          FROM tbas_comm_cd_dtl
+         WHERE comm_cd_val = b.color_cd
+           AND comm_cd_id = 'ZBAS_C_00040') as color_nm         
+  FROM tbas_prod_color b
+ WHERE b.del_yn  = 'N']]>
+	</select>
+	<select id="getMovProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISATR00700_getMovProdList_이정현_이정현" */
+       a.prod_cd,
+       a.prod_nm,
+       decode(a.del_yn, 'N', 'Y', 'N') use_yn,  
+       a.prod_cl,
+       (SELECT comm_cd_val_nm
+          FROM tbas_comm_cd_dtl
+         WHERE comm_cd_val = a.prod_cl
+           AND comm_cd_id = 'ZBAS_C_00010') as prod_cl_nm,
+       a.mfact_id,
+       FBAS_GET_DEAL_NM(a.mfact_id,'') as mfact_nm,
+       a.bar_cd_typ
+  FROM tbas_prod_mgmt a
+ WHERE a.del_yn  = 'N']]>
+	</select>
+	<select id="getMovProdListByExcel" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISATR00700_selectDisProdList_이정현_김중일" */
+       a.prod_cl,
+       (select comm_cd_val_nm
+       from tbas_comm_cd_dtl
+       where comm_cd_id = 'ZBAS_C_00010'
+       and   comm_cd_val = a.prod_cl) AS prod_cl_nm,
+       a.mfact_id,
+       (select b.deal_co_nm from tbas_deal_co_mgmt b
+        where  b.deal_co_cd = a.mfact_id and b.deal_co_cl1 = '20' and rownum = 1) as mfact_nm,
+       a.prod_nm,
+       a.prod_cd,
+       a.rmks,
+       a.bar_cd_typ,
+       e.color_cd,
+       e.ser_num,
+       e.old_ser_num,
+       /* e.bad_yn, */
+       e.eqp_st,
+       e.dis_st,
+       e.hld_plc_id,
+       hld.deal_co_nm as hld_plc_nm,
+       a.mktg_dt,
+       '1' mov_qty,
+       e.upd_cnt,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,e.ser_num,'1','U') as sale_unit_prc,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,e.ser_num,'1','D') as sale_prc,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,e.ser_num,'1','M') as sale_mar,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,e.ser_num,'1','S') as sale_cmms,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,e.ser_num,'1','Y') as splst_yn,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,e.ser_num,'1','V') as sale_vat_prc,
+       FSAL_GET_SALEAMT(#out_plc_id#,#sale_dtm#,#sale_typ_cd#,a.prod_cd,e.ser_num,'1','SA') as sale_amt
+FROM   tbas_prod_mgmt a,
+       tdis_prod_dis e,
+       tbas_deal_co_mgmt hld /* 보유처 */
+WHERE a.del_yn = 'N'
+AND   a.prod_cd  = #prod_cd#
+AND   a.prod_cd  = e.prod_cd
+AND   e.ser_num  = #ser_num#
+AND   e.del_yn   = 'N'
+AND   e.dis_st   = '01'
+AND   e.hld_plc_id = #out_plc_id#
+AND   e.color_cd   = #color_cd#
+AND   e.hld_plc_id = hld.deal_co_cd	/* 보유처 */ ]]>
+	</select>
+</sqlMap>

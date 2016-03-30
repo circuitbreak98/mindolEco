@@ -1,0 +1,957 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ADMBTW00100" Left="8" OnLoadCompleted="ADMBTW00100_OnLoadCompleted" PidAttrib="7" Title="할부원금&#32;금액설정" Top="8" Ver="1.0" Width="960" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_input"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_Agency">
+				<Contents>
+					<colinfo id="org_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="org_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="pos_agency" size="256" summ="default" type="STRING"/>
+					<colinfo id="pos_agency_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="pos_dcode" size="256" summ="default" type="STRING"/>
+					<colinfo id="aply_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="old_aply_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="exist_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="update_yn" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_Adjust">
+				<Contents>
+					<colinfo id="chk" size="256" summ="default" type="STRING"/>
+					<colinfo id="from_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="to_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="allot_adj_prc" size="256" summ="default" type="STRING"/>
+					<colinfo id="cash_adj_prc" size="256" summ="default" type="STRING"/>
+					<colinfo id="old_allot" size="256" summ="default" type="STRING"/>
+					<colinfo id="old_cash" size="256" summ="default" type="STRING"/>
+					<colinfo id="update_yn" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_Product">
+				<Contents>
+					<colinfo id="apply_month" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="apply_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="old_apply_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="exist_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="update_yn" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_Range">
+				<Contents>
+					<colinfo id="chk" size="256" summ="default" type="STRING"/>
+					<colinfo id="apply_month" size="256" summ="default" type="STRING"/>
+					<colinfo id="agrmt_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="range_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="update_yn" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="38" Id="div_condition" Left="10" Style="sty_div_search" TabOrder="1" TabStop="FALSE" Text="Div0" Top="10" Width="942">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="839" LeftMargin="5" OnClick="Div_Condition_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" TabStop="FALSE" Text="조회" Top="7" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static1" Left="7" Style="sty_lb_Search" TabOrder="2" Text="영업센터" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_orgId" Left="75" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="82"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_orgId" ImageID="btn_i_detail_b" Left="156" OnClick="div_condition_btn_orgId_OnClick" TabOrder="5" Text="Button0" Top="7" Width="20"></Button>
+				<Edit Border="Flat" CheckLength="Byte" Enable="FALSE" Height="20" Id="edt_orgNm" ImeMode="native" Left="176" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" Width="148"></Edit>
+				<Image Height="21" Id="Image2" ImageID="bul_mand" Left="348" TabOrder="9" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static0" Left="351" Style="sty_lb_Search" TabOrder="6" Text="적용년월" Top="7" VAlign="Middle" Width="60"></Static>
+				<MaskEdit Border="Flat" Height="19" Id="cal_clsMth" Left="416" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="7" Type="STRING" UserData="마감월" Width="60"></MaskEdit>
+				<Button Cursor="HAND" Height="21" Id="btn_calMonth" ImageID="btn_i_detail_b" Left="475" OnClick="div_condition_btn_calMonth_OnClick" TabOrder="7" Text="Button0" Top="7" Width="20"></Button>
+				<Static Align="Right" Height="20" Id="Static10" Left="501" Style="sty_lb_Search" TabOrder="13" Text="제조사" Top="8" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_MfactNm" Left="565" LeftMargin="2" OnCharChanged="div_condition_edt_MfactNm_OnCharChanged" OnKeyDown="div_condition_edt_MfactNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="7" Width="122"></Edit>
+				<Button Height="21" Id="btn_MfactId" ImageID="btn_i_detail" Left="687" OnClick="div_condition_btn_MfactId_OnClick" TabOrder="11" Text="Button0" Top="7" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_MfactId" Left="706" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="7" Visible="FALSE" Width="13"></Edit>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="대상&#32;대리점" Top="51" Width="150"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="893" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="562" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="603" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="보조금기준&#32;조정금액" Top="302" Width="150"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_saveAdjust" ImageID="btn_c_2" Left="831" LeftMargin="5" OnClick="btn_saveAdjust_OnClick" Style="sty_btn_c" TabOrder="5" Text="저장" Top="562" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="292" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="6" Text="저장" Top="562" Visible="FALSE" Width="60"></Button>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_Agency" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="558" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" FixedColSizing="TRUE" HeadBorder="Flat" HeadHeight="21" Height="485" Id="grd_Agency" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnHeadClick="grd_Agency_OnHeadClick" Right="351" RowHeight="21" Style="sty_Grid" TabOrder="7" TabStop="FALSE" Top="73" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="341">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="34"/>
+						<col width="80"/>
+						<col width="149"/>
+						<col width="68"/>
+						<col width="24"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="순번"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="대리점코드"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="대리점명"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="금액설정"/>
+						<cell bkcolor="user34" col="4" color="user35" display="checkbox" edit="checkbox"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="chk" display="number" edit="checkbox" expr="ROW+1"/>
+						<cell col="1" colid="pos_dcode" display="text"/>
+						<cell col="2" colid="pos_agency_nm" display="text"/>
+						<cell align="center" col="3" colid="aply_yn" colspan="2" display="checkbox" edit="checkbox"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_Adjust" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="557" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="235" Id="grd_Adjust" InputPanel="FALSE" Left="600" LineColor="user33" MinWidth="100" Right="950" RowHeight="21" Style="sty_Grid" TabOrder="8" TabStop="true" Top="322" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="350">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="39"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="100"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" rowspan="2" text="선택"/>
+						<cell bkcolor="user34" col="1" color="user35" colspan="2" display="text" text="보조금"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" rowspan="2" text="할부매출조정"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" rowspan="2" text="현금매출조정"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" row="1" text="이상"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" row="1" text="미만"/>
+					</head>
+					<body>
+						<cell align="right" col="0" colid="chk" display="checkbox" edit="checkbox"/>
+						<cell align="right" col="1" colid="from_amt" display="number" edit="expr:decode(rowType,&apos;insert&apos;,&apos;number&apos;,&apos;none&apos;)"/>
+						<cell align="right" col="2" colid="to_amt" display="number" edit="expr:decode(rowType,&apos;insert&apos;,&apos;number&apos;,&apos;none&apos;)"/>
+						<cell align="right" col="3" colid="allot_adj_prc" display="number" edit="number"/>
+						<cell align="right" col="4" colid="cash_adj_prc" display="number" edit="number"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="357" LeftMargin="15" Style="sty_img_tit" TabOrder="9" Text="대상&#32;모델" Top="51" Width="150"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_Product" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="558" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" FixedColSizing="TRUE" HeadBorder="Flat" HeadHeight="21" Height="485" Id="Grid0" InputPanel="FALSE" Left="355" LineColor="user33" MinWidth="100" OnHeadClick="grd_Agency_OnHeadClick" Right="595" RowHeight="21" Style="sty_Grid" TabOrder="10" TabStop="FALSE" Top="73" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="240">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="34"/>
+						<col fix="left" width="43"/>
+						<col fix="left" width="80"/>
+						<col width="55"/>
+						<col width="24"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="순번"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="모델명"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="적용여부"/>
+						<cell bkcolor="user34" col="4" color="user35" display="checkbox" edit="checkbox"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="chk" display="number" edit="checkbox" expr="ROW+1"/>
+						<cell align="center" col="1" colid="prod_cd" display="text"/>
+						<cell col="2" colid="prod_nm" display="text"/>
+						<cell align="center" col="3" colid="apply_yn" colspan="2" display="checkbox" edit="checkbox"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_saveModel" ImageID="btn_c_2" Left="537" LeftMargin="5" OnClick="btn_saveModel_OnClick" Style="sty_btn_c" TabOrder="11" Text="저장" Top="562" Visible="FALSE" Width="60"></Button>
+		<Div Height="21" Id="div_Halbu" Left="910" TabOrder="13" Text="Div2" Top="301" Width="44">
+			<Contents>
+				<Button Cursor="HAND" Height="20" Id="btn_addRange" ImageID="btn_i_add_w" OnClick="btn_addRange_OnClick" TabOrder="1" Text="Button7" Width="20"></Button>
+				<Button Cursor="HAND" Height="20" Id="btn_delRange" ImageID="btn_i_subtract_w" Left="22" OnClick="btn_delRange_OnClick" TabOrder="2" Text="Button7" Width="20"></Button>
+			</Contents>
+		</Div>
+		<MaskEdit Border="Flat" Height="19" Id="cal_clsMth" Left="848" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="51" Type="STRING" UserData="마감월" Visible="FALSE" Width="60"></MaskEdit>
+		<Image Align="Left" Height="25" Id="Image3" ImageID="bul_tit" Left="599" LeftMargin="15" Style="sty_img_tit" TabOrder="15" Text="할부지원금&#32;설정" Top="51" Width="150"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_saveRange" ImageID="btn_c_2" Left="893" LeftMargin="5" OnClick="btn_saveRange_OnClick" Style="sty_btn_c" TabOrder="14" Text="저장" Top="266" Visible="FALSE" Width="60"></Button>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_Range" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="261" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="188" Id="grd_Range" InputPanel="FALSE" Left="600" LineColor="user33" MinWidth="100" OnExpandUp="grd_Range_OnExpandUp" OnKeyDown="grd_Range_OnKeyDown" Right="950" RowHeight="21" Style="sty_Grid" TabOrder="16" TabStop="true" Top="73" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="350">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="51"/>
+						<col width="117"/>
+						<col width="110"/>
+						<col width="110"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="선택"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="적용년월"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="할부지원금"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="적용기준"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="chk" display="checkbox" edit="checkbox"/>
+						<cell align="left" col="1" colid="apply_month" display="text" edit='expr:decode(rowType,&apos;insert&apos;,decode(ds_Range.GetColumn(0,&quot;chk&quot;),&apos;0&apos;,&apos;none&apos;,&apos;normal&apos;),&apos;none&apos;)' expandimage="btn_i_detail" expandshow='expr:decode(rowType,&apos;insert&apos;,decode(ds_Range.GetColumn(0,&quot;chk&quot;),&apos;1&apos;,&apos;false&apos;,&apos;true&apos;),&apos;false&apos;)' expandsize="19" Mask="####-##"/>
+						<cell align="right" col="2" colid="agrmt_amt" display="number" edit="number"/>
+						<cell align="right" col="3" colid="range_amt" display="number" edit="number"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Height="21" Id="div_Range" Left="909" TabOrder="17" Text="Div2" Top="52" Width="44">
+			<Contents>
+				<Button Cursor="HAND" Height="20" Id="btn_addAdjust" ImageID="btn_i_add_w" OnClick="btn_addAdjust_OnClick" TabOrder="1" Text="Button7" Width="20"></Button>
+				<Button Cursor="HAND" Height="20" Id="btn_delAdjust" ImageID="btn_i_subtract_w" Left="22" OnClick="btn_delAdjust_OnClick" TabOrder="2" Text="Button7" Width="20"></Button>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_deleteRange" ImageID="btn_c_2" Left="829" LeftMargin="5" OnClick="btn_deleteRange_OnClick" Style="sty_btn_c" TabOrder="18" Text="삭제" Top="266" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_deleteAdjust" ImageID="btn_c_2" Left="769" LeftMargin="5" OnClick="btn_deleteAdjust_OnClick" Style="sty_btn_c" TabOrder="19" Text="삭제" Top="562" Visible="FALSE" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ADMBTW00100
+* 업무명      : 방통위 대리점 관리
+* 프로그램명  : 
+--------------------------------------------------------------------------------
+* 작성자      : 김연석
+* 작성일      : 2011.03.03
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var    FV_ORG_ID;                // 소속 
+var    FV_ORG_NM;                // 소속명
+var    FV_ORG_CL;                // 소소구분
+var    FV_USER_GRP;
+
+var    FV_STR_POP_RESULT;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ADMBTW00100_OnLoadCompleted(obj)
+{
+    cf_setAuth(pFrmNum);    // 권한 공통
+    btn_saveModel.Visible    = btn_save.Visible;
+    btn_saveRange.Visible    = btn_save.Visible;
+    btn_saveAdjust.Visible   = btn_save.Visible;
+    btn_deleteRange.Visible  = btn_save.Visible;
+    btn_deleteAdjust.Visible = btn_save.Visible;
+
+    lf_getSession();    
+    lf_formInit();
+}
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function lf_getSession()
+{
+    FV_ORG_ID   = gds_session.GetColumn(0, "orgid");    // 소속 
+    FV_ORG_NM   = gds_session.GetColumn(0, "orgnm");    // 소속명
+    FV_ORG_CL   = gds_session.GetColumn(0, "orgcl");    // 소속구분
+    FV_USER_GRP = gds_session.GetColumn(0, "userGrp");    // 사용자그룹
+}
+
+/*******************************************************************************
+ * @description         : 폼 초기화
+*******************************************************************************/
+function lf_formInit()
+{
+	div_condition.cal_clsMth.Value = substr(ToDay(), 0, 6);
+    f_init();
+}
+
+/*******************************************************************************
+* 함수명 : f_init
+* 기능명 : 화면 초기화 및 조회 Parameter Setting
+*******************************************************************************/
+function f_init()
+{
+    Div_Condition_btn_Search_OnClick();
+}
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+    if (sSvcID == "getBTWAgency")
+    {
+
+    }
+    if (sSvcID = "svcSaveBTWAgency") 
+    {
+        f_search_Agency();
+    }
+    if (sSvcID = "svcSaveBTWProduct") 
+    {
+        f_search_Product();
+    }
+    if (sSvcID = "svcSaveBTWRange") 
+    {
+        f_search_Range();
+    }
+    if (sSvcID = "svcSaveBTWAdjust") 
+    {
+        f_search_Adjust();
+    }
+    if (sSvcID = "svcdeleteBTWRange") 
+    {
+        f_search_Range();
+    }
+    if (sSvcID = "svcdeleteBTWAdjust") 
+    {
+        f_search_Adjust();
+    }
+
+    return;
+}
+
+/*******************************************************************************
+ * @description    : 자료조회 - 전체
+*******************************************************************************/
+function Div_Condition_btn_search_OnClick(obj)
+{ 
+    var sOrgID       = div_condition.edt_orgId.Text;
+    var sApplyMonth  = div_condition.cal_clsMth.Value;
+    var sMfactID     = div_condition.edt_MfactId.text;
+
+    if(uf_IsNull(sApplyMonth)){
+
+        alert("적용년월은 필수 입력항목 입니다.");
+        div_condition.cal_clsMth.SetFocus();
+        return;
+
+    }
+
+    cf_setParam(ds_input, "ORG_ID",      sOrgID);
+    cf_setParam(ds_input, "APPLY_MONTH", sApplyMonth );
+    cf_setParam(ds_input, "mfact_id",    sMfactID );
+
+    var sSvcID = "getBTWList";
+    var sInDs  = "nc_input_fieldDs=ds_input";
+    var sOutDs = "ds_Agency=ds_Agency ds_Product=ds_Product ds_Range=ds_Range ds_Adjust=ds_Adjust";
+    var sArg   = "sktst.adm.BTW#getBTWList";    
+
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+/*******************************************************************************
+ * @description    : 자료조회 - 대리점
+*******************************************************************************/
+function f_search_Agency(obj)
+{ 
+    var sOrgID       = div_condition.edt_orgId.Text;
+
+    cf_setParam(ds_input, "org_id", sOrgID);
+
+    var sSvcID = "getBTWAgency";
+    var sInDs  = "nc_input_fieldDs=ds_input";
+    var sOutDs = "ds_Agency=ds_Agency";
+    var sArg   = "sktst.adm.BTW#getBTWAgency";    
+
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+/*******************************************************************************
+ * @description    : 자료조회 - 단말기모델
+*******************************************************************************/
+function f_search_Product(obj)
+{ 
+    var smFactId = div_condition.edt_MfactId.Text;
+    var sApplyMonth  = div_condition.cal_clsMth.Value;
+
+    if(uf_IsNull(sApplyMonth)){
+
+        alert("적용년월은 필수 입력항목 입니다.");
+        div_condition.cal_clsMth.SetFocus();
+        return;
+
+    }
+
+    cf_setParam(ds_input, "APPLY_MONTH", sApplyMonth );
+    cf_setParam(ds_input, "mfact_id",    smFactId);
+
+    var sSvcID = "getBTWProduct";
+    var sInDs  = "nc_input_fieldDs=ds_input";
+    var sOutDs = "ds_Product=ds_Product";
+    var sArg   = "sktst.adm.BTW#getBTWProduct";    
+
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+/*******************************************************************************
+ * @description    : 자료조회 - 할부지원금
+*******************************************************************************/
+function f_search_Range(obj)
+{ 
+    var sApplyMonth  = div_condition.cal_clsMth.Value;
+
+    if(uf_IsNull(sApplyMonth)){
+
+        alert("적용년월은 필수 입력항목 입니다.");
+        div_condition.cal_clsMth.SetFocus();
+        return;
+
+    }
+
+    cf_setParam(ds_input, "APPLY_MONTH", sApplyMonth );
+
+    var sSvcID = "getBTWRange";
+    var sInDs  = "nc_input_fieldDs=ds_input";
+    var sOutDs = "ds_Range=ds_Range";
+    var sArg   = "sktst.adm.BTW#getBTWRange";    
+
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+/*******************************************************************************
+ * @description    : 자료조회 - 보조금기준
+*******************************************************************************/
+function f_search_Adjust(obj)
+{ 
+    var sApplyMonth  = div_condition.cal_clsMth.Value;
+
+    if(uf_IsNull(sApplyMonth)){
+
+        alert("적용년월은 필수 입력항목 입니다.");
+        div_condition.cal_clsMth.SetFocus();
+        return;
+
+    }
+
+    cf_setParam(ds_input, "APPLY_MONTH", sApplyMonth );
+
+    var sSvcID = "getBTWAdjust";
+    var sInDs  = "nc_input_fieldDs=ds_input";
+    var sOutDs = "ds_Adjust=ds_Adjust";
+    var sArg   = "sktst.adm.BTW#getBTWAdjust";    
+
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+/*******************************************************************************
+ * @description    : 자료저장
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+    var sFlag = false;
+    var sNewAply;
+    var sOldAply;
+
+    for(var i=0; i<ds_Agency.rowcount; i++)
+    {
+        sOldAply = ds_Agency.GetColumn(i, "old_aply_yn");
+        sNewAply = ds_Agency.GetColumn(i, "aply_yn");
+        if(sOldAply == sNewAply){
+			ds_Agency.SetColumn(i, "update_yn", "N");
+        } else {
+			sFlag = true;
+			ds_Agency.SetColumn(i, "update_yn", "Y");
+        }
+    }
+
+    if (!sFlag) {
+	    alert("변경된 자료가 없습니다.");
+	    return;
+    }
+
+    // 트랜잭션 설정
+    var sSvcID = "svcSaveBTWAgency";
+    var sInDs  = "ds_Agency=ds_Agency";
+    var sOutDs = "";
+    var sArg   = "sktst.adm.BTW#saveBTWAgency";
+
+    // 공통 트랜잭션 호출
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+/*******************************************************************************
+ * @description    : 자료저장
+*******************************************************************************/
+function btn_saveModel_OnClick(obj)
+{
+    var sFlag = false;
+    var sNewAply;
+    var sOldAply;
+
+    for(var i=0; i<ds_Product.rowcount; i++)
+    {
+        sOldAply = ds_Product.GetColumn(i, "old_apply_yn");
+        sNewAply = ds_Product.GetColumn(i, "apply_yn");
+        if(sOldAply == sNewAply){
+			ds_Product.SetColumn(i, "update_yn", "N");
+        } else {
+			sFlag = true;
+			ds_Product.SetColumn(i, "update_yn", "Y");
+        }
+    }
+
+    if (!sFlag) {
+	    alert("변경된 자료가 없습니다.");
+	    return;
+    }
+
+    // 트랜잭션 설정
+    var sSvcID = "svcSaveBTWProduct";
+    var sInDs  = "ds_Product=ds_Product";
+    var sOutDs = "";
+    var sArg   = "sktst.adm.BTW#saveBTWProduct";
+
+    // 공통 트랜잭션 호출
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+/*******************************************************************************
+ * @description    : 자료저장
+*******************************************************************************/
+function btn_saveAdjust_OnClick(obj)
+{
+    var sFlag = false;
+    var sFAmt;
+    var sTAmt;
+    var cFAmt;
+    var cTAmt;
+
+    for(var i=0; i<ds_Adjust.rowcount; i++)
+    {
+        if (ds_Adjust.GetRowType(i) == "insert") {
+			sFlag = true;
+        }
+        if (ds_Adjust.GetRowType(i) == "update") {
+			if (ds_Adjust.GetColumn(i, "allot_adj_prc") != ds_Adjust.GetColumn(i, "old_allot")){
+				ds_Adjust.SetColumn(i, "update_yn", "U");
+				sFlag = true;
+			}
+			if (ds_Adjust.GetColumn(i, "cash_adj_prc")  != ds_Adjust.GetColumn(i, "old_cash")){
+				ds_Adjust.SetColumn(i, "update_yn", "U");
+				sFlag = true;
+			}
+        }
+
+		// 적용년월 중복 Check
+		if (i > 0) {
+			sFAmt = ds_Adjust.GetColumn(i, "from_amt");
+			sTAmt = ds_Adjust.GetColumn(i, "to_amt");
+
+			for(var j = 0; j<i; j++)
+			{
+				cFAmt = ds_Adjust.GetColumn(j, "from_amt");
+				cTAmt = ds_Adjust.GetColumn(j, "to_amt");
+
+				// 입력행의 시작값이 기존의 시작값보다 같거나 크고 종료값보다 작으면 오류
+				if (sFAmt >= cFAmt && sFAmt < cTAmt) {
+					alert(NumFormat(i + 1) + "행의 [이상] 값이 " + NumFormat(j + 1) + "행의 범위에 속한 자료입니다.");
+					return;
+				}
+				// 입력행의 종료값이 기존의 시작값보다 크고 종료값보다 같거나 작으면 오류
+				if (sTAmt > cFAmt && sTAmt <= cTAmt) {
+					alert(NumFormat(i + 1) + "행의 [미만] 값이 " + NumFormat(j + 1) + "행의 범위에 속한 자료입니다.");
+					return;
+				}
+			}
+		}
+    }
+
+	// 금액 범위의 연속성 Check
+	if (ds_Adjust.rowcount > 1) {
+		// Dataset을 [이상] 항목을 기주능로 Ascending Sort
+		ds_Adjust.Sort("from_amt,to_amt", true);
+		sFAmt = ds_Adjust.GetColumn(0, "from_amt");
+		sTAmt = ds_Adjust.GetColumn(0, "to_amt");
+
+		for(var i=1; i<ds_Adjust.rowcount; i++)
+		{
+			cFAmt = ds_Adjust.GetColumn(i, "from_amt");
+			cTAmt = ds_Adjust.GetColumn(i, "to_amt");
+
+			if (sTAmt != cFAmt) {
+				var sMSG  = NumFormat(sTAmt) + " 이상 " + NumFormat(cFAmt) + "미만 금액이 적용되지 않습니다.\n\n";
+				    sMSG += "진행하시겠습니까 ?";
+				if (Confirm(sMSG) == false) return;
+			}
+
+			sFAmt = cFAmt;
+			sTAmt = cTAmt;
+		}
+    }
+
+    if (!sFlag) {
+	    alert("변경된 자료가 없습니다.");
+	    return;
+    }
+
+    // 트랜잭션 설정
+    var sSvcID = "svcSaveBTWAdjust";
+    var sInDs  = "ds_Adjust=ds_Adjust";
+    var sOutDs = "";
+    var sArg   = "sktst.adm.BTW#saveBTWAdjust";
+
+    // 공통 트랜잭션 호출
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+/*******************************************************************************
+ * @description    : 자료저장
+*******************************************************************************/
+function btn_saveRange_OnClick(obj)
+{
+    var sFlag = false;
+    var sChk;
+    var sMonth;
+
+    for(var i=0; i<ds_Range.rowcount; i++)
+    {
+		sChk = ds_Range.GetColumn(i, "chk");
+        if (sChk == "1") {
+			sFlag = true;
+        }
+
+		// 적용년월 중복 Check
+		if (i > 0) {
+			sMonth = ds_Range.GetColumn(i, "apply_month");
+			for(var j = 0; j<i; j++)
+			{
+				if (sMonth == ds_Range.GetColumn(j, "apply_month")) {
+					alert(NumFormat(j + 1) + "행과 " + NumFormat(i + 1) + "행의 적용년월이 중복된 자료입니다.");
+					return;
+				}
+			}
+		}
+    }
+
+    if (!sFlag) {
+	    alert("선택된 자료가 없습니다.");
+	    return;
+    }
+
+    // 트랜잭션 설정
+    var sSvcID = "svcSaveBTWRange";
+    var sInDs  = "ds_Range=ds_Range";
+    var sOutDs = "";
+    var sArg   = "sktst.adm.BTW#saveBTWRange";
+
+    // 공통 트랜잭션 호출
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+/*******************************************************************************
+* 함수명 : btn_deleteRange_OnClick 
+* 기능명 : 할부지원금 삭제
+*******************************************************************************/
+function btn_deleteRange_OnClick(obj)
+{
+    var sFlag = false;
+    var sChk;
+
+    for(var i=0; i<ds_Range.rowcount; i++)
+    {
+		sChk = ds_Range.GetColumn(i, "chk");
+        if (sChk == "1") {
+			sFlag = true;
+        }
+    }
+
+    if (!sFlag) {
+	    alert("선택된 자료가 없습니다.");
+	    return;
+    }
+
+    if(Confirm( "삭제하시겠습니까?" ) == false) return;
+
+    // 트랜잭션 설정
+    var sSvcID = "svcdeleteBTWRange";
+    var sInDs  = "ds_Range=ds_Range";
+    var sOutDs = "";
+    var sArg   = "sktst.adm.BTW#delBTWRange";
+
+    // 공통 트랜잭션 호출
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+* 함수명 : btn_deleteRange_OnClick 
+* 기능명 : 보조금기준 삭제
+*******************************************************************************/
+function btn_deleteAdjust_OnClick(obj)
+{
+    var sFlag = false;
+    var sChk;
+
+    for(var i=0; i<ds_Adjust.rowcount; i++)
+    {
+		sChk = ds_Adjust.GetColumn(i, "chk");
+        if (sChk == "1") {
+			sFlag = true;
+        }
+    }
+
+    if (!sFlag) {
+	    alert("선택된 자료가 없습니다.");
+	    return;
+    }
+
+    if(Confirm( "삭제하시겠습니까?" ) == false) return;
+
+    // 트랜잭션 설정
+    var sSvcID = "svcdeleteBTWAdjust";
+    var sInDs  = "ds_Adjust=ds_Adjust";
+    var sOutDs = "";
+    var sArg   = "sktst.adm.BTW#delBTWAdjust";
+
+    // 공통 트랜잭션 호출 
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : Form 닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	Close();
+}
+
+/*******************************************************************************
+ * @description    : 조직 - 조회 Button Click 시
+*******************************************************************************/
+function div_condition_btn_orgId_OnClick(obj)
+{
+    var sResult = cf_callOrgTree("div_condition.edt_orgId", "div_condition.edt_orgNm");
+}
+
+/*******************************************************************************
+ * @description    : Grid Header Click
+*******************************************************************************/
+function grd_Agency_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+    if(nCell == 5)
+    {
+    // 전체 선택/해제
+        if(grd_Agency.GetCellProp("Head", 5,  "text") == "1")
+        {
+            grd_Agency.SetCellProp("Head", 5, "text", "0");
+
+            for(var i=0; i<ds_Agency.rowcount; i++)
+            {
+                ds_Agency.SetColumn(i, "aply_yn", "0");
+            }
+        }
+        else
+        {
+            grd_Agency.SetCellProp("Head", 5, "text", "1");
+            
+            for(var i=0; i<ds_Agency.rowcount; i++)
+            {
+                ds_Agency.SetColumn(i, "aply_yn", "1");
+            }
+        }
+    } else {
+    // Sort
+        cf_markGridSort(obj,nCell,nX,nY,nPivotIndex);
+    }
+}
+
+/*******************************************************************************
+ * @description    : Grid Header Click
+*******************************************************************************/
+function grd_Product_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+    if(nCell == 8)
+    {
+    // 전체 선택/해제
+        if(grd_Product.GetCellProp("Head", 8,  "text") == "1")
+        {
+            grd_Product.SetCellProp("Head", 8, "text", "0");
+
+            for(var i=0; i<ds_Product.rowcount; i++)
+            {
+                ds_Product.SetColumn(i, "apply_yn", "0");
+            }
+        }
+        else
+        {
+            grd_Product.SetCellProp("Head", 8, "text", "1");
+            
+            for(var i=0; i<ds_Product.rowcount; i++)
+            {
+                ds_Product.SetColumn(i, "apply_yn", "1");
+            }
+        }
+    } else {
+    // Sort
+        cf_markGridSort(obj,nCell,nX,nY,nPivotIndex);
+    }
+}
+
+/*******************************************************************************
+* 함수명 : 
+* 기능명 : 적용년월 선택
+*******************************************************************************/
+function div_condition_btn_calMonth_OnClick(obj)
+{
+    cf_callMonthCalendar(div_condition.cal_clsMth);
+    Div_Condition_btn_Search_OnClick();
+}
+
+/*******************************************************************************
+* 함수명 : btn_addRange_OnClick 
+* 기능명 : 로우 추가
+*******************************************************************************/
+function btn_addRange_OnClick(obj)
+{
+	var vAmt         = "";
+	var nRow         = ds_Adjust.AddRow();	
+    var sApplyMonth  = div_condition.cal_clsMth.Value;
+
+	if (nRow == 0) {
+		vAmt = "270000";
+	} else {
+	    vAmt = ds_Adjust.GetColumn(nRow - 1, "to_amt");
+	}
+
+	if (uf_IsNull(sApplyMonth)) {
+		sApplyMonth = substr(ToDay(), 0, 6);
+	}
+
+	ds_Adjust.SetColumn(nRow, "apply_month",    sApplyMonth);
+	ds_Adjust.SetColumn(nRow, "from_amt",       vAmt);
+	ds_Adjust.SetColumn(nRow, "to_amt",        "999999999");
+	ds_Adjust.SetColumn(nRow, "allot_adj_amt", "0");
+	ds_Adjust.SetColumn(nRow, "cash_adj_amt",  "0");
+	ds_Adjust.SetColumn(nRow, "old_allot",     "0");
+	ds_Adjust.SetColumn(nRow, "old_cash",      "0");
+	ds_Adjust.SetColumn(nRow, "update_yn",     "I");
+
+	grd_Adjust.SetCellPos(0);
+	grd_Adjust.SetFocus();
+
+}
+
+/*******************************************************************************
+* 함수명 : btn_delRange_OnClick 
+* 기능명 : 로우 삭제
+*******************************************************************************/
+function btn_delRange_OnClick(obj)
+{
+	if(ds_Adjust.GetRowType(ds_Adjust.currow) != 'insert'){
+		alert(MSG_01005); //기등록된 데이터는 삭제할 수 없습니다
+		return;
+	}
+	
+	ds_Adjust.DeleteRow(ds_Adjust.row);
+}
+
+/*******************************************************************************
+* 함수명 : btn_addAdjust_OnClick 
+* 기능명 : 로우 추가
+*******************************************************************************/
+function btn_addAdjust_OnClick(obj)
+{	
+	var nRow = ds_Range.AddRow();
+
+	ds_Range.SetColumn(nRow, "chk",       "1");
+	ds_Range.SetColumn(nRow, "apply_month", substr(ToDay(), 0, 6));
+	ds_Range.SetColumn(nRow, "agrmt_amt",  "160800");
+	ds_Range.SetColumn(nRow, "range_amt",  "270000");	
+	ds_Range.SetColumn(nRow, "update_yn", "I");
+
+}
+
+/*******************************************************************************
+* 함수명 : btn_delAdjust_OnClick 
+* 기능명 : 로우 삭제
+*******************************************************************************/
+function btn_delAdjust_OnClick(obj)
+{
+	if(ds_Range.GetRowType(ds_Range.currow) != 'insert'){
+		alert(MSG_01005); //기등록된 데이터는 삭제할 수 없습니다
+		return;
+	}
+	
+	ds_Range.DeleteRow(ds_Range.row);
+}
+
+/*******************************************************************************
+* 함수명 : grd_Range_OnExpandUp 
+* 기능명 :  적용년월 선택 창을 Pupup
+*******************************************************************************/
+function grd_Range_OnExpandUp(obj,nRow,nCell,strVal,nPivotIndex)
+{
+	if(nCell == 1){
+		var sRow = ds_Range.currow;
+
+        cf_callMonthCalendar(cal_clsMth);
+		ds_Range.SetColumn(sRow, "apply_month", cal_clsMth.Value);
+    }
+}
+
+/*******************************************************************************
+* 함수명 : grd_Range_OnKeyDown 
+* 기능명 :  적용년월 선택 창을 Pupup
+*******************************************************************************/
+function grd_Range_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,nLLParam,nHLParam)
+{
+	if(grd_Range.CurrentCell == 2 || grd_Range.CurrentCell == 3) {
+		var sUpdateYN = ds_Range.GetColumn(ds_Range.currow, "update_yn");
+		if (sUpdateYN == "N") {
+			ds_Range.SetColumn(ds_Range.currow, "update_yn", "U");
+		}
+	}
+}
+
+/*******************************************************************************
+* 함수명 : div_condition_edt_MfactNm_OnCharChanged 
+* 기능명 :  제조사명 변경 시 제조사 Code Initialized..
+*******************************************************************************/
+function div_condition_edt_MfactNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	if (strPreText != strPostText)
+	{
+		div_condition.edt_MfactId.value = "";
+	}
+}
+
+/*******************************************************************************
+* 함수명 : div_condition_edt_MfactNm_OnKeyDown 
+* 기능명 :  제조사명 조회
+*******************************************************************************/
+function div_condition_edt_MfactNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if (nChar == 13)
+	{
+		var sArg  = "deal_co_cl1="+quote("20");
+		    //sArg += " eff_dtm="+quote(div_search.cal_StrdDt.Value);
+	
+		cf_callDealPop(sArg, div_condition, "edt_MfactNm,edt_MfactId");
+
+		if (!uf_IsNull(div_condition.edt_MfactId.Text)) {
+			f_search_Product();
+		}
+	}
+}
+
+/*******************************************************************************
+* 함수명 : div_condition_edt_MfactNm_OnKeyDown 
+* 기능명 :  제조사명 조회
+*******************************************************************************/
+function div_condition_btn_MfactId_OnClick(obj)
+{
+	var sArg  = "deal_co_cl1="+quote("20");
+		//sArg += " eff_dtm="+quote(div_search.cal_StrdDt.Value);
+
+	cf_callDealPop(sArg, div_condition, "edt_MfactNm,edt_MfactId");
+
+	if (!uf_IsNull(div_condition.edt_MfactId.Text)) {
+		f_search_Product();
+	}
+}
+]]></Script>
+</Window>

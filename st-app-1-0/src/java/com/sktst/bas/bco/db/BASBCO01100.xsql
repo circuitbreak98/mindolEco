@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO01100">
+	<select id="getOrgTree" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT				/*+ BASBCO01100_getOrgTree_원윤성_최승호 */ 
+	org_id,			/* 조직 아이디 */
+	org_nm,			/* 조직 이름 */
+	org_cl,			/* 조직 구분 */
+	sup_org			/* 상위 조직 아이디 */
+FROM
+	tbas_org_mgmt
+WHERE 
+	del_yn = 'N'
+AND 
+	( org_biz_cl = '1' or org_biz_cl is null )	
+START WITH
+	org_id = 'G00000'
+CONNECT BY PRIOR
+	org_id = sup_org]]>
+	</select>
+</sqlMap>

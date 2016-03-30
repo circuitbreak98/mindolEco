@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCSAC01900" Left="8" OnLoadCompleted="ACCSAC01900_OnLoadCompleted" PidAttrib="7" Title="도매수수료&#32;미확정&#32;미검증&#32;관리" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_MTH></ACC_MTH>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_monthClsList" OnColumnChanged="ds_monthClsList_OnColumnChanged">
+				<Contents>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="POS_AGENCY" size="256" summ="default" type="STRING"/>
+					<colinfo id="POS_AGENCY_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_CMMS_FIX_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="VERIFY_YN" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" BindDataset="ds_monthClsList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="551" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="463" Id="grd_oldRtnEquip" InputPanel="FALSE" Left="10" LineColor="user33" OnCellDBLClick="grd_monthClsList_OnCellDblClick" OnExpandUp="grd_monthClsList_OnExpandUp" OnHeadClick="f_allGridCheck" Right="450" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="440">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="40"/>
+						<col fix="left" width="200"/>
+						<col fix="left" width="210"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="굴림,9,Bold" rowspan="2" text="상태" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="정산처" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="대리점" Valign="Center"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="확정현금매출" Valign="Center"/>
+						<cell col="3" display="text" rowspan="2" Valign="Center"/>
+						<cell col="3" display="text" rowspan="2" Valign="Center"/>
+						<cell col="3" display="text" rowspan="2" Valign="Center"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="확정위탁수수료" Valign="Center"/>
+						<cell col="4" display="text" rowspan="2" Valign="Center"/>
+						<cell col="4" display="text" rowspan="2" Valign="Center"/>
+						<cell col="4" display="text" rowspan="2" Valign="Center"/>
+					</head>
+					<body>
+						<cell bkcolor="expr:iif(SALE_CMMS_FIX_YN&#32;&lt;&gt;&apos;Y&apos;,&apos;User25&apos;,iif(VERIFY_YN&#32;&lt;&gt;&apos;Y&apos;,&apos;User40&apos;))" col="0" display="text"/>
+						<cell col="1" colid="DEAL_CO_NM" display="text"/>
+						<cell col="2" colid="POS_AGENCY_NM" display="text"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" colspan="3" display="text"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="도매&#32;수수료&#32;미정산&#32;관리" Top="59" Width="166"></Image>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="3" Text="Div0" Top="10" Width="440">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="20" Id="btn_search" ImageID="btn_a_2" Left="223" LeftMargin="5" OnClick="df_search" Style="sty_btn_a" TabOrder="1" Text="조회" Top="8" Width="60"></Button>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="ACC_MTH" Height="20" Id="cal_accYm" Left="99" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="8" Type="STRING" Width="77"></MaskEdit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="176" OnClick="btn_monthCalendar_OnClick" TabOrder="3" TabStop="FALSE" Text="Button3" Top="8" Width="17"></Button>
+				<Static Align="Right" Height="20" Id="Static1" Left="33" Style="sty_lb_dataview" TabOrder="4" Text="정산월" Top="8" VAlign="Middle" Width="60"></Static>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="20" Id="img_polChg" ImageID="bul_caution" Left="188" LeftMargin="20" OnClick="img_polChg_OnClick" Style="sty_lb_info" TabOrder="4" Text="빨강:추정일마감&#32;미완료,&#32;갈색:미검증" Top="62" Width="212"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : ACCSAC01900
+* 업무명      : 정산
+* 프로그램명  : 도매 수수료 정산 관리
+--------------------------------------------------------------------------------
+* 작성자      : 전승호
+* 작성일      : 2009.03.09
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_POS_AGENCY_ID;		// 대리점 코드
+var FV_POS_AGENCY_UKEY_ID;	// 대리점 UKey 코드
+var FV_POS_AGENCY_NM;		// 대리점명
+var cmmsAddSubD = "N";
+var accMtchDtlD = "N";
+var FV_CLOSE_DT;
+
+/*******************************************************************************
+* 함수명 : ACCSAC01900_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function ACCSAC01900_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_oldRtnEquip);	// 그리드 정렬
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	div_search.cal_accYm.Value = substr(TODAY(),0,6);
+
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack
+* 기능명 : 트랜잭션 콜백
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "svcSearch")
+	{
+		ds_monthClsList.Sort("DEAL_CO_NM");
+	}
+
+
+}
+
+/*******************************************************************************
+* 함수명 : df_search
+* 기능명 : 공통 조회 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function df_search()
+{
+	var sSvcID = "svcSearch";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_monthClsList=ds_monthClsList";
+	var sArg   = "sktst.acc.SAC#getDisAccSaleList";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+}
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_accYm);
+
+}
+
+]]></Script>
+</Window>

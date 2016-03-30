@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASPRM00500">
+	<select id="getDealList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 
+       deal_co_cd        
+,      hseq_no          
+,      deal_co_nm       
+,      deal_co_cl1      
+,      deal_co_cl2      
+,      ukey_agency_cd   
+,      tax_strd         
+,      biz_num          
+,      rep_user_nm      
+,      biz_con          
+,      typ_of_biz       
+,      zip_cd1          
+,      zip_cd2          
+,      addr             
+,      tel_no           
+,      fax_no           
+,      deal_sta_dt       
+,      deal_end_yn      
+,      pay_stop_yn      
+,      out_stop_yn      
+,      sale_stop_yn     
+,      out_stop_dt      
+,      deal_end_dt      
+,      org_id           
+,      sale_grp         
+,      chrgr_user_id    
+,      stl_plc          
+,      rep_mbl_phon     
+,      prac_chrgr1      
+,      prac_mbl_phon1   
+,      prac_chrgr2      
+,      prac_mbl_phon2   
+,      grt_insu_co      
+,      insp_no          
+,      insp_eff_dt      
+,      insp_exp_dt       
+,      insp_gua_amt      
+,      insp_issue_cmms   
+,      casa_dpst_bank_cd 
+,      casa_dpst_acc_no  
+,      casa_dpst_depo    
+,      casa_dpst_cms_cd  
+,      pmag_dpst_bank_cd 
+,      pmag_dpst_acc_no  
+,      pmag_dpst_depo    
+,      pmag_dpst_cms_cd  
+,      slcm_dfry_bank_cd 
+,      slcm_dfry_acc_no  
+,      slcm_dfry_depo    
+,      eff_sta_dtm       
+,      eff_end_dtm       
+,      rmks              
+,      del_yn            
+,      upd_cnt           
+,      ins_dtm           
+,      ins_user_id       
+,      mod_dtm           
+,      mod_user_id       
+,      crdt_lmt          
+,      ukey_sub_cd       
+,      ukey_channel_cd   
+,      pos_agency        
+,      normal_yn         
+,      sup_deal          
+,      dtl_addr          
+,      card_fee_rate     
+,      dis_hld_plc       
+,      sort_seq          
+,      biz_cd            
+,      per_biz_cl        
+,      reg_num           
+,      pol_oper_yn       
+,      skn_dlv_plc_cd    
+FROM   tbas_deal_co_mgmt
+WHERE  deal_co_cd = #deal_co_cd#
+AND    del_yn = 'N']]>
+	</select>
+	<update id="updateDealList" parameterClass="map" ><![CDATA[UPDATE tbas_deal_co_mgmt
+SET    eff_sta_dtm  = #eff_sta_dtm#
+,      eff_end_dtm  = #eff_end_dtm#
+,      deal_co_nm   = #deal_co_nm#
+,      normal_yn    = #normal_yn#            
+,      deal_sta_dt  = #deal_sta_dt#       
+,      deal_end_yn  = #deal_end_yn#     
+,      pay_stop_yn  = #pay_stop_yn# 
+,      out_stop_yn  = #out_stop_yn#
+,      sale_stop_yn = #sale_stop_yn#
+,      out_stop_dt  = #out_stop_dt#
+,      deal_end_dt  = #deal_end_dt#
+,      upd_cnt = upd_cnt + 1
+,      mod_user_id = #onlineContext.userInfo.loginId#
+,      mod_dtm = TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+WHERE  deal_co_cd = #deal_co_cd#
+AND    hseq_no = #hseq_no#
+AND    upd_cnt = #upd_cnt#]]>
+	</update>
+</sqlMap>

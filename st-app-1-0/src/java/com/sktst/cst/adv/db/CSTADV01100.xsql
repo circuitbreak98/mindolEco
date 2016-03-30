@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTADV01100">
+	<insert id="addPrchsCustRmks" parameterClass="map" ><![CDATA[INSERT INTO TCST_PRCHS_CUST_RMKS
+      (
+        PRCHS_MGMT_NO
+       ,SEQ
+       ,CUST_DT
+       ,PRC_ST
+       ,RMKS
+       ,DEL_YN
+       ,UPD_CNT
+       ,INS_DTM
+       ,INS_USER_ID
+       ,MOD_DTM
+       ,MOD_USER_ID
+      ) 
+      VALUES
+      (
+        #PRCHS_MGMT_NO#
+       ,(SELECT NVL(MAX(SEQ)+1,1)
+           FROM TCST_PRCHS_CUST_RMKS 
+          WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#)
+       ,#CUST_DT#
+       ,(CASE #CUST_YN#
+	      WHEN '22' THEN DECODE(#CUST_YN_DTL#,null,#CUST_YN#,#CUST_YN_DTL#)
+		  WHEN '26' THEN DECODE(#CUST_YN_DTL#,null,#CUST_YN#,#CUST_YN_DTL#)
+		  ELSE #CUST_YN#
+		 END)
+       ,#RMKS#
+       ,'N'
+       ,0
+       ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+       ,#onlineContext.userInfo.loginId#
+       ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+       ,#onlineContext.userInfo.loginId#
+      )
+      ]]>
+	</insert>
+	<select id="getPrchsCustRmksList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT rmk.PRCHS_MGMT_NO
+	 , rmk.SEQ||'차' SEQ_NM 
+	 , rmk.SEQ
+	 , SUBSTR(rmk.INS_DTM,0,8) CUST_DT
+     , SUBSTR(rmk.INS_DTM,9,2)||':'||SUBSTR(rmk.INS_DTM,11,2)||':'||SUBSTR(rmk.INS_DTM,13,2) CUST_TM
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', rmk.PRC_ST) PRC_ST_NM
+     , DECODE(rmk.PRC_ST,'24','22','27','26',rmk.PRC_ST) PRC_ST
+     , DECODE(rmk.PRC_ST,'24','24','27','27','') PRC_ST_DTL
+	 , rmk.RMKS
+	 , rmk.INS_USER_ID
+     , FBAS_GET_USER_NM(rmk.INS_USER_ID) INS_USER_NM
+     , mgmt.RTN_CL
+  FROM TCST_PRCHS_CUST_RMKS rmk
+     , TCST_PRCHS_MGMT mgmt
+ WHERE rmk.PRCHS_MGMT_NO = #PRCHS_MGMT_NO#
+   AND rmk.DEL_YN = 'N'
+   AND rmk.PRCHS_MGMT_NO = mgmt.PRCHS_MGMT_NO
+   AND mgmt.SKN_YN = 'N'
+   AND mgmt.DEL_YN = 'N']]>
+	</select>
+	<update id="updatePrchsCustRmks" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_CUST_RMKS
+   SET RMKS        = #RMKS#
+      ,UPD_CNT     = UPD_CNT+1
+      ,MOD_DTM     = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE PRCHS_MGMT_NO  = #PRCHS_MGMT_NO#
+   AND SEQ = #SEQ#    ]]>
+	</update>
+	<update id="updatePrchsCustPrc" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET CUST_YN = (CASE #CUST_YN#
+		 	        WHEN '21' THEN 'Y'
+		 	        WHEN '25' THEN 'Y'
+		 	        WHEN '2E' THEN 'Y'
+		            ELSE 'N'
+		           END)
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#   
+      ,CUST_USER_ID = #onlineContext.userInfo.loginId#   
+      ,CUST_DT = TO_CHAR(SYSDATE,'YYYYMMDD')
+      ,PRC_ST = (CASE #CUST_YN#
+			      WHEN '22' THEN DECODE(#CUST_YN_DTL#,null,#CUST_YN#,#CUST_YN_DTL#)
+				  WHEN '26' THEN DECODE(#CUST_YN_DTL#,null,#CUST_YN#,#CUST_YN_DTL#)
+				  ELSE #CUST_YN#
+				 END)
+	  ,RTN_CL = (CASE NVL(#CUST_YN_DTL#,DECODE(#CUST_YN#,'28','27'))
+			      		WHEN '24' THEN #RETURN_CL#
+						WHEN '27' THEN #RETURN_CL#
+						ELSE ''
+					 END)
+ WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#]]>
+	</update>
+	<insert id="addPrchsCustRmksOnly" parameterClass="map" ><![CDATA[INSERT INTO TCST_PRCHS_CUST_RMKS
+      (
+        PRCHS_MGMT_NO
+       ,SEQ
+       ,CUST_DT
+       ,PRC_ST
+       ,RMKS
+       ,DEL_YN
+       ,UPD_CNT
+       ,INS_DTM
+       ,INS_USER_ID
+       ,MOD_DTM
+       ,MOD_USER_ID
+      ) 
+      VALUES
+      (
+        #PRCHS_MGMT_NO#
+       ,(SELECT NVL(MAX(SEQ)+1,1)
+           FROM TCST_PRCHS_CUST_RMKS 
+          WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#)
+       ,#CUST_DT#
+       ,(SELECT PRC_ST
+       	   FROM TCST_PRCHS_MGMT
+          WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#)
+       ,#RMKS#
+       ,'N'
+       ,0
+       ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+       ,#onlineContext.userInfo.loginId#
+       ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+       ,#onlineContext.userInfo.loginId#
+      )
+      ]]>
+	</insert>
+	<update id="updatePrchsReturnCl" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET RTN_CL = #RETURN_CL#
+ WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#]]>
+	</update>
+</sqlMap>

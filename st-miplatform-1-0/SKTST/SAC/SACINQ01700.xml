@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="460" Id="SACINQ01700" Left="8" OnLoadCompleted="SACINQ01700_OnLoadCompleted" PidAttrib="7" Title="소매카드매출내역" Top="8" Ver="1.0" Width="442" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_cardSale">
+				<Contents>
+					<colinfo id="YYMM" size="255" summ="default" type="STRING"/>
+					<colinfo id="AGENCY" size="255" summ="default" type="STRING"/>
+					<colinfo id="AGENCY_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="CARD_CO" size="256" summ="default" type="STRING"/>
+					<colinfo id="CARD_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CARD_AMT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="yymm" size="10" summ="default" type="STRING"/>
+					<colinfo id="agency" size="10" summ="default" type="STRING"/>
+					<colinfo id="pos_agency" size="10" summ="default" type="STRING"/>
+					<colinfo id="pos_agency_nm" size="255" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cd" size="100" summ="default" type="STRING"/>
+					<colinfo id="deal_co_nm" size="100" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="374" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="421" Width="60"></Button>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_cardSale" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="406" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="302" Id="grd_accMtchDtlD" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="432" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="104" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="422">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="200"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="카드사"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="카드매출"/>
+					</head>
+					<body>
+						<cell align="left" col="0" colid="CARD_CO_NM" display="text" edit="normal"/>
+						<cell align="right" col="1" colid="CARD_AMT" display="number" edit="integer" limit="9"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" display="text" text="합계"/>
+						<cell align="right" bkcolor="user37" col="1" color="user38" display="number" expr='sum(&quot;CARD_AMT&quot;)'/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="소매카드매출내역" Top="77" Width="192"></Image>
+		<Div Border="Raised" Height="62" Id="div_search" Left="10" Style="sty_div_search" TabOrder="4" Text="Div0" Top="10" Width="422">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="173" Style="sty_lb_Search" TabOrder="1" Text="대리점" Top="8" VAlign="Middle" Width="45"></Static>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="pos_agency_nm" Enable="FALSE" Height="20" Id="edt_agencyCdNm" Left="222" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" UserData="발주처" Width="80"></Edit>
+				<Button Cursor="HAND" Height="20" Id="btn_agency" ImageID="btn_i_detail" Left="302" TabOrder="3" Text="Button0" Top="7" Width="20"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="agency" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="320" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="80"></Edit>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="POS_AGENCY" Enable="FALSE" Height="20" Id="edt_agencyCd" Left="400" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Visible="FALSE" Width="10"></Edit>
+				<Static Align="Right" Height="20" Id="Static4" Left="175" Style="sty_lb_Search" TabOrder="9" Text="거래처" Top="32" VAlign="Middle" Width="40"></Static>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="deal_co_nm" Enable="FALSE" Height="20" Id="edt_dealNm" Left="222" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="32" Width="80"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_dealCo" ImageID="btn_i_detail" Left="302" TabOrder="8" Text="Button0" Top="32" Width="19"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="deal_co_cd" Enable="FALSE" Height="20" Id="edt_dealCd" ImeMode="none" Left="320" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="32" Width="80"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="1" Style="sty_lb_dataview" TabOrder="10" Text="정산월" Top="8" VAlign="Middle" Width="60"></Static>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="yymm" Enable="FALSE" Height="20" Id="cal_accMth" Left="67" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="11" Top="8" Type="STRING" Width="77"></MaskEdit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="144" TabOrder="12" TabStop="FALSE" Text="Button3" Top="8" Width="17"></Button>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SACINQ01700
+* 업무명      : 영업회계 - 소매카드매출내역
+* 프로그램명  : 소매카드매출내역
+--------------------------------------------------------------------------------
+* 작성자      : 이강수
+* 작성일      : 2009.11.09
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_LOGIN_ID;        //사용자계정     
+var FV_ORG_ID;          //조직코드    
+var FV_ORG_CL;          //조직구분      
+var FV_SUP_ORG_ID;      //상위조직코드   
+var FV_USER_GRP;        //사용자그룹   
+var FV_ORG_AREA_ID;     // 근무지 cd.
+var FV_ORG_AREA_NM;     // 근무지 nm.       
+var FV_POS_AGENCY_ID;   // 소속 대리점ID 
+var FV_POS_AGENCY_NM;   // 소속 대리점명 
+var FV_POS_AGENCY_UKEY_ID; // 소속 대리점UKEY ID 
+var PAY_CL;             // 결제구분(온라인소매수수료/온라인결제수수료)
+
+
+/*******************************************************************************
+* 함수명 : SACINQ01700_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function SACINQ01700_OnLoadCompleted(obj)
+{
+
+	ds_condition.DeleteAll();
+	ds_condition.AddRow();	// Temp DataSet 의 row 추가
+
+	ds_cardSale.DeleteAll();
+	ds_cardSale.AddRow();	// Temp DataSet 의 row 추가
+	
+	/****************************************************************************
+	 *   메인화면에서 넘어온 변수값 처리
+	 *   YYMM       : 년월
+	 *   AGENCY     : 대리점코드
+	 *   AGENCY_NM  : 대비점명
+	 *   AGENCY_UK  : 대리점 UkeyCd
+	 *   DEAL_CO_CD : 거래처코드
+	 *   DEAL_CO_NM : 거래처명
+	 ****************************************************************************/
+	ds_condition.SetColumn(ds_condition.currow, "yymm", YYMM);
+	ds_condition.SetColumn(ds_condition.currow, "agency", AGENCY_UK);
+	ds_condition.SetColumn(ds_condition.currow, "pos_agency", AGENCY);
+	ds_condition.SetColumn(ds_condition.currow, "pos_agency_nm", AGENCY_NM);
+	ds_condition.SetColumn(ds_condition.currow, "deal_co_cd", DEAL_CO_CD);
+	ds_condition.SetColumn(ds_condition.currow, "deal_co_nm", DEAL_CO_NM);
+
+	// 소매카드매출 데이터 조회
+	f_cardSale();
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack
+* 기능명 : 트랜잭션 콜백
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+
+    if(sSvcID == "getRetailSaleCardList")
+    {   
+        return;
+    }
+    
+}
+
+/*******************************************************************************
+* 함수명 : f_cardSale
+* 기능명 : 소매카드매출조회
+*******************************************************************************/
+function f_cardSale()
+{
+    var sSvcID = "getRetailSaleCardList";
+    var sInDs  = "nc_input_fieldDs=ds_condition";
+    var sOutDs = "ds_cardSale=ds_cardSale";
+    var sArg   = "sktst.sac.INQ#getRetailSaleCardList";
+
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+/*******************************************************************************
+ * @description    : 닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+    this.Close();
+}
+]]></Script>
+</Window>

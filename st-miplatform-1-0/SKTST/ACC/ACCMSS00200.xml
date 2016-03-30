@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="711" Id="ACCMSS00200" Left="8" OnLoadCompleted="ACCMSS00200_OnLoadCompleted" PidAttrib="7" Title="SKT&#32;수수료&#32;정산현황" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_mss_sale_cond">
+				<Contents>
+					<colinfo id="acc_mth" size="256" summ="default" type="STRING"/>
+					<colinfo id="org_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="org_cl" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_mss_list">
+				<Contents>
+					<colinfo id="teamNm" size="256" summ="default" type="STRING"/>
+					<colinfo id="centerNm" size="256" summ="default" type="STRING"/>
+					<colinfo id="agencyNm" size="256" summ="default" type="STRING"/>
+					<colinfo id="stlPlc" size="256" summ="default" type="STRING"/>
+					<colinfo id="fix_sply_prc" size="256" summ="default" type="STRING"/>
+					<colinfo id="fix_vat" size="256" summ="default" type="STRING"/>
+					<colinfo id="sum" size="256" summ="default" type="STRING"/>
+					<colinfo id="fix_sply_prc_tmp" size="256" summ="default" type="STRING"/>
+					<colinfo id="fix_vat_tmp" size="256" summ="default" type="STRING"/>
+					<colinfo id="sum_tmp" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="1004">
+			<Contents>
+				<Edit Border="Flat" Font="돋움,9" Height="20" Id="edt_orgNm" ImeMode="none" Left="365" LeftMargin="2" MaxLength="50" OnCharChanged="div_search_edt_orgNm_OnCharChanged" OnKeyDown="div_search_edt_orgNm_OnKeyDown" RightMargin="2" Style="sty_lb_Search" TabOrder="3" Top="7" UserData="조직" Width="136"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_org" ImageID="btn_i_detail" Left="500" OnClick="div_search_btn_org_OnClick" TabOrder="1" Text="Button0" Top="7" Width="19"></Button>
+				<Static Align="Right" Height="20" Id="Static4" Left="294" Style="sty_lb_Search" TabOrder="2" Text="조직" Top="7" VAlign="Middle" Width="60"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="663" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="4" Text="조회" Top="7" Width="60"></Button>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="318" TabOrder="5" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Border="None" Height="20" Id="Static1" Left="12" Style="sty_lb_Search" TabOrder="6" Text="정산월" Top="7" VAlign="Middle" Width="65"></Static>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="27" TabOrder="7" Top="6" Transparent="TRUE" Width="20"></Image>
+				<MaskEdit Border="Flat" Height="20" Id="cal_acc_mth" Left="90" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="7" Type="STRING" Width="104"></MaskEdit>
+			</Contents>
+		</Div>
+		<Grid BindDataset="ds_mss_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="571" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="483" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" OnCellDBLClick="Grid2_OnCellDblClick" Right="1014" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="130"/>
+						<col width="130"/>
+						<col width="150"/>
+						<col width="130"/>
+						<col width="150"/>
+						<col width="150"/>
+						<col width="163"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" rowspan="2" text="영업팀" wordwrap="word"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" rowspan="2" text="영업센터" wordwrap="word"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" rowspan="2" text="대리점" wordwrap="word"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" rowspan="2" text="정산처" wordwrap="word"/>
+						<cell bkcolor="user34" col="4" color="user35" colspan="3" display="text" text="SKT수수료&#32;확정&#32;금액" wordwrap="word"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" row="1" text="공급가" wordwrap="word"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" row="1" text="부가세" wordwrap="word"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" row="1" text="합계" wordwrap="word"/>
+					</head>
+					<body>
+						<cell align="left" bkcolor='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User41&quot;,&#32;&#32;&quot;default&quot;)' col="0" colid="teamNm" color='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User29&quot;,&#32;&#32;&quot;default&quot;)' display="text" subsumexpr='decode(rowlevel,1,&quot;&quot;,null)' suppress="1"/>
+						<cell align="left" bkcolor='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User41&quot;,&#32;&#32;&quot;default&quot;)' col="1" colid="centerNm" color='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User29&quot;,&#32;&#32;&quot;default&quot;)' display="text" subsumexpr='decode(rowlevel,1,&quot;&quot;,null)'/>
+						<cell align="left" bkcolor='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User41&quot;,&#32;&#32;&quot;default&quot;)' col="2" colid="agencyNm" color='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User29&quot;,&#32;&#32;&quot;default&quot;)' display="text" subsumexpr='decode(rowlevel,1,&quot;&quot;,null)'/>
+						<cell align="expr:decode(rowlevel,1,&apos;right&apos;,&apos;defalut&apos;)" bkcolor='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User41&quot;,&#32;&#32;&quot;default&quot;)' col="3" colid="stlPlc" color='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User29&quot;,&#32;&#32;&quot;default&quot;)' display="text" font='expr:decode(rowlevel,1,&quot;돋움,9,Bold&quot;,&quot;default&quot;)' subsumtext="소계"/>
+						<cell align="right" bkcolor='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User41&quot;,&#32;&#32;&quot;default&quot;)' col="4" colid="fix_sply_prc" color='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User29&quot;,&#32;&#32;&quot;default&quot;)' display="number" expr="decode(rowlevel&#32;,1,&#32;fix_sply_prc_tmp,&#32;&#32;fix_sply_prc)" font='expr:decode(rowlevel,1,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User41&quot;,&#32;&#32;&quot;default&quot;)' col="5" colid="fix_vat" color='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User29&quot;,&#32;&#32;&quot;default&quot;)' display="number" expr="decode(rowlevel&#32;,1,&#32;fix_vat_tmp,&#32;&#32;fix_vat)" font='expr:decode(rowlevel,1,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User41&quot;,&#32;&#32;&quot;default&quot;)' col="6" colid="sum" color='expr:decode(rowlevel&#32;,&#32;1,&#32;&quot;User29&quot;,&#32;&#32;&quot;default&quot;)' display="number" expr="decode(rowlevel&#32;,1,&#32;sum_tmp,&#32;&#32;sum)" font='expr:decode(rowlevel,1,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+					</body>
+					<summary>
+						<cell bkcolor="user37" col="0" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="1" color="user38" display="text" font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="2" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="3" color="user38" display="text" font="돋움,9,Bold" text="합계"/>
+						<cell align="right" bkcolor="user37" col="4" color="user38" display="number" expr='sum(&quot;fix_sply_prc&quot;)'/>
+						<cell align="right" bkcolor="user37" col="5" color="user38" display="number" expr='sum(&quot;fix_vat&quot;)'/>
+						<cell align="right" bkcolor="user37" col="6" color="user38" display="number" expr='sum(&quot;sum&quot;)'/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="SKT&#32;수수료&#32;정산현황" Top="59" Width="192"></Image>
+		<Button Cursor="HAND" Height="21" Id="btn_export" ImageID="btn_i_exceldown_w" Left="994" OnClick="btn_export_OnClick" TabOrder="4" Text="Button1" ToolTipText="Excel&#32;Download" Top="65" Width="20"></Button>
+		<Button Cursor="HAND" Height="18" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="189" OnClick="btn_monthCalendar_OnClick" TabOrder="5" Text="Button3" Top="21" Width="17"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  ACCMSS00200
+* 업무명      :  SKT Sales Commission Sattlement Status by each Org
+* 프로그램명  :  SSKT Sales Commission Sattlement Status by each Org
+--------------------------------------------------------------------------------
+* 작성자      : Krishan K Gaur
+* 작성일      : 2009.06.19
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+//==============================================================================
+// 전역변수선언
+//==============================================================================
+var FV_LOGIN_ID = gds_session.GetColumn(0, "loginId");		//사용자계정
+var FV_ORG_ID = gds_session.GetColumn(0, "orgId");			//조직코드
+var FV_ORG_CL = gds_session.GetColumn(0, "orgCl");			//조직구분
+var FV_SUP_ORG_ID = gds_session.GetColumn(0, "supOrgId");	//상위조직코드
+var FV_USER_GRP = gds_session.GetColumn(0, "userGrp");		//사용자그룹
+var FV_ORG_AREA = gds_session.GetColumn(0, "orgAreaId");	//근무지코드
+var FV_POS_AGENCY_ID = gds_session.GetColumn(0,"posAgencyId");         	// 소속 대리점ID
+var FV_POS_AGENCY_NM = gds_session.GetColumn(0,"posAgencyNm");       	// 소속 대리점명
+var FV_POS_AGENCY_UKEY_ID = gds_session.GetColumn(0,"posAgencyUkeyId"); // 소속 대리점UKEY ID
+var ORG_CL;
+var ORG_ID;
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ACCMSS00200_OnLoadCompleted(obj)
+{
+	
+	
+	cf_setAuth(pFrmNum);
+	f_init();	//폼 초기화 
+
+}
+/*******************************************************************************
+ * @description    : 폼 초기화 
+*******************************************************************************/
+function f_init()
+{
+	
+	div_search.cal_acc_mth.Value = cf_today();	
+	ds_mss_sale_cond.AddRow();
+	
+}
+/*******************************************************************************
+ * @description    :  콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	 
+
+}
+function div_search_btn_org_OnClick(obj)
+{
+	
+	var temp=cf_callFullOrgTree("","div_search.edt_orgNm");
+	
+	ORG_CL=NToken(temp,'^',3);
+	ORG_ID=NToken(temp,'^',1);
+}
+
+function div_search_btn_search_OnClick(obj)
+{	
+	
+	if(!cf_checkObjValues(div_search)){
+		return;
+	}
+	ds_mss_list.AddRow();
+	cf_setParam(ds_mss_sale_cond,"org_id",ORG_ID);
+	cf_setParam(ds_mss_sale_cond, "acc_mth", SubStr(div_search.cal_acc_mth.Value,0,6));	
+	cf_setParam(ds_mss_sale_cond, "org_cl", ORG_CL);
+	
+	ds_mss_list.GroupKey = "teamNm, centerNm, agencyNm";
+	
+	var sSvcID = "getMssCmmsByOrg";
+	var sInDs = "nc_input_fieldDs=ds_mss_sale_cond";
+	var sOutDs = "ds_mss_list=ds_mss_list";
+	var sArg = "sktst.acc.MSS#getMssCmmsByOrg";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+}
+
+/*******************************************************************************
+* 함수명 : btn_export_OnClick
+* 기능명 :  엑셀 export
+*******************************************************************************/
+function btn_export_OnClick(obj)
+{
+	cf_exportExcel(grd_list);
+}
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_acc_mth);
+}
+function div_search_edt_orgNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	ds_mss_list.ClearData();
+}
+
+function div_search_edt_orgNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == "13"){
+		var temp=cf_callFullOrgTree("","div_search.edt_orgNm");		
+	ORG_CL=NToken(temp,'^',3);
+	ORG_ID=NToken(temp,'^',1);	
+	}
+}
+]]></Script>
+</Window>

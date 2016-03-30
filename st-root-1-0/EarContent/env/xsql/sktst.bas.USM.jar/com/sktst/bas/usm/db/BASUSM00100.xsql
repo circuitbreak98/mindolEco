@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM00100">
+	<select id="getUserList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00100_getUserList_조민지_이영진" */
+    a.user_id
+    , u_key_id
+    , portal_user_id
+    , user_cd
+    , user_nm
+    , duty
+    , a.pos_agency
+    , FBAS_GET_DEAL_NM(a.pos_agency,'') as pos_agency_nm
+    , pwd
+    , eff_user_yn
+    , wphon
+    , user_grp
+    , fbas_get_commcdnm_val('ZBAS_C_00250', user_grp) user_grp_nm
+    , org_area
+    , c.deal_co_nm as  org_area_nm
+    , decode(c.deal_co_cl2, '2', '2차점', '3', '3차점', '') org_gubun
+    , decode(substr(c.ukey_channel_cd, 1, 1), 'P', c.ukey_channel_cd
+                                            , 'U', c.ukey_channel_cd, '') org_pcode
+    , a.rmks
+    , a.org_id
+    , b.org_nm  org_id_nm
+    , a.del_yn
+    , a.upd_cnt
+    , a.pwd_end_dt
+    , a.mbl_phon
+    , a.mbl_phon2
+    , a.mbl_phon3
+    , a.happy_sms1
+    , a.happy_sms2
+    , a.happy_sms3
+    , a.acc_sms1
+    , a.acc_sms2
+FROM tbas_user_mgmt    a
+   , tbas_org_mgmt     b
+   , (select *
+        from tbas_deal_co_mgmt a
+       where del_yn = 'N'
+         and hseq_no = (select max(hseq_no)
+                          from tbas_deal_co_mgmt
+                         where deal_co_cd = a.deal_co_cd
+                           and del_yn = 'N')) c
+WHERE a.org_id = b.org_id
+and a.org_area = c.deal_co_cd(+)
+AND a.del_yn = 'N'
+AND b.del_yn = 'N'
+]]>    <isNotEmpty prepend="AND" property="user_grp">
+<![CDATA[        a.user_grp LIKE #user_grp#||'%'
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="portal_user_id">
+<![CDATA[        a.portal_user_id = #portal_user_id#
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="user_nm">
+<![CDATA[        a.user_nm LIKE '%'||#user_nm#||'%'
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="org_nm">
+<![CDATA[        b.org_nm LIKE #org_nm#||'%'
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="org_area">
+<![CDATA[        a.org_area = #org_area#
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="org_id">
+<![CDATA[        b.org_id in (SELECT org_id
+                       FROM tbas_org_mgmt
+                      WHERE del_yn = 'N'
+                        AND EFF_ORG_YN = 'Y'
+                      START WITH org_id = #org_id#
+                    CONNECT BY PRIOR org_id = sup_org)
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="user_id">
+<![CDATA[        a.user_id LIKE '%'||#user_id#||'%'
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="u_key_id">
+<![CDATA[        a.u_key_id LIKE '%'||#u_key_id#||'%'
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="eff_user_yn">
+<![CDATA[        a.eff_user_yn = #eff_user_yn#
+]]>    </isNotEmpty>
+<![CDATA[ORDER BY user_grp DESC,user_nm]]>
+	</select>
+	<select id="getUserIdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00100_getUserIdList_조민지_이영진" */
+    a.user_id
+    , fbas_get_commcdnm_val('ZBAS_C_00250', user_grp) user_grp_nm
+    , c.deal_co_nm as  org_area_nm
+    , b.user_id_act_st_cd as user_st_cd
+    , fbas_get_commcdnm_val('ZPTL_C_00300', b.user_id_act_st_cd) user_st_nm
+	FROM tbas_user_mgmt    a, tbas_portal_user b
+	   , (select *
+	        from tbas_deal_co_mgmt a
+	       where del_yn = 'N'
+	         and hseq_no = (select max(hseq_no)
+	                          from tbas_deal_co_mgmt
+	                         where deal_co_cd = a.deal_co_cd
+	                           and del_yn = 'N')) c
+	WHERE a.org_area = c.deal_co_cd(+)
+	and a.portal_user_id = b.login_id
+	AND UPPER(a.portal_user_id) = UPPER(#portal_user_id#)
+	AND a.del_yn = 'N'
+	ORDER BY user_grp DESC,user_nm]]>
+	</select>
+	<select id="getUserGrpList" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00100_getUserGrpList_조민지_이영진" */
+	comm_cd_val
+	, comm_cd_val_nm
+FROM tbas_comm_cd_dtl
+WHERE comm_cd_id = 'ZBAS_C_00250'
+AND del_yn='N'
+ORDER BY prt_seq]]>
+	</select>
+	<select id="getUserDutyList" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00100_getUserDutyList_조민지_이영진" */
+	comm_cd_val
+	, comm_cd_val_nm
+FROM tbas_comm_cd_dtl
+WHERE comm_cd_id = 'ZBAS_C_00210'
+AND del_yn='N']]>
+	</select>
+	<select id="getUserListPage" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00100_getUserListPage_조민지_이영진" */
+    rnum
+    , user_id
+    , u_key_id
+    , user_cd
+    , user_nm
+    , pwd
+    , eff_user_yn
+    , wphon
+    , mbl_phon
+    , user_grp
+    , user_grp_nm
+    , org_area
+    , org_area_nm
+    , rmks
+    , org_id
+    , org_id_nm
+    , del_yn
+    , upd_cnt
+FROM (
+SELECT
+    rownum as rnum
+    , user_id
+    , u_key_id
+    , user_cd
+    , user_nm
+    , pwd
+    , eff_user_yn
+    , wphon
+    , mbl_phon
+    , user_grp
+    , user_grp_nm
+    , org_area
+    , org_area_nm
+    , rmks
+    , org_id
+    , org_id_nm
+    , del_yn
+    , upd_cnt
+FROM (
+SELECT
+    a.user_id
+    , u_key_id
+    , user_cd
+    , user_nm
+    , pwd
+    , eff_user_yn
+    , wphon
+    , a.mbl_phon
+    , user_grp
+    , (SELECT comm_cd_val_nm
+       FROM tbas_comm_cd_dtl
+       WHERE comm_cd_id = 'ZBAS_C_00250'
+       AND  comm_cd_val = user_grp
+       AND del_yn = 'N'
+      ) user_grp_nm
+    , org_area
+    , (SELECT deal_co_nm
+       FROM tbas_deal_co_mgmt
+       WHERE deal_co_cd = org_area
+       AND del_yn = 'N'
+       AND TO_CHAR(SYSDATE, 'yyyymmddhh24miss') BETWEEN eff_sta_dtm AND eff_end_dtm
+      ) org_area_nm
+    , a.rmks
+    , a.org_id
+    , (SELECT org_nm
+       FROM tbas_org_mgmt
+       WHERE org_id = a.org_id
+       AND del_yn = 'N'
+      ) org_id_nm
+    , a.del_yn
+    , a.upd_cnt
+FROM tbas_user_mgmt a, tbas_org_mgmt b
+WHERE a.org_id = b.org_id
+AND a.del_yn = 'N'
+AND b.del_yn = 'N'
+]]><dynamic>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="user_grp" compareValue="">
+<![CDATA[        a.user_grp LIKE #user_grp#||'%'
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="user_nm" compareValue="">
+<![CDATA[        a.user_nm LIKE #user_nm#||'%'
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="org_nm" compareValue="">
+<![CDATA[        b.org_nm LIKE #org_nm#||'%'
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="org_id" compareValue="">
+<![CDATA[        b.org_id LIKE #org_id#||'%'
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="user_id" compareValue="">
+<![CDATA[        a.user_id = #user_id#
+]]>    </isNotEqual>
+<![CDATA[]]>    <isEqual property="search_condition" compareValue="user_grp">
+<![CDATA[        ORDER BY a.user_grp
+]]>    </isEqual>
+<![CDATA[]]>    <isEqual property="search_condition" compareValue="org_id">
+<![CDATA[        ORDER BY b.org_nm
+]]>    </isEqual>
+<![CDATA[]]>    <isEqual property="search_condition" compareValue="user_nm">
+<![CDATA[        ORDER BY a.user_nm
+]]>    </isEqual>
+<![CDATA[]]></dynamic>
+<![CDATA[)
+)
+WHERE rnum between #nc_firstRowIndex# and #nc_lastRowIndex#]]>
+	</select>
+	<select id="getUserListCount" parameterClass="map" resultClass="java.lang.Integer" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00100_getUserListCount_조민지_이영진" */
+    COUNT(a.user_id) AS cnt
+FROM tbas_user_mgmt a, tbas_org_mgmt b
+WHERE a.org_id = b.org_id
+AND a.del_yn = 'N'
+AND b.del_yn = 'N'
+]]><dynamic>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="user_grp" compareValue="">
+<![CDATA[        a.user_grp LIKE #user_grp#||'%'
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="user_nm" compareValue="">
+<![CDATA[        a.user_nm LIKE #user_nm#||'%'
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="org_nm" compareValue="">
+<![CDATA[        b.org_nm LIKE #org_nm#||'%'
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="org_id" compareValue="">
+<![CDATA[        b.org_id LIKE #org_id#||'%'
+]]>    </isNotEqual>
+<![CDATA[]]>    <isNotEqual prepend="AND" property="user_id" compareValue="">
+<![CDATA[        a.user_id = #user_id#
+]]>    </isNotEqual>
+<![CDATA[]]></dynamic>
+	</select>
+	<insert id="addExcelExportHst" ><![CDATA[INSERT INTO /*+ BASUSM00100_addExcelExportHst_EXCEL 추출이력 저장_김연석_김연석 */
+    TBAS_EXCEL_EXPORT_HST
+(
+    EXPORT_DTM      /* 추출일시 */
+  , EXPORT_SCREEN   /* 추출화면 */
+  , EXPORT_USER     /* 추출사용자 */
+  , EXPORT_COND     /* 추출조건 */
+  , USER_LOGIN_IP   /* IP */
+  , USER_ORG_CD     /* 조직 */
+  , USER_AGENCY_CD  /* 대리점 */
+  , USER_USER_GRP   /* 사용자그룹 */
+  , EXPORT_CNT      /* 추출건수 */
+  , DEL_YN
+  , UPD_CNT
+  , INS_DTM
+  , INS_USER_ID
+  , MOD_DTM
+  , MOD_USER_ID
+)
+VALUES
+(
+    #EXPORT_DTM#
+  , #EXPORT_SCREEN#
+  , #EXPORT_USER#
+  , #EXPORT_COND#
+  , #USER_LOGIN_IP#
+  , #USER_ORG_CD#
+  , #USER_AGENCY_CD#
+  , #USER_USER_GRP#
+  , #EXPORT_CNT#
+  , 'N'
+  , 1
+  , TO_CHAR(SYSDATE, 'yyyyMMddHH24miss')
+  , #onlineContext.userInfo.loginId#
+  , TO_CHAR(SYSDATE, 'yyyyMMddHH24miss')
+  , #onlineContext.userInfo.loginId#
+)]]>
+	</insert>
+	<select id="getDumyResult" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select #realBizYn# as realBizYn from dual]]>
+	</select>
+	<update id="updateJm" ><![CDATA[UPDATE TBAS_USER_MGMT  /* BASUSM00100_updateJm_실명인증결과저장_장화수 */
+	SET
+    REAL_BIZ_YN = #realBizYn#
+  , BIZ_JM_NUM  = #bizJmNum#
+WHERE USER_ID = #onlineContext.userInfo.loginId#
+    	and DEL_YN <> 'Y']]>
+	</update>
+	<select id="getUkeyInfo" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASUSM00100_getUkeyInfo_로그인UKEYID취득_장화수 */
+       b.user_id as u_key_id
+  from tbas_user_mgmt   a
+     , tbas_portal_user b
+ where a.portal_user_id = b.login_id
+   and a.user_id = #id#]]>
+	</select>
+	<select id="getPortalUserInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /* BASUSM00100_getPortalUserInfo_포탈SSO정보취득_김연석 */
+       portal_user_id
+     , user_id
+     , user_nm
+     , user_grp
+     , fbas_get_commcdnm_val('ZBAS_C_00250', user_grp)  user_grp_nm
+     , org_nm
+     , user_stat
+     , fbas_get_commcdnm_val('ZPTL_C_00300', user_stat) user_stat_nm
+  from tbas_user_mgmt   a
+  ,  ( select login_id
+            , org_nm
+            , user_id_act_st_cd user_stat
+         from tbas_portal_user a
+            , tbas_portal_org  b
+        where a.post_org_id  = b.org_id) b
+ where a.portal_user_id = b.login_id(+)
+   and portal_user_id   = #portal_user_id#]]>
+	</select>
+</sqlMap>

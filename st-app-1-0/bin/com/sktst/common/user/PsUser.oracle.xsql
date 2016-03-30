@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="biz.user">
+
+	<typeAlias alias="userInfo" type="com.sktst.common.user.PsUserInfo"/>
+	<typeAlias alias="loginUserInfo" type="com.sktst.common.user.PsLoginUserInfo"/>	
+    
+    <select id="getUserInfo" parameterClass="string" resultClass="userInfo">
+    <![CDATA[
+    SELECT
+    	U.USER_ID AS userId
+    	,U.USER_CD AS userCd
+    	,U.U_KEY_ID AS userNm
+    	,U.PWD AS pwd
+    	,U.PWD_END_DT AS pwdEndDt
+    	,U.EFF_USER_YN AS effUserYn
+    	,U.WPHON AS wphon
+    	,U.MBL_PHON AS mblPhon
+    	,U.EMAIL1 AS email1
+    	,U.EMAIL2 AS email2
+    	,U.USER_GRP AS userGrp
+    	,U.DUTY AS duty
+    	,U.ORG_ID AS orgId
+    	,U.ORG_AREA AS orgArea
+    	,U.RMKS AS rmks
+    	,U.DEL_YN AS delYn
+    	,U.BIZ_JM_NUM AS bizJmNum
+    	,DECODE(NVL(U.REAL_BIZ_YN,''),'','N',U.REAL_BIZ_YN) AS realBizYn
+    	,U.PORTAL_USER_ID AS portalUserId
+    	,U.U_KEY_ID AS uKeyId
+    	,U.P_FLAG AS pFlag
+    	,U.USER_CL AS userCl
+    FROM
+    	TBAS_USER_MGMT U
+    WHERE
+    	U.USER_ID = #value#
+    	and U.DEL_YN <> 'Y'
+    ]]>
+    </select>    
+
+    <select id="getLoginUserInfo" parameterClass="string" resultClass="loginUserInfo">
+    <![CDATA[
+    SELECT
+        U.USER_ID AS loginId
+        ,U.USER_NM AS userNm
+        ,U.PWD AS loginPassword
+        ,U.PWD_END_DT AS passwordExpireDate
+        ,U.USER_GRP AS userGrp
+        ,U.DUTY AS duty
+    	,U.BIZ_JM_NUM AS bizJmNum
+    	,DECODE(NVL(U.REAL_BIZ_YN,''),'','N',U.REAL_BIZ_YN) AS realBizYn
+    	,U.PORTAL_USER_ID AS portalUserId
+    	,NVL(U.USER_CL,'X') AS userCl
+        ,ORG.ORG_ID AS orgId
+        ,ORG.ORG_NM AS orgNm
+        ,ORG.ORG_CL AS orgCl
+        ,ORG.SUP_ORG AS supOrgId
+        ,(    SELECT SUP_ORG.ORG_NM 
+            FROM TBAS_ORG_MGMT SUP_ORG
+            WHERE ORG.ORG_CL > '04' and ORG.SUP_ORG = SUP_ORG.ORG_ID
+        ) AS supOrgNm
+        ,U.ORG_AREA AS orgAreaId
+        ,WORK.DEAL_CO_CL1 AS orgAreaCl1
+        ,WORK.UKEY_AGENCY_CD as orgAreaUkeyId
+        ,(  SELECT DEAL_CO.DEAL_CO_NM
+            FROM TBAS_DEAL_CO_MGMT DEAL_CO
+            WHERE TO_CHAR(SYSDATE, 'yyyymmddhh24miss') BETWEEN DEAL_CO.EFF_STA_DTM and DEAL_CO.EFF_END_DTM
+                and DEAL_CO.DEL_YN <> 'Y'
+                and DEAL_CO.DEAL_CO_CD = U.ORG_AREA
+                and DEAL_CO.EFF_END_DTM = '99991231235959'
+        ) AS orgAreaNm
+        ,(  SELECT DEAL_CO.UKEY_AGENCY_CD
+            FROM TBAS_DEAL_CO_MGMT DEAL_CO
+            WHERE TO_CHAR(SYSDATE, 'yyyymmddhh24miss') BETWEEN DEAL_CO.EFF_STA_DTM and DEAL_CO.EFF_END_DTM
+                and DEAL_CO.DEL_YN <> 'Y'
+                and DEAL_CO.DEAL_CO_CD = U.ORG_AREA
+                and DEAL_CO.EFF_END_DTM = '99991231235959'
+        ) AS orgAreaPosAgencyCd
+        ,(  SELECT DEAL_CO.UKEY_SUB_CD
+            FROM TBAS_DEAL_CO_MGMT DEAL_CO
+            WHERE TO_CHAR(SYSDATE, 'yyyymmddhh24miss') BETWEEN DEAL_CO.EFF_STA_DTM and DEAL_CO.EFF_END_DTM
+                and DEAL_CO.DEL_YN <> 'Y'
+                and DEAL_CO.DEAL_CO_CD = U.ORG_AREA
+                and DEAL_CO.EFF_END_DTM = '99991231235959'
+        ) AS orgAreaUkeySubCd
+        ,(  SELECT DEAL_CO.UKEY_CHANNEL_CD
+            FROM TBAS_DEAL_CO_MGMT DEAL_CO
+            WHERE TO_CHAR(SYSDATE, 'yyyymmddhh24miss') BETWEEN DEAL_CO.EFF_STA_DTM and DEAL_CO.EFF_END_DTM
+                and DEAL_CO.DEL_YN <> 'Y'
+                and DEAL_CO.DEAL_CO_CD = U.ORG_AREA
+                and DEAL_CO.EFF_END_DTM = '99991231235959'
+        ) AS orgAreaUkeyChannelCd
+        ,U.POS_AGENCY as posAgencyId
+        ,(  SELECT DEAL_CO.DEAL_CO_NM
+            FROM TBAS_DEAL_CO_MGMT DEAL_CO
+            WHERE TO_CHAR(SYSDATE, 'yyyymmddhh24miss') BETWEEN DEAL_CO.EFF_STA_DTM and DEAL_CO.EFF_END_DTM
+                and DEAL_CO.DEL_YN <> 'Y'
+                and DEAL_CO.DEAL_CO_CD = U.POS_AGENCY
+                and DEAL_CO.EFF_END_DTM = '99991231235959'
+        ) as posAgencyNm
+        ,(  SELECT DEAL_CO.UKEY_AGENCY_CD
+            FROM TBAS_DEAL_CO_MGMT DEAL_CO
+            WHERE TO_CHAR(SYSDATE, 'yyyymmddhh24miss') BETWEEN DEAL_CO.EFF_STA_DTM and DEAL_CO.EFF_END_DTM
+                and DEAL_CO.DEL_YN <> 'Y'
+                and DEAL_CO.DEAL_CO_CD = U.POS_AGENCY
+                and DEAL_CO.EFF_END_DTM = '99991231235959'
+        ) as posAgencyUkeyId
+    FROM
+        TBAS_USER_MGMT U
+        ,TBAS_ORG_MGMT ORG
+        ,TBAS_DEAL_CO_MGMT WORK
+        ,TBAS_DEAL_CO_MGMT POS
+    WHERE        
+        U.USER_ID = #value#
+        AND U.DEL_YN <> 'Y'
+        AND U.EFF_USER_YN = 'Y'
+        AND ORG.DEL_YN <> 'Y'
+        AND ORG.EFF_ORG_YN = 'Y'
+        AND U.ORG_ID = ORG.ORG_ID
+        AND U.ORG_AREA = WORK.DEAL_CO_CD(+)
+        AND WORK.EFF_END_DTM (+) = '99991231235959'
+        AND WORK.DEL_YN(+) <> 'Y'
+        AND WORK.POS_AGENCY = POS.DEAL_CO_CD(+)
+        AND POS.DEL_YN(+) <> 'Y'    	
+        AND POS.EFF_END_DTM (+) = '99991231235959'
+	]]>
+	</select>
+ </sqlMap>

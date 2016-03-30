@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="ADMCNR00200">
+	<select id="getMenuList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  
+      B.MENU_NUM
+     ,B.TOP_PREFIX_CD
+     ,C.MENU_NM AS SUP_NM_LVL_3
+     ,D.MENU_NM AS SUP_NM_LVL_2
+     ,E.MENU_NM AS SUP_NM_LVL_1
+     ,B.MENU_NM
+     ,B.TOP_MENU_NUM
+     ,B.MENU_GROUP
+     ,B.MENU_LVL_CD
+     ,B.SORT_SEQ
+     ,B.SCREEN_ID
+     ,B.SUP_MENU_NUM  
+     ,B.USE_YN
+     ,B.REMARK      
+ FROM TADM_MENU B
+     ,TADM_MENU C 
+     ,TADM_MENU D 
+     ,TADM_MENU E             
+WHERE B.DEL_YN      = 'N'    
+  AND B.MENU_LVL_CD = '4'  
+  AND B.SCREEN_ID IS NOT NULL
+  AND B.SUP_MENU_NUM = C.MENU_NUM(+)
+  AND C.SUP_MENU_NUM = D.MENU_NUM(+)
+  AND D.SUP_MENU_NUM = E.MENU_NUM(+)
+]]><isNotEmpty prepend="AND" property="MENU_GROUP">
+<![CDATA[       B.MENU_GROUP LIKE SUBSTR(#MENU_GROUP#, 1,1) || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="MENU_NM">
+<![CDATA[       B.MENU_NM LIKE '%' || #MENU_NM# || '%' 
+]]></isNotEmpty>
+<![CDATA[START WITH 
+      B.MENU_LVL_CD = '1'
+CONNECT BY PRIOR 
+      B.MENU_NUM = B.SUP_MENU_NUM
+ORDER SIBLINGS BY 
+      B.SORT_SEQ]]>
+	</select>
+</sqlMap>

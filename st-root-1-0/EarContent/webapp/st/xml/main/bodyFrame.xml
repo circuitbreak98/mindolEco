@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnActivate="form_OnActivate" OnLoadCompleted="form_OnLoadCompleted" OnSize="form_OnSize" OnUnloadCompleted="form_OnUnloadCompleted" PidAttrib="7" Title="업무&#32;화면&#32;영역" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Div Height="600" Id="div_body" scroll="true" TabOrder="0" Text="Div0" Width="830">
+			<Contents></Contents>
+		</Div>
+		<FileDialog Bottom="25" Filter="Excel&#32;Files&#32;(*.xls)|*.xls" Height="24" Id="fld_excel" Left="802" Right="826" TabOrder="3" Top="1" Type="Save" Width="24"></FileDialog>
+		<FileDialog Bottom="32" Height="24" Id="fdg_excel" Left="784" Right="808" TabOrder="1" Top="8" Type="Save" Width="24"></FileDialog>
+		<File Bottom="32" Height="24" Id="b_File" Left="751" Right="775" TabOrder="1" Top="8" Width="24"></File>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BtnFrame
+* 업무명      : 프레임 구성
+* 프로그램명  : 하단
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	// Form 타이틀 설정
+	obj.Title = pFrmTitle;// + "[" + str_xml + "]";
+	
+	// 작업폼 열기
+	div_body.Url = pFrmUrl + ".xml";
+	
+	// 화면 타이틀 설정
+	//img_title.Text = pFrmTitle;
+	
+	//gf_setAuth();
+}
+
+
+/*******************************************************************************
+ * @description    : 창 종료시 탭 및 열린창 정보 제거- 이벤트
+*******************************************************************************/
+function form_OnUnloadCompleted(obj)
+{
+	//docBottom.FV_INT_TAB_COUNT--;
+	//var nNowTabIndex = docBottom.tab_openWindow.TabIndex;
+	var nRow = gds_openMenu.FindRow("pageTabId", obj.id);
+	gds_openMenu.DeleteRow(nRow);
+	//trace(" delete nNowTabIndex = " + this.GetTopWindow());
+	//trace(" delete nNowTabIndex = " + nNowTabIndex);
+//	trace(" delete obj.id = " + obj.id);
+	var nNowTabIndex = f_getTabIndex(obj.id);
+	
+	
+	docBottom.tab_openWindow.DeleteTab(nNowTabIndex);
+	
+	
+	// 탑 메뉴의 창 서브메뉴의 열린 목록 제거
+	var oTopMenuDs = docTop.ds_topMenu;
+	//trace(obj.id+ " / "+oTopMenuDs.FindRow("menu_id", obj.id));
+	oTopMenuDs.DeleteRow(oTopMenuDs.FindRow("menu_id", obj.id));
+}
+
+/*******************************************************************************
+ * @description    : 탭 아이디로 탭 인덱스를 얻기
+*******************************************************************************/
+function f_getTabIndex(sTabId)
+{
+	var oWinTab = docBottom.tab_openWindow.Components;
+	var nTabCount  = oWinTab.count();
+	for (i = 0 ; i < nTabCount ; i++)
+	{
+		if(oWinTab[i].id == sTabId)
+		{
+			return i+1;
+		}
+	} 
+}
+
+/*******************************************************************************
+ * @description    : 화면 리사이즈 - 이벤트
+*******************************************************************************/
+function form_OnSize(obj,nCx,nCy,nState)
+{
+	if(nCx > 830)
+	{
+		div_body.Width = nCx;
+	}
+	else
+	{
+		div_body.Width = 830;
+	}
+	
+	if(nCy > 600)
+	{
+		div_body.height = nCy;
+	}
+	else
+	{
+		div_body.height = 600;
+	}
+
+	docTop.f_setButtonPosition();
+	obj.ResizeScroll();
+}
+
+/*******************************************************************************
+ * @description    : 현재 폼에 활성화 - 이벤트
+*******************************************************************************/
+function form_OnActivate(obj)
+{
+	if(obj.id == "winTab1")
+	{
+		docBottom.tab_openWindow.tabIndex = 0;
+	}
+	else
+	{
+		docBottom.tab_openWindow.tabIndex = f_getTabIndex(obj.id);
+	}
+	docBottom.div_info.img_sysMsg.text = "";
+}
+]]></Script>
+</Window>

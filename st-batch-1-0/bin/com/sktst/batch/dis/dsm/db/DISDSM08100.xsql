@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDSM08100">
+	<select id="getDisListForUkey" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT '96'
+       ||rpad(nvl(c.ukey_agency_cd, ' '),  6, ' ')
+       ||rpad(nvl(b.ukey_sub_cd, ' '),  4, ' ')
+       ||rpad(nvl(b.ukey_channel_cd, ' '),  6, ' ')
+       ||'    '
+       ||rpad(nvl(a.prod_cd, ' '),  5, ' ')
+       ||rpad(nvl(a.ser_num||(decode(d.prod_cl,'2','F','')), ' '),  15, ' ') as MSG
+  FROM (
+        SELECT  PROD_CD
+             ,  COLOR_CD
+             ,  SER_NUM
+             ,  HLD_PLC_ID
+          FROM  (SELECT IN_PROD.RNUM
+                      , IN_PROD.PROD_CD
+                      , IN_PROD.COLOR_CD
+                      , IN_PROD.SER_NUM
+                      , IN_PROD.HLD_PLC_ID
+                   FROM (SELECT ROW_NUMBER() OVER(PARTITION BY PROD_CD,COLOR_CD,SER_NUM,HLD_PLC_ID ORDER BY PROD_CD,COLOR_CD,SER_NUM,HLD_PLC_ID) AS RNUM
+                              , PROD_CD
+                              , COLOR_CD
+                              , SER_NUM
+                              , HLD_PLC_ID
+                           FROM(/* 상품 전월재고 */
+                                SELECT /*+ index(a XDIS_MTH_DIS_01) */
+                                       PROD_CD
+                                     , COLOR_CD
+                                     , SER_NUM
+                                     , HLD_PLC_ID
+                                  FROM TDIS_MTH_DIS a   /* 월재고 */
+                                 WHERE STRD_YM  = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')
+                                   AND DEL_YN   = 'N'
+                                UNION ALL
+                                /* 상품 입고 (구매입고,교품입고) */
+                                /* 상품 이동출고 (이동입고) */
+                                /* 상품 판매입고 (기기교환입고,판매취소입고) */
+                                SELECT PROD_CD
+                                     , COLOR_CD
+                                     , SER_NUM
+                                     , IN_PLC_ID AS HLD_PLC_ID
+                                  FROM TDIS_PROD_INOUT_HST
+                                 WHERE INOUT_DT BETWEEN TO_CHAR(SYSDATE, 'YYYYMM')|| '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                   AND INOUT_CL      IN ('100','300')
+                                   AND INOUT_DTL_CL  IN ('101','102','301','104','105')  /* 구매입고,교품입고,이동입고,기기교환입고,판매취소입고 */
+                                UNION ALL
+                                /* 상품 출고 (반품출고취소,교품반품출고취소) */
+                                /* 상품 이동출고 (이동출고취소) */
+                                SELECT PROD_CD
+                                     , COLOR_CD
+                                     , SER_NUM
+                                     , OUT_PLC_ID AS HLD_PLC_ID
+                                FROM TDIS_PROD_INOUT_HST
+                                WHERE INOUT_DT BETWEEN TO_CHAR(SYSDATE, 'YYYYMM')|| '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                  AND INOUT_CL IN ('200','300')
+                                  AND INOUT_DTL_CL IN ('207','210','212','304')  /* 반품출고취소,교품반품출고취소, 선출고취소, 이동출고취소 */
+                               )
+                        ) IN_PROD
+                 MINUS
+                 SELECT OUT_PROD.RNUM
+                      , OUT_PROD.PROD_CD
+                      , OUT_PROD.COLOR_CD
+                      , OUT_PROD.SER_NUM
+                      , OUT_PROD.HLD_PLC_ID
+                   FROM (SELECT ROW_NUMBER() OVER(PARTITION BY PROD_CD,COLOR_CD,SER_NUM,HLD_PLC_ID ORDER BY PROD_CD,COLOR_CD,SER_NUM,HLD_PLC_ID) AS RNUM
+                              , PROD_CD
+                              , COLOR_CD
+                              , SER_NUM
+                              , HLD_PLC_ID
+                           FROM (/* 상품 입고 (구매입고취소,교품입고취소) */
+                                 /* 상품 이동출고 (이동입고취소) */
+                                 SELECT PROD_CD
+                                      , COLOR_CD
+                                      , SER_NUM
+                                      , IN_PLC_ID AS HLD_PLC_ID
+                                   FROM TDIS_PROD_INOUT_HST
+                                  WHERE INOUT_DT BETWEEN TO_CHAR(SYSDATE, 'YYYYMM')|| '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                    AND INOUT_CL      IN ('100','300')
+                                    AND INOUT_DTL_CL  IN ('106','107','304')  /* 구매입고취소,교품입고취소,이동입고취소 */
+                                  UNION ALL
+                                  /* 상품 출고 (반품출고,교품반품출고) */
+                                  /* 상품 이동출고 (이동출고) */
+                                  /* 상품 판매출고 */
+                                  SELECT PROD_CD
+                                       , COLOR_CD
+                                       , SER_NUM
+                                       , OUT_PLC_ID AS HLD_PLC_ID
+                                    FROM TDIS_PROD_INOUT_HST
+                                   WHERE INOUT_DT BETWEEN TO_CHAR(SYSDATE, 'YYYYMM')|| '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                     AND INOUT_CL IN ('200','300')
+                                     AND INOUT_DTL_CL IN ('201','206','211','301','204','205')  /* 반품출고,교품반품출고,선출고,이동출고,기기교환출고,판매출고 */
+                                )
+                        ) OUT_PROD
+                ) PROD
+       ) A
+              ,tbas_deal_co_mgmt b
+              ,tbas_deal_co_mgmt c
+              ,tbas_prod_mgmt d
+         WHERE a.hld_plc_id = b.deal_co_cd
+           AND (b.deal_co_cd,b.hseq_no) in (SELECT /*+ INDEX_DESC (x XBAS_DEAL_CO_MGMT_PK) */
+                                                   x.deal_co_cd, x.hseq_no
+                                              FROM tbas_deal_co_mgmt x
+                                             WHERE x.eff_sta_dtm <= to_char(sysdate,'YYYYMMDDHH24MISS')
+                                               AND x.eff_end_dtm >= to_char(sysdate,'YYYYMMDDHH24MISS')
+                                               AND x.del_yn = 'N'
+                                               AND x.deal_co_cd = b.deal_co_cd
+                                               AND x.hseq_no    = b.hseq_no
+                                               AND rownum = 1)
+           AND b.pos_agency = c.deal_co_cd
+           AND c.del_yn = 'N'
+           AND b.pos_agency is not null
+           AND (c.deal_co_cd,c.hseq_no) in (SELECT /*+ INDEX_DESC (x XBAS_DEAL_CO_MGMT_PK) */
+                                                   x.deal_co_cd, x.hseq_no
+                                              FROM tbas_deal_co_mgmt x
+                                             WHERE x.eff_sta_dtm <= to_char(sysdate,'YYYYMMDDHH24MISS')
+                                               AND x.eff_end_dtm >= to_char(sysdate,'YYYYMMDDHH24MISS')
+                                               AND x.del_yn = 'N'
+                                               AND x.deal_co_cd = c.deal_co_cd
+                                               AND x.hseq_no    = c.hseq_no
+                                               AND rownum = 1)
+           AND a.prod_cd = d.prod_cd
+	]]>
+	</select>
+
+</sqlMap>

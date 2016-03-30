@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SACTAX00100" Left="8" OnLoadCompleted="SACTAX00100_OnLoadCompleted" PidAttrib="7" Title="(월)전자세금계산서(대리점)&#32;전송결과" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="yymm" size="10" summ="default" type="STRING"/>
+					<colinfo id="tax_cl" size="1" summ="default" type="STRING"/>
+					<colinfo id="zdele" size="1" summ="default" type="STRING"/>
+					<colinfo id="org_id" size="10" summ="default" type="STRING"/>
+					<colinfo id="org_nm" size="100" summ="default" type="STRING"/>
+					<colinfo id="zgubun" size="3" summ="default" type="STRING"/>
+					<record>
+						<org_id></org_id>
+						<org_nm></org_nm>
+						<tax_cl></tax_cl>
+						<yymm></yymm>
+						<zdele>N</zdele>
+						<zgubun></zgubun>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="CHK" size="1" summ="default" type="STRING"/>
+					<colinfo id="TAX_CL" size="255" summ="default" type="STRING"/>
+					<colinfo id="TAX_CL_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="AGENCY" size="10" summ="default" type="STRING"/>
+					<colinfo id="AGENCY_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="UKEY_AGENCY_CD" size="10" summ="default" type="STRING"/>
+					<colinfo id="YYMM" size="8" summ="default" type="STRING"/>
+					<colinfo id="TAX_TYPE" size="255" summ="default" type="STRING"/>
+					<colinfo id="TOTAL_CNT" size="255" summ="default" type="STRING"/>
+					<colinfo id="TRAN_CNT" size="255" summ="default" type="STRING"/>
+					<colinfo id="TRAN_ERR" size="255" summ="default" type="STRING"/>
+					<colinfo id="TRAN_NOT" size="255" summ="default" type="STRING"/>
+					<colinfo id="TRMS_DT" size="20" summ="default" type="STRING"/>
+					<colinfo id="REQ_USER_ID" size="10" summ="default" type="STRING"/>
+					<colinfo id="REVERT_DT" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_zconfirm">
+				<Contents>
+					<colinfo id="CODE" size="1" summ="default" type="STRING"/>
+					<colinfo id="NAME" size="10" summ="default" type="STRING"/>
+					<record>
+						<CODE></CODE>
+						<NAME>전체</NAME>
+					</record>
+					<record>
+						<CODE>0</CODE>
+						<NAME>미수행</NAME>
+					</record>
+					<record>
+						<CODE>1</CODE>
+						<NAME>전송에러</NAME>
+					</record>
+					<record>
+						<CODE>2</CODE>
+						<NAME>전송성공</NAME>
+					</record>
+					<record>
+						<CODE>3</CODE>
+						<NAME>확정에러</NAME>
+					</record>
+					<record>
+						<CODE>4</CODE>
+						<NAME>확정성공</NAME>
+					</record>
+					<record>
+						<CODE>9</CODE>
+						<NAME>미존재</NAME>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_zgubun">
+				<Contents>
+					<colinfo id="COMM_CD_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_erpResult">
+				<Contents>
+					<colinfo id="YYMM" size="255" summ="default" type="STRING"/>
+					<colinfo id="AGENCY" size="255" summ="default" type="STRING"/>
+					<colinfo id="TRMS_ITEM" size="255" summ="default" type="STRING"/>
+					<colinfo id="TRMS_YN" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" AutoScrollBar="Vert" BindDataset="ds_result" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="552" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="464" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_sacTAXList_OnCellDblClick" OnHeadClick="grd_list_OnHeadClick" Right="1012" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="29"/>
+						<col width="148"/>
+						<col width="200"/>
+						<col width="125"/>
+						<col width="125"/>
+						<col width="125"/>
+						<col width="125"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="checkbox" edit="checkbox"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,10,Bold" text="대리점"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,10,Bold" text="구분"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,10,Bold" text="전체건수"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,10,Bold" text="전송건수"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,10,Bold" text="전송오류건수"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,10,Bold" text="미전송건수"/>
+					</head>
+					<body>
+						<cell col="0" colid="CHK" display="expr:iif(&#32;TRAN_NOT&#32;==&#32;&apos;0&apos;&#32;,&#32;&apos;none&apos;,&#32;&apos;checkbox&apos;)" edit="expr:iif(&#32;TRAN_NOT&#32;==&#32;&apos;0&apos;&#32;,&#32;&apos;none&apos;,&#32;&apos;checkbox&apos;)"/>
+						<cell align="center" col="1" colid="AGENCY_NM" display="text"/>
+						<cell align="center" col="2" colid="TAX_CL_NM" display="text"/>
+						<cell align="center" col="3" colid="TOTAL_CNT" display="text"/>
+						<cell align="center" col="4" colid="TRAN_CNT" display="number"/>
+						<cell align="center" col="5" colid="TRAN_ERR" display="text"/>
+						<cell align="center" col="6" colid="TRAN_NOT" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image3" ImageID="bul_tit" Left="10" LeftMargin="15" OnClick="Image3_OnClick" Style="sty_img_tit" TabOrder="2" Text="(월)전자세금계산서(대리점)전송요청" Top="60" Width="254"></Image>
+		<Div Border="Raised" Height="43" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="1004">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="26" Style="sty_lb_Search" TabOrder="1" Text="정산월" Top="8" VAlign="Middle" Width="50"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="932" LeftMargin="5" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="8" Width="60"></Button>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="202" TabOrder="8" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static3" Left="210" Style="sty_lb_Search" TabOrder="5" Text="조직" Top="9" VAlign="Middle" Width="35"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_orgId" Left="253" LeftMargin="2" OnCharChanged="div_search_edt_orgId_OnCharChanged" OnKeyDown="div_search_edt_orgId_OnKeyDown" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="8" Width="70"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_orgTree" ImageID="btn_i_detail" Left="322" OnClick="div_search_btn_orgTree_OnClick" TabOrder="4" Text="Button0" Top="8" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_orgNm" Left="342" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="8" Width="110"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_lvl" Left="453" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="8" Visible="FALSE" Width="10"></Edit>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="18" TabOrder="9" Top="7" Transparent="TRUE" Width="20"></Image>
+				<MaskEdit Border="Flat" Height="20" Id="cal_yymm" Left="84" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="11" Top="8" Type="STRING" Width="88"></MaskEdit>
+				<Button Cursor="HAND" Height="18" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="154" OnClick="btn_monthCalendar_OnClick" TabOrder="10" Text="Button3" Top="9" Width="17"></Button>
+				<Static Align="Right" Height="20" Id="Static1" Left="500" Style="sty_lb_Search" TabOrder="12" Text="구분" Top="9" VAlign="Middle" Width="28"></Static>
+				<Combo Border="Flat" Height="20" Id="cmb_taxCl" Left="528" Style="sty_ipt_form" TabOrder="13" Top="7" Width="160"></Combo>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_4" Left="928" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="4" Text="전송요청" Top="560" Width="85"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="994" OnClick="btn_export_OnClick" TabOrder="5" Text="Button1" ToolTipText="Excel&#32;Download" Top="60" Width="19"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : SACERP00100
+* 업무명      : 판매회계 - (월) 전자세금계싼서(대리점)
+* 프로그램명  : (월) 전자세금계산서(대리점) 전송결과
+--------------------------------------------------------------------------------
+* 작성자      : 김종환
+* 작성일      : 2010.11.22
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_DIS.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 전역변수선언
+//==============================================================================
+var FV_LOGIN_ID = gds_session.GetColumn(0, "loginId");		//사용자계정
+var FV_ORG_ID = gds_session.GetColumn(0, "orgId");			//조직코드
+var FV_ORG_NM = gds_session.GetColumn(0, "orgNm");			//조직코드
+var FV_ORG_CL = gds_session.GetColumn(0, "orgCl");			//조직구분
+var FV_SUP_ORG_ID = gds_session.GetColumn(0, "supOrgId");	//상위조직코드
+var FV_USER_GRP = gds_session.GetColumn(0, "userGrp");		//사용자그룹
+var FV_ORG_AREA = gds_session.GetColumn(0, "orgAreaId");	//근무지코드
+var FV_POS_AGENCY_ID = gds_session.GetColumn(0,"posAgencyId");         	// 소속 대리점ID
+var FV_POS_AGENCY_NM = gds_session.GetColumn(0,"posAgencyNm");       	// 소속 대리점명
+var FV_POS_AGENCY_UKEY_ID = gds_session.GetColumn(0,"posAgencyUkeyId"); // 소속 대리점UKEY ID
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SACTAX00100_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	// 그리드 체크박스 설정 및 정렬
+	//cf_setGrdChecknSortEvent(grd_list);
+		
+	div_search.edt_orgId.value = FV_ORG_ID;
+    div_search.edt_orgNm.value = FV_ORG_NM;	
+
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	cf_checkCommonCode();
+	// 공통 코드를 위한 데이타셋 설정	
+	
+	//폼 초기화 
+	f_init();
+	
+}
+
+
+/*******************************************************************************
+ * @description    : 폼 초기화 
+*******************************************************************************/
+function f_init()
+{
+	div_search.cal_yymm.Value = SubStr(AddMonth(Today(), -1), 0, 6);
+	//div_search.cal_yymm.Value = Today());
+	trace("Today() : " + Today());
+	trace("AddMonth() : " + AddMonth(Today(), -1));
+	
+	f_setCombo();
+}
+
+function f_setCombo()
+{
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("div_search.cmb_taxCl"    , "ZSAC_C_00120", "전체");	// 영업구분
+	cf_checkCommonCode(); 
+}
+
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_yymm);
+}
+
+/*******************************************************************************
+ * @description    : 전체 조직 트리 팝업 호출- 이벤트
+*******************************************************************************/
+function div_search_btn_orgTree_OnClick(obj)
+{
+    // 조직 트리 팝업 호출
+   cf_callOrgTree2("div_search.edt_orgId", "div_search.edt_orgNm","");    
+}
+
+/*******************************************************************************
+ * @description    : 전체 조직 트리 팝업 호출- 이벤트
+*******************************************************************************/
+function div_search_edt_orgId_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+    if(nChar == "13"){
+        // 조직 트리 팝업 호출
+        cf_callOrgTree2("div_search.edt_orgId", "div_search.edt_orgNm",""); 
+    }
+}
+
+/*******************************************************************************
+ * @description    : org OnChar Changed 이벤트
+*******************************************************************************/
+function div_search_edt_orgId_OnCharChanged(obj,strPreText,strPostText)
+{
+    if(strPreText != strPostText){
+        div_search.edt_orgNm.value = "";
+    }   
+}
+
+
+
+/*******************************************************************************
+ * @description : 조회 
+ ******************************************************************************/
+function btn_search_OnClick(obj)
+{
+	if( uf_isNull(div_search.cal_yymm.Value) == true ) {
+		alert(cf_getMessage(MSG_00135, "정산월"));
+		div_search.cal_yymm.SetFocus();
+		return false;
+	}
+
+	if (div_search.cal_yymm.Value < 201010) {
+		alert("2010년10월 이후로만 조회가 가능합니다.");
+		return false;
+	}
+	
+	ds_condition.Clear();
+
+	// 넘길 파라메터 설정
+	cf_setParam(ds_condition, "yymm"    , div_search.cal_yymm.Value); 
+	cf_setParam(ds_condition, "org_id"  , div_search.edt_orgId.Text); 
+	cf_setParam(ds_condition, "taxCl"   , div_search.cmb_taxCl.Value);
+
+	var sSvcID = "getTaxErpTranResult";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_result=ds_result";
+	var sArg = "sktst.sac.TAX#getTaxErpTranResult";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+function f_callBack(sSvcID){
+	if (sSvcID == "getTaxErpTranResult")  {
+		//trace(ds_result.SaveXML());
+		//alert(ds_result.GetColumn(0,"TAX_TYPE"));
+		
+	} else if (sSvcID == "saveMmAddTaxTrms") {
+		btn_search_OnClick(null);		
+	} else if (sSvcID == "getTaxErpTranResult") {
+	}
+	
+	return;	
+}
+
+
+/*******************************************************************************
+ * @description : ERP전송요청
+ ******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	//Vaild Chack
+	var nCnt = ds_result.GetRowCount();
+	var nChkCnt = 0;
+	var nClsCheckFlag = "";
+	
+	for (var i = 0; i < nCnt; i++) {
+		if (ds_result.GetColumn(i, "chk") == "1") {
+			nChkCnt++;			
+			break;
+		}		
+	}
+	
+	
+	if (nChkCnt ==  0) {
+		alert(cf_getMessage(MSG_00134, "전송요청건"));
+		return;
+	}
+    
+	if (confirm("전송요청 하시겠습니까?") == true) {
+		
+		var sSvcID	= "saveMmAddTaxTrms";
+		var sInDs	= "ds_result=ds_result:u";
+		var sOutDs	= "ds_result=ds_result";
+		var sArg	= "sktst.sac.TAX#saveMmAddTaxTrms";
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+	
+}
+
+
+/*******************************************************************************
+ * @description : Excel export
+ ******************************************************************************/
+function btn_export_OnClick(obj)
+{
+	cf_exportExcel(grd_list);
+}
+
+function Button0_OnClick(obj)
+{
+	cf_debug("ds_result");
+}
+
+function Image3_OnClick(obj,nX,nY)
+{
+	
+}
+function div_search_edt_orgNm_OnChanged(obj,strText)
+{
+	
+}
+
+function grd_sacTAXList_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if (nCell == '3' || nCell == '6') {
+		var sArg  = " YYMM=" + quote(ds_condition.getColumn(0,"YYMM"));
+			sArg += " ORG_ID=" + div_search.edt_orgId;
+			sArg += " ORG_NM=" + div_search.edt_orgNm;
+			sArg += " AGENCY=" + quote(ds_result.getColumn(nRow,"AGENCY")); 
+			sArg += " AGENCY_NM=" + quote(ds_result.getColumn(nRow,"AGENCY_NM"));		
+			sArg += " TAX_CL=" + quote(ds_result.getColumn(nRow,"TAX_CL"));
+			sArg += " TAX_CL_NM=" + quote(ds_result.getColumn(nRow,"TAX_CL_NM"));
+			sArg += " UKEY_AGENCY_CD=" + quote(ds_result.getColumn(nRow,"UKEY_AGENCY_CD"));		
+
+		//var sHeight = 580;
+		//var sWidth  = 1220;
+		//dialog("sac::SACTAX00200.xml", sArg, sWidth, sHeight,,30 ,60 );
+		gf_openWindow("100000762", sArg);
+	} else if (nCell == '4' || nCell == '5') {
+		var sArg  = " YYMM=" + quote(ds_condition.getColumn(0,"YYMM"));
+			sArg += " ORG_ID=" + div_search.edt_orgId;
+			sArg += " ORG_NM=" + div_search.edt_orgNm;
+			sArg += " AGENCY=" + quote(ds_result.getColumn(nRow,"AGENCY")); 
+			sArg += " AGENCY_NM=" + quote(ds_result.getColumn(nRow,"AGENCY_NM"));		
+			sArg += " TAX_CL=" + quote(ds_result.getColumn(nRow,"TAX_CL"));
+			sArg += " TAX_CL_NM=" + quote(ds_result.getColumn(nRow,"TAX_CL_NM"));
+			sArg += " UKEY_AGENCY_CD=" + quote(ds_result.getColumn(nRow,"UKEY_AGENCY_CD"));		
+	
+		//var sHeight = 580;
+		//var sWidth  = 1220;
+		//dialog("sac::SACTAX00300.xml", sArg, sWidth, sHeight,,30 ,60 );
+		gf_openWindow("100000763", sArg);
+	}
+}
+
+function grd_list_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+
+	trace("nCell : " + nCell);
+	if(nCell < 1)
+	{
+		var nChekValue = obj.getCellProp("head", 0, "text");
+
+		if(nChekValue == "0" || nChekValue == "")
+		{
+			nChekValue = 1;
+		}
+		else
+		{
+			nChekValue = 0;
+		}
+		
+		obj.setCellProp("head", 0, "text", nChekValue);
+		var nRow = ds_result.rowcount;
+		
+		for (var i = 0; i < nRow; i++) {
+			if ( ds_result.GetColumn(i, "TRAN_NOT") != "0"  ) {
+				ds_result.SetColumn(i, "chk", nChekValue);
+			}
+		}
+		
+	} else {
+		cf_markGridSort(obj,nCell,nX,nY,nPivotIndex);
+	}
+}
+]]></Script>
+</Window>

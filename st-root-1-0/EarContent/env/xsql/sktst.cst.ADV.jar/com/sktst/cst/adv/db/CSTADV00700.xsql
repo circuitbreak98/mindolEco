@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTADV00700">
+	<select id="getAllConPrch" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', NVL(prc.PRC_ST,con.PRC_ST)) PRC_NM
+	 , con.CON_MGMT_NO
+     , con.CON_DT
+     , con.IN_DT
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00020', prod.PROD_CHRTIC_1) PROD_CHRTIC_NM   
+     , FBAS_GET_DEAL_NM(prod.MFACT_ID,'') as MFACT_NM   
+	 , FBAS_GET_PROD_NM(NVL(prc.PROD_CD,con.PROD_CD)) PROD_NM
+     , NVL(prc.SER_NUM,con.SER_NUM) SER_NUM
+     , market.HQ_NM
+	 , market.MARKET_CD
+     , market.MARKET_NM      
+     , FBAS_GET_ORG_NM(deal.ORG_ID) ORG_NM
+     , deal.UKEY_AGENCY_CD 
+     , deal.UKEY_SUB_CD   
+     , FBAS_GET_AGENCY_NM(deal.POS_AGENCY,con.CON_DT) AGENCY_NM      
+     , FBAS_GET_DEAL_NM(con.CON_PLC_CD,con.CON_DT) CON_PLC_NM
+     , NVL(prc.CUST_NM,con.CUST_NM) CUST_NM
+     , con.SVC_DT
+     , DECODE(con.SVC_DT,NULL,NULL,
+           CASE WHEN (SUBSTR(con.CON_DT,7,2) - SUBSTR(con.SVC_DT,7,2)) >= 0
+       			THEN TO_CHAR((SUBSTR(con.CON_DT,0,4) - SUBSTR(con.SVC_DT,0,4)) * 12 + (SUBSTR(con.CON_DT,5,2) - SUBSTR(con.SVC_DT,5,2)) + 1)||'개월'
+				ELSE TO_CHAR((SUBSTR(con.CON_DT,0,4) - SUBSTR(con.SVC_DT,0,4)) * 12 + (SUBSTR(con.CON_DT,5,2) - SUBSTR(con.SVC_DT,5,2)))||'개월'
+			END) USE_MONTH
+     , con.TEL_NO
+     , BATT
+     , BATT_CASE
+     , GENDAR
+     , CHARGER
+     , EARPHONE
+     , DECODE((SELECT MIN_PRICE
+  				FROM TBAS_RATE_MGMT rate
+     			   , TBAS_PROD_MGMT prod
+               WHERE prod.PREFER_CL = rate.GRADE
+                 AND rate.TYPE_CL = '2'
+                 AND FROM_DT <= TO_CHAR(SYSDATE,'YYYYMMDD')
+                 AND TO_DT >= TO_CHAR(SYSDATE,'YYYYMMDD')
+                 AND rate.DEL_YN = 'N'
+                 AND prod.DEL_YN = 'N'
+                 AND prod.PROD_CD = prc.PROD_CD),NVL(prc.PRCHS_AMT,0),'최저가',prc.EQP_ST) EQP_ST_T
+     , prc.EQP_ST            
+     , DECODE(NVL(FIX_AMT_YN,'N'),'Y',prc.PRCHS_AMT - prc.ADJ_AMT,DECODE(NVL(prc.PRCHS_AMT,0),0,prc.PRCHS_AMT,prc.PRCHS_AMT + (TRUNC(con_dtl.DDCT_AMT,-2)-prc.ADJ_AMT))) EQP_ST_AMT             
+     , DECODE(NVL(FIX_AMT_YN,'N'),'Y',0,DECODE(prc.PRCHS_AMT,NULL,NULL,TRUNC(con_dtl.DDCT_AMT,-2))) DDCT_AMT
+     , prc.ADJ_AMT
+     , prc.PRCHS_AMT
+	 , DECODE(prc.REMIT_YN,'Y',prc.REMIT_DT,DECODE(prc.CHAG_DEDT_OP_YN,'Y',
+	 prc.CHAG_DEDT_OP_DT,DECODE(prc.POL_OP_YN,'Y',prc.POL_OP_DT,DECODE(prc.CORN_PRCHS_OP_YN,'Y',prc.CORN_PRCHS_OP_DT,'')))) PRCHS_DT
+     , DECODE(CUST_YN,'Y','확정','N','거부') CUST_CONF
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00060', prc.BANK_CD) BANK_NM
+     , prc.ACC_NO
+     , DECODE(prc.CHAG_DEDT_YN,'1','Y','') CHAG_DEDT_YN
+     , con.SVC_NO CON_SVC_NO
+     , con.SVC_MGMT_NO CON_SVC_MGMT_NO
+     , prc.SVC_NO
+     , prc.SVC_MGMT_NO
+     , DECODE(prc.REMIT_YN,'Y','Y',' ') REMIT_YN
+     , prc.REMIT_DT
+     , DECODE(prc.CHAG_DEDT_OP_YN,'Y','Y',' ') CHAG_DEDT_OP_YN
+     , prc.CHAG_DEDT_OP_DT
+     , DECODE(prc.CORN_PRCHS_OP_YN,'Y','Y',' ') CORN_PRCHS_OP_YN
+     , prc.CORN_PRCHS_OP_DT     
+     , DECODE(prc.POL_OP_YN,'Y','Y',' ') POL_OP_YN
+     , prc.POL_OP_DT          
+     , FBAS_GET_USER_NM(prc.CHECK_USER_ID) CHECK_USER_NM
+     , prc.CHECK_DT
+     , FBAS_GET_USER_NM(prc.CUST_USER_ID) CUST_USER_NM
+     , prc.CUST_DT
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00440', prod.COM_MTHD) COM_MTHD_NM
+     , NVL(prc.BOX_NO, con.BOX_NO) BOX_NO
+     , prc.EQP_ST_DTL
+     , NVL(con.FIRST_DC_YN,'N') FIRST_DC_YN
+     , DECODE(NVL(prc.PRCHS_AMT,1),1,0,NVL(FBAS_GET_RESERVE_AMT(con.CON_MGMT_NO),0)) UBO_AMT
+     , prc.PRCHS_AMT + NVL(FBAS_GET_RESERVE_AMT(con.CON_MGMT_NO),0) TOT_AMT
+	 , NVL(prc.IMEI,con.IMEI) IMEI
+	 , con.CUST_GROUP_NM
+     , FBAS_GET_USER_NM(con.IN_USER_ID) IN_USER_NM
+     , FBAS_GET_USER_NM(nvl(prc.BOX_USER_ID,con.BOX_USER_ID)) BOX_USER_NM
+     , substr(nvl(prc.BOX_DTM,con.BOX_DTM),0,8) BOX_DT
+     , substr(nvl(prc.BOX_DTM,con.BOX_DTM),9,2)||':'||substr(nvl(prc.BOX_DTM,con.BOX_DTM),11,2) BOX_TIME
+     , decode(DISP_AFTERIMAGE_CL,'A','강','B','약','') DISP_AFTERIMAGE_CL    
+     , prc.RMKS 	
+     , con.ASIANA_CARD_NO 
+  FROM TCST_CONSULT_MGMT con
+  	 ,(SELECT CON_MGMT_NO
+     		, SUM(BATT) BATT
+	        , NVL(MAX(BATT_CASE),'X') BATT_CASE
+	        , NVL(MAX(GENDAR),'X') GENDAR
+            , NVL(MAX(CHARGER),'X') CHARGER
+            , NVL(MAX(EARPHONE),'X') EARPHONE
+            , SUM(DDCT_AMT) DDCT_AMT
+   		 FROM (SELECT CON_MGMT_NO
+                    , DECODE(DTL_CL,'1',HLD_QTY,'2',HLD_QTY,'3',HLD_QTY,0) BATT
+      		  	    , DECODE(DTL_CL,'7','O','') BATT_CASE
+                    , DECODE(DTL_CL,'5','O','') GENDAR
+                    , DECODE(DTL_CL,'4','O','') CHARGER
+                    , DECODE(DTL_CL,'6','O','') EARPHONE
+                    , DDCT_AMT
+                 FROM TCST_CONSULT_DTL
+                 WHERE DEL_YN = 'N')
+        GROUP BY CON_MGMT_NO) con_dtl
+     , TCST_PRCHS_MGMT prc
+     , TBAS_DEAL_CO_MGMT deal
+     , TBAS_PROD_MGMT prod
+     , TBAS_DEAL_CO_MARKETING market
+ WHERE con.CON_MGMT_NO = con_dtl.CON_MGMT_NO(+)
+   AND con.CON_PLC_CD = deal.DEAL_CO_CD
+/*   AND deal.EFF_END_DTM = '99991231235959' */
+   AND deal.EFF_STA_DTM <= con.CON_DT||'235959'
+   AND deal.EFF_END_DTM >= con.CON_DT||'235959'
+   AND con.CON_MGMT_NO = prc.CON_MGMT_NO(+)  
+   AND con.PROD_CD = prod.PROD_CD 
+   AND deal.UKEY_AGENCY_CD  = market.UKEY_AGENCY_CD(+)
+   AND con.DEL_YN = 'N'
+   AND prc.DEL_YN(+) = 'N'
+   AND deal.DEL_YN = 'N'
+   AND prod.DEL_YN = 'N' 
+   AND market.DEL_YN(+) = 'N' 
+   AND NVL(market.STA_DT,con.CON_DT) <= con.CON_DT
+   AND NVL(market.END_DT,con.CON_DT) >= con.CON_DT
+   AND con.SKN_YN = 'N'
+   AND prc.SKN_YN(+) = 'N'
+]]><isEqual property="DT_GB" compareValue="1"> 
+<![CDATA[   AND con.CON_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isEqual property="DT_GB" compareValue="2"> 
+<![CDATA[   AND prc.CHECK_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isEqual property="DT_GB" compareValue="3"> 
+<![CDATA[   AND prc.REMIT_YN = 'Y'
+   AND prc.REMIT_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isEqual property="DT_GB" compareValue="4">
+<![CDATA[   AND prc.CHAG_DEDT_OP_YN = 'Y'
+   AND prc.CHAG_DEDT_OP_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isEqual property="DT_GB" compareValue="5">
+<![CDATA[   AND con.IN_YN = 'Y'
+   AND con.IN_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[	   deal.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[       con.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>	      
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       NVL(prc.PROD_CD,con.PROD_CD) = #PROD_CD#
+]]></isNotEmpty>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="REMIT_YN">   
+<![CDATA[       NVL(prc.REMIT_YN,'N') = #REMIT_YN#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">
+<![CDATA[       NVL(prc.SER_NUM,con.SER_NUM) = #SER_NUM#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[       con.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       con.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEqual property="FIRST_DC_YN" compareValue="A"> 
+<![CDATA[]]><isEqual property="SRH_GB" compareValue="1">
+<![CDATA[   AND NVL(con.FIRST_DC_YN,'N') = #FIRST_DC_YN#
+]]></isEqual>
+<![CDATA[]]><isEqual property="SRH_GB" compareValue="2">
+<![CDATA[]]><isEqual property="FIRST_DC_YN" compareValue="N">
+<![CDATA[   AND con.ASIANA_CARD_NO IS NULL
+]]></isEqual>
+<![CDATA[]]><isEqual property="FIRST_DC_YN" compareValue="Y">
+<![CDATA[   AND con.ASIANA_CARD_NO IS NOT NULL
+]]></isEqual>   
+<![CDATA[]]></isEqual>   
+<![CDATA[]]></isNotEqual> 
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="N"> 
+<![CDATA[   AND con.CON_PLC_CD <> '11050'
+]]></isEqual>
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="Y"> 
+<![CDATA[   AND con.CON_PLC_CD = '11050'
+]]></isEqual>
+<![CDATA[   ORDER BY con_dt]]>
+	</select>
+	<select id="getConsultMgmtAll" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT CON_MGMT_NO, RES_NO, ACC_NO, TEL_NO 
+  FROM TCST_CONSULT_MGMT
+ WHERE CON_DT = '20110819']]>
+	</select>
+	<update id="updateConCrypto" parameterClass="map" ><![CDATA[UPDATE TCST_CONSULT_MGMT SET 
+	RES_NO = #RES_NO#
+	, ACC_NO = #ACC_NO#
+	, TEL_NO = #TEL_NO#
+WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+	<select id="getPrchsMgmtAll" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT PRCHS_MGMT_NO, RES_NO, ACC_NO, TEL_NO
+  FROM TCST_PRCHS_MGMT
+where con_dt = '20110819']]>
+	</select>
+	<update id="updatePrcCrypto" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT SET 
+	RES_NO = #RES_NO#
+	, ACC_NO = #ACC_NO#
+	, TEL_NO = #TEL_NO#
+WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#]]>
+	</update>
+</sqlMap>

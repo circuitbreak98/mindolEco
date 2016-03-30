@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SALSUI00700" Left="8" OnLoadCompleted="SALSCO02100_OnLoadCompleted" PidAttrib="7" Title="SMS전송&#32;부가상품&#32;관리" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_input"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_SmsSuplList">
+				<Contents>
+					<colinfo id="chk" size="256" summ="default" type="STRING"/>
+					<colinfo id="pos_agency" size="256" summ="default" type="STRING"/>
+					<colinfo id="pos_agency_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="supl_svc_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="supl_svc_cl_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="supl_prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="supl_prod_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="sms_send_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_user" size="256" summ="default" type="STRING"/>
+					<colinfo id="mod_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="mod_user" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="38" Id="div_condition" Left="10" Style="sty_div_search" TabOrder="1" TabStop="FALSE" Text="Div0" Top="10" Width="1004">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="287" LeftMargin="5" OnClick="Div_Condition_btn_search_OnClick" Style="sty_btn_a" TabOrder="5" TabStop="FALSE" Text="조회" Top="7" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static1" Left="7" Style="sty_lb_Search" TabOrder="6" Text="대리점" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCdNm" Left="71" MaxLength="10" OnCharChanged="div_condition_edt_agencyCdNm_OnCharChanged" OnKeyDown="Div_Condition_edt_agencyCdNm_OnKeyDown" Style="sty_ipt_form" TabOrder="3" Top="7" UpperOnly="TRUE" Width="116"></Edit>
+				<Button Cursor="HAND" Height="20" Id="btn_agency" ImageID="btn_i_detail_b" Left="187" OnClick="div_condition_btn_agency_OnClick" OnKeyDown="Div_Condition_btn_agency_OnKeyDown" TabOrder="4" Text="Button0" Top="7" Width="20"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="207" MaxLength="10" Style="sty_ipt_form" TabOrder="1" Top="7" UpperOnly="TRUE" Width="57"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCd" Left="263" MaxLength="10" Style="sty_ipt_form" TabOrder="0" Top="7" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_SmsSuplList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="565" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" FixedColSizing="TRUE" HeadBorder="Flat" HeadHeight="21" Height="504" Id="grd_SmsSuplList" InputPanel="FALSE" Left="9" LineColor="user33" MinWidth="100" OnHeadClick="grd_SmsSuplList_OnHeadClick" Right="1013" RowHeight="21" Style="sty_Grid" TabOrder="9" TabStop="FALSE" Top="61" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="34"/>
+						<col fix="left" width="123"/>
+						<col fix="left" width="101"/>
+						<col fix="left" width="101"/>
+						<col width="153"/>
+						<col width="93"/>
+						<col width="120"/>
+						<col width="80"/>
+						<col width="120"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="선택"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="대리점"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="부가상품구분"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="부가상품코드"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="부가상품명"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="SMS전송여부"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="최초등록일시"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="최초등록자"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="변경처리일시"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="변경처리자"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="chk" display="checkbox" edit="checkbox"/>
+						<cell align="center" col="1" colid="pos_agency_nm" display="text"/>
+						<cell col="2" colid="supl_svc_cl_nm" display="text"/>
+						<cell col="3" colid="supl_prod_cd" display="text"/>
+						<cell align="left" col="4" colid="supl_prod_nm" display="text"/>
+						<cell align="center" col="5" colid="sms_send_yn" display="checkbox" edit="checkbox"/>
+						<cell align="left" col="6" colid="ins_dtm" display="text" Mask="####-##-##&#32;##:##:##"/>
+						<cell align="left" col="7" colid="ins_user" display="text"/>
+						<cell align="center" col="8" colid="mod_dtm" display="text" Mask="####-##-##&#32;##:##:##"/>
+						<cell align="center" col="9" colid="mod_user" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_NewSmsSupl" ImageID="btn_c_4" Left="8" LeftMargin="5" OnClick="btn_NewSmsSupl_OnClick" Style="sty_btn_c" TabOrder="3" Text="신규&#32;등록" Top="569" Visible="FALSE" Width="84"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="955" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="4" Text="저장" Top="569" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_Sync" ImageID="btn_c_4" Left="96" LeftMargin="5" OnClick="btn_Sync_OnClick" Style="sty_btn_c" TabOrder="5" Text="동기화" Top="569" Visible="FALSE" Width="84"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_delete" ImageID="btn_d_2" Left="892" LeftMargin="5" OnClick="btn_delete_OnClick" Style="sty_btn_d" TabOrder="6" Text="삭제" Top="569" Visible="FALSE" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALSCO02100
+* 업무명      : SMS전송부가상품관리
+* 프로그램명  : 
+--------------------------------------------------------------------------------
+* 작성자      : 김연석
+* 작성일      : 2010.02.10
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var	FV_ORG_ID;				// 소속 
+var	FV_ORG_NM;				// 소속명
+var	FV_ORG_CL;				// 소소구분
+var FV_USER_GRP;
+
+var FV_STR_POP_RESULT;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SALSCO02100_OnLoadCompleted(obj)
+{
+	cf_setAuth(pFrmNum);	// 권한 공통
+	btn_Sync.Visible       = btn_save.Visible;
+	btn_NewSmsSupl.Visible = btn_save.Visible;
+
+    lf_getSession();    
+	lf_formInit();
+}
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function lf_getSession()
+{
+	FV_ORG_ID   = gds_session.GetColumn(0, "orgid");	// 소속 
+	FV_ORG_NM   = gds_session.GetColumn(0, "orgnm");	// 소속명
+	FV_ORG_CL   = gds_session.GetColumn(0, "orgcl");	// 소속구분
+	FV_USER_GRP = gds_session.GetColumn(0, "userGrp");	// 사용자그룹
+}
+
+/*******************************************************************************
+ * @description         : 폼 초기화
+*******************************************************************************/
+function lf_formInit()
+{
+	uf_enableAgencyByAuth("div_condition" ,"edt_agencyCdNm,edt_agencyCd,btn_agency","edt_agencyUkeyCd");
+}
+
+/*******************************************************************************
+* 함수명 : f_init
+* 기능명 : 화면 초기화 및 조회 Parameter Setting
+*******************************************************************************/
+function f_init()
+{
+
+	http.Sync = true;
+
+	// SMS전송대리점 관리 화면에서 분기한 경우 처리
+	var sCond = param1;
+
+	if (uf_IsNull(sCond) == true) {
+		Div_Condition.edt_agencyCdNm.text = sCond;
+		
+        div_condition_btn_agency_OnClick();
+		Div_Condition_btn_Search_OnClick();
+	}
+	
+	http.Sync = false;
+}
+
+/*******************************************************************************
+ * @description         : 판매정보 Ukey Interface 조회
+*******************************************************************************/
+function lf_getSmsSuplList(org_cd)
+{
+    var sAgencyCd  =""; 
+    if(org_cd==null){
+    
+		sAgencyCd= div_condition.edt_agencyCd.Text;
+	}else{
+		sAgencyCd = org_cd;
+	}
+
+    cf_setParam(ds_input, "pos_agency", sAgencyCd );                         //대리점
+
+ 	var sSvcID = "getSmsSuplList";
+	var sInDs  = "nc_input_fieldDs=ds_input";
+	var sOutDs = "ds_SmsSuplList=ds_SmsSuplList";
+	var sArg   = "sktst.sal.SCO#getSmsSuplList";	
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);     
+}
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+    if (sSvcID == "getSmsSuplList")
+    {
+
+    } else if (sSvcID = "svcSave") 
+    {
+		lf_getSmsSuplList();
+    } else if (sSvcID = "svcDelete") 
+    {
+		lf_getSmsSuplList();
+    }
+    return;
+}
+
+
+/*******************************************************************************
+ * @description         : 대리점명을 입력받아 대리점코드를 가져온다.
+*******************************************************************************/
+function lf_getAgencyCd()
+{
+	sf_clearControls("div_condition.edt_agencyCd,div_condition.edt_agencyUkeyCd");
+
+	var sArg  = "org_id="  + quote(FV_ORG_ID); 
+		sArg += " org_cl=" + quote(FV_ORG_CL); 
+			
+	cf_callAgencyPop(sArg, div_condition, "edt_agencyCdNm,edt_agencyCd,edt_agencyUkeyCd");
+
+}
+
+/*******************************************************************************
+ * @description         : 대리점명을 입력받아 대리점 코드를 가져온다.
+*******************************************************************************/
+function div_condition_edt_agencyCdNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+        lf_getAgencyCd();
+	}
+}
+
+function div_condition_edt_agencyCdNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	sf_clearControls("div_condition.edt_agencyUkeyCd,div_condition.edt_agencyCd");
+}
+
+
+function div_condition_btn_agency_OnClick(obj)
+{
+	sf_clearControls("div_condition.edt_agencyUkeyCd,div_condition.edt_agencyCd");
+
+    lf_getAgencyCd();
+}
+
+function div_condition_btn_agency_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,nLLParam,nHLParam)
+{
+	if(nChar == 13)
+	{
+        lf_getAgencyCd();
+	}
+}
+
+
+function grd_SmsSuplList_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+	cf_markGridSort(obj,nCell,nX,nY,nPivotIndex);
+}
+
+/*******************************************************************************
+ * @description    : 신규등록
+*******************************************************************************/
+function btn_NewSmsSupl_OnClick(obj)
+{
+	cf_openAuthPop("100000679", "", 768, 576);
+}
+
+/*******************************************************************************
+ * @description    : 자료조회
+*******************************************************************************/
+function Div_Condition_btn_search_OnClick(obj)
+{
+	lf_getSmsSuplList();
+}
+
+/*******************************************************************************
+ * @description    : 자료저장
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	var i;
+	var sJobFlag;
+
+	// 선택된 자료를 Dataset에 저장
+	sJobFlag = false;
+	for( i=0; i < ds_SmsSuplList.rowcount; i++) {
+
+		if (ds_SmsSuplList.GetColumn(i, "chk") == "1") {
+
+			sJobFlag = true;
+
+		}
+	}
+
+	if (sJobFlag == false) {
+		alert("선택된 자료가 없습니다.");
+		return;
+	}
+
+	if(Confirm( "저장하시겠습니까?" ) == false) return;
+
+	// 트랜잭션 설정
+	var sSvcID = "svcSave";
+	var sInDs  = "ds_SmsSuplList=ds_SmsSuplList";
+	var sOutDs = "";
+	var sArg   = "sktst.sal.SCO#saveSmsSuplSvc";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+function btn_Sync_OnClick(obj)
+{
+	cf_openAuthPop("100000680", "", 768, 576);
+}
+
+function btn_delete_OnClick(obj)
+{
+	var i;
+	var sJobFlag;
+
+	// 선택된 자료를 Dataset에 저장
+	sJobFlag = false;
+	for( i=0; i < ds_SmsSuplList.rowcount; i++) {
+
+		if (ds_SmsSuplList.GetColumn(i, "chk") == "1") {
+
+			sJobFlag = true;
+
+		}
+	}
+
+	if (sJobFlag == false) {
+		alert("선택된 자료가 없습니다.");
+		return;
+	}
+
+	if(Confirm( "삭제하시겠습니까?" ) == false) return;
+
+	// 트랜잭션 설정
+	var sSvcID = "svcDelete";
+	var sInDs  = "ds_SmsSuplList=ds_SmsSuplList";
+	var sOutDs = "";
+	var sArg   = "sktst.sal.SCO#deleteSmsSuplSvc";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	
+}
+]]></Script>
+</Window>

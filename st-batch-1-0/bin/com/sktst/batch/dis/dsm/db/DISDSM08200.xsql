@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDSM08200">
+	<delete id="deleteDisDaySum" parameterClass="hmap">
+	<![CDATA[
+        DELETE FROM TDIS_DIS_DAY_SUM WHERE STRD_DT = #STRD_DT#
+	]]>
+	</delete>
+	<insert id="insertDisDaySum" parameterClass="hmap">
+	<![CDATA[
+		INSERT INTO TDIS_DIS_DAY_SUM (
+		   STRD_DT, HLD_PLC_ID, PROD_CD, 
+		   COLOR_CD, TEAM_CD, CNTR_CD, 
+		   AGENCY_CD, IN_QTY, OUT_QTY, 
+		   MOV_OUT_QTY, MOV_IN_QTY, AGENCY_MOV_OUT_QTY, 
+		   AGENCY_MOV_IN_QTY, SALE_IN_QTY, SALE_OUT_QTY, 
+		   BAD_QTY, EXPART_QTY, CURR_DIS_QTY, 
+		   DEL_YN, UPD_CNT, 
+		   INS_DTM, INS_USER_ID, MOD_DTM, MOD_USER_ID
+		   ) 
+		   (SELECT #STRD_DT# as strd_dt,
+			       g.hld_plc_id, 
+			       g.prod_cd, 
+			       g.color_cd, 
+			       i.sup_org,
+			       i.org_id,
+			       h.pos_agency,       
+			       sum(in_qty) as in_qty, 
+			       sum(out_qty) as out_qty, 
+			       sum(move_out_qty) as mov_out_qty,   
+			       sum(move_in_qty) as mov_in_qty,      
+			       sum(agency_move_out_qty) as agency_mov_out_qty,
+			       sum(agency_move_in_qty) as agency_mov_in_qty,    
+			       sum(sale_in_qty) as sale_in_qty, 
+			       sum(sale_out_qty) as sale_out_qty,
+			       sum(bad_qty) as bad_qty, 
+			       sum(chg_qty) as expart_qty, 
+			       sum(now_cnt) as curr_ids_qty, 
+			       'N' as del_yn,
+			       1 as upd_cnt,
+				   TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+				   #USER_ID#,
+				   TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+				   #USER_ID#			          
+			  FROM (SELECT a.hld_plc_id,
+                           a.prod_cd,
+                           a.color_cd,
+                           0 as in_qty,
+                           0 as out_qty,
+                           0 as sale_in_qty,
+                           0 as sale_out_qty,
+                           0 as chg_qty,
+                           1 as now_cnt,
+                           0 as bad_qty,
+                           0 as move_in_qty,
+                           0 as move_out_qty,
+                           0 as agency_move_in_qty,
+                           0 as agency_move_out_qty                               
+                      FROM tdis_dis a
+                     WHERE a.del_yn = 'N'
+                       AND (a.dis_st = '01' OR (a.dis_st = '02' and a.last_inout_cl in ('202','203') ))
+                     UNION ALL  
+			        SELECT decode(b.inout_cl,'100',b.in_plc_id,b.out_plc_id) as hld_plc_id,
+			               b.prod_cd,
+			               b.color_cd,
+			               decode(b.inout_dtl_cl,'101',1,0) + decode(b.inout_dtl_cl,'102',1,0)
+			               - decode(b.inout_dtl_cl,'106',1,0) - decode(b.inout_dtl_cl,'107',1,0) as in_qty,
+			               decode(b.inout_dtl_cl,'201',1,0) + decode(b.inout_dtl_cl,'206',1,0) + decode(b.inout_dtl_cl,'211',1,0)
+			               - decode(b.inout_dtl_cl,'207',1,0) - decode(b.inout_dtl_cl,'210',1,0) - decode(b.inout_dtl_cl,'212',1,0)as out_qty,
+			               decode(b.inout_dtl_cl,'104',1,0) + decode(b.inout_dtl_cl,'105',1,0) as sale_in_qty,
+			               decode(b.inout_dtl_cl,'204',1,0) + decode(b.inout_dtl_cl,'205',1,0) as sale_out_qty,
+			               decode(b.inout_dtl_cl,'102',1,0) - decode(b.inout_dtl_cl,'107',1,0) as chg_qty,
+			               0 as now_cnt,
+			               decode(c.prod_cd,null,0,1) as bad_qty,
+			               0 as move_in_qty,
+			               0 as move_out_qty,
+			               0 as agency_move_in_qty,
+			               0 as agency_move_out_qty                               
+			          FROM tdis_dis a,
+			               tdis_prod_inout_hst b,
+			               (select prod_cd,
+			                       color_cd,
+			                       ser_num
+			                  from tdis_bad_equip r
+			                 where op_dt = #STRD_DT#
+			                   and del_yn = 'N'
+			                 group by prod_cd, color_cd, ser_num) c
+			         WHERE a.del_yn = 'N'
+			           AND (a.dis_st = '01' OR (a.dis_st = '02' and a.last_inout_cl in ('202','203') ))
+			           AND a.prod_cd = b.prod_cd
+			           ANd a.color_cd = b.color_cd
+			           AND a.ser_num = b.ser_num
+			           AND substr(b.ins_dtm,0,8) = #STRD_DT#
+			           AND b.del_yn = 'N'
+			           AND b.inout_cl in ('100','200') 
+			           AND a.prod_cd = c.prod_cd(+)
+			           AND a.color_cd = c.color_cd(+)
+			           AND a.ser_num = c.ser_num(+)    
+			         UNION ALL
+			        SELECT decode(d.flag,'1',b.in_plc_id,b.out_plc_id) as hld_plc_id,
+			               b.prod_cd,
+			               b.color_cd,
+			               0 as in_qty,
+			               0 as out_qty,
+			               0 as sale_in_qty,
+			               0 as sale_out_qty,
+			               0 as chg_qty,
+			               0 as now_cnt,
+			               0 as bad_qty,
+			               case when d.flag = '1' and agency_mov_yn = 'N' and dis_stl_mov_yn in ('N','Y') 
+			                         then ( case when b.inout_dtl_cl = '301' then 1 when b.inout_dtl_cl = '304' then -1 else 0 end )
+			                    else 0
+			               end as move_in_qty,
+			               case when d.flag = '2' and agency_mov_yn = 'N' and dis_stl_mov_yn in ('N','Y')
+			                         then ( case when b.inout_dtl_cl = '301' then 1 when b.inout_dtl_cl = '304' then -1 else 0 end )
+			                    else 0
+			               end as move_out_qty,
+			               case when d.flag = '1' and agency_mov_yn = 'Y' and dis_stl_mov_yn in ('N','Z') 
+			                         then ( case when b.inout_dtl_cl = '301' then 1 when b.inout_dtl_cl = '304' then -1 else 0 end )
+			                    else 0
+			               end as agency_move_in_qty,
+			               case when d.flag = '2' and agency_mov_yn = 'Y' and dis_stl_mov_yn in ('N','Z') 
+			                         then ( case when b.inout_dtl_cl = '301' then 1 when b.inout_dtl_cl = '304' then -1 else 0 end )
+			                    else 0
+			               end as agency_move_out_qty                        
+			          FROM tdis_dis a,
+			               tdis_prod_inout_hst b,
+			               tdis_out_m c,
+			               (select '1' as flag from dual
+			                union
+			                select '2' from dual) d
+			         WHERE a.del_yn = 'N'
+			           AND (a.dis_st = '01' OR (a.dis_st = '02' and a.last_inout_cl in ('202','203') ))
+			           AND a.prod_cd = b.prod_cd
+			           ANd a.color_cd = b.color_cd
+			           AND a.ser_num = b.ser_num
+			           AND substr(b.ins_dtm,0,8) = #STRD_DT#
+			           AND b.del_yn = 'N'
+			           AND b.inout_cl in ('300')
+			           AND b.inout_dtl_cl in ('301','304')
+			           AND b.out_mgmt_no = c.out_mgmt_no                  
+			        ) g, tbas_deal_co_mgmt h,
+			       tbas_org_mgmt i
+			 WHERE g.hld_plc_id = h.deal_co_cd
+			   AND h.del_yn = 'N'
+			   AND h.eff_end_dtm = '99991231235959'
+			   AND h.org_id = i.org_id
+			   AND i.del_yn = 'N'
+			 GROUP BY i.sup_org, i.org_id, h.pos_agency, g.hld_plc_id, g.prod_cd, g.color_cd  
+		)
+	]]>
+	</insert>
+
+</sqlMap>

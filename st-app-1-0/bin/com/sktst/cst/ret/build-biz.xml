@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Nexcore Build Business - RET" default="all" basedir=".">
+
+	<property environment="env" />
+
+	<!-- ################################################################## -->
+	<!-- ## [Nexbuild] Auto-generated property ############################ -->
+	<!-- ################################################################## -->
+	<property name="project.name" value="st-app-1-0" />
+	<property name="component.id" value="RET" />
+	<property name="component.path" value="com/sktst/cst/ret" />
+	<property name="component.fqId" value="sktst.cst.RET" />
+	<property name="web.path" value="sktst/cst/ret" />
+	<property name="common.path" value="com/sktst" /><!-- 임시 -->
+    <property name="common.id" value="sktst" /><!-- 2번째 패키지 명 -->
+    <property name="sub.system" value="cst" /><!-- 추가 항목 : 3번째 패키지 명 -->
+
+	<!-- ################################################################## -->
+	<!-- ## [NEXCORE_HOME] common build property ########################## -->
+	<!-- ################################################################## -->
+	<!-- custombuild build.properties -->
+	<property file="${NEXCORE_HOME_ANT}/script/build/${project.name}.build.properties" />
+	<!-- default build.properties -->
+	<property file="${NEXCORE_HOME_ANT}/script/build/nexcore.build.properties" />
+	<!-- custombuild for CI tool (Continuous Integration : quickBuild etc) -->
+	<property file="${ant.home}/${project.name}.build.properties" />
+	<!-- default for CI tool (Continuous Integration : quickBuild etc) -->
+	<property file="${ant.home}/nexcore.build.properties" />
+	<target name="check.nexcore.property" unless="NEXCORE_HOME">
+		<echo message=" find ANT_HOME ..." />
+		<available file="${ant.home}/nexcore.build.properties" property="check.property.ant" />
+		<antcall target="check.nexcore.property.anthome" />
+	</target>
+	<target name="check.nexcore.property.anthome" unless="check.property.ant">
+		<echo message="ERROR: " />
+		<echo message="      define property 'NEXCORE_HOME_ANT' first " />
+		<echo message="      in your Eclipse Preferences [Ant-Runtime-properties]" />
+		<echo message="      before depoying" />
+		<fail message="ERROR: Ant runtime property 에 'NEXCORE_HOME_ANT'을 등록하세요. " />
+	</target>
+
+	<!-- ################################################################## -->
+	<!-- ## [ CLASSPATH Property ] ############################################# -->
+	<!-- ################################################################## -->
+	<!-- EX) ${NEXCORE_HOME}/lib/j2ee.jar;${wls.ear.lib}/xxxxxxxxxx.jar; 
+	<property name="add.classpath" value="" />-->
+    <property name="add.classpath" value="${jeus.ear.path}/ejbs/sktst.dis.INN.jar;${jeus.ear.path}/ejbs/sktst.bas.BCO.jar" />
+
+	<!-- ################################################################## -->
+	<!-- ## EJB+WEB Deployment ############################################ -->
+	<!-- ################################################################## -->
+	<target name="all" depends="check.nexcore.property">
+<!--		<ant antfile="${NEXCORE_HOME}/script/build/build-biz-common.xml" target="all-web" />-->
+		<ant antfile="${NEXCORE_HOME}/script/build/build-biz-common.xml" target="all-ejb" />
+		<ant antfile="${NEXCORE_HOME}/script/build/build-biz-common.xml" target="cleanup" />
+	</target>
+
+	<!-- ################################################################## -->
+	<!-- ## EJB Deployment ################################################ -->
+	<!-- ################################################################## -->
+	<target name="all-ejb" depends="check.nexcore.property">
+		<ant antfile="${NEXCORE_HOME}/script/build/build-biz-common.xml" target="all-ejb" />
+	</target>
+
+	<!-- ################################################################## -->
+	<!-- ## component Deployment ########################################## -->
+	<!-- ################################################################## -->
+	<target name="all-component.xml" depends="check.nexcore.property">
+		<ant antfile="${NEXCORE_HOME}/script/build/build-biz-common.xml" target="all-component.xml" />
+	</target>
+
+	<!-- ################################################################## -->
+	<!-- ## xsql Deployment ############################################### -->
+	<!-- ################################################################## -->
+	<target name="all-xsql.xml" depends="check.nexcore.property">
+		<ant antfile="${NEXCORE_HOME}/script/build/build-biz-common.xml" target="all-xsql.xml" />
+	</target>
+
+	<!-- ################################################################## -->
+	<!-- ## WEB Deployment ################################################ -->
+	<!-- ################################################################## -->
+	<target name="all-web" depends="check.nexcore.property">
+		<ant antfile="${NEXCORE_HOME}/script/build/build-biz-common.xml" target="all-web" />
+	</target>
+
+        <target name="all-ejb-delete" depends="check.nexcore.property">
+	    <ant antfile="${NEXCORE_HOME}/script/build/build-biz-common.xml" target="all-ejb-delete" />
+	</target>
+
+</project>

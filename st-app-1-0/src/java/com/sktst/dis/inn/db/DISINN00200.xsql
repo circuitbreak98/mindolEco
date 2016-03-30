@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISINN00200">
+	<select id="getOrdDtlList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00200_GETORDDTLLIST" */
+       A.ORD_MGMT_NO,
+       (SELECT COMM_CD_VAL_NM 
+          FROM TBAS_COMM_CD_DTL 
+         WHERE COMM_CD_ID = 'ZBAS_C_00010'
+           AND COMM_CD_VAL = C.PROD_CL) AS PROD_CL_NM,
+       FBAS_GET_DEAL_NM(C.MFACT_ID,A.ORD_DT) AS MFACT_NM,
+       C.PROD_NM,
+       B.COLOR_CD,
+       B.COLOR_CD AS COLOR_CD_ORG,
+       (SELECT COMM_CD_VAL_NM 
+          FROM TBAS_COMM_CD_DTL 
+         WHERE COMM_CD_ID = 'ZBAS_C_00040'
+           AND COMM_CD_VAL = B.COLOR_CD) AS COLOR_NM,       
+       B.ORD_QTY,
+       B.ORD_QTY AS ORD_QTY_ORG,
+       B.UNIT_PRC,
+       B.VAT,
+       B.AMT,
+       E.DEAL_CO_CD,
+       E.DEAL_CO_CD AS DEAL_CO_CD_ORG,
+       E.DEAL_CO_NM,       
+       B.PROD_CD,
+       B.PROD_CD AS PROD_CD_ORG,
+       D.IN_SCHD_DT,
+       B.MOD_DTM
+  FROM TDIS_ORD_M A,
+       TDIS_ORD_DTL_D B,
+       TBAS_PROD_MGMT C,
+       TDIS_IN_M D,
+       TBAS_DEAL_CO_MGMT E
+ WHERE A.ORD_MGMT_NO = B.ORD_MGMT_NO
+   AND A.ORD_MGMT_NO = #ORD_MGMT_NO#
+   AND B.PROD_CD = C.PROD_CD
+   AND A.DEL_YN = 'N'
+   AND B.DEL_YN = 'N'   
+   AND C.DEL_YN = 'N'
+   AND B.ORD_MGMT_NO = D.ORD_MGMT_NO(+)
+   AND B.IN_PLC_ID   = D.IN_PLC_ID(+)   
+   AND D.DEL_YN(+)   = 'N'
+   AND B.IN_PLC_ID   = E.DEAL_CO_CD
+   AND E.DEL_YN = 'N'
+   AND (E.DEAL_CO_CD, E.HSEQ_NO) IN (SELECT /*+ INDEX_DESC (X XBAS_DEAL_CO_MGMT_PK) */
+                                             X.DEAL_CO_CD,
+                                             X.HSEQ_NO
+                                        FROM TBAS_DEAL_CO_MGMT X
+                                       WHERE X.DEAL_CO_CD = E.DEAL_CO_CD
+                                         AND X.DEL_YN = 'N'                                       
+                                         AND X.EFF_END_DTM = '99991231235959'
+                                         AND ROWNUM = 1)
+ ORDER BY E.DEAL_CO_NM, C.PROD_NM]]>
+	</select>
+	<select id="getOrdMaster" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00200_getOrdMaster" */
+       X.ORD_MGMT_NO,
+       X.ORD_DT,
+       X.PRCHS_PLC_ID,
+       Y.PRCHS_PLC_UKEY_ID,       
+       Y.PRCHS_PLC_NM,
+       X.ORD_PLC_ID,
+       Z.ORD_PLC_UKEY_ID,
+       Z.ORD_PLC_NM,       
+       X.ORD_TS,
+       X.RMKS,
+       NVL((SELECT DECODE(COUNT(*),0,NULL,'Y') 
+              FROM TDIS_IN_M 
+             WHERE ORD_MGMT_NO = X.ORD_MGMT_NO
+               AND IN_SCHD_DT > ' '
+               AND DEL_YN = 'N'),'N') AS IN_SCHD_RGST_YN 
+  FROM TDIS_ORD_M X,
+       (SELECT /*+ INDEX_DESC (B XBAS_DEAL_CO_MGMT_PK) */
+               A.ORD_MGMT_NO,
+               A.PRCHS_PLC_ID,
+               B.UKEY_AGENCY_CD AS PRCHS_PLC_UKEY_ID,       
+               B.DEAL_CO_NM AS PRCHS_PLC_NM
+          FROM TDIS_ORD_M A,
+               TBAS_DEAL_CO_MGMT B
+         WHERE A.PRCHS_PLC_ID = B.DEAL_CO_CD
+           AND A.ORD_MGMT_NO = #ORD_MGMT_NO#
+           AND A.DEL_YN = 'N'        
+           AND B.DEL_YN = 'N'
+           AND B.EFF_END_DTM = '99991231235959'            
+           AND ROWNUM = 1 ) Y,    
+       (SELECT /*+ INDEX_DESC (C XBAS_DEAL_CO_MGMT_PK) */
+               A.ORD_MGMT_NO,  
+               A.ORD_PLC_ID,
+               C.UKEY_AGENCY_CD AS ORD_PLC_UKEY_ID,
+               C.DEAL_CO_NM AS ORD_PLC_NM       
+          FROM TDIS_ORD_M A,
+               TBAS_DEAL_CO_MGMT C
+         WHERE A.ORD_PLC_ID = C.DEAL_CO_CD
+           AND A.ORD_MGMT_NO = #ORD_MGMT_NO#
+           AND A.DEL_YN = 'N'
+           AND C.DEL_YN = 'N'
+           AND C.EFF_END_DTM = '99991231235959'     
+           AND ROWNUM = 1 ) Z
+ WHERE X.ORD_MGMT_NO = Y.ORD_MGMT_NO
+   AND X.ORD_MGMT_NO = Z.ORD_MGMT_NO
+   AND X.DEL_YN = 'N'
+   AND X.ORD_MGMT_NO = #ORD_MGMT_NO#]]>
+	</select>
+	<select id="getColorList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00200_getColorList" */
+       COMM_CD_VAL AS COLOR_CD,
+       COMM_CD_VAL_NM AS COLOR_NM,
+       NVL(DEL_YN,'N') AS DEL_YN
+  FROM TBAS_COMM_CD_DTL 
+ WHERE COMM_CD_ID = 'ZBAS_C_00040']]>
+	</select>
+	<select id="getProdColorList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00200_getProdColorList" */
+       prod_cd,
+       color_cd,
+       (SELECT comm_cd_val_nm 
+          FROM tbas_comm_cd_dtl 
+         WHERE comm_cd_id = 'ZBAS_C_00040'
+           AND comm_cd_val = a.color_cd) as color_nm,         
+       del_yn
+  FROM tbas_prod_color a
+ WHERE a.prod_cd = #prod_cd#
+   AND a.del_yn = 'N']]>
+	</select>
+	<select id="getUnitPrc" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00200_getUnitPrc" */
+       C.FIX_CASH_PRCHS_PRC, /* 현금가여신*/
+       C.FIX_CASH_PRCHS_PRC AS FIX_CRDT_PRCHS_PRC, /* 개통여신 */ 
+       C.FIX_CRDT_PRCHS_PRC AS ONE_MONTH_PRC, /* 1개월여신 */ 
+       C.FIX_CRDT_PRCHS_PRC AS TWO_MONTH_PRC  /* 2개월여신 */ 
+  FROM (SELECT /*+ index_desc( A XPOL_UPLST_PK) */
+               A.UPLST_ID,
+               A.POL_YM,
+               A.POL_TS,
+               A.APLY_STA_DTM,
+               A.APLY_END_DTM
+          FROM TPOL_UPLST A
+         WHERE A.DEL_YN   = 'N'
+           AND ROWNUM = 1 ) B,
+       TPOL_UPLST_APLY_MDL C
+ WHERE B.UPLST_ID = C.UPLST_ID
+   AND B.POL_YM   = C.POL_YM
+   AND B.POL_TS   = C.POL_TS
+   AND C.MDL_ID   = #PROD_CD#
+   AND C.DEL_YN   = 'N']]>
+	</select>
+	<procedure id="getMgmtNo" parameterClass="map" resultClass="hmap" ><![CDATA[call /*+ "DISINN00200_getMgmtNo_이정현_한병곤" */
+     SP_DIS_DCO_MGMT_NO ( 
+	 #OV_ERRCODE,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	 #OV_ERRMSG,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	 #IV_MGMT_NO_CD,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	 #IV_USER_ID,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	 #OV_MGMT_NO,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+)  ]]>
+	</procedure>
+	<insert id="insertOrdMaster" parameterClass="map" ><![CDATA[INSERT INTO /*+ "DISINN00200_insertOrdMaster_이강수" */
+tdis_ord_m (
+   ord_mgmt_no, 
+   ord_dt, 
+   prchs_plc_id, 
+   ord_plc_id, 
+   ord_ts, 
+   rmks, 
+   del_yn, 
+   upd_cnt, 
+   ins_dtm, 
+   ins_user_id, 
+   mod_dtm, 
+   mod_user_id) 
+VALUES ( 
+   #ord_mgmt_no#, 
+   #ord_dt#, 
+   #prchs_plc_id#, 
+   #ord_plc_id#, 
+   nvl((SELECT ( max(ord_ts) + 1 ) as ord_ts
+          FROM tdis_ord_m
+         WHERE ord_dt = #ord_dt#
+           AND prchs_plc_id = #prchs_plc_id#
+           AND ord_plc_id = #ord_plc_id#),1), 
+   #rmks#, 
+   'N', 
+   1, 
+   to_char(sysdate,'yyyymmddhh24MIss'), 
+   #onlineContext.userInfo.loginId#, 
+   to_char(sysdate,'yyyymmddhh24MIss'), 
+   #onlineContext.userInfo.loginId#)]]>
+	</insert>
+	<insert id="insertOrdDetail" parameterClass="map" ><![CDATA[INSERT INTO /*+ "DISINN00200_insertOrdDetail_이강수" */
+tdis_ord_dtl_d (
+   ord_mgmt_no, 
+   ord_seq,
+   prod_cd, 
+   color_cd, 
+   ord_qty, 
+   unit_prc, 
+   vat, 
+   amt, 
+   in_plc_id, 
+   del_yn, 
+   upd_cnt, 
+   ins_dtm, 
+   ins_user_id, 
+   mod_dtm, 
+   mod_user_id) 
+VALUES ( 
+   #ord_mgmt_no#, 
+   (select NVL(max(ord_seq), 0) + 1 
+      FROM TDIS_ORD_DTL_D 
+     WHERE ord_mgmt_No = #ord_mgmt_no#),
+   #prod_cd#, 
+   #color_cd#,
+   #ord_qty#, 
+   #unit_prc#,
+   #vat#, 
+   #amt#, 
+   #deal_co_cd#,
+   'N', 
+   1, 
+   to_char(sysdate,'yyyymmddhh24MIss'),
+   #onlineContext.userInfo.loginId#,
+   to_char(sysdate,'yyyymmddhh24MIss'),
+   #onlineContext.userInfo.loginId#
+)]]>
+	</insert>
+	<update id="updateOrdDetail" parameterClass="map" ><![CDATA[UPDATE tdis_ord_dtl_d /*+ "DISINN00200_updateOrdDetail_이강수" */
+SET    prod_cd       = #prod_cd#,
+       color_cd      = #color_cd#,
+       ord_qty       = #ord_qty#,
+       unit_prc      = #unit_prc#,
+       vat           = #vat#,
+       amt           = #amt#,
+       in_plc_id     = #deal_co_cd#,
+       del_yn        = 'N',
+       upd_cnt       = upd_cnt + 1,
+       mod_dtm       = to_char(sysdate,'yyyymmddhh24MIss'),
+       mod_user_id   = #onlineContext.userInfo.loginId#
+WHERE  ord_mgmt_no   = #ord_mgmt_no#
+AND    in_plc_id     = #deal_co_cd_org#
+AND    prod_cd       = #prod_cd_org#
+AND    color_cd      = #color_cd_org#]]>
+	</update>
+	<update id="updateOrdMaster" parameterClass="map" ><![CDATA[UPDATE tdis_ord_m /*+ "DISINN00200_updateOrdMaster_이강수" */
+SET    ord_dt          = #ord_dt#,
+       prchs_plc_id    = #prchs_plc_id#,
+       ord_plc_id      = #ord_plc_id#,
+       rmks            = #rmks#,
+       upd_cnt         = upd_cnt + 1,
+       mod_dtm         = to_char(sysdate,'yyyymmddhh24MIss'),
+       mod_user_id     = #onlineContext.userInfo.loginId#
+WHERE  ord_mgmt_no     = #ord_mgmt_no#]]>
+	</update>
+	<select id="getOrdDetailByLock" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00200_getOrdDetailByLock_이강수" */
+       count(*) as cnt
+  FROM tdis_ord_dtl_d
+ WHERE ord_mgmt_no = #ord_mgmt_no#
+   AND in_plc_id = #deal_co_cd_org#
+   AND prod_cd = #prod_cd_org#
+   AND color_cd = #color_cd_org#
+   AND mod_dtm = #mod_dtm#
+   AND ord_qty = #ord_qty_org#
+   AND del_yn = 'N']]>
+	</select>
+	<select id="getInnDataCnt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00200_getInnDataCnt_이강수" */
+       count(in_mgmt_no) as cnt
+  FROM tdis_in_m
+ WHERE ord_mgmt_no = #ord_mgmt_no#
+   AND in_plc_id = #deal_co_cd_org#
+   AND del_yn = 'N']]>
+	</select>
+	<delete id="deleteOrdDetail" parameterClass="map" ><![CDATA[UPDATE tdis_ord_dtl_d /*+ "DISINN00200_deleteOrdDetail_이강수" */
+SET    del_yn        = 'Y',
+       upd_cnt       = upd_cnt + 1,
+       mod_dtm       = to_char(sysdate,'yyyymmddhh24MIss'),
+       mod_user_id   = #onlineContext.userInfo.loginId#
+WHERE  ord_mgmt_no   = #ord_mgmt_no#
+AND    in_plc_id     = #deal_co_cd_org#
+AND    prod_cd       = #prod_cd_org#
+AND    color_cd      = #color_cd_org#]]>
+	</delete>
+	<update id="updateOrdDetailByDum" parameterClass="map" ><![CDATA[UPDATE tdis_ord_dtl_d /*+ "DISINN00200_updateOrdDetailByDum_이강수" */
+SET    prod_cd       = #prod_cd#,
+       color_cd      = #color_cd#,
+       settl_cond_cd = #settl_cond_cd#,
+       ord_qty       = #ord_qty#,
+       unit_prc      = #unit_prc#,
+       vat           = #vat#,
+       amt           = #amt#,
+       in_plc_id     = #deal_co_cd#,
+       del_yn        = 'N',
+       upd_cnt       = upd_cnt + 1,
+       mod_dtm       = to_char(sysdate,'yyyymmddhh24MIss'),
+       mod_user_id   = #onlineContext.userInfo.loginId#
+WHERE  ord_mgmt_no   = #ord_mgmt_no#
+AND    in_plc_id     = #deal_co_cd#
+AND    prod_cd       = #prod_cd#
+AND    color_cd      = #color_cd#
+AND    settl_cond_cd = #settl_cond_cd#]]>
+	</update>
+	<select id="getOrdMgmtNo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* DISINN00200_getMgmtNo */
+            #IV_MGMT_NO_CD# ||  TO_CHAR(SYSDATE, 'YYYYMMDD') || to_char(SDIS_ORD_MGMT_SEQ.NEXTVAL,'FM0000000') as mgmt_no
+        FROM DUAL]]>
+	</select>
+	<delete id="deleteOrdMaster" parameterClass="map" ><![CDATA[UPDATE tdis_ord_m /*+ "DISINN00200_deleteOrdMaster_이강수" */
+SET    del_yn          = 'Y',
+       upd_cnt         = upd_cnt + 1,
+       mod_dtm         = to_char(sysdate,'yyyymmddhh24MIss'),
+       mod_user_id     = #onlineContext.userInfo.loginId#
+WHERE  ord_mgmt_no     = #ord_mgmt_no#]]>
+	</delete>
+</sqlMap>

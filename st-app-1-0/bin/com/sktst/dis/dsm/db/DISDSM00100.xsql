@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDSM00100">
+	<select id="getDisDsm100" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISDSM00100_getDisDsm100 - 김만수 */
+	A.*
+FROM
+(
+        SELECT
+              DIS.HLD_PLC_ID
+              , TDCM.DEAL_CO_NM
+              ,SUM(DIS.BF_MTH_QTY) AS PRE_CNT
+              ,SUM(DIS.IN_QTY) AS COL_114
+              ,SUM(DIS.MOV_IN_QTY) AS COL_302
+              ,SUM(DIS.IN_CONT) AS IN_CNT
+              ,SUM(DIS.SALE_IN_QTY) AS COL_105
+              ,SUM(DIS.MOV_OUT_QTY) AS COL_301
+              ,SUM(DIS.OUT_QTY) AS COL_205
+              ,(SUM(DIS.BF_MTH_QTY) + SUM(DIS.IN_QTY) + SUM(DIS.IN_CONT) + SUM(DIS.MOV_IN_QTY) + SUM(DIS.SALE_IN_QTY))
+               - (SUM(DIS.OUT_QTY) + SUM(DIS.MOV_OUT_QTY)) AS OR_CNT
+        FROM
+        (
+                	/* 상품 전월재고 */
+                    SELECT
+                           TMD.PROD_CD
+                          ,TMD.COLOR_CD
+                          ,TMD.SER_NUM
+                          ,TMD.HLD_PLC_ID   /* 보유처ID */
+                          ,1 AS BF_MTH_QTY
+                          ,0 AS IN_QTY
+                          ,0 AS OUT_QTY
+                          ,0 AS MOV_OUT_QTY
+                          ,0 AS MOV_IN_QTY
+                          ,0 AS SALE_IN_QTY
+                          ,0 AS IN_CONT
+                    FROM TDIS_MTH_PROD_DIS TMD   /* 월재고 */
+                    WHERE TMD.STRD_YM = #strd_ym#
+                      AND TMD.DEL_YN = 'N'
+                      AND TMD.HLD_PLC_ID IN (SELECT DEAL_CO_CD
+                                         FROM TBAS_DEAL_CO_MGMT
+                                         WHERE POS_AGENCY = #pos_agency#
+]]>                                         <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                                         DEAL_CO_CD = #hld_plc_id#
+]]>                                         </isNotEmpty>
+<![CDATA[                                           AND DEL_YN = 'N'
+                                           AND EFF_END_DTM = '99991231235959')
+
+                    UNION ALL
+
+                    /* 상품 입고 */
+                    SELECT
+                           TPIH.PROD_CD
+                          ,TPIH.COLOR_CD
+                          ,TPIH.SER_NUM
+
+                          ,TPIH.IN_PLC_ID AS HLD_PLC_ID
+
+                          ,0 AS BF_MTH_QTY
+
+                          ,CASE WHEN TPIH.INOUT_CL = '100'
+                                THEN CASE WHEN TPIH.INOUT_DTL_CL IN ('114') THEN 1   /* 매입입고 */
+                                          WHEN TPIH.INOUT_DTL_CL IN ('115') THEN -1  /* 매입입고 취소 */
+                                          ELSE 0
+                                     END
+                                ELSE 0
+                           END AS IN_QTY
+
+                          ,0 AS OUT_QTY
+
+                          ,0 AS MOV_OUT_QTY
+
+                          ,CASE WHEN TPIH.INOUT_CL = '300'
+                                THEN CASE WHEN TPIH.INOUT_DTL_CL = '302' THEN 1   /* 이동입고 */
+                                          WHEN TPIH.INOUT_DTL_CL = '303' THEN -1  /* 이동입고취소 */
+                                          ELSE 0
+                                     END
+                                ELSE 0
+                           END AS MOV_IN_QTY
+
+                          ,CASE WHEN TPIH.INOUT_CL = '100'
+                                THEN CASE WHEN TPIH.INOUT_DTL_CL IN ('105') THEN 1 ELSE 0 END   /* 판매취소입고 */
+                                ELSE 0
+                           END AS SALE_IN_QTY
+                          ,0 AS IN_CONT
+                    FROM TDIS_PROD_INOUT_HST TPIH
+                    WHERE TPIH.INOUT_DT BETWEEN #last_inout_sdt# AND #last_inout_edt#
+                      AND TPIH.INOUT_CL IN ('100','300')
+                      AND TPIH.INOUT_DTL_CL IN ('114', '115', '302', '105', '303')
+                      AND TPIH.IN_PLC_ID IN (SELECT DEAL_CO_CD
+                                              FROM TBAS_DEAL_CO_MGMT
+                                              WHERE POS_AGENCY = #pos_agency#
+]]>                                              <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                                              DEAL_CO_CD = #hld_plc_id#
+]]>                                              </isNotEmpty>
+<![CDATA[                                                AND DEL_YN = 'N'
+                                                AND EFF_END_DTM = '99991231235959')
+
+                    UNION ALL
+
+                    /* 상품 출고 */
+                    SELECT
+                           TPIH.PROD_CD
+                          ,TPIH.COLOR_CD
+                          ,TPIH.SER_NUM
+
+                          ,TPIH.OUT_PLC_ID AS HLD_PLC_ID
+
+                          ,0 AS BF_MTH_QTY
+
+                          ,0 AS IN_QTY
+
+                          ,CASE WHEN TPIH.INOUT_CL = '200'
+                                THEN CASE WHEN TPIH.INOUT_DTL_CL IN ('205') THEN 1   /* 판매출고 */
+                                          ELSE 0
+                                     END
+                                ELSE 0
+                           END AS OUT_QTY
+
+                          ,CASE WHEN TPIH.INOUT_CL = '300'
+                                THEN CASE WHEN TPIH.INOUT_DTL_CL = '301' THEN 1    /* 이동출고 */
+                                          WHEN TPIH.INOUT_DTL_CL = '304' THEN -1   /* 이동출고취소 */
+                                          ELSE 0
+                                     END
+                                ELSE 0
+                           END AS MOV_OUT_QTY
+
+                          ,0 AS MOV_IN_QTY
+
+                          ,0 AS SALE_IN_QTY
+                          ,0 AS IN_CONT
+                    FROM TDIS_PROD_INOUT_HST TPIH
+                    WHERE TPIH.INOUT_DT BETWEEN #last_inout_sdt# AND #last_inout_edt#
+                      AND TPIH.INOUT_CL IN ('200','300')
+                      AND TPIH.INOUT_DTL_CL IN ('205','301','304')
+                      AND TPIH.OUT_PLC_ID IN (SELECT DEAL_CO_CD
+                                              FROM TBAS_DEAL_CO_MGMT
+                                              WHERE POS_AGENCY = #pos_agency#
+]]>                                              <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                                              DEAL_CO_CD = #hld_plc_id#
+]]>                                              </isNotEmpty>
+<![CDATA[                                                AND DEL_YN = 'N'
+                                                AND EFF_END_DTM = '99991231235959')
+                                                
+                  UNION ALL
+                    
+                  /* 입고예정 */
+                  SELECT
+                      TPIH.PROD_CD
+                      ,TPIH.COLOR_CD
+                      ,TPIH.SER_NUM
+                      ,TPIH.IN_PLC_ID HLD_PLC_ID  /* 보유처ID */
+                      ,0 AS BF_MTH_QTY
+                      ,0 AS IN_QTY
+                      ,0 AS OUT_QTY
+                      ,0 AS MOV_OUT_QTY
+                      ,0 AS MOV_IN_QTY
+                      ,0 AS SALE_IN_QTY
+                      ,1 AS IN_CONT
+                  FROM TDIS_PROD_INOUT_HST TPIH                  
+                  WHERE TPIH.INOUT_DT BETWEEN #last_inout_sdt# AND #last_inout_edt#  
+                  AND TPIH.DEL_YN = 'N'
+                  AND (TPIH.PROD_CD,TPIH.COLOR_CD,TPIH.SER_NUM,TPIH.INOUT_SEQ) IN
+                  		(SELECT PROD_CD, COLOR_CD, SER_NUM, MAX(INOUT_SEQ) FROM TDIS_PROD_INOUT_HST
+                                WHERE INOUT_DT BETWEEN #last_inout_sdt# AND #last_inout_edt#  
+                                AND INOUT_DTL_CL = '301'
+                                AND DEL_YN = 'N'
+                                AND IN_PLC_ID IN (SELECT DEAL_CO_CD
+                                       FROM TBAS_DEAL_CO_MGMT
+                                       WHERE POS_AGENCY = #pos_agency#
+]]>                                       <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                                         DEAL_CO_CD = #hld_plc_id#
+]]>                                         </isNotEmpty>
+<![CDATA[                                         AND DEL_YN = 'N'
+                                         AND EFF_END_DTM = '99991231235959')
+                                GROUP BY PROD_CD,COLOR_CD,SER_NUM)
+                  AND 0 = NVL((SELECT COUNT(INOUT_SEQ) FROM TDIS_PROD_INOUT_HST WHERE PROD_CD = TPIH.PROD_CD AND COLOR_CD = TPIH.COLOR_CD
+                  										AND SER_NUM = TPIH.SER_NUM AND INOUT_DTL_CL = '304' AND TPIH.INOUT_SEQ < INOUT_SEQ
+                  										AND IN_PLC_ID IN (SELECT DEAL_CO_CD
+                                       					FROM TBAS_DEAL_CO_MGMT
+                                       					WHERE POS_AGENCY = #pos_agency#
+]]>                                       					<isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                                         				DEAL_CO_CD = #hld_plc_id#
+]]>                                         				</isNotEmpty>
+<![CDATA[                                         				AND DEL_YN = 'N'
+                                         				AND EFF_END_DTM = '99991231235959')), 0)
+                  AND 0 = NVL(
+                  (
+                      	SELECT 
+                        	SUM(DECODE(INOUT_DTL_CL, '302', 1, '303', -1, '205', -1, '105', 1, '301', -1, '304', 1))
+                        FROM TDIS_PROD_INOUT_HST 
+                        WHERE PROD_CD = TPIH.PROD_CD AND COLOR_CD = TPIH.COLOR_CD AND SER_NUM = TPIH.SER_NUM 
+                        AND TPIH.INOUT_SEQ < INOUT_SEQ
+                        AND IN_PLC_ID IN (SELECT DEAL_CO_CD
+                                       			FROM TBAS_DEAL_CO_MGMT
+                                       			WHERE POS_AGENCY = #pos_agency#
+]]>                                       			<isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                                         		DEAL_CO_CD = #hld_plc_id#
+]]>                                         		</isNotEmpty>
+<![CDATA[                                         		AND DEL_YN = 'N'
+                                         		AND EFF_END_DTM = '99991231235959')
+                  ), 0)
+                  AND TPIH.IN_PLC_ID IN (SELECT DEAL_CO_CD
+                           FROM TBAS_DEAL_CO_MGMT
+                           WHERE POS_AGENCY = #pos_agency#
+                             AND DEL_YN = 'N'
+                             AND EFF_END_DTM = '99991231235959')
+
+        ) DIS
+        INNER JOIN TBAS_DEAL_CO_MGMT TDCM 	/* 보유처 */
+        ON DIS.HLD_PLC_ID = TDCM.DEAL_CO_CD
+        AND TDCM.DEL_YN = 'N'
+        AND TDCM.EFF_END_DTM = '99991231235959'
+        AND TDCM.POS_AGENCY = #pos_agency#
+]]>        <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[        TDCM.DEAL_CO_CD = #hld_plc_id#
+]]>        </isNotEmpty>
+<![CDATA[        
+        WHERE 1 = 1
+
+        GROUP BY DIS.HLD_PLC_ID, TDCM.DEAL_CO_NM
+) A
+ORDER BY A.HLD_PLC_ID, A.DEAL_CO_NM]]>
+	</select>
+</sqlMap>

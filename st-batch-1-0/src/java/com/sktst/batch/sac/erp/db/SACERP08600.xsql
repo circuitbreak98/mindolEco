@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08600">
+	<select id="getDealCoCd" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		WITH    W_DEAL_CO_MGMT AS 
+( 
+SELECT  DC.POS_AGENCY
+       ,DC.STL_PLC
+       ,DC.DEAL_CO_CD 
+       ,DC.DEAL_CO_CL1
+       ,DC.CHRGR_USER_ID
+       ,DC.EFF_STA_DTM
+       ,DC.EFF_END_DTM
+       ,dc.UKEY_AGENCY_CD
+       ,dc.UKEY_SUB_CD
+ FROM   TBAS_DEAL_CO_MGMT DC
+WHERE   DC.DEL_YN     = 'N'
+) /* 거래처 */
+,    W_GENERAL_SALE AS 
+(  
+SELECT  WA.POS_AGENCY
+       ,WA.STL_PLC
+       ,WA.DEAL_CO_CD 
+       ,WA.DEAL_CO_CL1
+       ,WA.CHRGR_USER_ID
+       , wa.UKEY_AGENCY_CD
+       , wa.UKEY_SUB_CD
+       ,TB.SVC_MGMT_NUM
+       ,TB.SL_CL
+       ,TB.GNRL_SALE_NO
+       ,TB.GNRL_SALE_CHG_SEQ
+       ,TB.SALE_DTM
+       ,TB.SALE_CHG_DTM
+       ,TB.SALE_CHG_HST_CL
+       ,TB.ACC_CHG_HST_CL
+       ,TB.SALE_CHG_PLC
+       ,TB.SALE_PLC
+       ,TB.DS_NET_CD
+       ,TB.AGRMT_PRD_CD
+       ,TB.ETC_PROD_SALE_YN         /* 기타상품판매여부*/
+       ,TB.CUST_NM                   /* 고객명*/
+       ,TB.SVC_NUM                  /*개통번호*/
+       ,TB.SL_NET_CD                 /* 영업망*/
+       ,TB.SALE_DTL_TYP             /* 판매유형*/
+       ,TB.SETTL_COND               /* 단말기결제조건*/
+       ,TB.USIM_ALLOT_CL            /* USIM결제조건*/  
+  FROM   W_DEAL_CO_MGMT WA  
+       ,TSAL_GENERAL_SALE TB
+ WHERE  TB.SALE_CHG_DTM BETWEEN WA.EFF_STA_DTM AND  WA.EFF_END_DTM                         
+   AND  TB.SALE_CHG_DTM BETWEEN substr(#TRAN_DT#, 0, 6) || '01000000' AND substr(#TRAN_DT#, 0, 6) || '31235959' 
+   AND  TB.DEL_YN           = 'N'
+   AND  WA.DEAL_CO_CD       = TB.STL_PLC 
+   AND  TB.SALE_CHG_HST_CL != '08'            /* 판매삭제 제외 */
+   AND  TB.SL_CL           IN ('01', '03')         /* 영업구분 */     
+   AND tb.svc_mgmt_num       > 0
+)
+		SELECT /* SACERP08600_getDealCoCd_직영점 온라인 직영점 매출 정보 찾기 */ 
+		     x.pos_agency                      /* 대리점코드 */
+            , x.stl_plc  deal_co_cd             /* 정산처 */
+            , x.UKEY_AGENCY_CD
+            , x.UKEY_SUB_CD
+            , #TRAN_DT#           TRAN_DT
+		    , SUM(NVL(ROUND(x.eqp_cash/1.1, 0), 0))     eqp_cash      /* 단말기현금매출 */
+		    , SUM(NVL(ROUND(x.eqp_allot/1.1, 0), 0))    eqp_allot     /* 단말기할부매출 */
+		    , SUM(NVL(ROUND(x.usim_cash/1.1, 0), 0))    usim_cash     /* USIM현금매출 */
+		    , SUM(NVL(ROUND(x.usim_allot/1.1, 0), 0))   usim_allot    /* USIM할부매출 */
+		    , SUM(NVL(ROUND(x.agrmt_astamt/1.1, 0), 0)) agrmt_astamt  /* 보조금 */
+		    , SUM(NVL(ROUND(x.eqp_prc/1.1, 0), 0))+ SUM(NVL(ROUND(x.usim_prc/1.1, 0), 0))     eqp_prc       /* 단말기원가 */
+		    , SUM(NVL(ROUND(x.usim_prc/1.1, 0), 0))     usim_prc      /* USIM원가 */
+		    , SUM(NVL(ROUND(x.dis_amt/1.1, 0), 0))      dis_amt      /* 단말기 재고원가 */
+		    , SUM(NVL(ROUND(x.usim_dis_amt/1.1, 0), 0)) usim_dis_amt /* USIM재고원가 */
+		    , SUM(NVL(ROUND(x.usim_dis_amt/1.1, 0), 0)) + SUM(NVL(ROUND(x.dis_amt/1.1, 0), 0)) dis_prc /* 재고원가 */
+		    , SUM(NVL(ROUND(X.skt_amt/1.1, 0), 0))      skt_amt       /* SKT장려금 */
+		    , SUM(NVL(ROUND(x.skn_amt/1.1, 0), 0))      skn_amt       /* SKN장려금 */
+		    , SUM(NVL(ROUND(x.psm_amt/1.1, 0), 0))      psm_amt       /* PSnM장려금 */
+		    , SUM(NVL(ROUND(x.etc_amt/1.1, 0), 0))      etc_amt       /* 제조사장려금 */
+		    , nvl((SELECT sum(ROUND(TP.PHONE_SAFE_AMT/1.1, 0)) - sum(ROUND(BF_PHONE_SAFE_AMT/1.1, 0)) as PHONE_SAFE_AMT
+                 FROM w_general_sale     a
+                    , TSAL_PAYMENT      TP
+                WHERE A.GNRL_SALE_NO         = TP.GNRL_SALE_NO
+                  AND A.GNRL_SALE_CHG_SEQ    = TP.GNRL_SALE_CHG_SEQ
+                  AND TP.PHONE_SAFE_CL      != 'N'
+                  and a.stl_plc              = x.stl_plc), 0) PHONE_SAFE_AMT
+	      /* 판매수량 */
+    	   ,SUM(NVL(SALE_CNT,0)) AS SALE_CNT 
+		 FROM  
+		    ( SELECT a.stl_plc
+		            , a.UKEY_AGENCY_CD
+		            , a.UKEY_SUB_CD
+		           ,  a.pos_agency 
+		           , (nvl(d.eqp_cash_sale_prc, 0)    - nvl(d.bf_eqp_cash_sale_prc, 0))   eqp_cash
+		           , (nvl(e.eqp_allot_sale_prc, 0)   - nvl(e.bf_eqp_allot_sale_prc, 0))  eqp_allot
+		           , (nvl(d.usim_cash_sale_prc, 0)   - nvl(d.bf_usim_cash_sale_prc, 0))  usim_cash
+		           , (nvl(e.usim_allot_sale_prc, 0)  - nvl(e.bf_usim_allot_sale_prc, 0)) usim_allot
+              /* 약정보조금*/        
+              ,NVL(CASE 
+                        WHEN (a.SALE_DTM<'20090601000000' AND a.ACC_CHG_HST_CL = '07') OR (a.SALE_DTM<'20090601000000' AND a.ACC_CHG_HST_CL = '02') THEN 0
+                   ELSE          
+                        (CASE WHEN a.DS_NET_CD = '2' AND a.ACC_CHG_HST_CL IN ('01','02') THEN   
+                                                                                 (SELECT  OC.AGRMT_ASTAMT /* 약정보조금 */
+                                                                                    FROM  TPOL_SPLST                  OA /*도소매_판매가격표*/
+                                                                                         ,TPOL_SPLST_MDL              OB /*도소매_모델별판매가격표*/
+                                                                                         ,TPOL_SPLST_MDL_AGRMT_ASTAMT OC /*도소매_모델별약정보조금*/
+                                                                                   WHERE  OA.SPLST_ID          = OB.SPLST_ID
+                                                                                     AND  OA.APLY_YM           = OB.APLY_YM
+                                                                                     AND  OA.ORG_ID            = OB.ORG_ID
+                                                                                     AND  OA.SL_NET_CD         = OB.SL_NET_CD
+                                                                                     AND  OA.DS_NET_CD         = OB.DS_NET_CD
+                                                                                     AND  OA.AGRMT_PRD_CD      = OB.AGRMT_PRD_CD
+                                                                                     AND  OA.SALE_TYP_CD_MAX   = OB.SALE_TYP_CD_MAX
+                                                                                     AND  OA.SPLST_ID          = OC.SPLST_ID
+                                                                                     AND  OA.APLY_YM           = OC.APLY_YM
+                                                                                     AND  OA.ORG_ID            = OC.ORG_ID
+                                                                                     AND  OA.SL_NET_CD         = OC.SL_NET_CD
+                                                                                     AND  OA.DS_NET_CD         = OC.DS_NET_CD
+                                                                                     AND  OA.AGRMT_PRD_CD      = OC.AGRMT_PRD_CD
+                                                                                     AND  OA.SALE_TYP_CD_MAX   = OC.SALE_TYP_CD_MAX
+                                                                                     AND  OB.SALE_TYP_CD_MIN   = OC.SALE_TYP_CD_MIN
+                                                                                     AND  OB.MDL_ID            = OC.MDL_ID
+                                                                                     AND  OA.ORG_ID            = a.pos_agency
+                                                                                     AND  OA.DEL_YN            = 'N'
+                                                                                     AND  OA.APLY_YM           = substr(#TRAN_DT#, 0, 6)
+                                                                                     AND  OA.SL_NET_CD         = a.SL_NET_CD /* 영업망 */
+                                                                                     AND  OA.DS_NET_CD         = a.DS_NET_CD /* 유통망 */
+                                                                                     AND  OA.AGRMT_PRD_CD      = a.AGRMT_PRD_CD /* 약정기간코드 */
+                                                                                     AND  OB.SALE_TYP_CD_MIN   = a.SALE_DTL_TYP/* 판매세부유형 */ 
+                                                                                     AND  OB.MDL_ID            = N.EQP_MDL_CD       /* 모델코드 */
+                                                                                     AND  OA.APLY_STA_DTM     <= SUBSTR(DECODE(a.ACC_CHG_HST_CL,'01', a.SALE_DTM, a.SALE_CHG_DTM),0,12) 
+                                                                                     AND  OA.APLY_END_DTM     >= SUBSTR(DECODE(a.ACC_CHG_HST_CL,'01', a.SALE_DTM, a.SALE_CHG_DTM),0,12) 
+                                                                                 )
+                              WHEN a.DS_NET_CD = '2' AND a.ACC_CHG_HST_CL IN ('07')  THEN 
+                                                                            (-1)*(SELECT OC.AGRMT_ASTAMT /* 약정보조금 */
+                                                                                    FROM  TPOL_SPLST                  OA /*도소매_판매가격표*/
+                                                                                         ,TPOL_SPLST_MDL              OB /*도소매_모델별판매가격표*/
+                                                                                         ,TPOL_SPLST_MDL_AGRMT_ASTAMT OC /*도소매_모델별약정보조금*/
+                                                                                   WHERE  OA.SPLST_ID          = OB.SPLST_ID
+                                                                                     AND  OA.APLY_YM           = OB.APLY_YM
+                                                                                     AND  OA.ORG_ID            = OB.ORG_ID
+                                                                                     AND  OA.SL_NET_CD         = OB.SL_NET_CD
+                                                                                     AND  OA.DS_NET_CD         = OB.DS_NET_CD
+                                                                                     AND  OA.AGRMT_PRD_CD      = OB.AGRMT_PRD_CD
+                                                                                     AND  OA.SALE_TYP_CD_MAX   = OB.SALE_TYP_CD_MAX
+                                                                                     AND  OA.SPLST_ID          = OC.SPLST_ID
+                                                                                     AND  OA.APLY_YM           = OC.APLY_YM
+                                                                                     AND  OA.ORG_ID            = OC.ORG_ID
+                                                                                     AND  OA.SL_NET_CD         = OC.SL_NET_CD
+                                                                                     AND  OA.DS_NET_CD         = OC.DS_NET_CD
+                                                                                     AND  OA.AGRMT_PRD_CD      = OC.AGRMT_PRD_CD
+                                                                                     AND  OA.SALE_TYP_CD_MAX   = OC.SALE_TYP_CD_MAX
+                                                                                     AND  OB.SALE_TYP_CD_MIN   = OC.SALE_TYP_CD_MIN
+                                                                                     AND  OB.MDL_ID            = OC.MDL_ID
+                                                                                     AND  OA.ORG_ID            = a.pos_agency
+                                                                                     AND  OA.DEL_YN            = 'N'
+                                                                                     AND  OA.APLY_YM           = substr(#TRAN_DT#, 0, 6)
+                                                                                     AND  OA.SL_NET_CD         = a.SL_NET_CD /* 영업망 */
+                                                                                     AND  OA.DS_NET_CD         = a.DS_NET_CD /* 유통망 */
+                                                                                     AND  OA.AGRMT_PRD_CD      = a.AGRMT_PRD_CD /* 약정기간코드 */
+                                                                                     AND  OB.SALE_TYP_CD_MIN   = a.SALE_DTL_TYP/* 판매세부유형 */ 
+                                                                                     AND  OB.MDL_ID            = N.EQP_MDL_CD       /* 모델코드 */
+                                                                                     AND  OA.APLY_STA_DTM     <= SUBSTR(DECODE(a.ACC_CHG_HST_CL,'01', a.SALE_DTM, a.SALE_CHG_DTM),0,12) 
+                                                                                     AND  OA.APLY_END_DTM     >= SUBSTR(DECODE(a.ACC_CHG_HST_CL,'01', a.SALE_DTM, a.SALE_CHG_DTM),0,12) 
+                                                                                 )
+                        ELSE 0 END)
+                   END,0) AS agrmt_astamt 
+		           , (SELECT (DECODE(a.settl_cond, 'A', NVL(fix_cash_prchs_prc, 0)
+		                                           , 'C', NVL(fix_crdt_prchs_prc, 0), 0)
+		                    * DECODE(a.acc_chg_hst_cl, '01', 1, '02', 1, '07', -1, 0) )
+		                   FROM TPOL_UPLST          x
+		                      , TPOL_UPLST_APLY_MDL y
+		                  WHERE y.mdl_id   = b.eqp_mdl_cd   
+		                    AND x.uplst_id = y.uplst_id
+		                    AND x.pol_ym   = y.pol_ym
+		                    AND x.pol_ts   = y.pol_ts
+		                    AND x.del_yn   = 'N'
+		                    AND a.sale_chg_dtm BETWEEN x.aply_sta_dtm || '00'
+		                                           AND x.aply_end_dtm || '59' ) eqp_prc
+		           , (SELECT (TD.DIS_AMT -  NVL(tdh.amt, 0))
+                           * DECODE(a.acc_chg_hst_cl, '01', 1, '02', 1, '07', -1, 0) cur_amt
+                        FROM TDIS_DIS td
+                           , (SELECT ser_num
+                                   , prod_cd
+                                   , color_cd
+                                   , NVL(SUM(amt), 0) amt
+                                FROM TDIS_DIS_UNIT_CHG_HST
+                               WHERE occr_cl  IN ('02', '05')
+                                 AND DEL_YN    = 'N'
+                               GROUP BY ser_num, prod_cd, color_cd
+                              )TDH
+                       WHERE TD.SER_NUM  = TDH.SER_NUM(+)
+                         AND TD.PROD_CD  = TDH.PROD_CD(+)
+                         AND TD.COLOR_CD = TDH.COLOR_CD(+)
+                         AND TD.PROD_CD  = b.eqp_mdl_cd
+                         AND TD.SER_NUM  = b.EQP_SER_NUM
+                         AND TD.COLOR_CD = b.EQP_COLOR_CD ) dis_amt
+		           , (SELECT cASE WHEN c.usim_old_sale_yn = 'Y'
+		                          THEN
+		                                 nvl(TD.DIS_AMT -  NVL(tdh.amt, 0), 0)
+		                                 * DECODE(a.acc_chg_hst_cl, '01', 1, '02', 1, '07', -1, 0)
+		                          ELSE   0
+		                          END
+                        FROM TDIS_DIS td
+                           , (SELECT ser_num
+                                   , prod_cd
+                                   , color_cd
+                                   , NVL(SUM(amt), 0) amt
+                                FROM TDIS_DIS_UNIT_CHG_HST
+                               WHERE occr_cl  IN ('02', '05')
+                                 AND DEL_YN    = 'N'
+                               GROUP BY ser_num, prod_cd, color_cd
+                              )TDH
+                       WHERE TD.SER_NUM  = TDH.SER_NUM(+)
+                         AND TD.PROD_CD  = TDH.PROD_CD(+)
+                         AND TD.COLOR_CD = TDH.COLOR_CD(+)
+                         AND TD.PROD_CD  = c.USIM_MDL_CD
+                         AND TD.SER_NUM  = c.USIM_SER_NUM ) usim_dis_amt
+			           , (SELECT CASE WHEN c.usim_old_sale_yn = 'Y'
+		                          THEN
+		                                 nvl(fix_cash_prchs_prc, 0)
+		                                 * DECODE(a.acc_chg_hst_cl, '01', 1, '02', 1, '07', -1, 0)
+		                          ELSE   0
+		                          END
+		                   FROM TPOL_UPLST          x
+		                      , TPOL_UPLST_APLY_MDL y
+		                  WHERE y.mdl_id   = c.usim_mdl_cd   
+		                    AND x.uplst_id = y.uplst_id
+		                    AND x.pol_ym   = y.pol_ym
+		                    AND x.pol_ts   = y.pol_ts
+		                    AND x.del_yn   = 'N'
+		                    AND a.sale_chg_dtm BETWEEN x.aply_sta_dtm || '00'
+		                                           AND x.aply_end_dtm || '59' ) usim_prc
+        ,NVL(CASE 
+                  WHEN (a.SALE_DTM<'20090601000000' AND a.ACC_CHG_HST_CL = '07') OR (a.SALE_DTM<'20090601000000' AND a.ACC_CHG_HST_CL = '02') 
+                  OR (NVL(S.PHONE_SAFE_AMT,0) - NVL(S.BF_PHONE_SAFE_AMT,0) !=0)
+                  THEN 0
+             ELSE
+                  skt_amt + NVL(U.SALE_SUPRT_AMT,0) + NVL(U.ADD_SALE_SUPRT_AMT ,0)
+                  - NVL(U.BF_SALE_SUPRT_AMT,0) - NVL(U.BF_ADD_SALE_SUPRT_AMT,0)
+             END,0) AS skt_amt
+              ,NVL(CASE 
+                        WHEN (a.SALE_DTM<'20090601000000' AND a.ACC_CHG_HST_CL = '07') OR (a.SALE_DTM<'20090601000000' AND a.ACC_CHG_HST_CL = '02') 
+                        OR (NVL(S.PHONE_SAFE_AMT,0) - NVL(S.BF_PHONE_SAFE_AMT,0) !=0)
+                        THEN 0
+                   ELSE
+                        skn_amt
+                   END,0) AS skn_amt
+              ,NVL(CASE 
+                        WHEN (a.SALE_DTM<'20090601000000' AND a.ACC_CHG_HST_CL = '07') OR (a.SALE_DTM<'20090601000000' AND a.ACC_CHG_HST_CL = '02') 
+                        OR (NVL(S.PHONE_SAFE_AMT,0) - NVL(S.BF_PHONE_SAFE_AMT,0) !=0)
+                        THEN 0
+                   ELSE
+                        psm_amt
+                   END,0) AS psm_amt
+              ,NVL(CASE 
+                        WHEN (a.SALE_DTM<'20090601000000' AND a.ACC_CHG_HST_CL = '07') OR (a.SALE_DTM<'20090601000000' AND a.ACC_CHG_HST_CL = '02') 
+                        OR (NVL(S.PHONE_SAFE_AMT,0) - NVL(S.BF_PHONE_SAFE_AMT,0) !=0)
+                        THEN 0
+                   ELSE
+                        etc_amt
+                   END,0) AS etc_amt
+	        /* 판매수량 */
+	        ,NVL(CASE WHEN a.ACC_CHG_HST_CL IN ('01','02') THEN  1
+	                  WHEN a.ACC_CHG_HST_CL IN ('07') THEN -1
+	                  ELSE 0
+	             END, 0) AS SALE_CNT
+		        FROM w_general_sale     a
+		           , tsal_equipment_sale   b
+		           , tsal_usim_sale        c
+		           , tsal_cash_sale        d
+		           , tsal_allot_sale       e
+		           , tsal_agreement_astamt f
+		           , ( SELECT  gnrl_sale_no
+		                    ,  gnrl_sale_chg_seq
+		                    ,  sum(case when pol_oper= '10001' then nvl(af_pr_mny,0) - nvl(bf_pr_mny,0) 
+		                       else 0 end) as skt_amt
+		                    ,  sum(case when pol_oper= '10002' then nvl(af_pr_mny,0) - nvl(bf_pr_mny,0) 
+		                       else 0 end) as skn_amt
+		                    ,  sum(case when pol_oper= '48018' then nvl(af_pr_mny,0) - nvl(bf_pr_mny,0) 
+		                       else 0 end) as psm_amt
+		                    ,  sum(case when pol_oper != '10001' and pol_oper != '10002' and pol_oper != '48018' then nvl(af_pr_mny,0) - nvl(bf_pr_mny,0)
+		                       else 0 end) as etc_amt 
+		                 FROM 
+		                    ( SELECT   a.gnrl_sale_no
+		                                ,a.gnrl_sale_chg_seq
+		                                ,b.pol_oper
+		                                ,sum(nvl((select pr_mny 
+		                                            from tsal_promotion_money_l 
+		                                           where gnrl_sale_no =b.gnrl_sale_no 
+		                                             and gnrl_sale_chg_seq = (b.gnrl_sale_chg_seq-1) 
+		                                             and pol_id  = b.pol_id
+		                                             and pol_ym = b.pol_ym
+		                                             and pol_ts = b.pol_ts
+		                                          ),0)) as bf_pr_mny
+		                                ,sum(pr_mny) as af_pr_mny   
+		                        FROM w_general_sale      a
+		                           , tsal_promotion_money_l b
+		                       WHERE a.gnrl_sale_no       = b.gnrl_sale_no
+		                         AND a.gnrl_sale_chg_seq  = b.gnrl_sale_chg_seq
+		                         AND b.del_yn = 'N'
+		                         AND b.acc_aply_yn = 'Y'
+		                         AND b.pr_mny_cl = '1' /*장려금 구분이 일반장려금인것만*/
+		                         AND b.pol_ym = substr(A.sale_dtm,0,6)
+		                       GROUP BY a.gnrl_sale_no,a.gnrl_sale_chg_seq, b.pol_oper
+		                      ) y                   
+		                   GROUP BY gnrl_sale_no,gnrl_sale_chg_seq  
+		             ) g
+              ,TSAL_PROMOTION_MONEY   U /* 장려금 (정산) */
+              ,TSAL_PAYMENT           S /* SKT수납대행 */    
+              ,(SELECT     AA.GNRL_SALE_CHG_SEQ
+                          ,AA.GNRL_SALE_NO
+                          ,AA.EQP_MDL_CD  
+                          ,AA.EQP_SER_NUM
+                          ,AA.EQP_OLD_SALE_YN
+                          ,BB.PROD_CL
+                          ,BB.PROD_NM
+                  FROM     TSAL_EQUIPMENT_SALE AA
+                          ,TBAS_PROD_MGMT BB 
+                 WHERE     AA.EQP_MDL_CD =  BB.PROD_CD (+)                 
+                ) N  /* 단말기판매  */
+		       WHERE a.gnrl_sale_no       = b.gnrl_sale_no
+		         AND a.gnrl_sale_chg_seq  = b.gnrl_sale_chg_seq
+		         AND a.gnrl_sale_no       = c.gnrl_sale_no
+		         AND a.gnrl_sale_chg_seq  = c.gnrl_sale_chg_seq
+		         AND a.gnrl_sale_no       = d.gnrl_sale_no
+		         AND a.gnrl_sale_chg_seq  = d.gnrl_sale_chg_seq
+		         AND a.gnrl_sale_no       = e.gnrl_sale_no
+		         AND a.gnrl_sale_chg_seq  = e.gnrl_sale_chg_seq
+		         AND a.gnrl_sale_no       = f.gnrl_sale_no
+		         AND a.gnrl_sale_chg_seq  = f.gnrl_sale_chg_seq
+		         AND a.gnrl_sale_no       = g.gnrl_sale_no(+)
+		         AND a.gnrl_sale_chg_seq  = g.gnrl_sale_chg_seq(+)
+             AND   a.GNRL_SALE_CHG_SEQ = U.GNRL_SALE_CHG_SEQ 
+             AND   a.GNRL_SALE_NO      = U.GNRL_SALE_NO 
+             AND   a .GNRL_SALE_CHG_SEQ = S.GNRL_SALE_CHG_SEQ   
+             AND   a .GNRL_SALE_NO      = S.GNRL_SALE_NO
+             AND   a .GNRL_SALE_CHG_SEQ = N.GNRL_SALE_CHG_SEQ   
+             AND   a .GNRL_SALE_NO      = N.GNRL_SALE_NO
+		    ) X
+        GROUP BY   x.pos_agency, x.stl_plc, x.UKEY_AGENCY_CD, x.UKEY_SUB_CD
+	]]>
+	</select>
+	
+  <insert id="insertTaccRetailPl" parameterClass="hmap">
+  <![CDATA[
+     INSERT INTO TACC_RETAIL_PL   /* SACERP08600_insertTaccRetailPl_ERP 계정별 금액 IF 저장_이강수 */
+         ( ACC_MTH
+         , AGENCY_CD
+         , DEAL_CO_CD
+         , ACC_CD
+         , ACC_AMT
+         , REMARK
+         , RGST_CL
+         , DEL_YN
+         , UPD_CNT
+         , INS_DTM
+         , INS_USER_ID
+         , MOD_DTM
+         , MOD_USER_ID 
+         ) 
+    VALUES 
+         ( substr(#ACC_MTH#, 0, 6)
+         , #AGENCY_CD#
+         , #DEAL_CO_CD#
+         , substr(#ACC_CD#, 5,6)
+         , #ACC_AMT#
+         , #REMARK#
+         , '1'
+         , 'N'
+         , 1
+         , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+         , #USER_ID#
+         , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+         , #USER_ID#
+         )
+  ]]>
+  </insert>
+
+  <delete id="deleteTaccRetailPl" parameterClass="map">
+  <![CDATA[
+    DELETE /* SACERP08100_deleteTaccRetailPl_ERP 계정별 금액 IF 삭제_이강수 */
+            TACC_RETAIL_PL
+     WHERE  ACC_MTH      = #ACC_MTH#
+       AND  DEAL_CO_CD   = #DEAL_CO_CD#
+       AND  RGST_CL      = '1'
+  ]]>
+  </delete>	
+</sqlMap>

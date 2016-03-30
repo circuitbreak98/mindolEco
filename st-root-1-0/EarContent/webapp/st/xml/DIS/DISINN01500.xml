@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="DISINN01500" Left="8" OnLoadCompleted="DISINN01500_OnLoadCompleted" PidAttrib="7" Title="상품이력조회" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="OLD_SER_NUM" size="256" summ="default" type="STRING"/>
+					<record>
+						<OLD_SER_NUM></OLD_SER_NUM>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="INS_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="OUT_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="IN_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="INOUT_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="INOUT_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="INOUT_DTL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SER_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_USER_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CON_MGMT_NO" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_info">
+				<Contents>
+					<colinfo id="PROD_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="COLOR_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="COLOR_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SER_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="EQP_ST" size="256" summ="default" type="STRING"/>
+					<colinfo id="DIS_ST" size="256" summ="default" type="STRING"/>
+					<colinfo id="OLD_SER_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CON_MGMT_NO" size="256" summ="default" type="STRING"/>
+					<colinfo id="RESERVE_AMT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="SunkenEdge" Height="63" Id="div_master" Left="9" Style="sty_div_dataview" TabOrder="2" Text="Div0" Top="57" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static2" Left="269" Style="sty_lb_dataview" TabOrder="1" Text="색상" Top="7" VAlign="Middle" Width="68"></Static>
+				<Edit BindDataset="ds_info" Border="Flat" Column="COLOR_NM" Enable="FALSE" Height="20" Id="edt_prchsPlcNm" Left="341" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="153"></Edit>
+				<Edit BindDataset="ds_info" Border="Flat" Column="SER_NUM" Enable="FALSE" Height="20" Id="edt_inPlcNm" Left="686" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" Width="113"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="558" Style="sty_lb_dataview" TabOrder="3" Text="최종&#32;상품일련번호" Top="7" VAlign="Middle" Width="116"></Static>
+				<Static Align="Right" Height="20" Id="Static0" Left="25" Style="sty_lb_dataview" TabOrder="5" Text="상품코드" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit BindDataset="ds_info" Border="Flat" Column="PROD_CD" Enable="FALSE" Height="20" Id="edt_inClNm" Left="89" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Width="47"></Edit>
+				<Static Align="Right" Height="20" Id="Static3" Left="17" Style="sty_lb_dataview" TabOrder="7" Text="단말기상태" Top="31" VAlign="Middle" Width="68"></Static>
+				<Edit BindDataset="ds_info" Border="Flat" Column="EQP_ST" Enable="FALSE" Height="20" Id="Edit0" Left="89" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="31" Width="153"></Edit>
+				<Static Align="Right" Height="20" Id="Static4" Left="269" Style="sty_lb_dataview" TabOrder="9" Text="유보금액" Top="31" VAlign="Middle" Width="68"></Static>
+				<Edit BindDataset="ds_inMaster" Border="Flat" Column="RESERVE_AMT" Enable="FALSE" Height="20" Id="Edit1" Left="341" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="31" Width="153"></Edit>
+				<Static Align="Right" Height="20" Id="Static5" Left="558" Style="sty_lb_dataview" TabOrder="11" Text="최종&#32;상담관리번호" Top="30" VAlign="Middle" Width="116"></Static>
+				<Edit BindDataset="ds_info" Border="Flat" Column="CON_MGMT_NO" Enable="FALSE" Height="20" Id="Edit2" Left="686" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="31" Width="113"></Edit>
+				<Edit BindDataset="ds_info" Border="Flat" Column="PROD_NM" Enable="FALSE" Height="20" Id="Edit3" Left="137" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="13" Top="7" Width="105"></Edit>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="40" Id="div_process" Left="9" Style="sty_div_input" TabOrder="1" Text="Div0" Top="7" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static3" Left="14" Style="sty_lb_Basic" TabOrder="1" Text="일련번호" Top="7" VAlign="Middle" Width="68"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="739" LeftMargin="5" OnClick="div_process_btn_search_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="8" Width="60"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="OLD_SER_NUM" Height="20" Id="edt_inClNm" Left="88" LeftMargin="2" OnKeyDown="div_process_edt_inClNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="113"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="592" CellMoving="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="436" Id="grd_movRegList" InputPanel="FALSE" Left="8" LineColor="user33" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="156" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="34"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="97"/>
+						<col width="80"/>
+						<col width="120"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="발생일자"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="출고처"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="입고처"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="입출고일자"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="입출고구분"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="입출고상세구분"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="상품일련번호"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="발생자"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="상담관리번호"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="currow+1"/>
+						<cell align="center" col="1" colid="INS_DTM" display="text"/>
+						<cell col="2" colid="OUT_PLC_NM" display="text"/>
+						<cell col="3" colid="IN_PLC_NM" display="text"/>
+						<cell align="center" col="4" colid="INOUT_DT" display="date"/>
+						<cell col="5" colid="INOUT_NM" display="text"/>
+						<cell col="6" colid="INOUT_DTL_NM" display="text"/>
+						<cell col="7" colid="SER_NUM" display="text"/>
+						<cell col="8" colid="INS_USER_NM" display="text"/>
+						<cell align="center" col="9" colid="CON_MGMT_NO" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="btn_excelDown" ImageID="btn_i_exceldown_w" Left="798" OnClick="div_btn_btn_excelDown_OnClick" TabOrder="4" Text="Button1" ToolTipText="Excel&#32;Download" Top="128" Width="19"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : DISINN01500
+* 업무명      : 입고 - 가용재고 조회
+* 프로그램명  : 가용재고 조회
+--------------------------------------------------------------------------------
+* 작성자      : 전미량
+* 작성일      : 2013.07.02
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_global.js"
+#include "lib::lib_util.js"
+#include "lib::lib_SAL.js"
+
+function DISINN01500_OnLoadCompleted(obj)
+{
+	cf_setAuth(pFrmNum);
+}
+
+/*******************************************************************************
+ * @description    : 조회
+*******************************************************************************/
+function div_process_btn_search_OnClick(obj)
+{
+	
+
+	// 트랜잭션 설정
+	var sSvcID = "svcProdDisHst";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=ds_list ds_info=ds_info";
+	var sArg   = "sktst.dis.INN#getProdDisHst";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+}
+
+function div_process_edt_inClNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if (nChar == 13)
+	{
+		div_process_btn_search_OnClick();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	// 제조사
+	if(sSvcID == "svcProdDisHst")
+	{
+	    
+	}
+
+}
+]]></Script>
+</Window>

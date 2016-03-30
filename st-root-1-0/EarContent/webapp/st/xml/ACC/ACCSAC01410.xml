@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="376" Id="ACCSAC01410" Left="8" OnLoadCompleted="ACCSAC01410_OnLoadCompleted" PidAttrib="7" Title="온라인도매수수료&#32;정산처추가&#32;정산관리" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="POS_AGENCY" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="MNP_CMMS_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_MTH></ACC_MTH>
+						<ACC_PLC></ACC_PLC>
+						<DEAL_CO_CD></DEAL_CO_CD>
+						<MNP_CMMS_CL></MNP_CMMS_CL>
+						<POS_AGENCY></POS_AGENCY>
+						<SL_CL></SL_CL>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_handWrite" OnColumnChanged="ds_handWrite_OnColumnChanged">
+				<Contents>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_ADD_ITM_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="SVC_MGMT_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_ADD_DTL_INFO" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="BF_ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="CUST_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SVC_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MDL_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="MDL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MDL_SER_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="FIX_CNSG_CMMS" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_stlPlcList">
+				<Contents>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CL2" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_PLC_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ParentProd">
+				<Contents>
+					<colinfo id="PROD_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="MFACT_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="skt_oper_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CHRTIC_1" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CHRTIC_2" size="256" summ="default" type="STRING"/>
+					<colinfo id="MKTG_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="END_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_nm" size="256" summ="default" type="STRING"/>
+					<record>
+						<END_DT></END_DT>
+						<MFACT_ID></MFACT_ID>
+						<mfact_nm></mfact_nm>
+						<MKTG_DT></MKTG_DT>
+						<PROD_CD></PROD_CD>
+						<PROD_CHRTIC_1></PROD_CHRTIC_1>
+						<PROD_CHRTIC_2></PROD_CHRTIC_2>
+						<PROD_CL></PROD_CL>
+						<PROD_NM></PROD_NM>
+						<skt_oper_yn></skt_oper_yn>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_accPlcList"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_accCmms">
+				<Contents>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="FIX_CNSG_CMMS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_copyAccCmms">
+				<Contents>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="FIX_CNSG_CMMS" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_MTH></ACC_MTH>
+						<ACC_PLC></ACC_PLC>
+						<DEAL_CO_CD>&#32;</DEAL_CO_CD>
+						<FIX_CNSG_CMMS></FIX_CNSG_CMMS>
+						<SL_CL></SL_CL>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" BindDataset="ds_handWrite" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="327" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="239" Id="grd_handWrite" InputPanel="FALSE" Left="9" LineColor="user33" OnExpandUp="grd_handWrite_OnExpandUp" Right="1013" RowHeight="21" Style="sty_Grid" TabOrder="0" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="FALSE" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="40"/>
+						<col fix="left" width="100"/>
+						<col fix="left" width="150"/>
+						<col fix="left" width="100"/>
+						<col fix="left" width="80"/>
+						<col fix="left" width="80"/>
+						<col fix="left" width="100"/>
+						<col fix="left" width="84"/>
+						<col width="80"/>
+						<col width="84"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="100"/>
+						<col width="150"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="굴림,9,Bold" text="No" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="정산추가항목" Valign="Center"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="세부내용" Valign="Center"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="정산처" Valign="Center"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="정산처구분" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="정산처코드" Valign="Center"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" text="판매처" Valign="Center"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,9,Bold" text="판매처코드" Valign="Center"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,9,Bold" text="기존정산월" Valign="Center"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" font="돋움,9,Bold" text="고객명" Valign="Center"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" font="돋움,9,Bold" text="개통번호" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="11" color="user35" display="text" font="돋움,9,Bold" text="서비스관리번호" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="12" color="user35" display="text" font="돋움,9,Bold" text="모델" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="13" color="user35" display="text" font="돋움,9,Bold" text="일련번호" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="14" color="user35" display="text" font="돋움,9,Bold" text="확정위탁수수료" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="15" color="user35" display="text" font="돋움,9,Bold" text="비고" Valign="Center"/>
+					</head>
+					<body>
+						<cell col="0" display="number" expr="currow+1"/>
+						<cell align="left" col="1" colid="ACC_ADD_ITM_CD" combocol="code" combodataset="ds_addCmms" combotext="name" display="combo" edit="combo"/>
+						<cell align="left" col="2" colid="ACC_ADD_DTL_INFO" display="text" edit="normal" limit="80"/>
+						<cell align="left" col="3" colid="ACC_PLC_NM" combocol="ACC_PLC" combodataset="ds_accPlcList" combotext="DEAL_CO_NM" display="combo" edit="combo" expandimage="btn_combo" expandshow="true"/>
+						<cell align="center" col="4" colid="DEAL_NM" display="text"/>
+						<cell align="center" col="5" colid="ACC_PLC" display="text" limit="10"/>
+						<cell align="center" col="6" colid="SALE_PLC_NM" combocol="SALE_PLC" combodataset="ds_stlPlcList" combotext="SALE_PLC_NM" display="combo" edit='expr:iif(ACC_PLC&#32;==&quot;&quot;,&#32;&quot;none&quot;,&quot;combo&quot;)' expandimage="btn_combo" expandshow="true"/>
+						<cell align="center" col="7" colid="SALE_PLC" display="text"/>
+						<cell align="center" col="8" colid="BF_ACC_MTH" display="text" expandimage="btn_i_calendar" expandshow="true" Mask="@@@@-@@"/>
+						<cell align="center" col="9" colid="CUST_NM" display="text" edit="normal" limit="20"/>
+						<cell align="center" col="10" colid="SVC_NUM" display="text" edit="normal" limit="12"/>
+						<cell align="center" col="11" colid="SVC_MGMT_NUM" display="text" edit="normal" limit="10"/>
+						<cell align="center" col="12" colid="MDL_NM" display="text" expandimage="btn_i_detail_b" expandshow="true"/>
+						<cell align="center" col="13" colid="MDL_SER_NUM" display="text" edit="normal" limit="7"/>
+						<cell align="right" col="14" colid="FIX_CNSG_CMMS" display="number" edit="number" limit="10"/>
+						<cell align="center" col="15" colid="RMKS" display="text" edit="normal" limit="80"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" colspan="2" display="text" text="합계"/>
+						<cell align="right" bkcolor="user37" col="2" color="user38" display="number"/>
+						<cell align="right" bkcolor="user37" col="3" color="user38" display="number"/>
+						<cell align="right" bkcolor="user37" col="4" color="user38" display="number"/>
+						<cell align="right" bkcolor="user37" col="5" color="user38" display="number"/>
+						<cell align="right" bkcolor="user37" col="6" color="user38" display="number"/>
+						<cell align="right" bkcolor="user37" col="7" color="user38" display="number"/>
+						<cell align="right" bkcolor="user37" col="8" color="user38" display="number"/>
+						<cell align="right" bkcolor="user37" col="9" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="10" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="11" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="12" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="13" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="14" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="15" color="user38" display="text"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="img_handWrite" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="1" Text="온라인도매수수료&#32;정산처추가&#32;정산관리" Top="59" Width="264"></Image>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="2" Text="Div0" Top="10" Width="1004">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="3" Style="sty_lb_Search" TabOrder="1" Text="대리점" Top="8" VAlign="Middle" Width="45"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCdNm" Left="52" LeftMargin="2" OnKeyDown="div_search_edt_agencyCdNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" UserData="발주처" Width="80"></Edit>
+				<Button Cursor="HAND" Height="20" Id="btn_agency" ImageID="btn_i_detail" Left="132" OnClick="div_search_btn_agency_OnClick" TabOrder="3" Text="Button0" Top="7" Width="20"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="POS_AGENCY" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="150" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="80"></Edit>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="POS_AGENCY" Enable="FALSE" Height="20" Id="edt_agencyCd" Left="230" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Visible="FALSE" Width="10"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="241" Style="sty_lb_Search" TabOrder="6" Text="정산월" Top="8" VAlign="Middle" Width="60"></Static>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="ACC_MTH" Height="20" Id="cal_accYm" Left="307" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="8" Type="STRING" Width="77"></MaskEdit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="384" TabOrder="8" TabStop="FALSE" Text="Button3" Top="8" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Height="25" Id="btn_save" ImageID="btn_c_2" Left="889" LeftMargin="5" OnClick="btn_save_onClick" Style="sty_btn_c" TabOrder="3" Text="저장" Top="337" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_c_2" Left="953" LeftMargin="5" OnClick="df_close" Style="sty_btn_c" TabOrder="4" Text="취소" Top="337" Width="60"></Button>
+		<Button Height="20" Id="btn_addRow" ImageID="btn_i_add_w" Left="945" OnClick="btn_addRow_OnClick" TabOrder="6" Text="Button7" Top="61" Width="20"></Button>
+		<Button Height="20" Id="btn_delRow" ImageID="btn_i_subtract_w" Left="969" OnClick="btn_delRow_OnClick" TabOrder="5" Text="Button7" Top="61" Width="20"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="992" OnClick="btn_export_OnClick" TabOrder="7" Text="Button1" ToolTipText="Excel&#32;Download" Top="61" Width="19"></Button>
+		<Image Align="Left" Height="20" Id="img_polChg" ImageID="bul_caution" Left="300" LeftMargin="20" Style="sty_lb_info" TabOrder="8" Text="정산&#32;추가의&#32;고객정보&#32;및&#32;개통정보는&#32;영업관리의&#32;데이터와&#32;관련이&#32;없습니다." Top="62" Visible="FALSE" Width="410"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : ACCSAC01410
+* 업무명      : 정산
+* 프로그램명  : 온라인도매수수료 수기입력 정산관리
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.11.21
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_POS_AGENCY_ID;		// 대리점 코드
+var FV_POS_AGENCY_UKEY_ID;	// 대리점 UKey 코드
+var FV_POS_AGENCY_NM;		// 대리점명
+var FV_CLOSE_DT;
+
+/*******************************************************************************
+* 함수명 : ACCSAC01410_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function ACCSAC01410_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	http.Sync = true;
+    
+    
+    f_initSearchSet();
+    
+    f_stlPlcList();
+   
+    /**정산 추가 항목 코드 셋팅 */
+    cf_setCommonCodeDsEnv();
+	
+	cf_setCommonCode("grd_handWrite", "ZACC_C_00330",null,1);
+		
+	cf_checkCommonCode();
+	
+    /**정산 추가 항목 코드 셋팅  끝*/
+    
+    FV_CLOSE_DT = div_search.cal_accYm.Value;
+    
+	http.Sync = false;
+
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack
+* 기능명 : 트랜잭션 콜백
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "svcStlPlcList")
+	{
+		if(ds_stlPlcList.rowcount == 0) {
+			btn_addRow.Enable = false;
+			btn_delRow.Enable = false;
+			btn_save.Enable   = false;
+			alert("수기입력 할 정산처가 없습니다.");
+		}else{
+			btn_addRow.Enable = true;
+			btn_delRow.Enable = true;
+			btn_save.Enable   = true;
+			
+			f_setCmbAccPlc();
+		}
+		
+		return;
+	}
+		
+	if(sSvcID == "saveHandWriteCmmsAccMonthList")
+	{
+		alert(cf_getMessage(MSG_00006, "온라인도매 수수료 정산 추가등록이"));
+		
+		parent.btn_search_OnClick();
+		this.Close();
+	}
+	
+}
+
+
+/*******************************************************************************
+* 함수명 : f_setCmbAccPlc
+* 기능명 : 정산처 리스트 콤보박스 셋팅
+*******************************************************************************/
+function f_setCmbAccPlc()
+{
+    ds_stlPlcList.Filter("DEAL_CL2=='2'");
+    //2차점 정산처인 애들만 따로 데이터셋 Filtering
+	ds_accPlcList.CopyF(ds_stlPlcList);		
+	//3차점 판매처 위한 데이터셋 만들기 위해 Unfiltering
+	ds_stlPlcList.UnFilter();
+}
+
+/*******************************************************************************
+* 함수명 : f_initSearchSet
+* 기능명 : 온라인도매수수료 검색조건 세팅
+*******************************************************************************/
+function f_initSearchSet()
+{
+	cf_setParam(ds_condition,"ACC_MTH"   	   ,ACC_MTH);	//정산월
+	cf_setParam(ds_condition,"SL_CL"   	   	   ,SL_CL);		//영업구분
+	div_search.edt_agencyCdNm.Text = POS_AGENCY_NM;			//대리점명
+	div_search.edt_agencyUkeyCd.Text = POS_AGENCY;			//대리점코드
+	
+	uf_ObjComponentEnable(div_search,false);
+	
+}
+
+
+/*******************************************************************************
+* 함수명 : f_stlPlcSearch
+* 기능명 : 수기입력 대상 정산처 리스트 조회.
+*******************************************************************************/
+function f_stlPlcList()
+{
+	
+	var sSvcID = "svcStlPlcList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_stlPlcList=ds_stlPlcList";
+	var sArg   = "sktst.acc.SAC#getOnStlPlcList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+* 함수명 : btn_addRow_OnClick
+* 기능명 : 로우 추가
+*******************************************************************************/
+function btn_addRow_OnClick(obj)
+{
+    if(ds_stlPlcList.rowcount > 0 ){
+		//정산처 갯수만큼 로우 추가 가능
+		
+		ds_handWrite.FireEvent = false;
+		
+		ds_handWrite.AddRow();
+		
+		ds_handWrite.SetColumn(ds_handWrite.lastrow, "DEAL_CO_CD",POS_AGENCY);
+		ds_handWrite.SetColumn(ds_handWrite.lastrow, "ACC_PLC","");
+		ds_handWrite.SetColumn(ds_handWrite.lastrow, "ACC_MTH",ACC_MTH);
+		ds_handWrite.SetColumn(ds_handWrite.lastrow, "DEAL_CL","");
+		ds_handWrite.SetColumn(ds_handWrite.lastrow, "DEAL_NM","");
+		ds_handWrite.SetColumn(ds_handWrite.lastrow, "SL_CL","04");
+		ds_handWrite.SetColumn(ds_handWrite.lastrow, "ACC_ADD_ITM_CD","01");
+				
+		f_set_gridFocus(grd_handWrite, ds_handWrite.lastrow, 1);
+		
+		ds_stlPlcList.UnFilter();
+		
+		ds_handWrite.FireEvent = true;
+	}
+}
+
+/*******************************************************************************
+* 함수명 : btn_export_OnClick
+* 기능명 :  엑셀 export
+*******************************************************************************/
+function btn_export_OnClick(obj)
+{
+	cf_exportExcel(grd_handWrite);
+}
+
+/*******************************************************************************
+* 함수명 : f_set_gridFocus
+* 기능명 : 그리드 포커스 이동
+*******************************************************************************/
+function f_set_gridFocus(gridObj, nRow, nCellIdx) 
+{	
+	var dataSetObj = object(gridObj.bindDataset);
+	dataSetObj.row = nRow;
+	gridObj.SetCellPos(nCellIdx);
+	gridObj.SetFocus();
+}
+
+/*******************************************************************************
+* 함수명 : df_close
+* 기능명 : 화면 종료
+*******************************************************************************/
+function df_close(sButtonID)
+{
+	this.close();
+}
+
+
+function Button0_OnClick(obj)
+{
+	cf_debug("ds_handWrite");
+}
+
+
+/*******************************************************************************
+ * 함수명    : ds_handWrite_OnColumnChanged
+ * 기능명   :  정산처, 판매처 선택시 코드, 정산처 구분 조회 이벤트
+*******************************************************************************/
+function ds_handWrite_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	obj.FireEvent = false;
+		
+	if(strColumnID == "ACC_PLC_NM"){
+	
+		if(varNewValue != varOldValue){
+			ds_stlPlcList.UnFilter();
+			ds_handWrite.SetColumn(nRow, "SALE_PLC","");
+			ds_handWrite.SetColumn(nRow, "SALE_PLC_NM","");
+			
+			ds_handWrite.SetColumn(nRow, "ACC_PLC",ds_stlPlcList.GetColumn(ds_stlPlcList.FindRow("ACC_PLC",varNewValue),"ACC_PLC"));
+			ds_handWrite.SetColumn(nRow, "DEAL_CL",ds_stlPlcList.GetColumn(ds_stlPlcList.FindRow("ACC_PLC",varNewValue),"DEAL_CL"));
+			ds_handWrite.SetColumn(nRow, "DEAL_NM",ds_stlPlcList.GetColumn(ds_stlPlcList.FindRow("ACC_PLC",varNewValue),"DEAL_NM"));		
+		
+			//ds_stlPlcList.UnFilter();
+			var sAccPlcCd = ds_handWrite.GetColumn(nRow, "ACC_PLC");
+			ds_stlPlcList.Filter("ACC_PLC="+quote(sAccPlcCd));
+		}			
+	}
+	
+	if(strColumnID == "SALE_PLC_NM"){
+		
+		if(varNewValue != varOldValue){
+			ds_handWrite.SetColumn(nRow, "SALE_PLC",ds_stlPlcList.GetColumn(ds_stlPlcList.currow,"SALE_PLC"));
+		}
+			
+	}
+	
+	obj.FireEvent = true;
+}
+
+/*******************************************************************************
+ * 함수명    : grd_handWrite_OnExpandUp
+ * 기능명   :  판매처, 모델, 기존 정산월 팝업 호출 이벤트
+*******************************************************************************/
+function grd_handWrite_OnExpandUp(obj,nRow,nCell,strVal,nPivotIndex)
+{
+	if(nCell == 6){
+		            
+        if(uf_IsNull(ds_handWrite.GetColumn(nRow,"ACC_PLC"))){
+        
+            alert(cf_getMessage(MSG_00083, "정산처"));
+            f_set_gridFocus(grd_handWrite, nRow, 3);
+            return;
+        }
+                
+	} else if (nCell == 8) {
+		
+		f_setPopupDivCalendar(obj, nRow, nCell);
+		
+	} else if (nCell == 12) {
+		
+		var sInRow = ds_ParentProd.AddRow(); 
+		
+		ds_ParentProd.SetColumn(sInRow,"prod_cd",ds_handWrite.GetColumn(nRow, "MDL_CD"));
+		ds_ParentProd.SetColumn(sInRow,"prod_nm",ds_handWrite.GetColumn(nRow, "MDL_NM"));
+		
+		cf_commPopProdDs("ds_ParentProd", sInRow);
+				
+		ds_handWrite.SetColumn(nRow, "MDL_CD", ds_ParentProd.GetColumn(sInRow, "prod_cd"));
+		ds_handWrite.SetColumn(nRow, "MDL_NM", ds_ParentProd.GetColumn(sInRow, "prod_nm"));
+		
+		ds_ParentProd.ClearData();
+	}
+}
+
+function Button1_OnClick(obj)
+{
+	cf_debug("ds_stlPlcList");
+}
+
+function Button2_OnClick(obj)
+{
+	cf_debug("ds_ParentProd");
+}
+
+/*******************************************************************************
+ * 함수명    : btn_save_onClick
+ * 기능명   :  저장 처리
+*******************************************************************************/
+function btn_save_onClick(obj)
+{
+	/*
+	cf_CheckCloseMnth('06',ACC_MTH,"정산월");  	
+	if(FV_BOOLEAN_CLOSE) return;
+	
+	cf_CheckCloseDay('04',substr(TODAY(),0,8),"정산월");  	
+	if(FV_BOOLEAN_CLOSE) return;
+	*/
+	
+	if (!(f_pre_save())) {
+		return;
+	}
+	
+	f_setDsGroup();
+	
+	if(confirm(cf_getMessage(MSG_00136, "저장")) == 1){
+		
+		var sSvcID = "saveHandWriteCmmsAccMonthList";
+		var sInDs  = "ds_handWrite=ds_handWrite:U ds_accCmms=ds_accCmms";
+		var sOutDs = "";
+		var sArg   = "sktst.acc.SAC#saveOnHandWriteAccMonthList";
+
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+	
+}
+
+
+function Button3_OnClick(obj)
+{
+	cf_debug("ds_accPlcList");
+}
+
+
+/*******************************************************************************
+* 함수명 : f_pre_save 
+* 기능명 : 정산수기입력 항목 필수입력 체크
+*******************************************************************************/
+function f_pre_save(){
+	
+	var bChk = true;
+	
+	for(var nRow=0; nRow<ds_handWrite.rowcount; nRow++){
+		
+		if(uf_isNull(ds_handWrite.GetColumn(nRow,"ACC_ADD_ITM_CD")) ==true){
+			alert("정산추가항목을 선택하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 1);
+			break;
+		}
+		
+		if(uf_isNull(ds_handWrite.GetColumn(nRow,"ACC_ADD_DTL_INFO")) ==true){
+			alert((nRow+1)+"번째 라인의 세부내용을 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 2);
+			break;
+		}	
+		
+		if(uf_isNull(ds_handWrite.GetColumn(nRow,"ACC_PLC")) ==true){
+			alert((nRow+1)+"번째 라인의 정산처를 선택하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 3);
+			break;
+		}	
+		
+		if(uf_isNull(ds_handWrite.GetColumn(nRow,"SALE_PLC")) ==true){
+			alert((nRow+1)+"번째 라인의 판매처를 선택하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 6);
+			break;
+		}	
+		
+		if(lengthb(ds_handWrite.GetColumn(nRow,"BF_ACC_MTH")) != 6){
+			alert((nRow+1)+"번째 라인의 기존정산월을 'YYYYMM' 형태로 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 8);
+			break;
+		}
+		
+		if(uf_isNull(ds_handWrite.GetColumn(nRow,"CUST_NM")) ==true){
+			alert((nRow+1)+"번째 라인의 고객명을 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 9);
+			break;
+		}	
+		
+		if(uf_isNull(ds_handWrite.GetColumn(nRow,"SVC_NUM")) ==true){
+			alert((nRow+1)+"번째 라인의 개통번호를 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 10);
+			break;		
+		}
+		
+		
+		if(uf_isNull(ds_handWrite.GetColumn(nRow,"SVC_MGMT_NUM")) ==true){
+			alert((nRow+1)+"번째 라인의 서비스관리번호를 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 11);
+			break;		
+		}
+		
+		if(f_isNumber(ds_handWrite.GetColumn(nRow,"SVC_MGMT_NUM")) == false){
+			alert((nRow+1)+"번째 라인의 서비스관리번호를 숫자로 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 11);
+			break;		
+		}
+			
+		if(lengthb(ds_handWrite.GetColumn(nRow,"SVC_MGMT_NUM")) != 10){
+			alert((nRow+1)+"번째 라인의 서비스관리번호를 10 자로 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 11);
+			break;		
+		}
+		
+		if(uf_isNull(ds_handWrite.GetColumn(nRow,"MDL_CD")) ==true){
+			alert((nRow+1)+"번째 라인의 유효한 모델을 선택하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 12);
+			break;		
+		}
+		
+		if(uf_isNull(ds_handWrite.GetColumn(nRow,"MDL_SER_NUM")) ==true){
+			alert((nRow+1)+"번째 라인의 일련번호를 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 13);
+			break;		
+		}
+		
+		if(f_isNumber(ds_handWrite.GetColumn(nRow,"MDL_SER_NUM")) == false){
+			alert((nRow+1)+"번째 라인의 일련번호를 숫자로 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 13);
+			break;		
+		}
+			
+		if(lengthb(ds_handWrite.GetColumn(nRow,"MDL_SER_NUM")) != 7){
+			alert((nRow+1)+"번째 라인의 단말기 일련번호를 7자로 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 13);
+			break;
+		}
+		
+		if(uf_isNull(ds_handWrite.GetColumn(nRow,"FIX_CNSG_CMMS")) ==true){
+			alert((nRow+1)+"번째 라인의 확정수수료를 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 14);
+			break;		
+		}
+		
+		if(f_isNumber(ds_handWrite.GetColumn(nRow,"FIX_CNSG_CMMS")) == false){
+			alert((nRow+1)+"번째 라인의 확정수수료를 숫자로 입력하십시오.");
+			bChk = false;
+			f_set_gridFocus(grd_handWrite, nRow, 14);
+			break;		
+		}
+	}
+	
+	if(!bChk){
+		return false;
+	}else{
+		return true;
+	}
+}
+
+/*******************************************************************************
+* 함수명 : f_setDsGroup 
+* 기능명 : tacc_oa_cmms_acc_m (온라인도매 수수료 월정산에 확정수수료 넣기 위한 grouping 처리 
+*******************************************************************************/
+
+function f_setDsGroup(){
+	
+	ds_accCmms.ClearData();
+	
+	if(ds_handWrite.GetRowCount() >0){
+		
+		var sArrProdCd = "";
+		
+		
+		for(var i=0;i<ds_handWrite.rowcount; i++){
+		
+		    var sOutAccPlcCd = ds_handWrite.GetColumn(i, "ACC_PLC");
+			var sOutDealCoCd = ds_handWrite.GetColumn(i, "DEAL_CO_CD");
+			var sOutSlCl = ds_handWrite.GetColumn(i, "SL_CL");
+			var sOutAccMth = ds_handWrite.GetColumn(i, "ACC_MTH");
+			var sOutFixCnsgCmms = ds_handWrite.GetColumn(i, "FIX_CNSG_CMMS");
+			
+		    var sMoney = 0;
+		    var sInRow = ds_accCmms.FindRow("ACC_PLC",sOutAccPlcCd);
+		    var rowCount = ds_accCmms.GetRowCount(); 
+		    
+		    if(ds_accCmms.GetRowCount() ==0 || sInRow < 0){
+				 ds_accCmms.AddRow();
+				 ds_accCmms.SetColumn(rowCount, "DEAL_CO_CD", sOutDealCoCd);
+				 ds_accCmms.SetColumn(rowCount, "ACC_PLC", sOutAccPlcCd);
+				 ds_accCmms.SetColumn(rowCount, "ACC_MTH", sOutAccMth);
+				 ds_accCmms.SetColumn(rowCount, "SL_CL", sOutSlCl);
+				 ds_accCmms.SetColumn(rowCount, "FIX_CNSG_CMMS", sOutFixCnsgCmms);
+		    }else{
+				sMoney += toNumber(ds_accCmms.GetColumn(sInRow, "FIX_CNSG_CMMS")) + toNumber(ds_handWrite.GetColumn(i, "FIX_CNSG_CMMS"));
+				ds_accCmms.SetColumn(sInRow, "FIX_CNSG_CMMS", sMoney);
+		    }
+			
+		}
+	
+	}
+}
+
+/*******************************************************************************
+* 함수명 : btn_delRow_OnClick 
+* 기능명 : 로우 삭제
+*******************************************************************************/
+function btn_delRow_OnClick(obj){
+
+	var oGrdDs = object(grd_handWrite.BindDataset);
+	oGrdDs.DeleteRow(oGrdDs.row);
+}
+
+
+/*******************************************************************************
+* 함수명 : f_isNumber
+* 기능명 :  숫자인지 check
+*******************************************************************************/
+function f_isNumber(sNumber)
+{
+	var i;
+	
+	var digit = replace(sNumber,'-',''); //-은 제외
+	//숫자인지 check
+	for(i=0; i<length(digit); i++) {
+		if(asc(CharAt(digit, i)) < 48
+		   || asc(CharAt(digit, i)) > 57) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+function ds_copyAccCmms_OnClick(obj)
+{
+	cf_debug("ds_copyAccCmms");
+}
+
+function Button4_OnClick(obj)
+{
+	cf_debug("ds_accCmms");
+}
+
+/*******************************************************************************
+* 함수명 : f_calDayClick 
+* 기능명 : CALENDER 이벤트 클릭시
+*******************************************************************************/
+function f_setPopupDivCalendar(obj, nRow, nCell)
+{
+	v_objGrid = obj;
+
+	var arr_val =  v_objGrid.GetCellRect(nRow,nCell);
+	var div_x = ClientToScreenX(obj, arr_val[0]);
+	var div_y = ClientToScreenY(obj, arr_val[1]);
+	var div_w = arr_val[2] - arr_val[0];
+	var div_h = arr_val[3] - arr_val[1];
+	
+	var oGrdDs = object(obj.BindDataset);
+	var oCalendar;
+	Create("PopupDiv", "popupDivCalendar", 'width="152" height="133"');
+	oCalendar = popupDivCalendar;
+	oCalendar.Url = "main::monthCalendar.xml";
+	var nX = ClientToScreenX(obj, obj.Width);
+	var nY = ClientToScreenY(obj, obj.Height);
+	var rtn = oCalendar.TrackPopup(div_x, div_y, div_w, div_h);
+	
+	if(rtn != null){
+		oGrdDs.setColumn(nRow,"BF_ACC_MTH",rtn);
+	}
+	
+	Destroy(oCalendar.id);
+}
+]]></Script>
+</Window>

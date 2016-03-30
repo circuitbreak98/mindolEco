@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCPAC01000" Left="8" OnLoadCompleted="ACCPAC01000_OnLoadCompleted" PidAttrib="7" Title="(월)요금채권관리" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="ACC_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="POS_AGENCY" size="256" summ="default" type="STRING"/>
+					<colinfo id="UKEY_AGENCY_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_ukey" size="256" summ="default" type="STRING"/>
+					<colinfo id="stl_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CL" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_DT>&#32;</ACC_DT>
+						<DEAL_CL></DEAL_CL>
+						<DEAL_CO_NM></DEAL_CO_NM>
+						<deal_nm></deal_nm>
+						<deal_ukey></deal_ukey>
+						<POS_AGENCY></POS_AGENCY>
+						<stl_plc></stl_plc>
+						<UKEY_AGENCY_CD></UKEY_AGENCY_CD>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dpst_list">
+				<Contents>
+					<colinfo id="POS_AGENCY" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="UKEY_CHANNEL_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_PAY_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_BAL_AMT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dealCl">
+				<Contents>
+					<colinfo id="CODE" size="256" summ="default" type="STRING"/>
+					<colinfo id="NAME" size="256" summ="default" type="STRING"/>
+					<record>
+						<CODE></CODE>
+						<NAME>전체</NAME>
+					</record>
+					<record>
+						<CODE>A2</CODE>
+						<NAME>직영점</NAME>
+					</record>
+					<record>
+						<CODE>A3</CODE>
+						<NAME>판매점</NAME>
+					</record>
+					<record>
+						<CODE>B2</CODE>
+						<NAME>온라인판매점</NAME>
+					</record>
+					<record>
+						<CODE>50</CODE>
+						<NAME>온라인거래처</NAME>
+					</record>
+					<record>
+						<CODE>C1</CODE>
+						<NAME>M채널</NAME>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="1004">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static0" Left="4" Style="sty_lb_Search" TabOrder="1" Text="정산월" Top="7" VAlign="Middle" Width="68"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="921" LeftMargin="5" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="6" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static1" Left="189" Style="sty_lb_Search" TabOrder="3" Text="대리점" Top="7" VAlign="Middle" Width="60"></Static>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="19" TabOrder="4" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="195" TabOrder="5" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="deal_co_nm" Height="20" Id="edt_agencyNm" Left="254" LeftMargin="2" OnCharChanged="div_search_edt_agencyNm_OnCharChanged" OnKeyDown="div_search_edt_agencyNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="7" UserData="대리점" Width="94"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="347" OnClick="btn_agency_OnClick" TabOrder="6" Text="Button0" Top="7" Width="19"></Button>
+				<Static Align="Right" Border="None" Height="20" Id="Static2" Left="458" Style="sty_lb_Search" TabOrder="15" Text="입금처" Top="7" VAlign="Middle" Width="56"></Static>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="deal_nm" Height="20" Id="edt_dealNm" Left="521" LeftMargin="2" OnCharChanged="div_search_edt_dealNm_OnCharChanged" OnKeyDown="div_search_edt_dealNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="9" Top="7" Width="98"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_dealCo" ImageID="btn_i_detail" Left="618" OnClick="div_search_btn_dealCo_OnClick" TabOrder="11" Text="Button0" Top="7" Width="19"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="stl_plc" Enable="FALSE" Height="20" Id="edt_dealCd" ImeMode="none" Left="637" LeftMargin="2" OnCharChanged="div_search_edt_dealCd_OnCharChanged" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="7" Width="74"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="366" MaxLength="10" Readonly="TRUE" Style="sty_ipt_form" TabOrder="12" TabStop="FALSE" Top="7" UpperOnly="TRUE" Width="74"></Edit>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="pos_agency" Height="20" Id="edt_agencyCd" Left="441" MaxLength="10" Style="sty_ipt_form" TabOrder="13" TabStop="FALSE" Top="7" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static3" Left="720" Style="sty_lb_Search" TabOrder="15" Text="거래처구분" Top="7" VAlign="Middle" Width="84"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" CodeColumn="CODE" Column="DEAL_CL" DataColumn="NAME" Height="20" Id="cmb_deal" ImeMode="none" INDEX="0" InnerDataset="ds_dealCl" Left="808" OnKeyDown="f_commonEnterDown" Style="sty_ipt_form" TabOrder="14" Top="5" Width="100"></Combo>
+				<MaskEdit Border="Flat" Height="20" Id="cal_acc_mth" Left="76" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="17" Top="7" Type="STRING" Width="87"></MaskEdit>
+				<Button Cursor="HAND" Height="24" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="161" OnClick="btn_monthCalendar_OnClick" TabOrder="16" Text="Button3" Top="7" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="요금채권조회" Top="60" Width="192"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_dpst_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="535" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="447" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="1014" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="35"/>
+						<col fix="left" width="80"/>
+						<col fix="left" width="170"/>
+						<col fix="left" width="80"/>
+						<col fix="left" width="80"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" rowspan="2" text="번호" wordwrap="word"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" rowspan="2" text="거래처구분" wordwrap="word"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" rowspan="2" text="입금처"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" rowspan="2" text="거래처코드" wordwrap="word"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" rowspan="2" text="채널코드" wordwrap="word"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" rowspan="2" text="발생채권"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" rowspan="2" text="입금정산액"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" rowspan="2" text="입금정산잔액"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" rowspan="2" text="상계예상금액"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" rowspan="2" text="ERP채권잔액"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell align="left" col="1" colid="DEAL_CL_NM" display="text"/>
+						<cell align="left" col="2" colid="DEAL_CO_NM" display="text"/>
+						<cell align="center" col="3" colid="DEAL_CO_CD" display="text"/>
+						<cell align="center" col="4" colid="UKEY_CHANNEL_CD" display="text"/>
+						<cell align="right" col="5" colid="CASH_PAY_AMT" display="number"/>
+						<cell align="right" col="6" colid="CHAG_DPST_ACC_AMT" display="number"/>
+						<cell align="right" col="7" colid="DPST_AMT" display="number"/>
+						<cell align="right" col="8" colid="CHAG_BOND_BAMT" display="number"/>
+						<cell align="right" col="9" colid="ACC_BAL_AMT" display="number"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="1" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="2" color="user38" display="text" font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="3" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="4" color="user38" display="text" font="돋움,9,Bold" text="계"/>
+						<cell align="right" bkcolor="user37" col="5" color="user38" display="number" expr='sum(&quot;CASH_PAY_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="6" color="user38" display="number" expr='sum(&quot;CHAG_DPST_ACC_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="7" color="user38" display="number" expr='sum(&quot;DPST_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="8" color="user38" display="number" expr='sum(&quot;CHAG_BOND_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="9" color="user38" display="number" expr='sum(&quot;ACC_BAL_AMT&quot;)'/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="Button56" ImageID="btn_i_exceldown_w" Left="994" OnClick="btn_excel_OnClick" TabOrder="4" Text="Button1" ToolTipText="Excel&#32;Download" Top="60" Width="19"></Button>
+	</Form>
+	<Script><![CDATA[
+/*******************************************************************************
+* 프로그램ID : ACCPAC01000
+* 업무명      : 입금관리 - 월요금채권관리
+* 프로그램명  : 요금채권조회
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2011.03.15
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+
+var FV_ORG_ID;         	//조직코드    
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ACCPAC01000_OnLoadCompleted(obj)
+{
+	div_search.cal_acc_mth.Value = Today();
+	
+	cf_setGrdChecknSortEvent(grd_list);
+	
+	FV_ORG_ID 	= gds_session.GetColumn(0, "orgId");	
+	FV_LOGIN_ID = gds_session.GetColumn(0, "loginId");		                         
+	FV_ORG_ID 	= gds_session.GetColumn(0, "orgId");		                             
+	FV_ORG_CL 	= gds_session.GetColumn(0, "orgCl");		                           
+	FV_SUP_ORG_ID 	= gds_session.GetColumn(0, "supOrgId");	                       
+	FV_USER_GRP 	= gds_session.GetColumn(0, "userGrp");	                        
+	FV_ORG_AREA_ID  = gds_session.GetColumn(0,"orgAreaId");     
+    FV_ORG_AREA_NM  = gds_session.GetColumn(0,"orgAreaNm");                       
+	FV_POS_AGENCY_ID 	= gds_session.GetColumn(0,"posAgencyId");       
+	FV_POS_AGENCY_NM 	= gds_session.GetColumn(0,"posAgencyNm");          
+	FV_POS_AGENCY_UKEY_ID = gds_session.GetColumn(0,"posAgencyUkeyId");  
+	
+	http.Sync = true;
+	
+	// 대리점 화면권한 설정
+	//uf_enableAgencyByAuth("div_search", "edt_agencyNm,edt_agencyCd,btn_agency", "edt_agencyUkeyCd");
+	uf_enableAgencyByAuth("div_search", "edt_agencyNm,edt_agencyCd,btn_agency", "edt_agencyUkeyCd");
+	uf_enableDealByAuth("div_search", "edt_dealNm,edt_dealCd,btn_dealCo");
+	
+}
+
+
+
+/*******************************************************************************
+ * @description    : 목록 조회 (요금채권 등록, 수정 후 조회 event)
+*******************************************************************************/
+function f_search(){
+	
+	btn_search_OnClick();
+
+}
+
+
+/*******************************************************************************
+ * @description    : 리스트 조회 - 이벤트
+*******************************************************************************/
+function btn_search_OnClick(obj)
+{
+	if(!cf_checkObjValues(div_search)){
+		return;
+	}
+	
+	if ( uf_IsNull(div_search.cal_acc_mth.Value) )
+    {
+        alert(cf_getMessage(MSG_00028, "정산월"));
+        div_search.cal_acc_mth.SetFocus();
+        return false;
+    }
+	
+	if(uf_IsNull(div_search.edt_agencyCd.value)){
+
+		alert(cf_getMessage(MSG_00028, "대리점"));
+		div_search.edt_agencyNm.SetFocus();
+		return;
+	}
+	
+	ds_condition.SetColumn(0,"ACC_DT", substr(div_search.cal_acc_mth.Value,0,6) +"25");
+	ds_condition.SetColumn(0,"DEAL_CL",div_search.cmb_deal.Value);
+	
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_dpst_list=ds_dpst_list";
+	var sArg   = "sktst.acc.PAC#getClsMthBondList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg,null,true,true);
+}
+
+
+/*******************************************************************************
+ * @description    : 콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{   
+   if(sSvcID == "svcList"){
+				
+		return;
+    }
+}
+
+/*******************************************************************************
+ * @description    : 대리점 검색 팝업
+*******************************************************************************/
+
+function btn_agency_OnClick(obj)
+{
+	var sArg  =  "org_id="+quote(FV_ORG_ID);  // 필수
+	
+	cf_callAgencyPop(sArg, div_search, "edt_agencyNm,edt_agencyCd,edt_agencyUkeyCd");	
+}
+
+
+/*******************************************************************************
+ * @description    : 대리점 key down팝업
+*******************************************************************************/
+function div_search_edt_agencyNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == "13"){
+		var sArg  =  "org_id="+quote(FV_ORG_ID);  // 필수
+		
+		cf_callAgencyPop(sArg, div_search, "edt_agencyNm,edt_agencyCd,edt_agencyUkeyCd");	
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 대리점 OnChar Changed 이벤트
+*******************************************************************************/
+function div_search_edt_ordPlcNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	if(strPreText != strPostText){
+		div_search.edt_ordPlcId.value = "";
+		div_search.edt_ordPlcUkeyId.Text = "";
+	}
+}
+
+
+
+/*******************************************************************************
+ * @description : 입금처   팝업 
+ ******************************************************************************/
+function div_search_btn_dealCo_OnClick(obj)
+{
+	var dealCd = ds_condition.GetColumn(0, "pos_agency");
+	
+	var sArg  = "deal_co_cl1="+quote("A2,A3,A4,B1,B2,C1"); // 필수 - 복수시 A1,A2,A3 형태의 콤바구분자로 설정
+		sArg += " pos_agency="+quote(dealCd);
+		
+	cf_callDealPop(sArg, ds_condition, "deal_nm,stl_plc,deal_ukey", 0, "Y");
+}
+
+/*******************************************************************************
+ * @description    : 입금처enter- 이벤트
+*******************************************************************************/
+function div_search_edt_dealNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == "13"){	
+
+		var dealCd = ds_condition.GetColumn(0, "pos_agency");
+		
+		var sArg  = "deal_co_cl1="+quote("A2,A3,A4,B1,B2,C1"); // 필수 - 복수시 A1,A2,A3 형태의 콤바구분자로 설정
+			sArg += " pos_agency="+quote(dealCd);
+			
+		//cf_callDealPop(sArg, ds_condition, "deal_nm,stl_plc,deal_ukey", 0);
+		cf_callDealPop(sArg, div_search, "edt_dealNm,edt_dealCd",0,"Y");
+	}
+}
+
+
+function div_search_edt_agencyNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	div_search.edt_agencyCd.Text = "";
+	div_search.edt_agencyUkeyCd.Text = "";
+}
+
+
+function div_search_edt_dealNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	div_search.edt_dealCd.Text = "";
+}
+
+
+
+/*******************************************************************************
+ * @description    : excel export
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	cf_exportExcel(grd_list);
+}
+
+
+function Button0_OnClick(obj)
+{
+	cf_debug("ds_childPop");
+}
+
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_acc_mth);
+}
+]]></Script>
+</Window>

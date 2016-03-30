@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="576" Id="DISDTR00410" Left="8" OnLoadCompleted="DISDCO00400_OnLoadCompleted" PidAttrib="7" Title="거래명세표" Top="8" Ver="1.0" Width="888" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_dealDescList"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_inCond">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_outPlcInfo"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_inPlcInfo">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dealDescTarList"></Dataset>
+		</Datasets>
+		<Report Bottom="565" Height="557" Id="Report0" Left="8" Right="878" Top="8" Width="870"></Report>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : DISDCO00400
+* 업무명      :  재고관리 - 재고공통
+* 프로그램명  :  거래명세표출력(출고증)
+--------------------------------------------------------------------------------
+* 작성자      : 한병곤
+* 작성일      : 2009.04.07
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+var FV_OUT_MGMT_NO;
+var FV_OUT_CL;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function DISDCO00400_OnLoadCompleted(obj)
+{
+	http.Sync = true;
+	
+	var dsArry = Array();
+	var sXML = "";
+	
+	FV_OUT_MGMT_NO = parent.ds_outList.GetColumn(parent.ds_outList.currow, "out_mgmt_no");
+	
+	f_getDealDescList();
+	f_getDealCoInfo("ds_inPlcInfo", parent.ds_outList.GetColumn(parent.ds_outList.currow, "in_plc_id"),"IN");
+	f_getDealCoInfo("ds_outPlcInfo", parent.ds_outList.GetColumn(parent.ds_outList.currow, "out_plc_id"),"OUT");
+	
+	f_parseSerNum(ds_DealDescList, ds_DealDescTarList, 3);
+	
+	dsArry[0] = ds_outPlcInfo;
+	dsArry[1] = ds_inPlcInfo;
+	dsArry[2] = ds_DealDescTarList;
+
+	sXML = f_dsToXml(dsArry);
+
+	Report0.setRdata(sXML);
+	Report0.AutoAdjust = false;
+	Report0.ZoomRatio = 100;
+	Report0.FileOpen(gv_url + "MRD/DIS/DISDCO00400.mrd", "");
+	//Report0.FileOpen(gv_url + "MRD/DIS/DISDTR00410.mrd", "");
+
+	http.Sync = false;
+}
+
+/*******************************************************************************
+ * @description    : 거래명세(출고증) 조회
+*******************************************************************************/
+function f_getDealDescList()
+{
+    ds_inCond.Clear();
+    cf_setparam(ds_inCond, "out_mgmt_no", FV_OUT_MGMT_NO);
+    cf_setparam(ds_inCond, "out_cl", FV_OUT_CL);
+    
+	// 트랜잭션 설정
+	var sSvcID = "svcDealDescList";
+	var sInDs = "nc_input_fieldDs=ds_inCond";
+	var sOutDs = "ds_dealDescList=DealDescList";
+	var sArg = "sktst.dis.DCO#getOutProdListByReport";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 거래처 정보 조회
+*******************************************************************************/
+function f_getDealCoInfo(sDsNm, sDealCoCd, sPlcKind)
+{
+    ds_inCond.Clear();
+    cf_setparam(ds_inCond, "out_mgmt_no", FV_OUT_MGMT_NO);
+    cf_setparam(ds_inCond, "deal_co_cd", sDealCoCd);
+    cf_setparam(ds_inCond, "plc_kind", sPlcKind);
+    
+	// 트랜잭션 설정
+	var sSvcID = "svcDealCoInfo";
+	var sInDs = "nc_input_fieldDs=ds_inCond";
+	var sOutDs = sDsNm + "=DealCoInfo";
+	var sArg = "sktst.dis.DCO#getDealDtlByReport";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+}
+
+/*******************************************************************************
+ * @description    : 데이터셋을 XML 문자열로 바꾼다.
+ * @param sSvcID   : 데이터셋 배열
+ *        delStr   : 구분 문자열
+*******************************************************************************/
+function f_dsToText(dsArr, delStr)
+{
+	var returnStr;
+	var dsLength;	// 배열의 전체 개수 (데이터셋의 개수)
+	var dsColCnt;	// 각 데이터셋의 컬럼 개수.
+	var dsRowCnt;	// 각 데이터셋의 로우 개수.
+	dsLength = length(dsArr);
+	
+	// 데이터셋 배열의 크기가 1보다 작을 경우..
+	if(dsLength < 1)
+	{
+		returnStr = "";
+	}
+	else
+	{
+		var tmpStr = "";
+		for(i=0; i<dsLength; i++)
+		{
+			dsColCnt = dsArr[i].getColCount();
+			dsRowCnt = dsArr[i].getRowCount();
+			for(j=0; j<dsRowCnt; j++)
+			{
+				for(k=0; k<dsColCnt; k++)
+				{
+					// 각 필드의 값을 문자열로 연결.
+					tmpStr += dsArr[i].getColumn(j, dsArr[i].GetColIDXbyorder(k));
+					tmpStr += delStr;		// 각 필드 사이에 구분자 값을 입력
+				}
+				tmpStr += chr(13) + chr(10);	// 각 데이터 로우 사이에 개행 문자 삽입.
+			}
+	
+			// 데이터셋이 두 개 이상일 경우 구분하기 위한 문자 삽입 (RD에서 필요)
+			if(dsLength>1)
+			{
+				tmpStr += "//EOR//";		
+				tmpStr += chr(13) + chr(10);	// 개행 문자 삽입.
+			}
+		}
+		returnStr = tmpStr;
+	}
+	
+	return returnStr;
+}
+
+/*******************************************************************************
+ * @description    : DS to XML
+ * @param arrObj   : 데이터셋 배열
+*******************************************************************************/
+function f_dsToXml(arrObj){
+	var strTemp = "";
+	
+	var dsobj = split(arrObj,",");
+	var ds_cnt = length(dsobj);
+				
+	strTemp += '<?xml version="1.0" encoding="euc-kr"?>' + chr(10);
+	strTemp += '<root>';
+	
+	for (i=0; i<toNumber(ds_cnt); i++){
+	    var sTmp = replace(dsobj[i], "[", "");
+	    sTmp = replace(sTmp, "]", "");
+	    sTmp = replace(sTmp, "Dataset:", "");
+		strTemp += object(sTmp).saveXML(object(sTmp).id, "A", false);
+	}
+	
+	strTemp += chr(10) + '</root>';
+	
+	return strTemp;
+}
+
+/*******************************************************************************
+ * @description    : 일련번호 조합
+ * @param oSrcDs   : 원본 데이터셋
+          oTarDs   : 저장 데이터셋
+          nUnit    : 조합할 일련번호 수
+*******************************************************************************/
+function f_parseSerNum(oSrcDs, oTarDs, nUnit)
+{  
+    // 컬럼 생성
+    oTarDs.Clear();
+    for(var i=0; i<oSrcDs.colcount; i++)
+    {
+        oTarDs.AddColumn(oSrcDs.GetColID(i));
+    }
+    
+    // 일련번호 조합
+    var nTmp = 0;
+    var nCnt = 0;
+    var nQty = 0;
+    var sTmp = "";
+    for(var i=0; i<oSrcDs.rowcount; i++)
+    {
+		if(i > 0 && (oSrcDs.GetColumn(i-1, "PROD_CD") != oSrcDs.GetColumn(i, "PROD_CD")
+				|| oSrcDs.GetColumn(i-1, "COLOR_CD") != oSrcDs.GetColumn(i, "COLOR_CD")))
+		{
+		    nCnt = 0;
+		}
+		
+		nCnt++;
+		nQty = nQty + ToNumber(oSrcDs.GetColumn(i, "OUT_FIX_QTY"));
+		
+		if((i+1) < oSrcDs.rowcount && (oSrcDs.GetColumn(i+1, "PROD_CD") != oSrcDs.GetColumn(i, "PROD_CD")
+				|| oSrcDs.GetColumn(i+1, "COLOR_CD") != oSrcDs.GetColumn(i, "COLOR_CD")))
+		{
+		    nCnt = nUnit;
+		}
+    
+        nTmp = nCnt % nUnit;
+        
+        if(oSrcDs.rowcount == 1)
+        {
+            f_addSerRow(oSrcDs, i, oTarDs, oSrcDs.GetColumn(i, "SER_NUM"), nQty);
+            break;
+        }
+        
+        sTmp = sTmp + oSrcDs.GetColumn(i, "SER_NUM") + ",";
+               
+        if(oSrcDs.rowcount > 1 && (i+1) == oSrcDs.rowcount)
+        {
+			f_addSerRow(oSrcDs, i, oTarDs, Left(sTmp, Length(sTmp)-1), nQty);
+            break;
+        }
+        
+        if(nTmp == 0)
+        {
+            f_addSerRow(oSrcDs, i, oTarDs, Left(sTmp, Length(sTmp)-1), nQty);
+            nTmp = 0;
+            nCnt = 0;
+            nQty = 0;
+            sTmp = "";
+        }
+    }
+}
+
+/*******************************************************************************
+ * @description    : 데이터셋 행추가
+ * @param oSrcDs   : 원본 데이터셋
+          nRow     : 행번호
+          oTarDs   : 저장 데이터셋
+          sSerNum  : 일련번호
+          nCnt     : 수량
+*******************************************************************************/
+function f_addSerRow(oSrcDs, nRow, oTarDs, sSerNum, nCnt)
+{
+	oTarDs.AddRow();
+	for(var j=0; j<oTarDs.colcount; j++)
+	{
+		if( oTarDs.GetColID(j) == "SER_NUM")
+		{
+			oTarDs.SetColumn(oTarDs.rowcount-1, "SER_NUM", sSerNum);
+		}
+		else if(oTarDs.GetColID(j) == "OUT_FIX_QTY")
+		{
+		    oTarDs.SetColumn(oTarDs.rowcount-1, "OUT_FIX_QTY", nCnt);
+		}
+		else
+		{
+			oTarDs.SetColumn(oTarDs.rowcount-1, oTarDs.GetColID(j), oSrcDs.GetColumn(nRow, oTarDs.GetColID(j)));
+		}
+	}
+}]]></Script>
+</Window>

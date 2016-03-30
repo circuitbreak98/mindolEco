@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="Console" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d] %-5p %C{1}.%M(%F:%L) - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="file"
+        class="org.apache.log4j.RollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="MaxFileSize" value="512KB" />
+        <param name="MaxBackupIndex" value="4" />
+        <param name="File" value="log/batch/application.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%n%d%n\%p : %l%n%m%n%n" />
+        </layout>
+    </appender>
+    
+    <appender name="file_ioc"
+        class="org.apache.log4j.RollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="MaxFileSize" value="512KB" />
+        <param name="MaxBackupIndex" value="4" />
+        <param name="File" value="log/batch/ioc.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d] %-5p %C{1}.%M(%F:%L) - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="sql"
+        class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <param name="File" value="log/batch/sql/sql.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%n%d : %m%n" />
+        </layout>
+    </appender>
+ 
+    <appender name="file_debug"
+        class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <param name="File" value="log/batch/devlog/devlog.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="![%d]_[%p]_[ %l]_[%m]%n" />
+        </layout>
+    </appender>
+ 
+    <appender name="file_fwk"
+        class="org.apache.log4j.RollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="MaxFileSize" value="512KB" />
+        <param name="MaxBackupIndex" value="4" />
+        <param name="File" value="log/batch/fwklog.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="![%d]_[%p]_[ %l]_[%m]%n" />
+        </layout>
+    </appender>
+
+    <!-- org.xx -->
+    <category name="org" additivity="false">
+        <priority value="warn" />
+        <appender-ref ref="Console" />
+    </category>
+    
+    <!-- Spring Framework -->
+    <category name="org.springframework" additivity="false">
+        <priority value="info" />
+        <appender-ref ref="file_ioc" />
+    </category>
+
+    <!-- JDBC (for iBatis) : Statement, PreparedStatement, ResultSet -->
+    <category name="java.sql" additivity="false">
+        <priority value="fatal" />
+        <appender-ref ref="sql" />
+    </category>
+
+    <category name="__devlog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file_debug" />
+        <appender-ref ref="Console" />
+    </category>
+    
+    <category name="__devInfolog" additivity="false">
+        <priority value="info" />
+        <appender-ref ref="file_debug" />
+        <appender-ref ref="Console" />
+    </category>
+    
+    <category name="__devErrorlog" additivity="false">
+        <priority value="error" />
+        <appender-ref ref="file_debug" />
+        <appender-ref ref="Console" />
+    </category>
+
+
+    <category name="__fwklog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file_fwk" />
+        <appender-ref ref="Console" />
+    </category>
+    
+    <root>
+        <level value="OFF"/>
+        <appender-ref ref="Console" />
+    </root>
+    
+</log4j:configuration>

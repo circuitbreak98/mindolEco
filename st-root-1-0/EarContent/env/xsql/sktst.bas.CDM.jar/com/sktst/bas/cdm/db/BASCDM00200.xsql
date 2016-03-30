@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASCDM00200">
+	<select id="getCommonCode" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*BASCDM00200_공통코드등록_조민지_조민지  */ 
+		A.comm_cd_id
+		,A.comm_cd_nm
+		,A.comm_cd_desc
+		,A.sup_comm_cd_id
+		,A.rgst_cl
+		,A.rgst_cl as rgst_cl_tmp
+		,(SELECT B.COMM_CD_NM FROM tbas_comm_cd_lst  B
+		  WHERE A.sup_comm_cd_id = B.comm_cd_id) AS sup_comm_cd_nm
+FROM 	tbas_comm_cd_lst A
+WHERE 	A.comm_cd_id = #value#
+AND		A.del_yn = 'N']]>
+	</select>
+	<select id="getCommonCodeDetail" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*BASCDM00200_공통코드등록_조민지_조민지  */ 
+		a.comm_cd_id
+        ,a.comm_cd_val
+        ,a.comm_cd_val_nm
+        ,a.comm_cd_val_desc
+        ,a.prt_seq
+        ,a.eff_sta_dt
+        ,a.eff_end_dt
+        ,a.sub_comm_cd_id
+        ,a.del_yn
+        ,a.rgst_cl
+        ,a.rgst_cl as rgst_cl_tmp
+FROM    tbas_comm_cd_dtl a,
+        tbas_comm_cd_lst b
+WHERE   b.comm_cd_id = #value#
+AND     a.comm_cd_id = b.comm_cd_id
+AND     a.del_yn = 'N'
+ORDER BY	a.prt_seq]]>
+	</select>
+	<insert id="addCommonCodeList" parameterClass="map" ><![CDATA[INSERT INTO TBAS_COMM_CD_LST/*BASCDM00200_addCommonCodeList_조민지_조민지 */
+	(
+	comm_cd_id
+	,comm_cd_nm
+	,comm_cd_desc
+	,sup_comm_cd_id
+	,del_yn
+	,rgst_cl
+	,upd_cnt
+	,ins_dtm
+	,ins_user_id
+	,mod_dtm
+	,mod_user_id
+	)
+VALUES(
+	#comm_cd_id#
+	,#comm_cd_nm#
+	,#comm_cd_desc#
+	,#sup_comm_cd_id#
+	,'N'
+	,#rgst_cl# 
+	,'0' 
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') 
+	,#onlineContext.userInfo.loginId#
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,#onlineContext.userInfo.loginId#
+	)]]>
+	</insert>
+	<insert id="addCommonCodeDetail" parameterClass="map" ><![CDATA[INSERT INTO TBAS_COMM_CD_DTL/*BASCDM00200_cudCommonCodeDetail_조민지_조민지 */
+	(
+	comm_cd_id
+	,comm_cd_val
+	,comm_cd_val_nm
+	,comm_cd_val_desc
+	,prt_seq
+	,eff_sta_dt
+	,eff_end_dt
+	,sub_comm_cd_id
+	,rgst_cl
+	,del_yn
+	,upd_cnt
+	,ins_dtm
+	,ins_user_id
+	,mod_dtm
+	,mod_user_id
+	)
+VALUES(
+	#comm_cd_id#
+	,#comm_cd_val#
+	,#comm_cd_val_nm#
+	,#comm_cd_val_desc#
+	,#prt_seq#
+	,#eff_sta_dt#
+	,#eff_end_dt#
+	,#sub_comm_cd_id#
+	,#rgst_cl#
+	,'N' 
+	,'0' 
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') 
+	,#onlineContext.userInfo.loginId#
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,#onlineContext.userInfo.loginId#
+	)]]>
+	</insert>
+	<update id="updateCommonCodeDetail" parameterClass="map" ><![CDATA[UPDATE 				/*+ BASCDM00200_cudCommonCodeDetail_조민지_조민지 */ 
+	tbas_comm_cd_dtl
+SET 
+	 comm_cd_val_desc = #comm_cd_val_desc#
+	,comm_cd_val_nm = #comm_cd_val_nm#
+	,prt_seq = #prt_seq#
+	,eff_sta_dt = #eff_sta_dt#
+	,eff_end_dt = #eff_end_dt#
+	,sub_comm_cd_id = #sub_comm_cd_id#
+	,rgst_cl = #rgst_cl#
+	,del_yn = 'N'
+	,upd_cnt = upd_cnt + 1
+	,mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,mod_user_id = #onlineContext.userInfo.loginId#
+WHERE 
+	comm_cd_val = #comm_cd_val#
+AND	
+	comm_cd_id = #comm_cd_id#]]>
+	</update>
+	<update id="updateCommonCodeList" parameterClass="map" ><![CDATA[UPDATE /*+ BASCDM00200_saveCommonCodeList_조민지_조민지 */ tbas_comm_cd_lst
+	SET	comm_cd_nm = #comm_cd_nm#
+		,comm_cd_desc = #comm_cd_desc#
+		,sup_comm_cd_id = #sup_comm_cd_id#	
+		,rgst_cl = #rgst_cl#
+		,del_yn = 'N'
+		,upd_cnt = upd_cnt + 1
+		,mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+		,mod_user_id = #onlineContext.userInfo.loginId#
+WHERE comm_cd_id = #comm_cd_id#]]>
+	</update>
+	<delete id="deleteCommonCodeDetail" parameterClass="map" ><![CDATA[DELETE FROM				/*+ BASCDM00200_deleteCommonCodeDetail_조민지_최승호 */
+	tbas_comm_cd_dtl
+WHERE
+	comm_cd_id = #comm_cd_id#
+
+/* 코드 상세 값 */	
+]]><isNotEmpty prepend="AND" property="comm_cd_val">
+<![CDATA[	comm_cd_val = #comm_cd_val#
+]]></isNotEmpty>	
+<![CDATA[
+	 ]]>
+	</delete>
+	<delete id="deleteCommonCodeHeader" parameterClass="map" ><![CDATA[DELETE FROM				/*+ BASCDM00200_deleteCommonCodeHeader_조민지_최승호 */
+	tbas_comm_cd_lst
+WHERE
+	comm_cd_id = #comm_cd_id# ]]>
+	</delete>
+	<select id="getSubCheck" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*BASCDM00200_getSubCheck_조민지_한병곤  */ 
+       decode(nvl(sub_comm_cd_id,'Y'),'Y','Y','N') as sub_comm_cd_id
+  FROM tbas_comm_cd_dtl
+ WHERE comm_cd_id  = #comm_cd_id#
+   AND comm_cd_val = #comm_cd_val#
+   AND del_yn = 'N']]>
+	</select>
+	<select id="getMasterCheck" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*BASCDM00200_getMasterCheck_조민지_한병곤  */ 
+       decode(nvl(comm_cd_id,'Y'),'Y','Y','N') as comm_cd_id
+  FROM tbas_comm_cd_dtl
+ WHERE sub_comm_cd_id = #comm_cd_id#
+   AND del_yn = 'N']]>
+	</select>
+</sqlMap>

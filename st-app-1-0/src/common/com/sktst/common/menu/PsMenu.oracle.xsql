@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="biz.menu">
+
+	<typeAlias alias="Menu" type="com.sktst.common.menu.PsMenu"/>
+	<typeAlias alias="MenuAuth" type="com.sktst.common.menu.PsMenuAuth"/>
+	
+    <select id="getMenu" parameterClass="string" resultClass="Menu">
+    <![CDATA[
+	SELECT
+		TO_CHAR(A.MENU_NUM) AS menuNum
+		,A.MENU_NM AS menuNm
+		,A.MENU_SHOT_NM AS menuShotNm
+		,A.TOP_MENU_NUM AS topMenuNum
+		,A.MENU_GROUP AS menuGroup
+		,A.MENU_LVL_CD AS menuLvlCd
+		,A.MENU_URL AS menuUrl
+		,A.SORT_SEQ AS sortSeq
+		,A.SCREEN_ID AS screenId
+		,A.SUP_MENU_NUM AS supMenuNum
+		,A.TOP_PREFIX_CD AS topPrefixCd
+		,A.SCREEN_SIZE AS screenSize
+		,A.USE_YN AS useYn
+		,A.REMARK AS remark
+	FROM
+	 	TADM_MENU A
+	WHERE
+		A.MENU_NUM = #value#
+		and A.DEL_YN <> 'Y'
+    ]]>
+    </select>    
+
+    <select id="getMenuList" resultClass="Menu">
+    <![CDATA[
+	SELECT
+		TO_CHAR(A.MENU_NUM) AS menuNum
+		,A.MENU_NM AS menuNm
+		,A.MENU_SHOT_NM AS menuShotNm
+		,A.TOP_MENU_NUM AS topMenuNum
+		,A.MENU_GROUP AS menuGroup
+		,A.MENU_LVL_CD AS menuLvlCd
+		,A.MENU_URL AS menuUrl
+		,A.SORT_SEQ AS sortSeq
+		,A.SCREEN_ID AS screenId
+		,A.SUP_MENU_NUM AS supMenuNum
+		,A.TOP_PREFIX_CD AS topPrefixCd
+		,A.SCREEN_SIZE AS screenSize
+		,A.USE_YN AS useYn
+		,A.REMARK AS remark
+	FROM
+	 	TADM_MENU A
+	WHERE
+		A.DEL_YN <> 'Y'
+	ORDER BY A.MENU_GROUP, A.MENU_LVL_CD, A.SORT_SEQ
+    ]]>
+    </select>
+
+
+    <select id="getMenuAuthByUserGrp" parameterClass="string" resultClass="MenuAuth">
+    <![CDATA[
+	SELECT
+		TO_CHAR(A.MENU_NUM) AS menuNum
+		,B.SEARCH_AUTH_YN AS searchAuthYn
+		,B.SAVE_AUTH_YN AS saveAuthYn
+		,B.DEL_AUTH_YN AS delAuthYn
+		,B.REQ_AUTH_YN AS reqAuthYn
+		,B.APRV_AUTH_YN AS aprvAuthYn
+		,B.CAN_AUTH_YN AS canAuthYn
+		,B.CLOSE_AUTH_YN AS closeAuthYn
+		,B.PRINT_AUTH_YN AS printAuthYn
+		,B.INIT_AUTH_YN AS initAuthYn
+		,B.ETC1_AUTH_YN AS etc1AuthYn
+		,B.ETC2_AUTH_YN AS etc2AuthYn
+		,B.ETC3_AUTH_YN AS etc3AuthYn
+	FROM
+	 	TADM_MENU A
+	 	,TADM_MENU_AUTH B	 	
+	WHERE
+		B.USER_GRP = #value#
+		and B.DEL_YN <> 'Y'
+		and B.SEARCH_AUTH_YN ='Y'
+		and B.MENU_NUM = A.MENU_NUM
+		and	A.DEL_YN <> 'Y'
+	ORDER BY A.MENU_GROUP, A.MENU_LVL_CD, A.SORT_SEQ
+    ]]>
+    </select>    
+
+ </sqlMap>

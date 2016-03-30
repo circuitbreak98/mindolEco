@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO01700">
+	<select id="getExcelExportList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT	EXPORT_DTM,
+		EXPORT_SCREEN,
+		EXPORT_USER,
+		EXPORT_COND,
+		USER_LOGIN_IP,
+		USER_ORG_CD,
+		USER_AGENCY_CD,
+		USER_USER_GRP,
+		EXPORT_CNT,
+		DEL_YN,
+		UPD_CNT,
+		INS_DTM,
+		INS_USER_ID,
+		MOD_DTM,
+		MOD_USER_ID
+FROM	TBAS_EXCEL_EXPORT_HST
+WHERE 	EXPORT_DTM >= #EX_START_DTM#
+  AND	EXPORT_DTM <= #EX_END_DTM#]]>
+	</select>
+	<select id="getScreenList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ BASBCO01700_getScreenList_김연석_김연석 */
+       distinct EXPORT_SCREEN SCREEN_ID
+     , MENU_NM                SCREEN_NM
+  FROM TBAS_EXCEL_EXPORT_HST a
+     , TADM_MENU             b
+ WHERE a.EXPORT_SCREEN = b.MENU_NUM]]>
+	</select>
+	<select id="getUserList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ BASBCO01700_getUserList_김연석_김연석 */
+       distinct EXPORT_USER          USER_ID
+     , fbas_get_user_nm(EXPORT_USER) USER_NM
+  FROM TBAS_EXCEL_EXPORT_HST]]>
+	</select>
+</sqlMap>

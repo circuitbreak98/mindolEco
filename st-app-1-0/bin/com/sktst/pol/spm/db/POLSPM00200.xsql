@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="POLSPM00200">
+	<select id="getAmtGrdCl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00200_getAmtGrdCl_이문규" */ 
+       a.seq as amt_grd_cl
+     , a.amt_from
+     , a.amt_to
+     , a.del_yn
+     , a.ins_dtm
+     , a.ins_user_id
+     , a.mod_dtm
+     , a.mod_user_id
+  FROM tbas_splst_amt_mgmt a
+ WHERE a.del_yn = 'N'
+   AND a.eff_sta_dt <= #aply_ym# || '01'
+   AND a.eff_end_dt >= #aply_ym# || '01'
+ ORDER BY a.prt_seq]]>
+	</select>
+	<select id="getSequenceNo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 	('A'||LPAD(SPOL_SPLST_ID.NEXTVAL,11,'0')) AS SPLST_ID
+  FROM DUAL]]>
+	</select>
+	<insert id="insertSplst" parameterClass="map" ><![CDATA[INSERT INTO TPOL_SPLST /*+ POLSPM00200_insertSplst_이문규 */       
+(
+  splst_id
+ ,aply_ym
+ ,org_id
+ ,sale_typ_cd
+ ,aply_sta_dtm
+ ,aply_end_dtm
+ ,rmks
+ ,pol_cl
+ ,del_yn
+ ,upd_cnt
+ ,ins_dtm
+ ,ins_user_id
+ ,mod_dtm
+ ,mod_user_id
+)
+VALUES
+(
+  #splst_id#
+ ,#aply_ym#
+ ,#org_id#
+ ,#sale_typ_cd#
+ ,#aply_sta_dtm#
+ ,#aply_end_dtm#
+ ,#rmks#
+ ,#pol_cl#
+ ,'N' 
+ ,0
+ ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+ ,#onlineContext.userInfo.loginId#
+ ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+ ,#onlineContext.userInfo.loginId#
+) ]]>
+	</insert>
+	<insert id="insertSplstPrefer" parameterClass="map" ><![CDATA[INSERT INTO TPOL_SPLST_PREFER /*+ POLSPM00200_insertSplstPrefer_이문규 */       
+(
+  splst_id
+ ,aply_ym
+ ,org_id
+ ,sale_typ_cd
+ ,prefer_grd_cl
+ ,amt_seq
+ ,amt_from
+ ,amt_to
+ ,mar_cl
+ ,mar_fix_rt
+ ,mar_fix_amt
+ ,sale_cmms_cl
+ ,sale_cmms_fix_rt
+ ,sale_cmms_fix_amt
+ ,del_yn
+ ,upd_cnt
+ ,ins_dtm
+ ,ins_user_id
+ ,mod_dtm
+ ,mod_user_id
+)
+VALUES
+(
+  #splst_id#
+ ,#aply_ym#
+ ,#org_id#
+ ,#sale_typ_cd#
+ ,#prefer_grd_cl#
+ ,(select nvl(max(b.amt_seq),0) + 1
+     from TPOL_SPLST_PREFER b
+    where b.splst_id      = #splst_id#
+      and b.aply_ym       = #aply_ym#
+      and b.org_id        = #org_id#
+      and b.sale_typ_cd   = #sale_typ_cd#
+      and b.prefer_grd_cl = #prefer_grd_cl#)
+ ,#amt_from#
+ ,#amt_to#
+ ,#mar_cl#
+ ,#mar_fix_rt#
+ ,#mar_fix_amt#
+ ,#sale_cmms_cl#
+ ,#sale_cmms_fix_rt#
+ ,#sale_cmms_fix_amt#
+ ,'N'            /* del_yn   */
+ ,0              /* upd_cnt  */
+ ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+ ,#onlineContext.userInfo.loginId#
+ ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+ ,#onlineContext.userInfo.loginId#
+)          ]]>
+	</insert>
+	<select id="getSplst" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00200_getSplst_이문규" */ 
+       a.splst_id
+      ,a.aply_ym
+      ,a.org_id
+      ,b.org_nm
+      ,a.sale_typ_cd
+      ,c.comm_cd_val_nm as sale_typ_cd_nm
+      ,a.aply_sta_dtm
+      ,a.aply_end_dtm
+      ,a.rmks
+      ,a.del_yn
+      ,a.upd_cnt
+      ,a.ins_dtm
+      ,a.ins_user_id
+      ,a.mod_dtm
+      ,a.mod_user_id
+      ,FBAS_GET_USER_NM(a.mod_user_id) AS mod_user_nm  
+      ,a.pol_cl
+      ,d.comm_cd_val_nm as pol_nm
+FROM   tpol_splst       a
+      ,tbas_org_mgmt    b
+      ,tbas_comm_cd_dtl c
+      ,tbas_comm_cd_dtl d
+WHERE  a.del_yn = 'N'
+AND    a.splst_id    = #splst_id#
+AND    a.aply_ym     = #aply_ym#
+AND    a.org_id      = #org_id#
+AND    a.sale_typ_cd = #sale_typ_cd#
+AND    b.eff_org_yn  = 'Y'
+AND    b.del_yn      = 'N'
+AND    a.org_id      = b.org_id 
+AND    a.sale_typ_cd = c.comm_cd_val
+AND    c.comm_cd_id  = 'ZPOL_C_00030'
+AND    a.pol_cl      = d.comm_cd_val
+AND    d.comm_cd_id  = 'ZPOL_C_00540']]>
+	</select>
+	<select id="getSplstPrefer" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00200_getSplstPrefer_이문규" */ 
+       b.splst_id
+      ,b.aply_ym
+      ,b.org_id
+      ,c.org_nm
+      ,b.sale_typ_cd
+      ,d.comm_cd_val_nm as sale_typ_cd_nm
+      ,b.prefer_grd_cl
+      ,b.amt_seq
+      ,b.amt_from
+      ,b.amt_to
+      ,b.mar_cl
+      ,b.mar_fix_rt
+      ,b.mar_fix_amt
+      ,b.sale_cmms_cl
+      ,b.sale_cmms_fix_rt
+      ,b.sale_cmms_fix_amt
+      ,b.del_yn
+      ,b.upd_cnt
+      ,b.ins_dtm
+      ,b.ins_user_id
+      ,b.mod_dtm
+      ,b.mod_user_id
+      ,FBAS_GET_USER_NM(b.mod_user_id) AS mod_user_nm  
+FROM   tpol_splst        a
+      ,tpol_splst_prefer b
+      ,tbas_org_mgmt     c
+      ,tbas_comm_cd_dtl  d
+WHERE  a.del_yn = 'N'
+AND    a.splst_id    = #splst_id#
+AND    a.aply_ym     = #aply_ym#
+AND    a.org_id      = #org_id#
+AND    a.sale_typ_cd = #sale_typ_cd#
+AND    b.del_yn      = 'N'
+AND    a.splst_id    = b.splst_id
+AND    a.aply_ym     = b.aply_ym
+AND    a.org_id      = b.org_id
+AND    a.sale_typ_cd = b.sale_typ_cd
+AND    c.eff_org_yn  = 'Y'
+AND    c.del_yn      = 'N'
+AND    a.org_id      = c.org_id 
+AND    a.sale_typ_cd = d.comm_cd_val
+AND    d.comm_cd_id  = 'ZPOL_C_00030'
+ORDER BY b.splst_id, b.aply_ym, b.org_id, b.sale_typ_cd, prefer_grd_cl, b.amt_seq
+    ]]>
+	</select>
+	<delete id="deleteSplst" parameterClass="map" ><![CDATA[DELETE    /* POLSPM00200_deleteSplst_이문규 */
+FROM tpol_splst
+WHERE splst_id    = #splst_id#
+AND   aply_ym     = #aply_ym#   
+AND   org_id      = #org_id#
+AND   sale_typ_cd = #sale_typ_cd# ]]>
+	</delete>
+	<delete id="deleteSplstPrefer" parameterClass="map" ><![CDATA[DELETE    /* POLSPM00200_deleteSplstPrefer_이문규 */
+FROM tpol_splst_prefer
+WHERE splst_id    = #splst_id#
+AND   aply_ym     = #aply_ym#   
+AND   org_id      = #org_id#
+AND   sale_typ_cd = #sale_typ_cd# ]]>
+	</delete>
+	<insert id="insertSplstMdl" parameterClass="map" ><![CDATA[INSERT INTO TPOL_SPLST_MDL /*+ POLSPM00200_insertSplstMdl_이문규 */       
+(
+  splst_id
+ ,aply_ym
+ ,org_id
+ ,sale_typ_cd
+ ,mdl_id
+ ,sale_prc
+ ,sale_cmms
+ ,del_yn
+ ,upd_cnt
+ ,ins_dtm
+ ,ins_user_id
+ ,mod_dtm
+ ,mod_user_id
+)
+VALUES
+(
+  #splst_id#
+ ,#aply_ym#
+ ,#org_id#
+ ,#sale_typ_cd#
+ ,#prod_cd#
+ ,#sale_prc#
+ ,#sale_cmms#
+ ,'N'
+ ,0 
+ ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+ ,#onlineContext.userInfo.loginId#
+ ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+ ,#onlineContext.userInfo.loginId#
+)          ]]>
+	</insert>
+	<select id="getSplstMdl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00200_getSplstMdl_이문규" */ 
+       '' as chk
+      ,b.splst_id
+      ,b.aply_ym
+      ,b.org_id
+      ,c.org_nm
+      ,b.sale_typ_cd
+      ,d.comm_cd_val_nm as sale_typ_cd_nm
+      ,e.mfact_id
+      ,FBAS_GET_DEAL_NM(e.mfact_id,'') as mfact_nm
+      ,e.prod_nm
+      ,e.prod_cd
+      ,e.prod_chrtic_1
+      ,b.sale_prc
+      ,b.del_yn
+      ,b.upd_cnt
+      ,b.ins_dtm
+      ,b.ins_user_id
+      ,b.mod_dtm
+      ,b.mod_user_id
+      ,FBAS_GET_USER_NM(b.mod_user_id) AS mod_user_nm  
+      ,e.prod_cl as prod_cl
+FROM   tpol_splst        a
+      ,tpol_splst_mdl    b
+      ,tbas_org_mgmt     c
+      ,tbas_comm_cd_dtl  d
+      ,tbas_prod_mgmt    e
+WHERE  a.del_yn = 'N'
+AND    a.splst_id    = #splst_id#
+AND    a.aply_ym     = #aply_ym#
+AND    a.org_id      = #org_id#
+AND    a.sale_typ_cd = #sale_typ_cd#
+AND    b.del_yn      = 'N'
+AND    a.splst_id    = b.splst_id
+AND    a.aply_ym     = b.aply_ym
+AND    a.org_id      = b.org_id
+AND    a.sale_typ_cd = b.sale_typ_cd
+AND    c.eff_org_yn  = 'Y'
+AND    c.del_yn      = 'N'
+AND    a.org_id      = c.org_id 
+AND    a.sale_typ_cd = d.comm_cd_val
+AND    d.comm_cd_id  = 'ZPOL_C_00030'
+AND    e.prod_cl     = '1'
+AND    b.mdl_id      = e.prod_cd
+    ]]>
+	</select>
+	<delete id="deleteSplstMdl" parameterClass="map" ><![CDATA[DELETE    /* POLSPM00200_deleteSplstMdl_이문규 */
+FROM tpol_splst_mdl
+WHERE splst_id    = #splst_id#
+AND   aply_ym     = #aply_ym#   
+AND   org_id      = #org_id#
+AND   sale_typ_cd = #sale_typ_cd# ]]>
+	</delete>
+	<update id="updateSplstPrefer" parameterClass="map" ><![CDATA[UPDATE /* POLSPM00200_updateSplstPrefer_이문규 */
+       tpol_splst_prefer
+SET    amt_from          = #amt_from#
+      ,amt_to            = #amt_to#
+      ,mar_cl            = #mar_cl#
+      ,mar_fix_amt       = #mar_fix_amt#
+      ,mar_fix_rt        = #mar_fix_rt#
+      ,sale_cmms_cl      = #sale_cmms_cl#
+      ,sale_cmms_fix_amt = #sale_cmms_fix_amt#
+      ,sale_cmms_fix_rt  = #sale_cmms_fix_rt#
+      ,upd_cnt           = upd_cnt + 1
+      ,mod_dtm           = to_char(sysdate,'yyyymmddhh24MIss')
+      ,mod_user_id       = #onlineContext.userInfo.loginId#   
+WHERE splst_id      = #splst_id#    
+AND   aply_ym       = #aply_ym#
+AND   org_id        = #org_id#
+AND   sale_typ_cd   = #sale_typ_cd#
+AND   prefer_grd_cl = #prefer_grd_cl#
+AND   amt_seq       = #amt_seq#]]>
+	</update>
+	<insert id="insertSplstPreferChg" parameterClass="map" ><![CDATA[INSERT INTO TPOL_SPLST_PREFER /*+ POLSPM00200_insertSplstPreferChg_이문규 */       
+(
+  splst_id
+ ,aply_ym
+ ,org_id
+ ,sale_typ_cd
+ ,prefer_grd_cl
+ ,amt_seq
+ ,amt_from
+ ,amt_to
+ ,mar_cl
+ ,mar_fix_rt
+ ,mar_fix_amt
+ ,sale_cmms_cl
+ ,sale_cmms_fix_rt
+ ,sale_cmms_fix_amt
+ ,del_yn
+ ,upd_cnt
+ ,ins_dtm
+ ,ins_user_id
+ ,mod_dtm
+ ,mod_user_id
+)
+SELECT 
+       #new_splst_id#
+      ,a.aply_ym
+      ,a.org_id
+      ,a.sale_typ_cd
+      ,a.prefer_grd_cl
+      ,a.amt_seq
+      ,a.amt_from
+      ,a.amt_to
+      ,a.mar_cl
+      ,a.mar_fix_rt
+      ,a.mar_fix_amt
+      ,a.sale_cmms_cl
+      ,a.sale_cmms_fix_rt
+      ,a.sale_cmms_fix_amt
+      ,'N'            /* del_yn   */
+      ,0              /* upd_cnt  */
+      ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,#onlineContext.userInfo.loginId#
+      ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,#onlineContext.userInfo.loginId#
+FROM   tpol_splst_prefer a          
+WHERE  a.splst_id    = #splst_id#
+AND    a.aply_ym     = #aply_ym#
+AND    a.org_id      = #org_id#
+AND    a.sale_typ_cd = #sale_typ_cd#]]>
+	</insert>
+	<insert id="insertSplstChg" parameterClass="map" ><![CDATA[INSERT INTO TPOL_SPLST /*+ POLSPM00200_insertSplstChg_이문규 */       
+(
+  splst_id
+ ,aply_ym
+ ,org_id
+ ,sale_typ_cd
+ ,aply_sta_dtm
+ ,aply_end_dtm
+ ,rmks
+ ,pol_cl
+ ,del_yn
+ ,upd_cnt
+ ,ins_dtm
+ ,ins_user_id
+ ,mod_dtm
+ ,mod_user_id
+)
+SELECT 
+       #new_splst_id#
+      ,a.aply_ym
+      ,a.org_id
+      ,a.sale_typ_cd
+      ,#aply_mod_dtm#
+      ,a.aply_end_dtm
+      ,''
+      ,a.pol_cl
+      ,'N'            /* del_yn   */
+      ,0              /* upd_cnt  */
+      ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,#onlineContext.userInfo.loginId#
+      ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,#onlineContext.userInfo.loginId#
+FROM   tpol_splst a
+WHERE  a.splst_id    = #splst_id#
+AND    a.aply_ym     = #aply_ym#
+AND    a.org_id      = #org_id#
+AND    a.sale_typ_cd = #sale_typ_cd#]]>
+	</insert>
+	<update id="updateObjSplstClose" parameterClass="map" ><![CDATA[UPDATE TPOL_SPLST /*+ POLSPM00200_updateObjSplstClose_이문규 */       
+SET    aply_end_dtm = TO_CHAR(TO_DATE(#aply_mod_dtm#,'yyyymmddhh24MI') - 1/24/60, 'yyyymmddhh24MI') /* 1분전을 마감으로함.*/
+      ,upd_cnt      = upd_cnt + 1
+      ,mod_dtm      = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,mod_user_id  = #onlineContext.userInfo.loginId#
+WHERE splst_id    = #splst_id#
+AND   aply_ym     = #aply_ym#
+AND   org_id      = #org_id#
+AND   sale_typ_cd = #sale_typ_cd#]]>
+	</update>
+	<update id="updateSplstMdl" parameterClass="map" ><![CDATA[UPDATE /* POLSPM00200_updateSplstMdl_이문규 */
+       tpol_splst_mdl
+SET    sale_prc     = #sale_prc#
+      ,sale_cmms    = #sale_cmms#
+      ,upd_cnt      = upd_cnt + 1
+      ,mod_dtm      = to_char(sysdate,'yyyymmddhh24MIss')
+      ,mod_user_id  = #onlineContext.userInfo.loginId#   
+WHERE splst_id      = #splst_id#    
+AND   aply_ym       = #aply_ym#
+AND   org_id        = #org_id#
+AND   sale_typ_cd   = #sale_typ_cd#
+AND   mdl_id        = #prod_cd#]]>
+	</update>
+	<delete id="deleteSplstMdlByMdl" parameterClass="map" ><![CDATA[DELETE    /* POLSPM00200_deleteSplstMdlByMdl_이문규 */
+FROM tpol_splst_mdl
+WHERE splst_id    = #splst_id#
+AND   aply_ym     = #aply_ym#   
+AND   org_id      = #org_id#
+AND   sale_typ_cd = #sale_typ_cd# 
+AND   mdl_id      = #prod_cd# ]]>
+	</delete>
+	<select id="getSplstCount" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* POLSPM00200_getSpLstCount_이문규 */ 
+  COUNT(*) AS cnt
+FROM  TPOL_SPLST a
+WHERE a.aply_ym = #aply_ym#
+AND   a.org_id  = #org_id#
+AND   a.sale_typ_cd = #sale_typ_cd#
+AND   a.pol_cl = #pol_cl#
+AND   a.del_yn = 'N'
+	 ]]>
+	</select>
+	<select id="getProdListForSplstPrefer" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT FBAS_GET_PROD_NM(PROD_CD) AS PROD_NM 
+  FROM TPOL_PROD_GROUP_MGMT
+ WHERE PROD_GROUP_CD = #PROD_GROUP_CD#
+ORDER BY FBAS_GET_PROD_NM(PROD_CD)]]>
+	</select>
+</sqlMap>

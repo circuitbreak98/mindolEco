@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="398" Id="BASBCO00400" Left="8" OnLoadCompleted="BASBCO00400_OnLoadCompleted" PidAttrib="7" Title="우편번호검색" Top="8" Ver="1.0" Width="490" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_zipCd">
+				<Contents>
+					<colinfo id="ZIP_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADDR" size="256" summ="default" type="STRING"/>
+					<colinfo id="FULL_ADDR" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button0" ImageID="btn_d_2" Left="278" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="1" Text="닫기" Top="363" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="147" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="2" Text="확인" Top="363" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_delete" ImageID="btn_d_2" Left="213" LeftMargin="5" OnClick="btn_delete_OnClick" Style="sty_btn_d" TabOrder="3" Text="삭제" Top="363" Width="60"></Button>
+		<Div Border="Raised" Height="40" Id="divS" Left="10" Style="sty_div_search" TabOrder="4" Text="Div0" Top="10" Width="470">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_search" ImageID="btn_a_2" Left="240" LeftMargin="5" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="6" Width="60"></Button>
+				<Edit Border="Flat" BorderColor="user10" Height="20" Id="edt_dong" ImeMode="native" Left="83" LeftMargin="2" OnKeyDown="edt_dong_OnKeyDown" RightMargin="2" TabOrder="3" Top="7" Width="147"></Edit>
+				<Static Align="Center" Border="None" Height="20" Id="Static0" Left="26" Style="sty_lb_Search" TabOrder="1" Text="읍/면/동" Top="7" VAlign="Middle" Width="56"></Static>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="63" Id="divD" Left="8" Style="sty_div_dataview" TabOrder="5" Text="Div0" Top="291" Width="470">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static1" Left="28" Style="sty_lb_Basic" TabOrder="1" Text="우편번호" Top="7" VAlign="Middle" Width="50"></Static>
+				<Edit Align="CENTER" Border="Flat" Enable="FALSE" Height="20" Id="edt_zipCd1" Left="81" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="41"></Edit>
+				<Edit Align="CENTER" Border="Flat" Enable="FALSE" Height="20" Id="edt_zipCd2" Left="123" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="41"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="28" Style="sty_lb_Basic" TabOrder="4" Text="주소" Top="30" VAlign="Middle" Width="50"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_addr1" Left="81" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="30" Width="372"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" AutoFitEndLine="Hide" BindDataset="ds_zipCd" BKColor="white" BkColor2="#f6f6f6" BkSelColor="#4caddc" BoldHead="true" Border="Flat" Bottom="276" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="191" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="#b1bec7" MinWidth="100" OnCellClick="grd_list_OnCellClick" OnCellDBLClick="grd_list_OnCellDblClick" Right="480" RowHeight="21" SelColor="white" Style="sty_grid" TabOrder="6" TabStop="true" Top="85" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="default" WheelScrollRow="1" Width="470">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="82"/>
+						<col width="383"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" cursor="hand" display="text" font="돋움,9,Bold" text="우편번호"/>
+						<cell bkcolor="user34" col="1" color="user35" cursor="hand" display="text" font="돋움,9,Bold" text="주소"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="ZIP_CD" cursor="hand" display="text" expr='substr(ds_zipCd.GetColumn(currow,&quot;ZIP_CD&quot;),0,3)+&quot;-&quot;+substr(ds_zipCd.GetColumn(currow,&quot;ZIP_CD&quot;),3,3)'/>
+						<cell col="1" colid="FULL_ADDR" cursor="hand" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="7" Text="검색&#32;결과" Top="60" Width="192"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : BASBCO00400
+* 업무명      : 공통 
+* 프로그램명  : 우편번호 
+--------------------------------------------------------------------------------
+* 작성자      : 한병곤
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 1. 전 처리기
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+
+//==============================================================================
+// 2. 폼 변수 정의
+//==============================================================================
+var sZipCd1;  //우편번호 앞자리
+var sZipCd2;  //우편번호 뒷자리
+var sAddr;    //주소
+
+//==============================================================================
+// 3. 폼 로드
+//==============================================================================
+/*******************************************************************************
+* 함수명 : BASBCO00400_form_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+--------------------------------------------------------------------------------
+* 작성자      : 한병곤
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+function BASBCO00400_OnLoadCompleted(obj)
+{
+	divS.edt_dong.SetFocus();
+	cf_setGrdChecknSortEvent(grd_list);
+}
+
+/*******************************************************************************
+* 함수명 : grd_list_OnCellDblClick 
+* 기능명 : 콤보 변경시 event
+*******************************************************************************/
+function grd_list_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	divD.edt_zipCd1.Text = substr(obj.GetCellText("Body",nRow,0),0,3);
+	divD.edt_zipCd2.Text = substr(obj.GetCellText("Body",nRow,0),4,3);
+	divD.edt_addr1.text  = ds_zipCd.GetColumn(nRow,"ADDR");
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{   
+    // 조회조건 조회 (본부/팀)
+    if(sSvcID == "getCondition")
+    {   
+		alert(ds_zipCd1.GetRowCount());
+    }
+ }
+
+ /*******************************************************************************
+* 함수명 : btn_search_OnClick
+* 기능명 : 조회 버튼 클릭
+*******************************************************************************/
+function btn_search_OnClick(obj)
+{
+
+	if(divS.edt_dong.value == ''){
+		alert('읍/면/동을 입력하세요.');
+		divS.edt_dong.SetFocus();
+		return;
+	}
+
+	cf_setParam(ds_condition, "DONG", divS.edt_dong.Value);
+	
+    var sSvcID = "getZipCdList";
+    var sInDs  = "nc_input_fieldDs=ds_condition";
+    var sOutDs = "ds_zipCd=zipCdList";
+    var sArg   = "sktst.bas.BCO#getZipCodeList";
+    
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);  
+}
+
+/*******************************************************************************
+* 함수명 : edt_dong_OnKeyDown
+* 기능명 : ENTER
+*******************************************************************************/
+function edt_dong_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if ( nChar == 13) {
+		btn_search_OnClick();
+	}	
+}
+
+/*******************************************************************************
+* 함수명 : btn_close_OnClick
+* 기능명 : 닫기 버튼 클릭
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+/*******************************************************************************
+* 함수명 : btn_confirm_OnClick
+* 기능명 : 확인 버튼 클릭
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	if(divD.edt_addr1.value == ''){
+	
+		if(ds_zipCd.GetRowCount() == 0){
+			alert('우편번호를 조회 하신 후 선택하세요.');
+			divD.edt_addr1.SetFocus();			
+		}else{
+		
+			alert('조회하신 우편번호를 선택하세요.');
+			divD.edt_addr1.SetFocus();				
+		}		
+		
+		return;	
+	}
+
+	// parent에 값 전달..
+	Object("parent."+sZipCd1).Text = divD.edt_zipCd1.value;
+	Object("parent."+sZipCd2).Text = divD.edt_zipCd2.value;
+	Object("parent."+sAddr).Text = divD.edt_addr1.value;
+	
+	this.Close();
+}
+
+/*******************************************************************************
+* 함수명 : btn_delete_OnClick
+* 기능명 : 삭제 버튼 클릭
+*******************************************************************************/
+function btn_delete_OnClick(obj)
+{
+	Object("parent."+sZipCd1).Text = '';
+	Object("parent."+sZipCd2).Text = '';
+	Object("parent."+sAddr).Text = '';	
+	this.Close();	
+}
+
+/*******************************************************************************
+* 함수명 : grd_list_OnCellDblClick
+* 기능명 : grid double 클릭 event
+*******************************************************************************/
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	btn_confirm_OnClick(obj);
+}
+]]></Script>
+</Window>

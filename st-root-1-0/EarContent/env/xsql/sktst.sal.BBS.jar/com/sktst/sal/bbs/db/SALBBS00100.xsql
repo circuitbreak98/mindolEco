@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="SALBBS00100">
+	<select id="getSaleList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALAES00100_getSaleList-전희경 */
+	   '1' as prod_cl
+	   ,a.gnrl_sale_no as gnrl_sale_no
+       , a.gnrl_sale_chg_seq as gnrl_sale_chg_seq
+	   , a.sale_chg_hst_cl as sale_chg_hst_cl
+	   , a.sale_dtm sale_dtm
+	   , a.sale_chg_dtm as sale_chg_dtm
+	   , a.sale_plc as sale_plc
+	   , a.stl_plc as stl_plc
+	   , FBAS_GET_DEAL_NM(a.sale_plc, a.sale_dtm) sale_plc_nm 
+	   , ag.pos_agency agency_cd
+	   , ag.org_id
+       , FBAS_GET_ORG_NM(ag.org_id) org_nm
+       , ag.ukey_agency_cd
+       , FBAS_GET_UKEY_AGENCY_NM(ag.ukey_agency_cd, a.sale_dtm) ukey_agency_nm
+	   , FBAS_GET_DEAL_NM(ag.pos_agency, a.sale_dtm) agency_cd_nm 
+	   , (SELECT COUNT(*) 
+          		FROM TSAL_EQUIPMENT_SALE tes
+                WHERE tes.gnrl_sale_no = a.gnrl_sale_no
+	  				AND    tes.gnrl_sale_chg_seq = a.gnrl_sale_chg_seq) as sale_qty
+	   , NVL(c.cash_pay_amt,0)      as cash_pay_amt
+	   , NVL(c.crdtcrd_pay_amt1, 0) as crdtcrd_pay_amt1
+	   , NVL(c.crdtcrd_pay_amt2, 0) as crdtcrd_pay_amt2
+	   , NVL(c.crdtcrd_pay_amt1, 0) + NVL(c.crdtcrd_pay_amt2, 0) as crdtcrd_pay_amt
+	   , NVL(c.cash_pay_amt,0) + NVL(c.crdtcrd_pay_amt1, 0) + NVL(c.crdtcrd_pay_amt2, 0) as sale_amt
+    FROM   tsal_gnrl_sale a
+	     ,   (SELECT gnrl_sale_no 
+		     		,SUM(cash_pay_amt) cash_pay_amt
+		     		,SUM(crdtcrd_pay_amt1) crdtcrd_pay_amt1
+		            ,SUM(crdtcrd_pay_amt2) crdtcrd_pay_amt2
+		       FROM TSAL_PAYMENT
+		       WHERE gnrl_sale_no in (SELECT gnrl_sale_no
+               							FROM tsal_gnrl_sale a1
+                                        	,tbas_deal_co_mgmt ag1
+                                        WHERE a1.gnrl_sale_chg_seq = (SELECT MAX(gnrl_sale_chg_seq)
+									                                     FROM    tsal_gnrl_sale
+																		 WHERE   gnrl_sale_no = a1.gnrl_sale_no)	
+                                        		AND a1.sale_plc = ag1.deal_co_cd
+                                                AND    ag1.eff_sta_dtm <= a1.sale_dtm
+                                                AND    ag1.eff_end_dtm >= a1.sale_dtm
+                                                AND    a1.sale_dtm BETWEEN #sale_dtm_from# AND #sale_dtm_to#
+                                                AND	 a1.sale_typ_cd = '01'	
+                                          ]]>      <isNotEqual prepend="AND" property="sale_plc" compareValue="">
+                                          <![CDATA[	         a1.sale_plc = #sale_plc#  
+                                          ]]>      </isNotEqual>
+                                          <![CDATA[]]>      <isNotEqual prepend="AND" property="agency_cd" compareValue="">
+                                          <![CDATA[	         ag1.pos_agency = #agency_cd#      
+                                          ]]>      </isNotEqual>
+                                          <![CDATA[      AND 	 a1.sale_chg_hst_cl not in ( '07','08')	
+                                                AND    a1.del_yn = 'N'
+                                                AND    ag1.del_yn = 'N')
+		       		AND del_yn = 'N'
+		       GROUP BY gnrl_sale_no) c
+         ,   tbas_deal_co_mgmt ag
+	WHERE  a.gnrl_sale_no = c.gnrl_sale_no
+	  AND    a.gnrl_sale_chg_seq = (SELECT MAX(gnrl_sale_chg_seq)
+	                                     FROM    tsal_gnrl_sale
+										 WHERE   gnrl_sale_no = a.gnrl_sale_no)
+      AND    a.sale_plc = ag.deal_co_cd
+	  AND    ag.eff_sta_dtm <= a.sale_dtm
+      AND    ag.eff_end_dtm >= a.sale_dtm
+      AND    a.del_yn = 'N'
+ORDER BY  sale_dtm desc
+       ,  sale_chg_dtm desc]]>
+	</select>
+</sqlMap>

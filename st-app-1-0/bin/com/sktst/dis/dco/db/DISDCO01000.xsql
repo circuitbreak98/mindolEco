@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDCO01000">
+	<select id="getProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISDCO01000_getProdList_이정현_한병곤" */ 
+       a.prod_cl
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00010', a.prod_cl) AS prod_cl_nm
+     , a.mfact_id
+     , FBAS_GET_DEAL_NM(a.mfact_id,'') AS mfact_nm
+     , a.prod_nm
+     , a.prod_cd
+     , a.prod_chrtic_1
+     , a.prod_chrtic_2
+     , a.mktg_dt
+     , a.end_dt
+     , a.rgst_cl
+     , a.rmks
+     , a.del_yn
+     , a.upd_cnt
+     , a.ins_dtm
+     , a.ins_user_id
+     , a.mod_dtm
+     , a.mod_user_id
+     , a.bar_cd_typ 
+  FROM tbas_prod_mgmt a 
+ WHERE a.del_yn = 'N'
+   AND ( a.prod_cd like '%'||decode(#prod_cd#,null,#prod_nm#,#prod_cd#)||'%' 
+    OR a.prod_nm like '%'||decode(#prod_nm#,null,#prod_cd#,#prod_nm#)||'%' )
+]]><isNotEmpty prepend="AND" property="PROD_CL_CD">
+<![CDATA[	a.prod_cl = #prod_cl_cd#
+]]></isNotEmpty>   
+<![CDATA[ ORDER BY a.prod_nm]]>
+	</select>
+</sqlMap>

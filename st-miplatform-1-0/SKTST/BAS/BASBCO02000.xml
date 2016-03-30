@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="320" Id="BASBCO02000" Left="8" OnLoadCompleted="BASBCO02000_OnLoadCompleted" PidAttrib="7" Title="상품일련번호검색" Top="8" Ver="1.0" Width="552" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="SER_NUM" size="256" summ="default" type="STRING"/>
+					<record>
+						<SER_NUM></SER_NUM>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodLst">
+				<Contents>
+					<colinfo id="PROD_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SER_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CON_MGMT_NO" size="256" summ="default" type="STRING"/>
+					<colinfo id="CON_DT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="divS" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="526">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="453" LeftMargin="5" OnClick="f_search" Style="sty_btn_a" TabOrder="2" Text="조회" Top="6" Width="60"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="SER_NUM" Font="굴림,-1" Height="20" Id="edt_prodCd" Left="88" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" UpperOnly="TRUE" Width="92"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="13" Style="sty_lb_Search" TabOrder="3" Text="일련번호" Top="7" VAlign="Middle" Width="60"></Static>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_prodLst" BkColor2="default" BoldHead="true" Border="Flat" Bottom="268" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="212" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" MultiSelect="TRUE" OnCellDBLClick="grd_list_OnCellDblClick" OnHeadClick="cf_allChecknSort" Right="536" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="56" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="526">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="64"/>
+						<col width="120"/>
+						<col width="88"/>
+						<col width="120"/>
+						<col width="84"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="상품코드" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="상품명" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="일련번호" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="상담관리번호" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="상담일자" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="center" bkcolor2="user36" col="0" colid="PROD_CD" combotext="name" display="text"/>
+						<cell align="left" bkcolor2="user36" col="1" colid="PROD_NM" combotext="name" display="text"/>
+						<cell align="left" bkcolor2="user36" col="2" colid="SER_NUM" combotext="name" display="text"/>
+						<cell align="left" bkcolor2="user36" col="3" colid="CON_MGMT_NO" combotext="name" display="text"/>
+						<cell align="center" bkcolor2="user36" col="4" colid="CON_DT" combotext="name" display="date"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="271" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="288" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Height="24" Id="BTN_CONFIRM" ImageID="btn_c_2" Left="208" LeftMargin="5" OnClick="BTN_CONFIRM_OnClick" Style="sty_btn_c" TabOrder="4" Text="확인" Top="288" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : BASBCO02000
+* 업무명      : 공통 
+* 프로그램명  : 상품일련번호검색 
+--------------------------------------------------------------------------------
+* 작성자      :  jeon miryang
+* 작성일      : 2012.10.26
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+
+var FV_SER_NUM;
+var ds_parent = '';
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function BASBCO02000_OnLoadCompleted(obj)
+{
+	FV_SER_NUM = q_ser_num;
+	ds_condition.SetColumn(0,"SER_NUM",q_ser_num);
+	ds_parent =  eval("parent."+dsParent);
+	
+	f_search();
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(ds_prodLst.GetRowCount() == 1 ){
+		btn_confirm_OnClick();
+	}else{
+		grd_list.SetFocus();
+	}
+}
+
+function f_search ()
+{	
+	var sSvcID = "svcSearch";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_prodLst=ds_prodLst";
+	var sArg = "sktst.bas.BCO#getProdListForSerNum";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 확인 - 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	cf_copyDataSetPop(ds_Parent, 0, ds_prodLst, ds_prodLst.currow);
+	this.Close();
+}
+
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	btn_confirm_OnClick();
+}
+]]></Script>
+</Window>

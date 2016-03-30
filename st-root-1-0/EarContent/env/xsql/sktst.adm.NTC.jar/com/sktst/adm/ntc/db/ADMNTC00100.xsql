@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMNTC00100">
+	<select id="getNoticeUser" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT							/*+ ADMNTC00100_getNoticeUser_조민지_최승호 */ 
+	a.user_id as cd,			/* 사용자 아이디 */
+	a.user_nm||'['||b.org_nm||']('
+	||fbas_get_deal_nm(org_area,'')||')'||a.mbl_phon as nm,			/* 사용자 이름 */
+	'1' as cl,					/* 구분 코드 */
+	a.user_grp as grp,			/* 그룹 코드 */
+	a.mbl_phon
+FROM
+	tbas_user_mgmt a,
+	tbas_org_mgmt b
+WHERE    
+    a.org_id = b.org_id
+AND
+	a.del_yn = 'N'
+AND    
+	a.eff_user_yn = 'Y'	
+AND
+    a.portal_user_id is not null
+AND
+	a.user_grp = #code#
+]]><isNotEmpty prepend="AND" property="org_id">
+<![CDATA[	a.pos_agency = #org_id#	
+]]></isNotEmpty>
+<![CDATA[ ORDER BY 	a.user_nm]]>
+	</select>
+	<select id="getNoticeDeal" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00100_getNoticeDeal_조민지_최승호 */ 
+       c.user_id as cd,            /* 사용자 아이디 */
+	   c.user_nm||'['||b.org_nm||']('
+	   ||fbas_get_deal_nm(org_area,'')||')'||c.mbl_phon as nm,			/* 사용자 이름 */
+	   '1' as cl,					/* 구분 코드 */
+	   #code# as grp,			/* 그룹 코드 */         
+	   c.mbl_phon
+    FROM tbas_deal_co_mgmt a,
+         tbas_org_mgmt b,
+         tbas_user_mgmt c
+   WHERE (a.deal_co_cd, a.hseq_no) IN (
+            SELECT   deal_co_cd, MAX (hseq_no)
+                FROM tbas_deal_co_mgmt
+               WHERE del_yn = 'N'
+                 AND deal_co_cl1 IN ('A2', 'A3', 'B1', 'B2','C1')
+                 AND deal_co_cl2 IN ('2','3')
+                 AND sale_grp = #code#
+                 AND pos_agency = #org_id#
+                 AND eff_end_dtm = '99991231235959'
+            GROUP BY deal_co_cd)
+     AND a.deal_co_cd =  c.org_area
+     AND c.org_id = b.org_id
+     AND c.eff_user_yn = 'Y'
+     AND c.portal_user_id is not null
+ORDER BY a.deal_co_nm ]]>
+	</select>
+	<insert id="addNoticeInfo" ><![CDATA[INSERT INTO 					/*+ ADMNTC00100_addNoticeInfo_조민지_최승호 */ 
+	tadm_notics
+(
+	notice_num,						/* 공지사항 번호 */
+	drawer,							/* 작성자 */
+	notice_type,					/* 공지유형 */
+	title,							/* 제목 */
+	sta_dt,							/* 게시 시작일 */
+	end_dt,							/* 게시 종료일 */
+	popup_yn,						/* 팝업여부 */
+	contents,						/* 내용 */
+	doc_id,							/* DOC_ID */
+	update_count,					/* 업데이트 카운트 - default : 0 */
+	del_yn,							/* 삭제 여부 - default : N */
+	ins_dtm,						/* 등록일시 */
+	ins_user_id,					/* 등록자 */
+	mod_dtm,						/* 수정일시 */
+	mod_user_id,						/* 수정자 */
+	notice_chk, 						/*공지여부*/
+	notice_sta_dt,							/*공지시작일*/
+	notice_end_dt						/*공지종료일*/
+)
+VALUES 
+(
+
+	#NOTICE_NUM#, /*(SELECT nvl(max(notice_num),10000)+1 FROM tadm_notics),*/
+	#onlineContext.userInfo.loginId#,
+	#NOTICE_TYPE#,
+	#TITLE#,
+	#STA_DT#,
+	#END_DT#,
+	#POPUP_YN#,
+	#CONTENTS#,
+	#DOC_ID#,				
+	0,
+	'N',			
+	TO_CHAR(SYSDATE, 'yyyyMMddHH24miss'),			
+	#onlineContext.userInfo.loginId#,									
+	TO_CHAR(SYSDATE, 'yyyyMMddHH24miss'),			
+	#onlineContext.userInfo.loginId#,
+	#NOTICE_CHK#,
+	#NOTICE_STA_DT#,
+	#NOTICE_END_DT#									
+)]]>
+	</insert>
+	<select id="getNoticeNo" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 												/*+ ADMNTC00100_getNoticeNo_조민지_최승호 */				
+	nvl(max(notice_num),10000)+1 AS notice_num		/* 공지사항 번호 */
+FROM 
+	tadm_notics]]>
+	</select>
+	<insert id="addNoticeTarget" parameterClass="map" ><![CDATA[INSERT INTO 						/*+ ADMNTC00100_addNoticeTarget_조민지_최승호 */ 
+	tadm_notics_target
+(
+	notice_num,						/* 공지사항 번호 */
+	seq_no,							/* 일련번호 */
+	deal_cd,						/* 거래처코드 */
+	user_id,						/* 사원번호 */
+	upd_cnt,					    /* 업데이트 카운트 - default : 0 */
+	del_yn,							/* 삭제 여부 - default : N */
+	ins_dtm,						/* 등록일 */
+	ins_user_id,					/* 등록자 */
+	mod_dtm,						/* 수정일 */
+	mod_user_id						/* 수정자 */
+)
+VALUES 
+(
+	#NOTICE_NUM#, 
+	( SELECT nvl(max(seq_no),0)+1 FROM tadm_notics_target WHERE notice_num = #NOTICE_NUM# ),
+	#grp#,
+	#cd#,			
+	0,
+	'N',			
+	TO_CHAR(SYSDATE, 'yyyyMMddHH24miss'),			
+	#onlineContext.userInfo.loginId#,									
+	TO_CHAR(SYSDATE, 'yyyyMMddHH24miss'),			
+	#onlineContext.userInfo.loginId#									
+)]]>
+	</insert>
+	<select id="getNoticeUserFromDeal" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT							/*+ ADMNTC00100_getNoticeUserFromDeal_조민지_최승호 */ 
+	a.user_id as cd,			/* 사용자 아이디 */
+	a.user_nm as nm,			/* 사용자 이름 */
+	'2' as cl,					/* 구분 코드 */
+	a.org_area as grp			/* 그룹 코드 */
+FROM
+	tbas_user_mgmt a
+WHERE    
+	a.del_yn = 'N'
+AND    
+	a.eff_user_yn = 'Y'	
+AND
+	a.org_area IN ( $deal_co_cds$ )
+ORDER BY 
+	a.user_nm]]>
+	</select>
+	<select id="getNoticeDetail" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  								/*+ ADMNTC00100_getNoticeDetail_조민지_최승호 */ 
+	a.notice_num,						/* 공지사항 번호 */
+	a.drawer,							/* 작성자 */
+	a.notice_type,						/* 공지유형 */
+	a.title,							/* 제목 */
+	a.sta_dt,							/* 게시 시작일 */
+	a.end_dt,							/* 게시 종료일 */
+	a.popup_yn,							/* 팝업여부 */
+	a.contents,							/* 내용 */
+	a.doc_id,							/* DOC_ID */
+	b.user_nm,
+	a.notice_chk,							/* 공지체크 */
+	a.notice_sta_dt,							/* 공지시작일 */
+	a.notice_end_dt							/* 공지종료일 */
+FROM    
+	tadm_notics a,
+	tbas_user_mgmt b
+WHERE a.drawer = b.user_id
+AND 
+	a.del_yn = 'N'		
+AND 
+	a.notice_num = #notice_num#]]>
+	</select>
+	<select id="getNoticeTarget" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  									/*+ ADMNTC00100_getNoticeTarget_조민지_최승호 */ 
+	a.notice_num,							/* 공지사항 번호 */
+	a.deal_cd AS grp,						/* 거래처 코드 */
+	a.user_id AS cd,						/* 유저 아이디 */
+	( b.user_nm||'['||fbas_get_deal_nm(b.pos_agency,a.INS_DTM)||']('||fbas_get_deal_nm(org_area,a.INS_DTM)||')') AS nm,							/* 명칭 */
+	'1' AS cl								/* 구분 코드 */	
+FROM    
+	tadm_notics_target a,
+    tbas_user_mgmt b
+WHERE
+    a.user_id = b.user_id    
+AND
+	a.del_yn = 'N'
+AND 
+	a.deal_cd is null		
+AND 
+	a.notice_num = #notice_num#
+
+union
+
+SELECT
+	notice_num,								/* 공지사항 번호 */
+	deal_cd AS grp,							/* 거래처 코드 */
+	user_id AS cd,							/* 유저 아이디 */
+	( SELECT deal_co_nm FROM tbas_deal_co_mgmt WHERE deal_co_cd = deal_cd and rownum = 1) AS nm,	/* 명칭 */
+	'2' AS cl								/* 구분 코드 */
+FROM tadm_notics_target 
+
+WHERE rowid in 
+(
+	SELECT 
+		max(rowid) 
+	FROM    
+		tadm_notics_target
+	WHERE    
+		del_yn = 'N'
+	AND 
+		deal_cd is not null	
+	AND 
+		notice_num = #notice_num#
+	GROUP BY 
+		deal_cd
+)]]>
+	</select>
+	<update id="updateNoticeInfo" ><![CDATA[UPDATE                                          		/*+ ADMNTC00100_updateNoticeInfo_조민지_최승호 */ 
+	tadm_notics
+SET
+	notice_type = #notice_type#,						/* 공지유형 */
+	title = #title#,									/* 제목 */
+	sta_dt = #sta_dt#,									/* 게시 시작일 */
+	end_dt = #end_dt#,									/* 게시 종료일 */
+	notice_chk = #notice_chk#,						/* 공지체크 */
+	notice_sta_dt = #notice_sta_dt#,									/* 공지 시작일 */
+	notice_end_dt = #notice_end_dt#,									/* 공지 종료일 */
+	popup_yn = #popup_yn#,								/* 팝업여부 */
+	contents = #contents#,								/* 내용 */
+	mod_dtm = TO_CHAR(SYSDATE, 'yyyyMMddHH24miss')			/* 수정일시 */
+WHERE 
+	del_yn = 'N'
+AND 
+	notice_num = to_number(#notice_num#)]]>
+	</update>
+	<delete id="deleteNoticeTarget" ><![CDATA[DELETE						/*+ ADMNTC00100_deleteNoticeTarget_조민지_최승호 */ 
+FROM
+	tadm_notics_target
+WHERE 
+	del_yn = 'N'
+AND 
+	notice_num = to_number(#notice_num#)
+AND 
+	user_id = #cd#]]>
+	</delete>
+	<update id="updateReadInfo" parameterClass="map" ><![CDATA[UPDATE                                         				  /*+ ADMNTC00100_updateReadInfo_조민지_최승호 */ 
+	tadm_notics_target
+SET
+	read_dtm = TO_CHAR(SYSDATE, 'yyyyMMddHH24miss'),		  /* 읽은일시 */
+	read_yn = 'Y'											  /* 읽음여부 */			
+WHERE 
+	notice_num = #notice_num#
+AND
+	seq_no = #seq_no#]]>
+	</update>
+	<select id="getSalP" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ ADMNTC00100_getSalP_원윤성_한병곤 */ 
+       a.user_id as COMM_CD_VAL,
+       user_nm||'('||org_nm||')' as COMM_CD_VAL_NM,
+       'ZBAS_C_00000' as COMM_CD_ID
+  from tbas_user_mgmt a,
+       tbas_org_mgmt b
+ where a.org_id = b.org_id
+   and a.del_yn = 'N'
+   and eff_user_yn = 'Y'
+   and a.user_grp in ('D21','D13') /* 온라인영업담당, 도매영업 */
+   and a.pos_agency = #org_id#
+ order by org_nm  ]]>
+	</select>
+	<select id="getSaleP" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00100_getSaleP_원윤성_한병곤 */ 
+       b.user_id as cd,			/* 사용자 아이디 */
+	   b.user_nm||'['||c.org_nm||']('
+	   ||fbas_get_deal_nm(org_area,'')||')'||b.mbl_phon as nm,			/* 사용자 이름 */
+	   '1' as cl,					/* 구분 코드 */
+	   #code# as grp,			/* 그룹 코드 */
+	   b.mbl_phon
+  FROM tbas_deal_co_mgmt a,
+       tbas_user_mgmt b,
+       tbas_org_mgmt c
+ WHERE a.deal_co_cd = b.org_area
+   AND a.chrgr_user_id = #code#  
+   AND a.del_yn = 'N'
+   AND a.EFF_END_DTM ='99991231235959'    
+   AND b.del_yn = 'N'
+   AND b.eff_user_yn = 'Y'
+   AND b.portal_user_id is not null
+   AND b.org_id = c.org_id]]>
+	</select>
+	<select id="getOrgNm" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00100_getOrgNm_원윤성_전현주 */ 
+		DEAL_CO_CD as COMM_CD_VAL,
+        DEAL_CO_NM as COMM_CD_VAL_NM,
+       'ZBAS_C_00001' as COMM_CD_ID
+FROM TBAS_DEAL_CO_MGMT
+WHERE DEAL_CO_CL1 = 'A1'
+AND   EFF_END_DTM = '99991231235959'
+AND   DEL_YN = 'N'
+AND   DEAL_CO_CD = #org_id#]]>
+	</select>
+	<update id="deleteNotice" parameterClass="map" ><![CDATA[UPDATE /*+ ADMNTC00100_deleteNotice_원윤성_한병곤 */ 
+       TADM_NOTICS
+   SET DEL_YN = 'Y'
+ WHERE NOTICE_NUM = #NOTICE_NUM#]]>
+	</update>
+	<update id="deleteNoticeTargetAll" parameterClass="map" ><![CDATA[UPDATE /*+ ADMNTC00100_deleteNoticeTargetAll_원윤성_한병곤 */ 
+       TADM_NOTICS_TARGET
+   SET DEL_YN = 'Y'
+ WHERE NOTICE_NUM = #NOTICE_NUM#]]>
+	</update>
+	<select id="getMemListByOrg" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ ADMNTC00100_getMemListByOrg_원윤성_전현주 */ 
+       a.user_id as cd,			/* 사용자 아이디 */
+	   a.user_nm||'['||FBAS_GET_DEAL_NM(b.pos_agency,'99991231')||']('
+	   ||fbas_get_deal_nm(org_area,'')||')'||a.mbl_phon as nm,			/* 사용자 이름 */
+	   '1' as cl,					/* 구분 코드 */
+	   a.user_grp as grp,			/* 그룹 코드 */
+	   a.mbl_phon
+    FROM tbas_user_mgmt a
+        ,tbas_deal_co_mgmt b
+    WHERE a.eff_user_yn = 'Y'
+    AND   a.org_area = b.deal_co_cd
+    AND   b.pos_agency = #code#
+    AND   b.eff_end_dtm = '99991231235959'
+    AND   b.del_yn = 'N'
+    AND   b.deal_end_dt = '99991231'
+    AND   a.portal_user_id is not null
+    AND   a.user_grp != 'D14']]>
+	</select>
+	<select id="getOrgArea" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ ADMNTC00100_getMemListByOrg_원윤성_전현주 */ 
+       a.user_id as cd,			/* 사용자 아이디 */
+	   a.user_nm||'['||fbas_get_org_nm(a.org_id)||']('
+	   ||b.deal_co_nm||')'||a.mbl_phon as nm,			/* 사용자 이름 */
+	   '1' as cl,					/* 구분 코드 */
+	   a.user_grp as grp,			/* 그룹 코드 */
+	   a.mbl_phon
+    FROM tbas_user_mgmt a
+        ,tbas_deal_co_mgmt b
+    WHERE a.eff_user_yn = 'Y'
+    AND   a.portal_user_id is not null
+    AND   b.pos_agency = #org_id#
+    AND   a.org_area =  #code#
+    AND   a.org_area = b.deal_co_cd
+    AND   b.del_yn = 'N'
+    AND   b.eff_end_dtm = '99991231235959']]>
+	</select>
+	<select id="getDealCoNm" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ ADMNTC00100_getDealCoNm_원윤성_전현주 */ 
+       b.deal_co_cd as COMM_CD_VAL,
+       b.deal_co_nm as COMM_CD_VAL_NM,
+       'ZBAS_C_00002' as COMM_CD_ID
+from tbas_deal_co_mgmt b
+ where b.pos_agency = #org_id#
+ and b.deal_co_cd =  #org_area# 
+ and b.del_yn = 'N'
+ and b.eff_end_dtm = '99991231235959'
+ order by b.deal_co_nm ASC]]>
+	</select>
+	<select id="getMyGroup" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT	/*+ ADMNTC00100_getMyGroup_원윤성_전현주 */ 
+       b.user_id as cd,			/* 사용자 아이디 */
+	   b.user_nm||'['||c.org_nm||']('
+	   ||fbas_get_deal_nm(org_area,'')||')'||b.mbl_phon as nm,			/* 사용자 이름 */
+	   '1' as cl,					/* 구분 코드 */
+	   b.user_grp as grp,			/* 그룹 코드 */
+	   b.mbl_phon
+		FROM tadm_my_notice a,
+		tbas_user_mgmt b,
+		tbas_org_mgmt c
+		WHERE a.notice_user_id = b.user_id
+		and   b.eff_user_yn = 'Y'
+		and   b.del_yn = 'N'
+		and   b.portal_user_id is not null
+		and   b.org_id = c.org_id
+		and   c.del_yn = 'N'
+		and   a.notice_group = #notice_group#
+		and   a.user_id = #onlineContext.userInfo.loginId#]]>
+	</select>
+	<select id="getMyNoticeGroup" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[ SELECT /*+ ADMNTC00100_getMyNotice_원윤성_전현주 */  
+ 		a.notice_group as COMM_CD_VAL,
+       a.notice_group as COMM_CD_VAL_NM,
+       'ZBAS_C_00003' as COMM_CD_ID
+ FROM tadm_my_notice_group a
+ WHERE a.user_id = #onlineContext.userInfo.loginId#]]>
+	</select>
+	<select id="getMblPhonList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select c.user_id,
+               c.user_nm,
+               c.user_id||c.user_nm as key_data,
+               (case when mbp = '1' then c.mbl_phon 
+                     when mbp = '2' then c.mbl_phon2 
+                     when mbp = '3' then c.mbl_phon3 end ) as mbl_phon
+          from tbas_user_mgmt c,
+               (select '1' as mbp from dual
+                union all
+                select '2' from dual
+                union all
+                select '3' from dual) b
+         where ((mbp = '1' and mbl_phon is not null)
+            or ( mbp = '2' and mbl_phon2 is not null ) 
+            or ( mbp = '3' and mbl_phon3 is not null ))
+           and c.del_yn = 'N'
+           AND c.eff_user_yn = 'Y'
+           order by c.user_id, c.user_nm asc]]>
+	</select>
+</sqlMap>

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="메세지관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_type">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="text" size="256" summ="default" type="STRING"/>
+					<record>
+						<code></code>
+						<text>전체</text>
+					</record>
+					<record>
+						<code>W</code>
+						<text>경고</text>
+					</record>
+					<record>
+						<code>I</code>
+						<text>정보</text>
+					</record>
+					<record>
+						<code>E</code>
+						<text>에러</text>
+					</record>
+					<record>
+						<code>Q</code>
+						<text>질의</text>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list" OnColumnChanged="ds_list_OnColumnChanged">
+				<Contents>
+					<colinfo id="messageId" size="256" summ="default" type="STRING"/>
+					<colinfo id="messageName" size="256" summ="default" type="STRING"/>
+					<colinfo id="messageReason" size="256" summ="default" type="STRING"/>
+					<colinfo id="messageTypeXd" size="256" summ="default" type="STRING"/>
+					<colinfo id="messageRemark" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ipAddress"></Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="565" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="485" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellClick="grd_list_OnCellClick" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="4" TabStop="true" Top="80" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="43"/>
+						<col width="80"/>
+						<col width="99"/>
+						<col width="293"/>
+						<col width="149"/>
+						<col width="140"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="메시지타입"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="메시지ID"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="메세지내용"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="이유"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="비고"/>
+					</head>
+					<body>
+						<cell col="0" display="text" expr="row+1"/>
+						<cell col="1" colid="messageTypeXd" combocol="code" combodataset="ds_type" combofilter="code&#32;&lt;&gt;&#32;&apos;&apos;" combotext="text" display="combo" edit="expr:decode(rowType,&apos;insert&apos;,&apos;combo&apos;,&apos;none&apos;)" expandsize="19"/>
+						<cell col="2" colid="messageId" display="text" edit="expr:decode(rowType,&apos;insert&apos;,&apos;uppernumchar&apos;,&apos;normal&apos;)" limit="8"/>
+						<cell col="3" colid="messageName" display="text" edit="normal" limit="256"/>
+						<cell col="4" colid="messageReason" display="text" edit="normal" expandsize="19" limit="256"/>
+						<cell col="5" colid="messageRemark" display="text" edit="normal" expandsize="19" limit="256"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="760" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="5" Text="저장" Top="568" Visible="FALSE" Width="60"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_addRow" ImageID="btn_i_add_w" Left="777" OnClick="btn_addRow_OnClick" TabOrder="2" Text="Button1" ToolTipText="행추가" Top="53" Width="19"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_delRow" ImageID="btn_i_subtract_w" Left="800" OnClick="btn_delRow_OnClick" TabOrder="3" Text="Button1" ToolTipText="추가된&#32;행삭제" Top="53" Width="19"></Button>
+		<Div Border="Raised" Height="40" Id="div_search" Left="8" Style="sty_div_search" TabOrder="1" Text="Div0" Top="8" Width="810">
+			<Contents>
+				<Combo Border="Flat" CodeColumn="code" DataColumn="text" Height="20" Id="cmb_type" INDEX="0" InnerDataset="ds_type" Left="62" ResetIndex="FIRST" Style="sty_ipt_form" TabOrder="1" Top="6" Width="122"></Combo>
+				<Static Align="Right" Height="20" Id="Static0" Left="-2" Style="sty_lb_Search" TabOrder="5" Text="구분" Top="7" VAlign="Middle" Width="60"></Static>
+				<Static Align="Right" Height="20" Id="Static2" Left="190" Style="sty_lb_Search" TabOrder="6" Text="메세지ID" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_id" Left="254" LeftMargin="2" OnKeyDown="f_commonEnterDown" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="6" UpperOnly="TRUE" Width="121"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="390" Style="sty_lb_Search" TabOrder="7" Text="메세지내용" Top="7" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_name" Left="478" LeftMargin="2" OnKeyDown="f_commonEnterDown" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="121"></Edit>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="611" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_b" TabOrder="4" Text="조회" Top="7" Visible="FALSE" Width="60"></Button>
+			</Contents>
+		</Div>
+		<Edit Border="None" Height="23" Id="Edit0" Left="12" OnClick="Edit0_OnClick" TabOrder="6" Top="52" Width="20"></Edit>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ADMMSG00100
+* 업무명      : admin
+* 프로그램명  : 메세지관리
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	//  그리드 헤더 정렬 기능
+	cf_setGrdChecknSortEvent(grd_list);
+	
+	// 기본 조회
+	div_search_btn_search_OnClick();
+	
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	
+	// IP : ZADM_C_00090
+	//cf_setCommonCode("ds_ipAddress", "ZADM_C_00090");	
+    cf_setCommonCode("ds_ipAddress", "ZADM_C_00090","","","1"); 
+	// 설정된 코드를 기반으로 공통 코드를 추가 및 데이타 바인딩
+	cf_checkCommonCode();	
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcList")
+	{
+		// 원본 데이터셋 생성
+		cf_setOrgDs(ds_list);
+	}
+
+    if(sSvcID == "svcMultiTr")
+    {          
+		var sSvcID = "refresh";
+		var sInDs  = "";
+		var sOutDs = "";
+		var sArg   = "sktst.adm.MSG#refreshMessageAll";
+		
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);  
+    }
+	
+/*******************************************************************	
+	if(sSvcID == "svcMultiTr")
+	{
+		var sIpAddress = "";
+		
+		for(var i = 0 ; i < ds_ipAddress.rowcount ; i++){
+			
+			sIpAddress = ds_ipAddress.GetColumn(i,"comm_cd_val_nm");
+            
+            alert(sIpAddress);
+			
+            var sSvcID = "refresh";
+			var sInDs  = "";
+			var sOutDs = "";
+			var sArg   = "sktst.adm.MSG#refreshMessage";
+			
+			cf_Transaction(sSvcID, sInDs, sOutDs, sArg, sIpAddress);
+            
+            alert("Tr OK");					
+		}		
+	}
+**********************************************************************/
+
+}
+
+/*******************************************************************************
+ * @description    : 조회 - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	// 조회 조건 설정
+	cf_setParam(ds_condition, "messageTypeXd", div_search.cmb_type.value);
+	cf_setParam(ds_condition, "messageId",  div_search.edt_id.text); 
+	cf_setParam(ds_condition, "messageName",  div_search.edt_name.text); 
+
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=ds_messageList";
+	var sArg = "sktst.adm.MSG#getMessageList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    : 저장 - 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	// 변경 datacheck
+	if(ds_list.GetUpdate() == 0 ){
+		alert(cf_getMessage(MSG_00071,"")); // 처리할 대상이 없습니다
+		return;
+	}		
+	
+	// 트랜잭션 설정
+	var sSvcID = "svcMultiTr";
+	var sInDs = "ds_messageList=ds_list:U";
+	var sOutDs = "";
+	var sArg = "sktst.adm.MSG#saveMessageList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, );
+}
+
+/*******************************************************************************
+ * @description    : 행 추가 - 이벤트
+*******************************************************************************/
+function btn_addRow_OnClick(obj)
+{
+	var oGrdDs = object(grd_list.BindDataset);
+	if(oGrdDs.getRowCount() < 1)
+	{
+		//alert("행 추가를 할 수 없습니다.");
+		//return;
+	}
+	
+	oGrdDs.InsertRow(oGrdDs.currow);
+	//var nRow = oGrdDs.AddRow();
+}
+
+/*******************************************************************************
+ * @description    : 행 삭제 - 이벤트
+*******************************************************************************/
+function btn_delRow_OnClick(obj)
+{
+	var oGrdDs = object(grd_list.BindDataset);
+	if(oGrdDs.getRowCount() < 1)
+	{
+		alert(cf_getMessage(MSG_00039,""));
+		return;
+	}
+	if(oGrdDs.getRowType(oGrdDs.currow) == "insert")
+	{
+		oGrdDs.DeleteRow(oGrdDs.currow);
+	}
+	else
+	{
+		if(confirm(cf_getMessage(MSG_00102,"")) == true)
+		{
+			oGrdDs.DeleteRow(oGrdDs.currow);
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : 엔터 이벤트 - 이벤트
+*******************************************************************************/
+function f_commonEnterDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		div_search_btn_search_OnClick();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 메세지 타입이 변화시 메세지 아이디의 기본값 설정 - 이벤트
+*******************************************************************************/
+function ds_list_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if(strColumnID == "MESSAGETYPEXD")
+	{
+		obj.SetColumn(nRow, "MESSAGEID", "PSM"+varNewValue);
+		grd_list.MoveToNextCell();
+		grd_list.setEditCaret(4);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 메세지 타입 설정 없이 메세지 아이디를 클릭시 - 이벤트
+*******************************************************************************/
+function grd_list_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell == 2)
+	{
+		if(ds_list.GetColumn(nRow, "MESSAGETYPEXD").length < 1)
+		{
+			alert("메세지 타입을 설정해 주십시요!");
+			obj.setFocus();
+			obj.SetCellPos(nCell-1);
+			return;
+		}
+	}
+}
+
+function Edit0_OnClick(obj)
+{
+	alert(" Login IP : "+gds_session.GetColumn(0,"ip"));
+}
+]]></Script>
+</Window>

@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="608" Id="BASSAM00100" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="판매가격표금액관리" Top="8" Ver="1.0" Width="900" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="AMT_FROM" size="256" summ="default" type="STRING"/>
+					<colinfo id="AMT_TO" size="256" summ="default" type="STRING"/>
+					<colinfo id="EFF_STA_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="EFF_END_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRT_SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="EFF_DT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="38" Id="div_search" Left="8" Style="sty_div_search" TabOrder="1" TabStop="FALSE" Text="Div0" Top="10" Width="884">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="813" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" TabStop="FALSE" Text="조회" Top="5" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static9" Left="35" Style="sty_lb_Search" TabOrder="2" Text="적용년월" Top="7" VAlign="Middle" Width="60"></Static>
+				<Image Height="20" Id="Image0" ImageID="bul_mand" Left="29" TabOrder="3" Top="7" Transparent="TRUE" Width="20"></Image>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_6" Left="8" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="2" Text="신규등록" Top="568" Width="111"></Button>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="560" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="21" Height="504" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_List_OnCellDblClick" Right="892" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="56" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="884">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="45"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="45"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="금액(From)"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="금액(To)"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="적용기간"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="출력순서"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="Row+1"/>
+						<cell align="right" col="1" colid="AMT_FROM" display="number"/>
+						<cell align="right" col="2" colid="AMT_TO" display="number"/>
+						<cell align="center" col="3" colid="EFF_DT" display="text"/>
+						<cell align="center" col="4" colid="PRT_SEQ" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="24" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="216" OnClick="btn_monthCalendar_OnClick" TabOrder="4" Text="Button3" Top="21" Width="17"></Button>
+		<MaskEdit Border="Flat" Height="20" Id="cal_acc_mth" Left="113" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="20" Type="STRING" Width="104"></MaskEdit>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID 	: BASSAM00100
+* 업무명      	: 판매가격표금액관리
+* 프로그램명  	: 판매가격표금액관리
+--------------------------------------------------------------------------------
+* 작성자      : 김만수
+* 작성일      : 2011.11.22
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_NAME; 				// 사용자 이름
+
+// 글로벌 세션정보
+var FV_USER_ID;					// 사용자ID
+var FV_USER_NM;					// 사용자명
+
+var	FV_ORG_ID;					// 소속 
+var	FV_ORG_NM;					// 소속명
+var	FV_ORG_CL;					// 소속구분
+var	FV_AGENCY_ID;           	// 소속 대리점ID
+var	FV_AGENCY_NM;           	// 소속 대리점명
+var	FV_AGENCY_UKEY_ID;      	// 소속 대리점UKEY ID	
+
+var	FV_DUTY;					// 사용자 직책
+var	FV_ORG_AREA_CL1;			// 근무지 구분	
+
+var	FV_ORG_AREA_ID;				// 근무지 ID
+var	FV_ORG_AREA_NM;				// 근무지명
+var	FV_ORG_AREA_POS_AGENCY_CD;	// 근무지 
+var	FV_ORG_AREA_UKEY_ID;     	// 근무지ukeyid
+var	FV_ORG_AREA_SUB_CD;      	// 근무지subcd
+var	FV_ORG_AREA_CHANNEL_CD;  	// 근무지 channelcd	
+var	FV_USER_GRP;			 	// 유저그룹
+
+var FV_VALID_IF = false;
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{	
+	cf_setAuth(pFrmNum);				// 권한 공통
+	cf_setGrdChecknSortEvent(grd_list);	// 그리드 정렬	
+	f_init();
+}
+
+/*******************************************************************************
+ 공통 스크립트 영역 끝
+*******************************************************************************/
+
+//==============================================================================
+// 기타 업무 메소드들
+//==============================================================================
+
+
+/*******************************************************************************
+ * @description    : 리스트 조회 - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	if(!f_validSearch())
+	{
+		return;
+	}
+
+	var OLD_DT = div_search.cal_acc_mth.Value;
+	var dt = OLD_DT.Replace("-", "") + "01";
+
+	// 넘길 파라메터 설정
+	cf_setParam(ds_condition, "eff_dt"   , dt); 	// 처리기간1
+
+	// 트랜잭션 설정
+	var sSvcID = "svcSamList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=List";
+	var sArg   = "sktst.bas.SAM#getSamList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcSamList")
+	{
+		return;
+	}
+}
+
+/*******************************************************************************
+ * @description    : 엑셀 출력 - 이벤트
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	// oGrd - 엑셀화할 그리드 객체 , nMode - 엑셀 저장 모드 1 or null : 엑셀로드 , 2 : 파일 저장
+	cf_exportExcel(grd_list);
+}
+
+/*******************************************************************************
+ * @description    : 화면 로딩시 초기값 세팅 
+*******************************************************************************/
+function f_init()
+{
+	
+	//div_search.cal_ifDtmFrom.value = sf_getFirstDay();
+	//div_search.cal_ifDtmTo.value   = Today();
+	
+	//f_setCombo();
+}
+
+/*******************************************************************************
+ * @description    : 콤보에 사용될 데이터 바인딩
+*******************************************************************************/
+function f_setCombo()
+{
+	
+}
+
+/*******************************************************************************
+ * @description    : 권한 설정
+*******************************************************************************/
+function f_setAuth()
+{
+	f_getSession();
+}
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function f_getSession()
+{
+	FV_USER_ID        = gds_session.GetColumn(0, "loginid");					// 사용자ID
+	FV_USER_NM        = gds_session.GetColumn(0, "usernm");						// 사용자명
+
+	FV_ORG_ID         = gds_session.GetColumn(0, "orgid");						// 소속 
+	FV_ORG_NM         = gds_session.GetColumn(0, "orgnm");						// 소속명
+	FV_ORG_CL         = gds_session.GetColumn(0, "orgcl");						// 소속구분
+	FV_AGENCY_ID      = gds_session.GetColumn(0, "posAgencyId");        		// 소속 대리점ID
+	FV_AGENCY_NM      = gds_session.GetColumn(0, "posAgencyNm");        		// 소속 대리점명
+	FV_AGENCY_UKEY_ID = gds_session.GetColumn(0, "posAgencyUkeyId");    		// 소속 대리점UKEY ID	
+	
+	FV_ORG_AREA_ID            = gds_session.GetColumn(0, "orgareaid");			// 근무지 ID
+	FV_ORG_AREA_NM            = gds_session.GetColumn(0, "orgareanm");			// 근무지명
+	FV_ORG_AREA_POS_AGENCY_CD = gds_session.GetColumn(0, "orgareaposagencycd");	// 근무지 
+	FV_ORG_AREA_UKEY_ID       = gds_session.GetColumn(0, "orgareaukeyid");      // 근무지ukeyid
+	FV_ORG_AREA_SUB_CD        = gds_session.GetColumn(0, "orgareaukeysubcd");   // 근무지subcd
+	FV_ORG_AREA_CHANNEL_CD    = gds_session.GetColumn(0, "orgareaukeychannelcd");  // 근무지 channelcd	
+	FV_USER_GRP               = gds_session.GetColumn(0, "usergrp");			// 유저그룹
+	FV_ORG_AREA_CL1           = gds_session.GetColumn(0, "orgareacl1");			// 근무지 구분
+	FV_DUTY                   = gds_session.GetColumn(0, "duty");	   		    // 직책		
+	
+}
+
+/*******************************************************************************
+ * @description    :  검색전 날짜 유효성 검사
+ *******************************************************************************/
+function f_validSearch()
+{	
+	if(uf_CheckDate(div_search.cal_acc_mth.Text, "YYYYMM") == false)
+	{
+		alert(cf_getMessage(MSG_00047,"적용년월을"));
+		div_search.cal_acc_mth.SetFocus();
+		return false;		
+	}
+	
+	return true;
+}
+
+/*******************************************************************************
+ * @description    :  그리드 더블 클릭 이벤트 
+*******************************************************************************/
+function grd_List_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	//var sdt = ds_list.GetColumn(nRow, "EFF_STA_DT");
+	//var edt = ds_list.GetColumn(nRow, "EFF_END_DT");
+	
+	var sArg = "FV_ROW=" + quote(nRow);
+	dialog("BAS::BASSAM00200.xml", sArg, "800","585");
+}
+
+/*******************************************************************************
+ * @description    : 엑셀저장
+*******************************************************************************/
+function Div0_btn_ExcelExport_OnClick(obj)
+{
+	cf_exportExcel(grd_list);
+}
+
+/*******************************************************************************
+ * @description    : 신규등록화면 호출
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	var sArg = "FV_ROW=-1";
+	dialog("BAS::BASSAM00200.xml", sArg, "800","585");
+}
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_acc_mth);
+}
+]]></Script>
+</Window>

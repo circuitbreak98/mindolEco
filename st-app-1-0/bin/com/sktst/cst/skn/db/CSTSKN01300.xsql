@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTSKN01300">
+	<select id="getDisCancel" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT a.CON_MGMT_NO
+     , a.SER_NUM 
+     , a.PROD_CD
+     , FBAS_GET_PROD_NM(a.PROD_CD) PROD_NM
+     , a.COLOR_CD
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', a.COLOR_CD) COLOR_NM
+     , a.SKN_YN
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', a.PRC_ST) PRC_ST_NM
+     , a.SKN_OP_DT
+     , c.SER_NUM as G_SER_NUM
+     , ' ' PRC_CHECK
+  FROM TCST_PRCHS_MGMT a
+     , TDIS_DIS b
+     , TDIS_PROD_DIS c
+ WHERE a.PROD_CD = b.PROD_CD
+   AND a.SER_NUM = b.SER_NUM
+   AND a.COLOR_CD = b.COLOR_CD
+   AND b.PROD_CD = c.PROD_CD
+   AND b.SER_NUM = c.OLD_SER_NUM
+   AND b.COLOR_CD = c.COLOR_CD
+   AND a.CON_MGMT_NO = #CON_MGMT_NO#
+   AND a.PRC_ST = '35' 
+   AND c.LAST_INOUT_CL = '100'
+   AND c.LAST_INOUT_DTL_CL = '114'
+   AND a.SKN_YN = 'Y'
+   AND a.DEL_YN = 'N'
+   AND b.DEL_YN = 'N'
+   AND c.DEL_YN = 'N'      ]]>
+	</select>
+	<update id="deleteDis" parameterClass="map" ><![CDATA[UPDATE TDIS_DIS  
+   SET DEL_YN      = 'Y'
+     , UPD_CNT     = UPD_CNT + 1
+     , MOD_DTM     = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE PROD_CD  = #PROD_CD#
+   AND COLOR_CD = #COLOR_CD#
+   AND SER_NUM  = #SER_NUM#
+   AND LAST_INOUT_DT = #SKN_OP_DT#
+   AND LAST_INOUT_CL = '200'
+   AND LAST_INOUT_DTL_CL = '213'   ]]>
+	</update>
+	<update id="deleteDisAmt" parameterClass="map" ><![CDATA[UPDATE TDIS_DIS_AMT  /*+ DISINN00400_deleteDisAmt_이문규 */       
+   SET DEL_YN      = 'Y'
+     , UPD_CNT     = UPD_CNT + 1
+     , MOD_DTM     = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE PROD_CD  = #PROD_CD#
+   AND COLOR_CD = #COLOR_CD#
+   AND SER_NUM  = #SER_NUM#
+   AND OCCR_DT = #SKN_OP_DT#]]>
+	</update>
+	<update id="deleteProdDis" parameterClass="map" ><![CDATA[UPDATE TDIS_PROD_DIS  
+   SET DEL_YN      = 'Y'
+     , UPD_CNT     = UPD_CNT + 1
+     , MOD_DTM     = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE PROD_CD  = #PROD_CD#
+   AND COLOR_CD = #COLOR_CD#
+   AND OLD_SER_NUM = #SER_NUM#
+   AND LAST_INOUT_CL = '100'
+   AND LAST_INOUT_DTL_CL = '114']]>
+	</update>
+	<update id="updatePrchsPrcSt" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET PRC_ST = '13'
+     , SKN_OP_YN = ''
+     , SKN_OP_DT = ''
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#
+   AND DEL_YN = 'N'
+   AND SKN_YN = 'Y']]>
+	</update>
+</sqlMap>

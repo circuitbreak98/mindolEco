@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="CSTSTA00100">
+	<select id="getCstSta100" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT	
+	HQ_NM
+	, SUM(CON_DT) 			AS CON_DT
+    , SUM(IN_YN) 			AS IN_YN
+    , SUM(CHECK_DT) 		AS CHECK_DT
+    , SUM(BUY_CL) 			AS BUY_CL
+    , SUM(CUST_Y) 			AS CUST_Y
+    , SUM(CUST_N) 			AS CUST_N
+    , SUM(CUST_C) 			AS CUST_C
+    , SUM(CHAG_DEDT_YN) 	AS CHAG_DEDT_YN
+    , SUM(CON_DT_S) 		AS CON_DT_S
+    , SUM(CHAG_DEDT_YN_S) 	AS CHAG_DEDT_YN_S
+    , SUM(CON_DT_IP) 		AS CON_DT_IP
+    , SUM(CHAG_DEDT_YN_IP) 	AS CHAG_DEDT_YN_IP
+FROM 
+(
+	SELECT
+		TD.HQ_NM
+		, 1 CON_DT
+        , DECODE(TB.IN_YN, 'Y', 1, 0) IN_YN
+        , DECODE(TA.CHECK_DT, NULL, 0, 1) CHECK_DT
+        , DECODE(TA.BUY_CL, 'Y', 1, 0) BUY_CL
+        , CASE WHEN TA.BUY_CL = 'Y'
+                AND TA.CUST_YN IN ('Y') THEN 1
+				ELSE 0
+			END AS CUST_Y
+        , CASE WHEN TA.BUY_CL = 'Y'
+                AND TA.CUST_YN IN ('N') THEN 1
+                ELSE 0
+            END AS CUST_N
+        , CASE WHEN TA.BUY_CL = 'Y'
+                AND NVL(TA.CUST_YN, 'E') = 'E' THEN 1
+                ELSE 0
+            END AS CUST_C
+        , CASE WHEN TA.CUST_YN = 'Y'
+                AND TB.CHAG_DEDT_YN IN ('1') THEN 1
+                ELSE 0
+            END AS CHAG_DEDT_YN
+        , DECODE(TC.PROD_CHRTIC_1, 'S', 1, 0) CON_DT_S
+        , CASE WHEN TC.PROD_CHRTIC_1 = 'S'
+                AND TA.CUST_YN = 'Y'
+                AND TB.CHAG_DEDT_YN IN ('1') THEN 1
+				ELSE 0
+            END AS CHAG_DEDT_YN_S
+        , DECODE(TC.BAR_CD_TYP, '4', 1, 0) CON_DT_IP
+        , CASE WHEN TC.BAR_CD_TYP = '4'
+                AND TA.CUST_YN = 'Y'
+                AND TB.CHAG_DEDT_YN IN ('1') THEN 1
+				ELSE 0
+            END AS CHAG_DEDT_YN_IP
+	FROM  
+		TCST_PRCHS_MGMT TA 
+		, TCST_CONSULT_MGMT TB
+		, TBAS_PROD_MGMT TC
+		, TBAS_DEAL_CO_MARKETING TD
+		, TBAS_DEAL_CO_MGMT TE
+	WHERE TA.CON_MGMT_NO(+) = TB.CON_MGMT_NO
+		AND TB.PROD_CD = TC.PROD_CD
+		AND	TD.UKEY_AGENCY_CD = TE.UKEY_AGENCY_CD
+    	AND TB.CON_PLC_CD = TE.DEAL_CO_CD
+    	AND TB.CON_DT >= #EX_START_DTM#
+    	AND TB.CON_DT <= #EX_END_DTM#
+)
+GROUP BY HQ_NM]]>
+	</select>
+</sqlMap>

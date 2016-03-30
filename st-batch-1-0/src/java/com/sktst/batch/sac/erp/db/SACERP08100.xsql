@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08100">
+	<select id="getTsacJourStdInfoList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select  /* SACERP08100_getTsacJourStdInfoList_분개앤진정보조회_하창주 */
+				 jour_cd					/* 전송구분코드 */
+				,acc_typ					/* 전표유형 */
+				,seq_no						/* NO */
+				,firt_key					/* 전기키 */
+				,spec_gl					/* 	 */
+				,dc_cat						/* 차대구분 */
+				,inv_firt_key				/* 역전기키 */
+				,inv_spec_gl				/* 	 */
+				,gl_acc						/* 계정 */
+				,cust_yn					/* 거래처발생유무 */
+				,pay_cond					/* 	 */
+				,pay_def					/* 지급보류 */
+				,pay_mth					/* 지급방법 */
+				,pay_init_dt				/* 지급기산일 */
+				,occu_typ					/* 발생유형('10':매입,'20':매출,'30':수납대행,'40':판매수수료,'50':입금) */
+				,ref1						/* 참고1 */
+				,ref2						/* 참고2 */
+				,ref3						/* 참고3 */
+				,ref4						/* 참고4 */
+				,ref5						/* 참고5 */
+				,remark						/* 금액계산로직 기술 */
+				,ins_dtm					/* 입력일시 */
+				,ins_user_id				/* 입력자ID */
+				,mod_dtm					/* 수정일시 */
+				,mod_user_id				/* 수정자ID */
+		  from	tsac_jour_std_info
+		 where	jour_cd = #JOUR_CD#
+	]]>
+	</select>
+
+	<select id="getDdErpTrmsList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT  /* SACERP08100_getDdErpTrmsList_일ERP전송목록조회_하창주 */
+				 yymmdd
+				,agency
+				,trms_item
+				,trms_req_yn
+				,trms_req_dt
+				,remark
+				,trms_yn
+				,trms_dt
+				,req_user_id
+				,ukey_agency_cd
+		  FROM	tsac_dd_erp_trms
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn = '0'
+	]]>
+	</select>
+
+	<select id="getMmErpTrmsList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT  /* SACERP08100_getMmErpTrmsList_월ERP전송목록조회_하창주 */
+				 yymm
+				,agency
+				,trms_item
+				,trms_req_yn
+				,trms_req_dt
+				,remark
+				,trms_yn
+				,trms_dt
+				,req_user_id
+				,ukey_agency_cd
+		  FROM	tsac_mm_erp_trms
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn = '0'
+	]]>
+	</select>
+
+	<select id="getMmTaxTrmsList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT  /* SACERP08100_getMmTaxTrmsList_월부가세전송목록조회_하창주 */
+				 yymm
+			   , agency
+			   , tax_cl
+			   , trms_req_yn
+			   , trms_req_dt
+			   , ukey_agency_cd
+			   , remark
+			   , trms_yn
+			   , trms_dt
+			   , req_user_id
+		  FROM	tsac_mm_tax_trms
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn = '0'
+	]]>
+	</select>
+
+	<select id="getMmTaxErpTrmsList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT  /* SACERP08100_getMmTaxErpTrmsList_월부가세전송목록조회_이강수 */
+				 yymm
+			   , agency
+			   , stl_plc
+			   , tax_cl
+			   , seq
+			   , trms_req_yn
+			   , trms_req_dt
+			   , ukey_agency_cd
+			   , remark
+			   , trms_yn
+			   , trms_dt
+			   , req_user_id
+		  FROM	tsac_mm_tax_erp_trms
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn     = '0'
+	]]>
+	</select>
+
+	<select id="getMmErpTrmsCnt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT  /* SACERP08100_getMmTaxErpTrmsCnt_월ERP전송진행중건수조회_이강수 */
+                yymm
+			  , agency
+   		  FROM	tsac_mm_erp_trms
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn     = 'S'
+		   AND  rownum      = 1
+	]]>
+	</select>
+	
+	<select id="getMmTaxErpTrmsCnt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT  /* SACERP08100_getMmTaxErpTrmsCnt_월부가세전송진행중건수조회_이강수 */
+                yymm
+			  , agency
+			  , stl_plc
+			  , tax_cl
+			  , seq
+   		  FROM	tsac_mm_tax_erp_trms
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn     = 'S'
+		   AND  rownum      = 1
+	]]>
+	</select>
+			
+	
+	<select id="getUkeySubCode" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT  /* SACERP08100_getUkeySubCode_현대백화점 서브코드 조회_이강수 */
+               nvl(comm_cd_val_nm, '0000') ukey_sub_cd
+             , decode(substr(COMM_CD_VAL_DESC,1,1), 'D', substr(COMM_CD_VAL_DESC,1,6)) d_code 
+          FROM tbas_comm_cd_dtl
+         WHERE comm_cd_id = 'ZSAC_C_00110'
+           and COMM_CD_VAL = #deal_co_cd# 
+	]]>
+	</select>
+
+	<update id="updateDdErpTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateDdErpTrms_일ERP전송진행중-하창주 */
+				tsac_dd_erp_trms
+		   SET	 trms_yn		= 'S'
+		   		,remark			= #remark#
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn = '0'
+	]]>
+	</update>
+
+	<update id="updateTsacDdErpTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateTsacDdErpTrms_일ERP전송정보변경-하창주 */
+				tsac_dd_erp_trms
+		   SET	 trms_yn		= #ZCONFIRM#
+		   		,trms_dt		= #ZIFDATE#
+		   		,remark			= #REMARK#
+		   		,amt			= #WRBTR#
+		 WHERE	yymmdd			= #ZBUDAT#
+		 AND	trms_item		= #ZGUBUN#
+		 AND	ukey_agency_cd	= #ZGSBER#
+	]]>
+	</update>
+	
+	<update id="updateTsacDdErpTrms2" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateTsacDdErpTrms2_일ERP전송정보변경-하창주 */
+				tsac_dd_erp_trms
+		   SET	 trms_yn		= '9'
+		   		,remark			= #REMARK#
+		   		,amt			= 0
+		 WHERE	yymmdd			= #DPST_DT#
+		 AND	agency			= #AGENCY#
+		 AND	trms_item		= #TRMS_ITEM#
+	]]>
+	</update>
+	
+	<update id="updateMmErpTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateMmErpTrms_월ERP전송진행중-하창주 */
+				tsac_mm_erp_trms
+		   SET	 trms_yn		= 'S'
+		   		,remark			= #remark#
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn = '0'
+	]]>
+	</update>
+	
+	<update id="updateTsacMmErpTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateTsacMmErpTrms_월ERP전송정보변경-하창주 */
+				tsac_mm_erp_trms
+		   SET	 trms_yn		= #ZCONFIRM#
+		   		,trms_dt		= #ZIFDATE#
+		   		,revert_dt		= #ZBUDAT#
+		   		,remark			= #REMARK#
+		 WHERE	yymm			= substr(#ZBUDAT#, 0, 6)
+		 AND	trms_item		= #ZGUBUN#
+		 AND	ukey_agency_cd	= #ZGSBER#
+	]]>
+	</update>
+	
+	<update id="updateTsacMmErpTrms2" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateTsacMmErpTrms2_월ERP전송정보변경-하창주 */
+				tsac_mm_erp_trms
+		   SET	 trms_yn		= '9'
+		   		,remark			= #REMARK#
+		 WHERE	yymm			= #YYMM#
+		 AND	agency			= #AGENCY#
+		 AND	trms_item		= #TRMS_ITEM#
+	]]>
+	</update>
+
+	<update id="updateMmTaxTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateMmTaxTrms_월부가세전송진행중-하창주 */
+				tsac_mm_tax_trms
+		   SET	 trms_yn		= 'S'
+		   		,remark			= #remark#
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn = '0'
+	]]>
+	</update>
+	
+	<update id="updateTsacMmTaxTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateTsacMmTaxTrms_월부가세전송정보변경-하창주 */
+				tsac_mm_tax_trms
+		   SET	 trms_yn		= #ZCONFIRM#
+		   		,trms_dt		= #ZIFDATE#
+		   		,remark			= #REMARK#
+		 WHERE	yymm			= substr(#ZBUDAT#, 0, 6)
+		 AND	tax_cl		    = #TAX_CL#
+		 AND	ukey_agency_cd	= #ZGSBER#
+	]]>
+	</update>
+
+	<update id="updateTsacMmTaxTrms2" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateTsacMmTaxTrms2_월부가세전송정보변경-하창주 */
+				tsac_mm_tax_trms
+		   SET	 trms_yn		= '9'
+		   		,remark			= #REMARK#
+		 WHERE	yymm			= #YYMM#
+		 AND	agency			= #AGENCY#
+		 AND	tax_cl			= #TAX_CL#
+	]]>
+	</update>
+	
+	<update id="updateMmTaxErpTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateMmTaxErpTrms_월전자세금계산서전송진행중-이강수 */
+				tsac_mm_tax_erp_trms
+		   SET	 trms_yn		= 'S'
+		   		,remark			= #remark#
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn     = '0'
+	]]>
+	</update>
+
+	<update id="updateTsacMmTaxErpTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateTsacMmTaxErpTrms_월전자세금계산서전송정보변경-이강수 */
+				tsac_mm_tax_erp_trms
+		   SET	 trms_yn		= #ZCONFIRM#
+		   		,trms_dt		= #ZIFDATE#
+		   		,remark			= #REMARK#
+		 WHERE	yymm			= #YYMM#
+		 AND	agency    	    = #AGENCY#
+		 AND	stl_plc    	    = #STL_PLC#
+		 AND	seq		        = #SEQ#
+	]]>
+	</update>
+
+	<update id="updateTsacMmTaxErpTrms2" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08100_updateTsacMmTaxErpTrms2_월전자세금계산서전송정보변경-이강수 */
+				tsac_mm_tax_erp_trms
+		   SET	 trms_yn		= '9'
+		   		,remark			= #REMARK#
+		 WHERE	yymm			= #YYMM#
+		 AND	agency    	    = #AGENCY#
+		 AND	stl_plc    	    = #STL_PLC#
+		 AND	seq   		    = #SEQ#
+	]]>
+	</update>
+
+	<insert id="insertZift0003" parameterClass="hmap">
+	<![CDATA[
+		INSERT INTO ZIFT0003 (	/* SACERP08100_insertZift0003_전표마스터Head추가_하창주 */
+				 mandt			
+				,bukrs			
+				,zbudat			
+				,zgsber			
+				,zgubun			
+				,zifdate		
+				,zperiod		
+				,ztrusr			
+				,zcnt			
+				,zconfirm		
+				,zconfdat		
+				,zconfusr		
+				,zdele			
+				,errlog
+				,tax_cl
+		) VALUES (
+				 #MANDT#
+				,#BUKRS#
+				,#ZBUDAT#
+				,#ZGSBER#
+				,#ZGUBUN#
+				,#ZIFDATE#
+				,#ZPERIOD#
+				,#ZTRUSR#
+				,#ZCNT#
+				,#ZCONFIRM#
+				,#ZCONFDAT#
+				,#ZCONFUSR#
+				,'N'
+				,#ERRLOG#
+				,#TAX_CL#
+			)
+	]]>
+	</insert>
+
+	<insert id="insertZift0004" parameterClass="hmap">
+	<![CDATA[
+        INSERT INTO ZIFT0004 (	/* SACERP08100_insertZift0004_전표마스터Item추가_하창주 */
+				 mandt						/* 클라이언트(고정값 '500') */
+				,bukrs						/* 회사코드(고정값 '1000') */
+				,zbudat						/* 귀속일자 */
+				,zgsber						/* 영업에서 관리하는 영업센터 U.Key Code 6자리 */
+				,zgubun						/* 전송구분코드 */
+				,zifdate					/* 전송일시 */
+				,zitem						/* 전표생성단위 */
+				,blart						/* 전표유형 */
+				,budat						/* 전표기장일 */
+				,wrbtr						/* 차변합계금액 */
+				,zconfirm					/* I/F시 '0'으로 전송.('0':미수행,'1':에러,'2':성공,'3':확정에러,'4':확정) */
+				,errlog						/* 에러메시지 */
+				,bldat						/* 증빙일 */
+				,waers						/* 통화 */
+				,bktxt						/* 적요(전송구분코드+코드명) */
+				,belnr						/* ERP 생성 전표번호 */
+				,acc_create_dt				/* 전표생성일 */
+				,zbelnr						/* ERP 역 전표번호 */
+				,occu_typ					/* 발생유형('10':매입,'20':매출,'30':수납대행,'40':판매수수료,'50':입금) */
+				,acc_plc					/* 정산처 */
+				,card_co					/* 카드사 */
+				,acc_mm						/* 정산월 */
+				,fix_dt						/* 확정일 */
+				,cancel_yn					/* 전표취소여부 */
+				
+		) VALUES (
+				 #MANDT#
+				,#BUKRS#
+				,#ZBUDAT#
+				,#ZGSBER#
+				,#ZGUBUN#
+				,#ZIFDATE#
+				,#ZITEM#
+				,#BLART#
+				,#BUDAT#
+				,#WRBTR#
+				,#ZCONFIRM#
+				,#ERRLOG#
+				,#BLDAT#
+				,#WAERS#
+				,#BKTXT#
+				,#BELNR#
+				,#ACC_CREATE_DT#
+				,#ZBELNR#
+				,#OCCU_TYP#
+				,#ACC_PLC#
+				,#CARD_CO#
+				,#ACC_MM#
+				,#FIX_DT#
+				,#CANCEL_YN#
+			)
+	]]>
+	</insert>
+
+	<insert id="insertZift0005" parameterClass="hmap">
+	<![CDATA[
+        INSERT INTO ZIFT0005 (	/* SACERP08100_insertZift0005_전표마스터Sub_Item추가_하창주 */
+				 mandt						/* 클라이언트(고정값 '500') */
+				,bukrs						/* 회사코드(고정값 '1000') */
+				,zbudat						/* 귀속일자 */
+				,zgsber						/* 영업에서 관리하는 영업센터 U.Key Code 6자리 */
+				,zgubun						/* 전송구분코드 */
+				,zifdate					/* 전송일시 */
+				,zitem						/* 전표생성단위 */
+				,zitemseq					/* 전표 Item No */
+				,bschl						/* 전기키 */
+				,umskz						/* 특별GL */
+				,regno						/* 정산처코드 */
+				,hkont						/* GL계정(매출부가세(영업)계정도 Item으로 생성) */
+				,wrbtr						/* 부가세계정시 세액 */
+				,zgcode						/* 직영점 U.Key 코드 4자리 값 */
+				,bupla						/* 영업센터, 직영점 사업장코드 */
+				,kostl						/* 코스트센터 */
+				,zterm						/* 지급조건 */
+				,zlspr						/* 지급보류키(A) */
+				,zlsch						/* 지급방법 */
+				,zfbdt						/* 지급기산일 */
+				,bvtyp						/* 사용미정 */
+				,sgtxt						/* 적요(Text) */
+				,zrefer1					/* 참고1 */
+				,zrefer2					/* 참고2 */
+				,zrefer3					/* 참고3 */
+				,zrefer4					/* 참고4 */
+				,zrefer5					/* 참고5 */
+				,waers						/* 통화 */
+				,gsber						/* 사업영역 */
+				,secco						/* 개인인경우 */
+				,dc_cat						/* 차대구분 */
+				,errlog
+		) VALUES (
+				 #MANDT#
+				,#BUKRS#
+				,#ZBUDAT#
+				,#ZGSBER#
+				,#ZGUBUN#
+				,#ZIFDATE#
+				,#ZITEM#
+				,#ZITEMSEQ#
+				,#BSCHL#
+				,#UMSKZ#
+				,#REGNO#
+				,#HKONT#
+				,#WRBTR#
+				,#ZGCODE#
+				,#BUPLA#
+				,#KOSTL#
+				,#ZTERM#
+				,#ZLSPR#
+				,#ZLSCH#
+				,#ZFBDT#
+				,#BVTYP#
+				,#SGTXT#
+				,#XREF1#
+				,#XREF2#
+				,#XREF3#
+				,#XREF4#
+				,#XREF5#
+				,#WAERS#
+				,#GSBER#
+				,#SECCO#
+				,#DC_CAT#
+				,#ERRLOG#
+			)
+	]]>
+	</insert>
+
+	<insert id="insertZift0006" parameterClass="hmap">
+	<![CDATA[
+        INSERT INTO ZIFT0006 (	/* SACERP08100_insertZift0006_부가세전송테이블추가_하창주 */
+				 mandt				/* 클라이언트(고정값 '500') */
+				,bukrs				/* 회사코드(고정값 '1000') */
+				,zbudat				/* 귀속일자 */
+				,zgsber				/* 영업에서 관리하는 영업센터 U.Key Code 6자리 */
+				,zgubun				/* 전송구분코드 */
+				,zifdate			/* 전송일시 */
+				,zitem				/* 전표생성단위 */
+				,ztaxdat			/* 세금계산서일자(해당월 말일로고정) */
+				,mwskz				/* 부가세코드('11'매출세금계산서발행(사업자),'12'매출세금계산서발행(개인),'15'매출세금계산서미발행(개인),'41'과세매입일반 */
+				,zgcode				/* 직영점코드(UKey 코드값 4자리) */
+				,bupla				/* 사업장(ERP에서 생성) */
+				,taxgu				/* 원천코드('IA':매출, 'IV':매입) */
+				,name1				/* 부가세코드'11','12','41'은 상호명또는이름, '15'는 공백으로 채움 */
+				,hwbas				/* 공급가액(단 부가세코드가 '15'인경우에는 월 합계금액) */
+				,hwste				/* 세액(단 부가세코드가 '15'인경우에는 월 합계금액) */
+				,ztotamt			/* 합계금액(단 부가세코드가 '15'인경우에는 월 합계금액) */
+				,stcd1				/* 주민등록번호(부가세코드'11','15','41'은 공백, '12' 는 필수) */
+				,stcd2				/* 사업자번호(부가세코드'12','15'은 공백, '11','41' 은 필수) */
+				,j_1kfrepre			/* 대표자명(부가세코드'12','15'은 공백, '11','41' 은 필수) */
+				,ort01				/* 주소(부가세코드'15'는 공백, '11','12', '41' 은 필수) */
+				,j_1kftbus			/* 업태(부가세코드'12','15'은 공백, '11','41' 은 필수) */
+				,j_1kftind			/* 업종(부가세코드'12','15'은 공백, '11','41' 은 필수) */
+				,zarktx1			/* 품목텍스트(단말기, 판매수수료 등 TEXT) */
+				,ztaxcount			/* 세금계산서매수(부가세코드'11','12','41'은 공백, '15':총개인미발행거래수) */
+				,zrefer1			/* 참고1 */
+				,zrefer2			/* 참고2 */
+				,zrefer3			/* 참고3 */
+				,zrefer4			/* 참고4 */
+				,zrefer5			/* 참고5 */
+				,zrefer6			/* 참고6 */
+				,zrefer7			/* 참고7 */
+				,zrefer8			/* 참고8 */
+				,zrefer9			/* 참고9 */
+				,zrefer10			/* 참고10 */
+				,zconfirm			/* I/F시 '0'으로 전송. Value값('0'-미수행, '1'-에러, '2'-성공, '3'-확정에러, '4'-확정) */
+				,errlog				/* 에러메시지 */
+				,zdele				/* 삭제표시(확정이후 ERP부가세신고테이블 삭제인경우 사용) */
+				,ztaxno				/* 세금계산서번호(ERP생성번호->확정시 전표유형'ZS'의 번호범위로 자동채번) */
+				,gjahr				/* 거래처코드 */
+				,deal_co_cd
+		) VALUES (
+				 #MANDT#
+				,#BUKRS#
+				,#ZBUDAT#
+				,#ZGSBER#
+				,#ZGUBUN#
+				,#ZIFDATE#
+				,#ZITEM#
+				,#ZTAXDAT#
+				,#MWSKZ#
+				,#ZGCODE#
+				,#BUPLA#
+				,#TAXGU#
+				,#NAME1#
+				,#HWBAS#
+				,#HWSTE#
+				,#ZTOTAMT#
+				,#STCD1#
+				,#STCD2#
+				,#J_1KFREPRE#
+				,#ORT01#
+				,#J_1KFTBUS#
+				,#J_1KFTIND#
+				,#ZARKTX1#
+				,#ZTAXCOUNT#
+				,#ZREFER1#
+				,#ZREFER2#
+				,#ZREFER3#
+				,#ZREFER4#
+				,#ZREFER5#
+				,#ZREFER6#
+				,#ZREFER7#
+				,#ZREFER8#
+				,#ZREFER9#
+				,#ZREFER0#
+				,#ZCONFIRM#
+				,#ERRLOG#
+				,#ZDELE#
+				,#ZTAXNO#
+				,#GJAHR#
+				,#DEAL_CO_CD#
+			)
+	]]>
+	</insert>
+
+</sqlMap>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASBAR00100">
+	<insert id="insertBarCode" parameterClass="map" ><![CDATA[INSERT 
+  INTO TBAS_BARCODE_LST 
+       ( 
+           BARCODE_NO,
+           BOX_CNT,
+           DEL_YN,
+           UPD_CNT,
+           INS_DTM,
+           INS_USER_ID,
+           MOD_DTM,
+           MOD_USER_ID,
+           PROC_GB 
+       ) 
+       VALUES 
+       (
+           #BARCODE_NO# ,
+           #BOX_CNT# ,
+           'N' , 
+           0,
+           TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') ,
+           #onlineContext.userInfo.loginId# ,
+           TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') ,
+           #onlineContext.userInfo.loginId# ,
+           #PROC_GB#
+       )]]>
+	</insert>
+	<select id="getBarCodeNo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT #PROC_GB# AS PROC_GB,
+]]>	   <isEqual property="S_GB" compareValue="I">
+<![CDATA[           #PROC_GB#||LPAD(TBAS_BARCODE_I_SEQ.nextval,7,0)
+]]>       </isEqual> 
+<![CDATA[]]>       <isEqual property="S_GB" compareValue="R">
+<![CDATA[           #PROC_GB#||LPAD(TBAS_BARCODE_R_SEQ.nextval,7,0)
+]]>       </isEqual> 
+<![CDATA[]]>       <isEqual property="S_GB" compareValue="A">
+<![CDATA[           #PROC_GB#||LPAD(TBAS_BARCODE_A_SEQ.nextval,7,0)
+]]>       </isEqual> 
+<![CDATA[]]>       <isEqual property="S_GB" compareValue="D">
+<![CDATA[           #PROC_GB#||LPAD(TBAS_BARCODE_D_SEQ.nextval,7,0)
+]]>       </isEqual> AS BARCODE_NO
+<![CDATA[  FROM DUAL
+ ]]>
+	</select>
+</sqlMap>

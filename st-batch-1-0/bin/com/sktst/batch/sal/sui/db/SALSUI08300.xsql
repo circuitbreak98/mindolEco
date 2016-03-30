@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSUI08300">
+	<select id="getUserCount" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT  /* SALSUI08300_getUserCount_수납담당자갯수 정보 취득_김연석_김연석 */
+            Count(*)        as USER_CNT
+      FROM  TBAS_USER_MGMT
+     WHERE  u_key_id  = #U_KEY_ID#
+	]]>
+	</select>
+	<select id="getUserInfo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT  /* SALSUI08300_getUserInfo_수납담당자 정보 취득_김연석_김연석 */
+            user_id
+         ,  org_area
+      FROM  TBAS_USER_MGMT
+     WHERE  u_key_id  = #U_KEY_ID#
+	]]>
+	</select>
+	<insert id="addSktCharge" parameterClass="hmap">
+	<![CDATA[
+        INSERT  /* SALSUI08300_addSktCharge_SKT수납대상 I/F 자료 저장_김연석_김연석 */
+                INTO TSAL_SKT_CHARGE
+            (
+                pay_dtm
+             ,  pay_plc
+             ,  svc_mgmt_num
+             ,  pay_seq
+             ,  pay_chgrg_id
+             ,  cust_nm
+             ,  svc_num
+             ,  pay_cl
+             ,  pay_obj_amt
+             ,  stl_plc
+             ,  pay_req_plc
+             ,  sl_cl
+             ,  settl_way
+             ,  rev_itm_cd
+             ,  rev_itm_nm
+             ,  cash_pay_amt
+             ,  prxpay_amt
+             ,  mer_bond_pay_amt
+             ,  cash_dpst_fix_yn
+             ,  cash_dpst_fix_dt
+             ,  mer_bond_dpst_fix_yn
+             ,  mer_bond_dpst_fix_dt
+             ,  dt_cls_yn
+             ,  rmks
+             ,  del_yn
+             ,  upd_cnt
+             ,  ins_user_id
+             ,  ins_dtm
+             ,  mod_user_id
+             ,  mod_dtm
+            )
+            VALUES
+            (
+                #PAY_DTM#
+             ,  #PAY_PLC#
+             ,  #SVC_MGMT_NUM#
+			  , NVL((SELECT MAX(PAY_SEQ)+1
+				       FROM TSAL_SKT_CHARGE
+				      WHERE PAY_DTM      = #PAY_DTM#
+				        AND PAY_PLC      = #PAY_PLC#
+				        AND SVC_MGMT_NUM = #SVC_MGMT_NUM#), 1)
+             ,  #PAY_CHGRG_ID#
+             ,  #CUST_NM#
+             ,  #SVC_NUM#
+             ,  #PAY_CL#
+             ,  #PAY_OBJ_AMT#
+             ,  #STL_PLC#
+             ,  #PAY_REQ_PLC#
+             ,  #SL_CL#
+             ,  #SETTL_WAY#
+             ,  #REV_ITM_CD#
+             ,  #REV_ITM_NM#
+             ,  #CASH_PAY_AMT#
+             ,  #PRXPAY_AMT#
+             ,  #MER_BOND_PAY_AMT#
+             ,  'N'
+             ,  ''
+             ,  'N'
+             ,  ''
+             ,  'N'
+             ,  #RMKS#
+             ,  'N'
+             ,   1
+             ,  #INS_USER_ID#
+             ,  #INS_DTM#
+             ,  #INS_USER_ID#
+             ,  #INS_DTM#
+            )
+	]]>
+	</insert>
+	<insert id="addScrbfeeChgIf" parameterClass="hmap">
+	<![CDATA[
+        INSERT  /* SALSUI08300_addScrbfeeChgIf_가입비분납전환 I/F 자료 저장_김연석_김연석 */
+                INTO TSAL_SCRBFEE_CHG_IF
+            (
+                op_dt
+              , op_tm
+              , seq
+              , if_rec_typ
+              , ukey_agency_cd
+              , ukey_sub_cd
+              , ukey_channel_cd
+              , ukey_channel_sub_cd
+              , sale_chg_plc
+              , proc_dt
+              , proc_tm
+              , cust_nm
+              , svc_mgmt_num
+              , svc_num
+              , proc_id
+              , proc_chgrg_id
+              , svc_cd
+              , sl_cl
+              , gnrl_sale_no
+              , ps_apnd_yn
+              , error_cl
+              , rmks
+              , del_yn
+              , upd_cnt
+              , ins_user_id
+              , ins_dtm
+              , mod_user_id
+              , mod_dtm
+            )
+            VALUES
+            (
+				#OP_DT#
+			  , #OP_TM#
+			  , #SEQ#
+		      , #IF_REC_TYP#
+              , #UKEY_AGENCY_CD#
+              , #UKEY_SUB_CD#
+              , #UKEY_CHANNEL_CD#
+              , #UKEY_CHANNEL_SUB_CD#
+              , #SALE_CHG_PLC#
+              , #PROC_DT#
+              , #PROC_TM#
+              , #CUST_NM#
+              , #SVC_MGMT_NUM#
+              , #SVC_NUM#
+              , #PROC_ID#
+              , #PROC_CHGRG_ID#
+              , #SVC_CD#
+              , #SL_CL#
+              , #GNRL_SALE_NO#
+              , 'N'
+              , ''
+              , ''
+              , #DEL_YN#
+              , #UPD_CNT#
+			  , #USER_ID#
+			  , #OP_DT# || #OP_TM#
+			  , #USER_ID#
+			  , #OP_DT# || #OP_TM#
+            )
+	]]>
+	</insert>
+	<insert id="addSktChargeIf" parameterClass="hmap">
+	<![CDATA[
+        INSERT  /* SALSUI08300_addSktChargeIf_SKT수납대상 I/F 자료 저장_김연석_김연석 */
+                INTO TSAL_SKT_CHARGE_IF
+            (
+                op_dt
+              , op_tm
+              , seq
+              , if_rec_typ
+              , ukey_agency_cd
+              , ukey_sub_cd
+              , ukey_channel_cd
+              , ukey_channel_sub_cd
+              , pay_plc
+              , pay_req_plc
+              , svc_mgmt_num
+              , proc_dt
+              , proc_tm
+              , pay_cl
+              , settl_way
+              , wckt_deal_typ
+              , cust_nm
+              , svc_num
+              , proc_id
+              , proc_chgrg_id
+              , svc_cd
+              , rev_itm_cd
+              , rev_itm_nm
+              , pay_obj_amt
+              , ps_data_typ
+              , sl_cl
+              , sl_net_cd
+              , ps_apnd_yn
+              , error_cl
+              , rmks
+              , del_yn
+              , upd_cnt
+              , ins_user_id
+              , ins_dtm
+              , mod_user_id
+              , mod_dtm
+            )
+            VALUES
+            (
+				#OP_DT#
+			  , #OP_TM#
+			  , #SEQ#
+              , #IF_REC_TYP#
+              , #UKEY_AGENCY_CD#
+              , #UKEY_SUB_CD#
+              , #UKEY_CHANNEL_CD#
+              , #UKEY_CHANNEL_SUB_CD#
+              , #PAY_PLC#
+              , #PAY_REQ_PLC#
+              , #SVC_MGMT_NUM#
+              , #PROC_DT#
+              , #PROC_TM#
+              , #PAY_CL#
+              , #SETTL_WAY#
+              , #WCKT_DEAL_TYP#
+              , #CUST_NM#
+              , #SVC_NUM#
+              , #PROC_ID#
+              , #PROC_CHGRG_ID#
+              , #SVC_CD#
+              , #REV_ITM_CD#
+              , #REV_ITM_NM#
+              , #PAY_OBJ_AMT#
+              , #PS_DATA_TYP#
+              , #SL_CL#
+              , #SL_NET_CD#
+              , #PS_APND_YN#
+              , #ERROR_CL#
+              , #RMKS#
+              , #DEL_YN#
+              , #UPD_CNT#
+			  , #USER_ID#
+			  , #OP_DT# || #OP_TM#
+			  , #USER_ID#
+			  , #OP_DT# || #OP_TM#
+            )
+	]]>
+	</insert>
+	<select id="getChargeChk" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT  /* SALSUI08300_getChargeChk_처리여부Check_김연석_김연석 */
+            proc_dt
+         ,  proc_tm
+         ,  record_cnt
+      FROM  TSAL_CHARGE_IF_CHK
+     WHERE  if_sam_file   = #IF_SAM_FILE#
+	]]>
+	</select>
+	<insert id="addChargeChk" parameterClass="hmap">
+	<![CDATA[
+        INSERT  /* SALSUI08300_addChargeChk_작업결과저장_김연석_김연석 */
+                INTO TSAL_CHARGE_IF_CHK
+            (
+                 if_sam_file
+             ,   proc_dt
+             ,   proc_tm
+             ,   record_cnt
+             ,   if_insert_cnt
+             ,   charge_insert_cnt
+             ,   scrb_insert_cnt
+             ,   svc_skip_cnt
+             ,   card_skip_cnt
+             ,   invalid_skip_cnt
+             ,   prprc_skip_cnt
+             ,   pay_plc_skip_cnt
+             ,   user_id_skip_cnt
+             ,   pay_cl_skip_cnt
+             ,   del_yn
+             ,   upd_cnt
+             ,   ins_user_id
+             ,   ins_dtm
+             ,   mod_user_id
+             ,   mod_dtm
+            )
+            VALUES
+            (
+                #IF_SAM_FILE#
+             ,  #PROC_DT#
+             ,  #PROC_TM#
+             ,  #RECORD_CNT#
+             ,  #IF_INSERT_CNT#
+             ,  #CHARGE_INSERT_CNT#
+             ,  #SCRB_INSERT_CNT#
+             ,  #SVC_SKIP_CNT#
+             ,  #CARD_SKIP_CNT#
+             ,  #INVALID_SKIP_CNT#
+             ,  #PRPRC_SKIP_CNT#
+             ,  #PAY_PLC_SKIP_CNT#
+             ,  #USER_ID_SKIP_CNT#
+             ,  #PAY_CL_SKIP_CNT#
+             ,  'N'
+             ,   1
+             ,  #INS_USER_ID#
+             ,  #INS_DTM#
+             ,  #INS_USER_ID#
+             ,  #INS_DTM#
+            )
+	]]>
+	</insert>
+	<procedure id="call_SP_SALDEALINFO" resultClass="java.util.Map" parameterClass="hmap" >
+	<![CDATA[
+	{ call SP_SALDEALINFO /*+ call_SP_SALDEALINFO_김연석_김연석 */
+	( #ov_ErrorCl,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_ErrorMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_SalePLC,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_StlPLC,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_DisPLC,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_DealCl1,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_DealCl2,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_SaleStopYN,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_PayStopYn,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_SlCl,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_SlNetCd,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #iv_SaleDtm,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#
+    , #iv_ProcDtm,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#
+    , #iv_AgencyCd,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#
+    , #iv_SubCd,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#
+    , #iv_ChannelCd,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN# ) }]]>
+	</procedure>
+</sqlMap>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDSM08110">
+	<delete id="saveDelProdSvcHstIf" parameterClass="hmap">
+	<![CDATA[
+        TRUNCATE TABLE tdis_prod_svc_hst_if
+	]]>
+	</delete>
+    <insert id="saveProdSvcHstIf" parameterClass="hmap">
+	<![CDATA[
+        INSERT INTO tdis_prod_svc_hst_if
+            (
+                op_dt,
+                op_tm,
+                seq,
+                hld_plc_id,
+                svc_plc_id,
+                prod_cd,
+                ser_num,
+                svc_hst_yn,
+                svc_dt,
+                ukey_org_cd,
+                ukey_sub_org_cd,
+                ukey_svc_org_cd,
+                ukey_svc_sub_org_cd,
+                del_yn,
+                upd_cnt,
+                ins_dtm,
+                ins_user_id,
+                mod_dtm,
+                mod_user_id,
+                if_cl
+            )
+            VALUES
+            (
+				TO_CHAR(SYSDATE, 'YYYYMMDD'),
+				TO_CHAR(SYSDATE, 'HH24MISS'),
+				NVL((SELECT MAX(SEQ)+1 FROM tdis_prod_svc_hst_if 
+				      WHERE op_dt = TO_CHAR(SYSDATE, 'YYYYMMDD') 
+				        AND op_tm = TO_CHAR(SYSDATE, 'HH24MISS')), 1),
+                (SELECT hld_plc_id
+                   FROM tdis_dis
+                  WHERE prod_cd = TRIM(#PROD_CD#)  
+                    AND ser_num = TRIM(#SER_NUM#)
+                ),
+		        (SELECT DEAL_CO_CD
+		           FROM tbas_deal_co_mgmt c
+		          WHERE c.ukey_agency_cd = TRIM(#UKEY_SVC_ORG_CD#)
+		            AND c.hseq_no        = (select max(hseq_no)
+		                                      from tbas_deal_co_mgmt
+		                                     where deal_co_cd = c.deal_co_cd)
+		            and  c.ukey_sub_cd    = NVL(TRIM(#UKEY_SVC_SUB_ORG_CD#), '0')                 
+				),
+				TRIM(#PROD_CD#),
+				TRIM(#SER_NUM#),
+				TRIM(#SVC_HST_YN#),
+				TRIM(#SVC_DT#),
+				TRIM(#UKEY_ORG_CD#),
+				TRIM(#UKEY_SUB_ORG_CD#),
+				TRIM(#UKEY_SVC_ORG_CD#),
+				TRIM(#UKEY_SVC_SUB_ORG_CD#),
+				'N',
+				1,
+				TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+				#USER_ID#,
+				TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+				#USER_ID#,
+				'96'
+            )
+	]]>
+	</insert>
+</sqlMap>

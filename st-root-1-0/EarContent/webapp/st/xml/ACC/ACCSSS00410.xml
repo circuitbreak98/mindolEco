@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="570" Id="ACCSSS00410" Left="8" OnLoadCompleted="ACCSSS00410_OnLoadCompleted" PidAttrib="7" Title="SKT수수료&#32;공제정산등록" Top="8" Ver="1.0" Width="800" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_amt">
+				<Contents>
+					<colinfo id="stl_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="new_allot_pay" size="256" summ="default" type="STRING"/>
+					<colinfo id="chg_allot_pay" size="256" summ="default" type="STRING"/>
+					<colinfo id="new_allot_rpay" size="256" summ="default" type="STRING"/>
+					<colinfo id="chg_allot_rpay" size="256" summ="default" type="STRING"/>
+					<colinfo id="usim_allot_pay" size="256" summ="default" type="STRING"/>
+					<colinfo id="usim_allot_rpay" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_fix">
+				<Contents>
+					<colinfo id="PR_FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CMMS_FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TOT_FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEDT_FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="EXC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS_FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS_TOT_FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS_DEDT_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_copy"></Dataset>
+			<Dataset DataSetType="Dataset" Id="Dataset0">
+				<Contents>
+					<colinfo id="column0" size="256" summ="default" type="STRING"/>
+					<colinfo id="column1" size="256" summ="default" type="STRING"/>
+					<colinfo id="column2" size="256" summ="default" type="STRING"/>
+					<colinfo id="column3" size="256" summ="default" type="STRING"/>
+					<colinfo id="column4" size="256" summ="default" type="STRING"/>
+					<colinfo id="column5" size="256" summ="default" type="STRING"/>
+					<colinfo id="column6" size="256" summ="default" type="STRING"/>
+					<record>
+						<column0></column0>
+						<column1></column1>
+						<column2></column2>
+						<column3></column3>
+						<column4></column4>
+						<column5></column5>
+						<column6></column6>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_conditionDtl">
+				<Contents>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="STL_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="U_KEY_TRMS_DTM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ukey">
+				<Contents>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEDT_ITM_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEDT_ITM_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="U_KEY_TRMS_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<colinfo id="UKEY_AGENCY_CD" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="Dataset0" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="434" Enable="FALSE" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="127" Id="grd_fix1" InputPanel="FALSE" Left="9" LineColor="user33" MinWidth="100" OnChar="grd_usim_OnChar" Right="254" RowHeight="21" Style="sty_Grid" TabOrder="10" TabStop="FALSE" Top="307" UseDBuff="true" UsePopupMenu="true" UseSelColor="FALSE" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="245">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="150"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="항목명"/>
+					</head>
+					<body>
+						<cell align="left" col="0" display="normal" text="SKT장려금&#32;확정금액"/>
+						<cell align="left" col="0" display="normal" row="1" text="SKT수수료&#32;확정금액"/>
+						<cell align="left" col="0" display="normal" row="2" text="SKT수수료&#32;장려금&#32;및&#32;수수료&#32;총&#32;확정금액"/>
+						<cell col="0" display="text" row="3" text="SKT&#32;수수료공제&#32;확정금액"/>
+						<cell col="0" display="text" row="4" text="공제&#32;후&#32;입금금액"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Border="RaisedEdge" Height="39" Id="div_search" Left="10" Style="sty_div_dataview" TabOrder="4" Text="Div0" Top="10" Width="780">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static0" Left="225" Style="sty_lb_dataview" TabOrder="1" Text="정산월" Top="7" VAlign="Middle" Width="68"></Static>
+				<Edit BindDataset="ds_conditionDtl" Border="Flat" Column="POS_AGENCY_NM" Enable="FALSE" Height="20" Id="edt_agencyNm" Left="94" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="116"></Edit>
+				<MaskEdit BindDataset="ds_conditionDtl" Border="Flat" Column="ACC_MTH" Enable="FALSE" Height="20" Id="cal_acc_mth" Left="297" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Type="STRING" Width="116"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static1" Left="13" Style="sty_lb_dataview" TabOrder="4" Text="대리점" Top="7" VAlign="Middle" Width="68"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_stlNm" Left="506" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Width="116"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="425" Style="sty_lb_dataview" TabOrder="6" Text="정산처" Top="7" VAlign="Middle" Width="68"></Static>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="SKT수수료&#32;공제&#32;정산내역" Top="59" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="660" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="6" Text="저장" Top="535" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="724" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="7" Text="닫기" Top="535" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="8" Text="SKT수수료&#32;공제&#32;확정내역" Top="280" Width="192"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_fix" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="434" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="127" Id="grd_fix2" InputPanel="FALSE" Left="250" LineColor="user33" MinWidth="100" Right="790" RowHeight="21" Style="sty_Grid" TabOrder="9" TabStop="FALSE" Top="307" UseDBuff="true" UsePopupMenu="true" UseSelColor="FALSE" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="540">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="150"/>
+						<col width="300"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="확정금액"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="비고"/>
+					</head>
+					<body>
+						<cell align="right" bkcolor="user32" col="0" colid="PR_FIX_AMT" display="number"/>
+						<cell align="left" col="1" display="normal"/>
+						<cell align="right" bkcolor="user32" col="0" colid="CMMS_FIX_AMT" display="number" row="1"/>
+						<cell align="left" col="1" display="normal" row="1"/>
+						<cell bkcolor="user32" col="0" colid="TOT_FIX_AMT" display="number" row="2"/>
+						<cell align="left" col="1" colid="RMKS_FIX_AMT" display="normal" edit="normal" row="2"/>
+						<cell bkcolor="user32" col="0" colid="DEDT_FIX_AMT" display="number" row="3"/>
+						<cell align="left" col="1" colid="RMKS_TOT_FIX_AMT" display="normal" edit="normal" row="3"/>
+						<cell bkcolor="user32" col="0" colid="EXC_AMT" display="number" row="4"/>
+						<cell align="left" col="1" colid="RMKS_DEDT_DPST_AMT" display="normal" edit="normal" row="4"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="770" OnClick="btn_excel_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Top="57" Width="19"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_excel2" ImageID="btn_i_exceldown_w" Left="767" OnClick="btn_excel2_OnClick" TabOrder="3" Text="Button1" ToolTipText="Excel&#32;Download" Top="280" Width="19"></Button>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_ukey" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="275" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="193" Id="grd_ukey" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnChar="grd_ukey_OnChar" Right="790" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="FALSE" Top="82" UseDBuff="true" UsePopupMenu="true" UseSelColor="FALSE" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="780">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="180"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="240"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="항목"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="U.Key금액"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="정산금액"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="확정금액"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="비고"/>
+					</head>
+					<body>
+						<cell align="left" bkcolor="user32" col="0" colid="DEDT_ITM_NM" display="text"/>
+						<cell align="right" bkcolor="user32" col="1" colid="U_KEY_TRMS_AMT" display="number"/>
+						<cell align="right" col="2" colid="ACC_AMT" display="number" edit="number"/>
+						<cell align="right" bkcolor="user32" col="3" colid="FIX_AMT" display="number"/>
+						<cell align="left" col="4" colid="RMKS" display="text" edit="normal"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" display="text" font="돋움,9,Bold" text="계"/>
+						<cell align="right" bkcolor="user37" col="1" color="user38" display="number" expr='sum(&quot;U_KEY_TRMS_AMT&quot;)' font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="2" color="user38" display="number" expr='sum(&quot;ACC_AMT&quot;)' font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="3" color="user38" display="number" expr='sum(&quot;FIX_AMT&quot;)' font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="4" color="user38" display="text" font="돋움,9,Bold"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="11" LeftMargin="15" Style="sty_img_tit" TabOrder="11" Text="비고" Top="438" Width="192"></Image>
+		<Div Border="Raised" Height="66" Id="Div1" Left="9" Style="sty_div_input" TabOrder="12" Text="Div1" Top="463" Width="780">
+			<Contents>
+				<TextArea BindDataset="ds_fix" Border="Flat" Column="RMKS" Height="46" Id="TextArea0" Left="8" Style="sty_ipt_form" TabOrder="1" Top="7" VScroll="TRUE" Width="760"></TextArea>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : ACCSSS00410
+* 업무명      : 정산 - 용역매출정산  
+* 프로그램명  : SKT수수료공제 정산
+--------------------------------------------------------------------------------
+* 작성자      : 전현주 
+* 작성일      : 2009.07.05
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 전역변수 
+//==============================================================================
+var PAY_AMT	 = 0;		//장려금확정금액 
+var COMM_TOT = 0;		//수수료확정금액 
+
+var SUMM_COMM_PR = 0; 	//A : 장려금+수수료 
+var REMAIN 	= 0;		//B : 매입채무개통여신잔액
+var DEDT_PRCH = 0;		//C : 매입채무개통여신공제 
+var SUMM_ETC = 0; 		//D : 기타공제 합계 
+var SUM_COMM_DEDT = 0;	//E : 공제합계 
+
+var FV_S_FLAG = "";
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ACCSSS00410_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	f_init();
+}
+
+/*******************************************************************************
+ * @description    : 폼 초기화 
+*******************************************************************************/
+function f_init()
+{
+	div_search.edt_agencyNm.Text = sInDealCoNm;
+	div_search.cal_acc_mth.Value = sInAccMth;
+	div_search.edt_stlNm.Text = sInStlPlcNm;
+	FV_S_FLAG = sFlag;
+	
+	if(ds_conditionDtl.GetRowCount() <= 0){
+		ds_conditionDtl.AddRow();
+	}
+	
+	if(sInErpTrmsDtm != ""){
+		grd_ukey.Editable = "false";
+		grd_fix2.Editable = "false";
+		btn_save.Enable = false;
+	}
+	
+	ds_conditionDtl.SetColumn(0, "ACC_MTH", sInAccMth);
+	ds_conditionDtl.SetColumn(0, "DEAL_CO_CD", sInDealCoCd);
+	ds_conditionDtl.SetColumn(0, "STL_PLC", sInStlPlc);
+	ds_conditionDtl.SetColumn(0, "U_KEY_TRMS_DTM", sInUkeyTrmsDt);
+	
+	if(FV_S_FLAG =="I"){
+		
+		f_setSktDedtIfAmt();
+	
+	}else if(FV_S_FLAG =="U"){
+		
+		f_setSktDedtFixAmt();
+	}
+}
+
+
+/*******************************************************************************
+ * @description : skt 수수료 공제 i/f 조회 
+ ******************************************************************************/
+function f_setSktDedtIfAmt(){
+
+	var sSvcID 	= "svcSktDedtIf";
+	var sInDs  	= "nc_input_fieldDs=ds_conditionDtl";
+	var sOutDs 	= "ds_ukey=rs_sktDedtIf ds_fix=rs_fix";   
+	var sArg	= "sktst.acc.SSS#getDedtIfDetailList";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+/*******************************************************************************
+ * @description : skt 수수료 공제 월정산 조회
+ ******************************************************************************/
+function f_setSktDedtFixAmt(){
+
+	var sSvcID 	= "svcSktDedtFix";
+	var sInDs  	= "nc_input_fieldDs=ds_conditionDtl";
+	var sOutDs 	= "ds_ukey=rs_sktDedtIf ds_fix=rs_fix";   
+	var sArg	= "sktst.acc.SSS#getDedtMDetailList";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+/*******************************************************************************
+ * @description : 조회 
+ ******************************************************************************/
+function btn_search_OnClick(obj)
+{
+	ds_condition.SetColumn(0, "acc_mth", substr(div_search.cal_acc.Value,0,6));
+	if (length(ds_condition.GetColumn(0, "acc_mth")) != 6) {
+		div_search.cal_acc.SetFocus();
+		alert(MSG_00110);//정산월을 정확하게 입력해주시기 바랍니다
+		return false;
+	}
+	
+	div_process.edt_total.Text = "";
+	
+	var sSvcID 	= "getDedt";
+	var sInDs  	= "nc_input_fieldDs=ds_condition";
+	var sOutDs 	= "ds_result=ds_result ds_resultDtl=ds_resultDtl";   
+	var sArg	= "sktst.acc.SSS#getDedt";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description : 저장 
+ ******************************************************************************/
+ /*
+function btn_save_OnClick(obj)
+{
+	var sum = ds_resultDtl.Sum("dedt_amt");
+	ds_cmmsDedt.SetColumn(0, "CMMS_DEDT_TOT", sum);
+	
+	var sSvcID 	= "saveDedt";
+	var sInDs  	= "nc_input_fieldDs=ds_condition ds_resultDtl=ds_resultDtl";
+	var sOutDs 	= "ds_result=ds_result ds_resultDtl=ds_resultDtl";   
+	var sArg	= "sktst.acc.SSS#saveDedt";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+*/
+
+/*******************************************************************************
+ * @description : 저장 
+ ******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	/*
+	if(ds_ukey.GetUpdate() == false && ds_fix.GetUpdate() == false)
+	{
+		alert(cf_getMessage(MSG_00071,""));
+		return;
+	}
+	*/
+	
+    // 마감월 체크
+    
+    /*
+    
+    cf_CheckCloseMnth('03',div_search.cal_acc_mth.value,"정산월");  // 03: 정산 	
+    if(FV_BOOLEAN_CLOSE) return; // 입력한 일자가 마감 되었을 경우 '1'(true) 리턴.
+  
+    cf_CheckCloseDay('04',Left(cf_getDate(), 8),"저장일"); 
+	if(FV_BOOLEAN_CLOSE) return; // 입력한 일자가 마감 되었을 경우 '1'(true) 리턴.
+	*/
+	
+         
+	if(toNumber(ds_fix.GetColumn(0,"EXC_AMT")) <0){
+		alert(MSG_00119);
+		return;		
+	}
+		
+	if(Confirm( "저장하시겠습니까?" ) == false) return;
+		
+	cf_setParam(ds_fix, "DEAL_CO_CD", ds_conditionDtl.GetColumn(0, "DEAL_CO_CD")); 
+	cf_setParam(ds_fix, "ACC_MTH", ds_conditionDtl.GetColumn(0, "ACC_MTH")); 
+	cf_setParam(ds_fix, "ACC_PLC", ds_conditionDtl.GetColumn(0, "STL_PLC")); 
+	cf_setParam(ds_fix, "U_KEY_TRMS_DTM", ds_conditionDtl.GetColumn(0, "U_KEY_TRMS_DTM")); 
+	
+	//f_setCmmsIfAplyYn();
+		
+	var sSvcID = "saveDedt";
+	var sInDs  = "rs_fix=ds_fix rs_ukey=ds_ukey";
+	var sOutDs = "";
+	var sArg   = "sktst.acc.SSS#saveSktCmmsDedt";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	
+}
+
+
+/*******************************************************************************
+ * @description    :  콜백	
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "saveDedt") {
+		
+		alert(cf_getMessage(MSG_00006, "SKT 수수료 공제 정산이"));
+		
+		parent.btn_search_OnClick();
+		this.Close();
+		
+	} else if (sSvcId == "getDedt") {
+		if (ds_result.rowcount == 0) {
+			//장려금정산 또는 수수료정산이 완료되지 않아 수수료공제 정산이 불가능합니다
+			alert(MSG_00111); 
+			return;
+		} else {
+			/*
+			PAY_AMT	      //장려금확정금액                     
+			COMM_TOT      //수수료확정금액                     
+															   
+			SUMM_COMM_PR  //A : 장려금+수수료                  
+			REMAIN 	      //B : 매입채무개통여신잔액           
+			DEDT_PRCH     //C : 매입채무개통여신공제           
+			SUMM_ETC      //D : 기타공제 합계                  
+			SUM_COMM_DEDT //E : 공제합계
+			*/
+			
+			PAY_AMT = ds_result.GetColumn(0, "pr_mny_pay_amt");
+			COMM_TOT = ds_result.GetColumn(0, "cmms_tot");
+			
+			SUMM_COMM_PR = toNumber(PAY_AMT) + toNumber(COMM_TOT);
+			REMAIN = toFloat(ds_result.GetColumn(0, "dedt_amt"));
+			SUM_COMM_DEDT = ds_resultDtl.Sum("dedt_amt");
+			DEDT_PRCH = ds_resultDtl.GetColumn(6, "dedt_amt");
+	   
+ //trace ("a="+SUMM_COMM_PR+", b="+REMAIN+", c="+DEDT_PRCH+", d="+SUMM_ETC+", e="+SUM_COMM_DEDT);
+
+			div_process.edt_total.Value = SUMM_COMM_PR;
+			div_result.edt_getSum.value = toNumber(SUMM_COMM_PR)
+										- toNumber(SUM_COMM_DEDT);
+
+			// if (ds_resultDtl.rowcount == 0) {
+
+				// for (var i=0; i<7; i++) {
+					// ds_resultDtl.AddRow();
+					// ds_resultDtl.SetColumn(i, "dedt_amt", 0);
+				// }
+				
+				// ds_resultDtl.SetColumn(0, "dedt_itm_cd", "02");
+				// ds_resultDtl.SetColumn(1, "dedt_itm_cd", "03");
+				// ds_resultDtl.SetColumn(2, "dedt_itm_cd", "04");
+				// ds_resultDtl.SetColumn(3, "dedt_itm_cd", "05");
+				// ds_resultDtl.SetColumn(4, "dedt_itm_cd", "06");
+				// ds_resultDtl.SetColumn(5, "dedt_itm_cd", "99");
+				// ds_resultDtl.SetColumn(6, "dedt_itm_cd", "01");
+			// }
+		 }
+	}else if(sSvcId == "svcSktDedtIf"){
+		return;
+	}else if(sSvcId == "svcSktDedtFix"){
+		return;
+	}
+}
+
+
+/******************************************************************************
+* @description : 그리드 edit 컨트롤 
+*******************************************************************************/
+function grd_list_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if (nRow==6) {
+		grd_list.SetCellProp("Body", 1, "edit", "none");
+	} else {
+		grd_list.SetCellProp("Body", 1, "edit", "number");
+	}
+}
+
+/******************************************************************************
+* @description : 그리드 edit 컨트롤 
+*******************************************************************************/
+function grd_list_OnCellPosChanged(obj,nRow,nCell,nOldRow,nOldCell,nPivotIndex,nOldPivotIndex)
+{
+	if (nRow==6 && nCell==1) {
+		grd_list.SetCellProp("Body", 1, "edit", "none");
+	} else {
+		grd_list.SetCellProp("Body", 1, "edit", "number");
+	}	
+}
+
+/******************************************************************************
+* @description : 그리드에 공제금액 입력 
+*******************************************************************************/
+function grd_list_OnChar(obj,strPreText,nChar,strPostText,nLLParam,nHLParam,nRow,nCell,nPivotIndex)
+{
+	obj.redraw = false;
+	SUM_COMM_DEDT = ds_resultDtl.Sum("dedt_amt");
+
+	ds_resultDtl.SetColumn(nRow, "dedt_amt",strPostText);
+	 	
+	SUMM_ETC = 0;
+	SUMM_ETC =  toNumber(ds_resultDtl.GetColumn(0, "dedt_amt")) +
+				toNumber(ds_resultDtl.GetColumn(1, "dedt_amt")) +
+				toNumber(ds_resultDtl.GetColumn(2, "dedt_amt")) +
+				toNumber(ds_resultDtl.GetColumn(3, "dedt_amt")) +
+				toNumber(ds_resultDtl.GetColumn(4, "dedt_amt")) +
+				toNumber(ds_resultDtl.GetColumn(5, "dedt_amt")) ;
+				
+	if((toNumber(SUMM_COMM_PR)-toNumber(SUMM_ETC)) > toNumber(REMAIN)) {
+		DEDT_PRCH=REMAIN;
+		trace (SUMM_COMM_PR+"/"+SUMM_ETC+"/"+REMAIN);
+	} else {
+		trace (".////??"+SUMM_COMM_PR+"/"+SUM_COMM_DEDT );
+		DEDT_PRCH= toNumber(SUMM_COMM_PR)-toNumber(SUMM_ETC);
+		if (toNumber(DEDT_PRCH) < 0) {
+			
+			alert(MSG_00119);//공제합계는 장려금과 수수료 합계를 초과할 수 없습니다.
+			ds_resultDtl.SetColumn(nRow, "dedt_amt",0);
+			obj.redraw = true;	
+			return ;
+		}
+	}
+	
+	ds_resultDtl.SetColumn(6, "dedt_amt", DEDT_PRCH);
+	SUM_COMM_DEDT = ds_resultDtl.Sum("dedt_amt");
+	div_result.edt_getSum.value = toNumber(SUMM_COMM_PR)
+								- toNumber(SUM_COMM_DEDT);
+	obj.redraw = true;	
+	
+}
+
+function Button0_OnClick(obj)
+{
+	cf_debug("ds_conditionDtl");
+}
+
+
+/*******************************************************************************
+ * @description : 팝업창 닫기
+ ******************************************************************************/
+function btn_close_OnClick(obj)
+{
+    this.Close();
+}
+
+
+/*******************************************************************************
+ * @description : SKT 수수료  공제정산내역 정산금액 입력시 OnChar Event
+ ******************************************************************************/
+function grd_ukey_OnChar(obj,strPreText,nChar,strPostText,nLLParam,nHLParam,nRow,nCell,nPivotIndex)
+{
+	if(nCell =="2"){
+	
+		var sAccSplyPrc = ds_ukey.GetColumn(nRow,"ACC_AMT");
+		
+		ds_ukey.SetColumn(nRow,"FIX_AMT",(toNumber(ds_ukey.GetColumn(nRow,"FIX_AMT"))-toNumber(strPreText)+toNumber(strPostText)));
+		
+		ds_fix.SetColumn(0,"DEDT_FIX_AMT",ds_ukey.Sum("FIX_AMT"));
+		
+		if(toNumber(ds_fix.GetColumn(0,"TOT_FIX_AMT"))-toNumber(ds_ukey.Sum("FIX_AMT")) >=0){
+			ds_fix.SetColumn(0,"EXC_AMT",(toNumber(ds_fix.GetColumn(0,"TOT_FIX_AMT"))-toNumber(ds_ukey.Sum("FIX_AMT"))));
+		}else{
+			ds_fix.SetColumn(0,"EXC_AMT",0);
+		}		
+							
+	}
+}
+
+
+
+/*******************************************************************************
+ * @description    : SKT 수수료 공제정산 확정내역 excel export 2
+*******************************************************************************/
+
+function btn_excel2_OnClick(obj)
+{
+	cf_setExcelInfo("grd_fix1", "SKT수수료공제정산내역" );
+	cf_setExcelInfo("grd_fix2", "SKT수수료공제정산내역" , "b1");
+    
+    cf_exportDinamicExcel();
+}]]></Script>
+</Window>

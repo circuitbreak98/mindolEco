@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDSM00300">
+	<select id="getDisDsm300" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISDSM00300_getDisDsm300 - 김만수 */
+	A.HLD_PLC_ID
+    , A.PROD_CD
+    , A.SER_NUM
+    , A.OLD_SER_NUM
+    , A.LAST_INOUT_DTL_CL
+    , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', A.COLOR_CD) COLOR_NM
+    , A.DEAL_CO_NM
+    , A.PROD_NM
+    , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00020', A.PROD_CHRTIC_1) PROD_CHRTIC_NM
+    , A.OPER_NM
+    , A.UNIT_AMT
+    , A.PRCHS_PLC_NM
+    , A.IN_PLC_NM
+    , TO_DATE(SYSDATE) - TO_DATE(A.FST_IN_FIX_DT) DIS_DAYS
+    , A.LAST_MOV_IN_DT
+    , TO_DATE(SYSDATE) - TO_DATE(A.INOUT_DT) PROD_DAYS
+    , A.DIS_NM
+FROM
+(
+  SELECT
+  	DISTINCT
+    A.HLD_PLC_ID
+    , A.COLOR_CD
+    , A.OLD_SER_NUM
+    , B.DEAL_CO_NM
+    , A.PROD_CD
+    , C.PROD_NM
+    , C.PROD_CHRTIC_1
+    , D.DEAL_CO_NM OPER_NM
+    , A.SER_NUM
+    , (SELECT SUM(AMT) FROM TDIS_PROD_UNIT_PRC WHERE PROD_CD = A.PROD_CD AND COLOR_CD = A.COLOR_CD AND SER_NUM = A.SER_NUM) UNIT_AMT
+    , A.LAST_INOUT_DTL_CL
+    , FBAS_GET_DEAL_NM(A.FST_PRCHS_PLC_ID, '') PRCHS_PLC_NM
+    , FBAS_GET_DEAL_NM(A.FST_IN_PLC_ID, '') IN_PLC_NM
+    , FBAS_GET_COMMCDNM_VAL('ZDIS_C_00100', DIS_ST) DIS_NM
+    , (SELECT FST_IN_FIX_DT FROM TDIS_DIS WHERE PROD_CD = A.PROD_CD AND COLOR_CD = A.COLOR_CD AND SER_NUM = A.OLD_SER_NUM) FST_IN_FIX_DT
+    , (SELECT INOUT_DT FROM TDIS_PROD_INOUT_HST
+        WHERE PROD_CD = A.PROD_CD AND COLOR_CD = A.COLOR_CD AND SER_NUM = A.SER_NUM AND (PROD_CD, COLOR_CD, SER_NUM, INOUT_SEQ) IN
+        (SELECT PROD_CD, COLOR_CD, SER_NUM, MAX(INOUT_SEQ) FROM TDIS_PROD_INOUT_HST
+          WHERE INOUT_DT BETWEEN #last_inout_sdt# AND #last_inout_edt# GROUP BY PROD_CD, COLOR_CD, SER_NUM)) INOUT_DT
+    , A.LAST_MOV_IN_DT
+  FROM
+  (
+      SELECT
+        TMD.PROD_CD
+        ,TMD.COLOR_CD
+        ,TMD.SER_NUM
+        ,TMD.HLD_PLC_ID   /* 보유처ID */
+      FROM TDIS_MTH_PROD_DIS TMD   /* 월재고 */
+      WHERE TMD.STRD_YM = #strd_ym#
+      AND TMD.DEL_YN = 'N'
+      AND TMD.HLD_PLC_ID IN (SELECT DEAL_CO_CD
+                              FROM TBAS_DEAL_CO_MGMT
+                              WHERE POS_AGENCY = #pos_agency#
+]]>                              <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                              DEAL_CO_CD = #hld_plc_id#
+]]>                              </isNotEmpty>
+<![CDATA[                              AND DEL_YN = 'N'
+                              AND EFF_END_DTM = '99991231235959')
+
+      UNION ALL
+      SELECT
+        A.PROD_CD
+        ,A.COLOR_CD
+        ,A.SER_NUM
+        ,A.HLD_PLC_ID   /* 보유처ID */
+      FROM TDIS_PROD_DIS A   /* 상품재고 */
+      INNER JOIN TDIS_PROD_INOUT_HST B
+      ON A.PROD_CD = B.PROD_CD
+      AND A.COLOR_CD = B.COLOR_CD
+      AND A.SER_NUM = B.SER_NUM
+      WHERE B.INOUT_DT BETWEEN #last_inout_sdt# AND #last_inout_edt#
+      AND B.DEL_YN = 'N'
+      AND A.LAST_INOUT_DTL_CL IN ('114', '302', '105')
+      AND (B.PROD_CD,B.COLOR_CD,B.SER_NUM,B.INOUT_SEQ) IN (SELECT /*+ index_desc(tpih XDIS_PROD_INOUT_HST_PK) */
+                              PROD_CD, COLOR_CD, SER_NUM, MAX(INOUT_SEQ)
+                          FROM TDIS_PROD_INOUT_HST
+                          WHERE INOUT_DT BETWEEN #last_inout_sdt# AND #last_inout_edt# 
+                          AND PROD_CD = B.PROD_CD
+                          AND COLOR_CD = B.COLOR_CD
+                          AND SER_NUM = B.SER_NUM
+                          AND DEL_YN = 'N' GROUP BY PROD_CD,COLOR_CD,SER_NUM)
+      AND A.HLD_PLC_ID IN (SELECT
+                              DEAL_CO_CD
+                          FROM TBAS_DEAL_CO_MGMT
+                          WHERE POS_AGENCY = #pos_agency#
+]]>                          <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                          DEAL_CO_CD = #hld_plc_id#
+]]>                          </isNotEmpty>
+<![CDATA[                          AND DEL_YN = 'N'
+                          AND EFF_END_DTM = '99991231235959')       
+    UNION ALL
+    
+    /* 입고예정 */
+    SELECT
+      TPIH.PROD_CD
+      ,TPIH.COLOR_CD
+      ,TPIH.SER_NUM
+      ,TPIH.IN_PLC_ID HLD_PLC_ID  /* 보유처ID */
+    FROM TDIS_PROD_INOUT_HST TPIH    
+    WHERE TPIH.INOUT_DT BETWEEN #last_inout_sdt# AND #last_inout_edt#  
+    AND TPIH.DEL_YN = 'N'
+    AND (TPIH.PROD_CD,TPIH.COLOR_CD,TPIH.SER_NUM,TPIH.INOUT_SEQ) IN
+    	    (SELECT PROD_CD, COLOR_CD, SER_NUM, MAX(INOUT_SEQ) FROM TDIS_PROD_INOUT_HST
+                WHERE INOUT_DT BETWEEN #last_inout_sdt# AND #last_inout_edt#  
+                AND INOUT_DTL_CL = '301'
+                AND DEL_YN = 'N'
+                AND IN_PLC_ID IN (SELECT DEAL_CO_CD
+                       FROM TBAS_DEAL_CO_MGMT
+                       WHERE POS_AGENCY = #pos_agency#
+]]>                       <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                         DEAL_CO_CD = #hld_plc_id#
+]]>                         </isNotEmpty>
+<![CDATA[                         AND DEL_YN = 'N'
+                         AND EFF_END_DTM = '99991231235959')
+                GROUP BY PROD_CD,COLOR_CD,SER_NUM)
+    AND 0 = NVL((SELECT COUNT(INOUT_SEQ) FROM TDIS_PROD_INOUT_HST WHERE PROD_CD = TPIH.PROD_CD AND COLOR_CD = TPIH.COLOR_CD
+                  										AND SER_NUM = TPIH.SER_NUM AND INOUT_DTL_CL = '304' AND TPIH.INOUT_SEQ < INOUT_SEQ
+                  										AND IN_PLC_ID IN (SELECT DEAL_CO_CD
+                                       					FROM TBAS_DEAL_CO_MGMT
+                                       					WHERE POS_AGENCY = #pos_agency#
+]]>                                       					<isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                                         				DEAL_CO_CD = #hld_plc_id#
+]]>                                         				</isNotEmpty>
+<![CDATA[                                         				AND DEL_YN = 'N'
+                                         				AND EFF_END_DTM = '99991231235959')), 0)
+	AND 0 = NVL(
+    (
+      	SELECT 
+        	SUM(DECODE(INOUT_DTL_CL, '302', 1, '303', -1, '205', -1, '105', 1, '301', -1, '304', 1))
+        FROM TDIS_PROD_INOUT_HST 
+        WHERE PROD_CD = TPIH.PROD_CD AND COLOR_CD = TPIH.COLOR_CD AND SER_NUM = TPIH.SER_NUM 
+        AND TPIH.INOUT_SEQ < INOUT_SEQ
+        AND IN_PLC_ID IN (SELECT DEAL_CO_CD
+                                   FROM TBAS_DEAL_CO_MGMT
+                                   WHERE POS_AGENCY = #pos_agency#
+]]>                                   <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[                                   DEAL_CO_CD = #hld_plc_id#
+]]>                                   </isNotEmpty>
+<![CDATA[                                   AND DEL_YN = 'N'
+                                   AND EFF_END_DTM = '99991231235959')
+    ), 0)             
+    AND TPIH.IN_PLC_ID IN (SELECT DEAL_CO_CD
+       FROM TBAS_DEAL_CO_MGMT
+       WHERE POS_AGENCY = #pos_agency#
+         AND DEL_YN = 'N'
+         AND EFF_END_DTM = '99991231235959')          
+        
+  ) A0
+  INNER JOIN TDIS_PROD_DIS A
+  ON A.PROD_CD = A0.PROD_CD
+  AND A.COLOR_CD = A0.COLOR_CD
+  AND A.SER_NUM = A0.SER_NUM
+  /*AND A.HLD_PLC_ID = A0.HLD_PLC_ID  */
+  INNER JOIN TBAS_DEAL_CO_MGMT B
+  ON A0.HLD_PLC_ID = B.DEAL_CO_CD
+]]>  <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[  B.DEAL_CO_CD = #hld_plc_id#
+]]>  </isNotEmpty>  
+<![CDATA[  INNER JOIN TBAS_PROD_MGMT C
+  ON A.PROD_CD = C.PROD_CD
+  INNER JOIN TBAS_DEAL_CO_MGMT D
+  ON C.MFACT_ID = D.DEAL_CO_CD
+]]>  <isNotEmpty prepend="AND" property="oper_id">
+<![CDATA[  D.DEAL_CO_CD = #oper_id#
+]]>  </isNotEmpty>
+<![CDATA[  WHERE B.POS_AGENCY = #pos_agency#
+]]>  <isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[  A.PROD_CD = #prod_cd#
+]]>  </isNotEmpty>
+<![CDATA[]]>  <isNotEmpty prepend="AND" property="color_cd">
+<![CDATA[  A.COLOR_CD = #color_cd#
+]]>  </isNotEmpty>   
+<![CDATA[   
+) A]]>
+	</select>
+</sqlMap>

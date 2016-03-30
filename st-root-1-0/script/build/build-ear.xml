@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Deploy NEXCORE EarContent" default="deploy.EarContent.all" basedir="..">
+
+	<!-- ################################################################## -->
+	<!-- ## [NEXCORE_HOME] common build property ########################## -->
+	<!-- ################################################################## -->
+	<!-- default build.properties -->
+	<property file="${NEXCORE_HOME_ANT}/script/build/nexcore.build.properties" />
+
+	<!-- default for CI tool (Continuous Integration : quickBuild etc) -->
+	<property file="${ant.home}/nexcore.build.properties" />
+
+	<!-- ################################################################## -->
+	<!-- ## copy                                                         ## -->
+	<!-- ##   [from]                                                     ## -->
+	<!-- ##      ../EarContent                                           ## -->
+	<!-- ##   [to]                                                       ## -->
+	<!-- ##      ${NEXCORE_HOME}/EarContent                              ## -->
+	<!-- ################################################################## -->
+	<target name="deploy.EarContent.all" description="" >
+		<echo>NEXCORE_HOME =${NEXCORE_HOME}</echo>
+		<echo>WORKSPACE_HOME =${WORKSPACE_HOME}</echo>
+
+		<copy todir="${NEXCORE_HOME}/EarContent/APP-INF" preservelastmodified="${preservelastmodified}" includeemptydirs="true" verbose="true">
+			<fileset dir="${WORKSPACE_HOME}/EarContent/APP-INF">
+				<exclude name="**/.svn/**" />
+				<exclude name="nexcore-jboss-service.xml"/>
+			</fileset>
+		</copy>
+	    <copy todir="${NEXCORE_HOME}/EarContent/ejbs" preservelastmodified="${preservelastmodified}" includeemptydirs="true" verbose="true">
+			<fileset dir="${WORKSPACE_HOME}/EarContent/ejbs" defaultexcludes="true">
+				<include name="nexcore.framework.online.jar"/>
+				<exclude name="**/.svn/**" />
+			</fileset>
+		</copy>
+	    <copy todir="${NEXCORE_HOME}/EarContent/webapp/st/WEB-INF" preservelastmodified="${preservelastmodified}" includeemptydirs="true" verbose="true">
+			<fileset dir="${WORKSPACE_HOME}/EarContent/webapp/st/WEB-INF">
+				<exclude name="**/.svn/**" />
+			</fileset>
+		</copy>
+	    <copy todir="${NEXCORE_HOME}/lib" preservelastmodified="${preservelastmodified}" includeemptydirs="true" verbose="true">
+			<fileset dir="${WORKSPACE_HOME}/lib">
+				<exclude name="**/.svn/**" />
+			</fileset>
+		</copy>
+	    <copy todir="${NEXCORE_HOME}/script" preservelastmodified="${preservelastmodified}" includeemptydirs="true" verbose="true">
+			<fileset dir="${WORKSPACE_HOME}/script">
+				<exclude name="build/**/*.properties" />
+				<exclude name="eclipse-env/**" />
+				<exclude name="**/.svn/**" />
+			</fileset>
+		</copy>
+	</target>
+
+</project>

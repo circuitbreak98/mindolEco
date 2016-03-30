@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMADR00100">
+	<select id="getMyGroupList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT
+       '1' chk
+,      user_id    
+,      addr_group 
+,      '' org_addr_group 
+,      remark     
+,      reg_dt     
+FROM   tadm_my_addr_group
+WHERE  user_id = #onlineContext.userInfo.loginId# 
+ORDER BY reg_dt     ]]>
+	</select>
+	<select id="getMyAddrList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 
+       inf.user_id     
+,      inf.user_nm
+,      inf.user_cd
+,      adr.seq         
+,      adr.addr_user_id
+,      inf.pos_agency
+,      FBAS_GET_DEAL_NM(inf.pos_agency, '') pos_agency_nm
+,      inf.org_area
+,      FBAS_GET_DEAL_NM(inf.org_area, '') org_area_nm
+,      inf.mbl_phon phon_num
+,      org.org_id
+,      org.org_nm
+,      adr.addr_group
+FROM   tadm_my_addr   adr
+,      tbas_org_mgmt  org 
+,      (SELECT usr.* 
+/*       ,      (CASE WHEN gbn.mbp = '1' THEN mbl_phon 
+                    WHEN gbn.mbp = '2' THEN mbl_phon2 
+                    WHEN gbn.mbp = '3' THEN mbl_phon3 end ) as phon_num*/
+       FROM  tbas_user_mgmt usr
+/*       ,     (SELECT '1' mbp FROM dual
+              UNION ALL
+              SELECT '2' mbp FROM  dual
+              UNION ALL
+              SELECT '3' mbp FROM dual) gbn
+       WHERE (gbn.mbp = '1' OR ( gbn.mbp = '2' AND usr.mbl_phon2 IS NOT NULL )  
+                            OR ( gbn.mbp = '3' AND usr.mbl_phon3 IS NOT NULL ))*/
+	   WHERE 1=1							
+       AND    usr.del_yn = 'N'
+       AND    usr.eff_user_yn = 'Y'
+	) inf
+WHERE  1 = 1	 
+AND    inf.user_id = adr.addr_user_id 
+AND    inf.org_id  = org.org_id
+AND    adr.user_id = #onlineContext.userInfo.loginId# ]]>
+	</select>
+	<select id="getGroupList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 
+       comm_cd_id
+,      comm_cd_val
+,      comm_cd_val_nm
+FROM   tbas_comm_cd_dtl 
+WHERE  comm_cd_id in ('ZBAS_C_00250', 'ZBAS_C_00130', 'ZBAS_C_00380','ZBAS_C_00240')
+ORDER BY comm_cd_val DESC]]>
+	</select>
+	<select id="getUserInfoList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 
+       inf.user_id addr_user_id
+,      inf.user_nm
+,      inf.user_cd
+,      inf.pos_agency
+,      FBAS_GET_DEAL_NM(inf.pos_agency,'')  pos_agency_nm
+,      inf.org_area
+,      inf.mbl_phon phon_num
+,      FBAS_GET_DEAL_NM(inf.org_area,'')  org_area_nm
+,      org.org_id
+,      org.org_nm
+ FROM (SELECT usr.* 
+       FROM  tbas_user_mgmt usr
+       WHERE  1=1							
+       AND    usr.del_yn = 'N'
+       AND    usr.eff_user_yn = 'Y'
+	) inf 
+,     tbas_org_mgmt     org
+,     tbas_deal_co_mgmt deal
+WHERE 1=1
+AND inf.org_area     = deal.deal_co_cd(+)
+AND	deal.eff_end_dtm(+) = '99991231235959'
+]]><isNotEmpty prepend="AND" property="user_grp">
+<![CDATA[    inf.user_grp     = #user_grp#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="attc_cat">
+<![CDATA[    inf.attc_cat     = #attc_cat#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="user_nm">
+<![CDATA[    inf.user_nm      LIKE '%' || #user_nm# || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="sale_grp">
+<![CDATA[    deal.sale_grp    = #sale_grp#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="deal_co_cl1">
+<![CDATA[    deal.deal_co_cl1 = #deal_co_cl1#
+]]></isNotEmpty>
+<![CDATA[AND inf.org_id       = org.org_id  
+AND inf.org_id IN (SELECT org_id
+                   FROM tbas_org_mgmt
+                   WHERE del_yn = 'N'
+                   START WITH ORG_ID = #org_id#
+                   CONNECT BY SUP_ORG = PRIOR ORG_ID)	
+ORDER BY inf.user_nm]]>
+	</select>
+	<delete id="deleteMyGroup" parameterClass="map" ><![CDATA[DELETE 
+FROM   tadm_my_addr_group
+WHERE  user_id    = #onlineContext.userInfo.loginId#
+AND    addr_group = #addr_group#]]>
+	</delete>
+	<delete id="deleteMyAddr" parameterClass="map" ><![CDATA[DELETE 
+FROM  tadm_my_addr
+WHERE user_id    = #onlineContext.userInfo.loginId# 
+AND   addr_group = #addr_group#]]>
+	</delete>
+	<insert id="addMyGroup" parameterClass="map" ><![CDATA[INSERT 
+INTO   tadm_my_addr_group
+(
+ user_id     
+,addr_group  
+,remark      
+,reg_dt      
+)
+VALUES
+(
+ #onlineContext.userInfo.loginId#     
+,#addr_group#  
+,#remark#
+,TO_CHAR(SYSDATE, 'yyyyMMddHH24miss')      
+)]]>
+	</insert>
+	<insert id="addMyAddr" parameterClass="map" ><![CDATA[INSERT 
+INTO   tadm_my_addr
+(
+ user_id     
+,addr_group
+,seq         
+,addr_user_id
+)
+VALUES
+(
+ #onlineContext.userInfo.loginId#    
+,#addr_group#
+,(SELECT NVL(MAX(seq),0) + 1
+  FROM tadm_my_addr
+  WHERE user_id    = #onlineContext.userInfo.loginId#    
+  AND   addr_group = #addr_group#)
+, #addr_user_id#
+)]]>
+	</insert>
+	<update id="updateMyGroup" parameterClass="map" ><![CDATA[UPDATE tadm_my_addr_group
+SET addr_group = #addr_group#
+,   remark     = #remark#
+WHERE addr_group = #org_addr_group#]]>
+	</update>
+</sqlMap>

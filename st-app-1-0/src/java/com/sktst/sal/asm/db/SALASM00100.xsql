@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALASM00100">
+<select id="getProdAssignMgmtList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* "SALASM00100_getProdAssignMgmtList_전희경" */
+       TA.req_dtm
+     , TB.pos_agency                        AS agency_cd
+     , FBAS_GET_AGENCY_NM(TB.pos_agency,'') AS agency_nm
+     , TA.req_plc
+     , FBAS_GET_DEAL_NM(TA.req_plc, '')     AS req_plc_nm
+     , TA.req_seq
+     , TA.prod_cd
+     , FBAS_GET_PROD_NM(TA.prod_cd)         AS prod_nm
+     , TA.color_cd
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', TA.color_cd) AS color_nm
+     , TA.req_qty
+     , TA.UPD_CNT
+     , decode(TA.chk_yn, 'Y', 'Yes', 'No') 	AS chk_yn
+     , '0' 									AS chk
+  FROM TSAL_PROD_ASSIGN  TA
+     , TBAS_DEAL_CO_MGMT TB
+ WHERE TA.req_plc   = TB.deal_co_cd
+   AND TB.hseq_no   = (SELECT MAX(hseq_no) 
+                         FROM TBAS_DEAL_CO_MGMT  
+                        WHERE deal_co_cd = TB.deal_co_cd
+                      )
+   AND TA.req_dtm  BETWEEN #req_dtm_from# AND #req_dtm_to#
+   AND TB.pos_agency     = #agency_cd#
+   AND TA.req_plc        = #req_plc#]]>
+   <isNotEmpty prepend="AND" property="CHK_YN">   
+	<![CDATA[       NVL(TA.CHK_YN,'N') = #CHK_YN#
+	]]></isNotEmpty> 
+	<![CDATA[       
+	order by TA.req_dtm, TB.pos_agency, TA.req_plc, TA.req_seq
+	]]>
+  </select>
+  <update id="updateConfirm" parameterClass="map" ><![CDATA[UPDATE TSAL_PROD_ASSIGN
+   SET CHK_YN = 'Y'
+   	  ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#	     
+ WHERE REQ_DTM = #req_dtm#
+ 	AND REQ_PLC = #req_plc#
+ 	AND REQ_SEQ = #req_seq#]]>
+	</update>
+</sqlMap>

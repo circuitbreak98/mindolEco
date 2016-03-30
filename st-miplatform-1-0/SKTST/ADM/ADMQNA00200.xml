@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="446" Id="ADMQNA00200" Left="8" OnLoadCompleted="ADMQNA00200_OnLoadCompleted" PidAttrib="7" Title="Q&#32;&amp;&#32;A&#32;답변" Top="8" Ver="1.0" Width="700" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="Dataset0"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="qna_num" size="256" summ="default" type="STRING"/>
+					<record>
+						<qna_num></qna_num>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="qna_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="que_ctt" size="256" summ="default" type="STRING"/>
+					<colinfo id="ans_ctt" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="391" Id="Div1" Left="8" Style="sty_div_dataview" TabOrder="1" Text="Div0" Top="10" Width="682">
+			<Contents>
+				<Edit BindDataset="ds_result" Border="Flat" Column="title" Enable="FALSE" Height="20" Id="Edit0" Left="102" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Width="568"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="23" Style="sty_lb_dataview" TabOrder="2" Text="질문제목" Top="7" VAlign="Middle" Width="76"></Static>
+				<TextArea BindDataset="ds_result" Border="Flat" Column="que_ctt" Height="172" Id="TextArea1" Left="102" Readonly="TRUE" Style="sty_ipt_readonly" TabOrder="3" Top="30" VScroll="TRUE" Width="568"></TextArea>
+				<Static Align="Right" Height="20" Id="Static1" Left="23" Style="sty_lb_dataview" TabOrder="4" Text="질문내용" Top="30" VAlign="Middle" Width="76"></Static>
+				<TextArea BindDataset="ds_result" Border="Flat" Column="ans_ctt" Height="172" Id="TextArea0" Left="102" Readonly="TRUE" Style="sty_ipt_readonly" TabOrder="5" Top="206" VScroll="TRUE" Width="568"></TextArea>
+				<Static Align="Right" Height="20" Id="Static0" Left="23" Style="sty_lb_dataview" TabOrder="6" Text="답변내용" Top="206" VAlign="Middle" Width="76"></Static>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="630" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="2" Text="닫기" Top="411" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  ADMQNA00200
+* 업무명      :  Admin-Q&A 관리 
+* 프로그램명  :  Q&A 답변조회 
+--------------------------------------------------------------------------------
+* 작성자      : shimyunjung 
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var QNA_NUM = "";
+
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+function ADMQNA00200_OnLoadCompleted(obj)
+{
+	QNA_NUM = qnaNum;
+	 
+	ds_condition.SetColumn(0, "qna_num", QNA_NUM);
+	
+	var sSvcID	= "getQna";
+	var sInDs 	= "nc_input_fieldDs=ds_condition";
+	var sOutDs	= "ds_result=ds_result";
+	var sArg 	= "sktst.adm.QNA#getQna";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+ 
+}
+]]></Script>
+</Window>

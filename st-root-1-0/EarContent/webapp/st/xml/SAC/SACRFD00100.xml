@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SACRFD00100" Left="8" OnLoadCompleted="SACRFD00100_OnLoadCompleted" PidAttrib="7" Title="환불관리" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="dealCd" size="100" summ="default" type="STRING"/>
+					<colinfo id="pos_agency" size="10" summ="default" type="STRING"/>
+					<colinfo id="rfnd_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="rfnd_cl" size="256" summ="default" type="STRING"/>
+					<record>
+						<dealCd></dealCd>
+						<pos_agency></pos_agency>
+						<rfnd_cl></rfnd_cl>
+						<rfnd_dt></rfnd_dt>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_rfndinfo">
+				<Contents>
+					<colinfo id="CHK" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_DEAL_CO" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_DT" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_ACC_NO" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_SEQ" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="RFND_CL" size="255" summ="default" type="STRING"/>
+					<colinfo id="POS_AGENCY" size="255" summ="default" type="STRING"/>
+					<colinfo id="DPST_YYMM" size="255" summ="default" type="STRING"/>
+					<colinfo id="DPST_PLC" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_BANK_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_AMT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="PROC_DTM" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROC_USER_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="TRMS_DT" size="255" summ="default" type="STRING"/>
+					<colinfo id="FIX_YN" size="255" summ="default" type="STRING"/>
+					<colinfo id="FIX_DT" size="255" summ="default" type="STRING"/>
+					<colinfo id="REMARK" size="255" summ="default" type="STRING"/>
+					<colinfo id="DPST_PLC_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_DEAL_CO_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROC_USER_ID_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="UKEY_AGENCY_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="MTH_CHK_YN" size="255" summ="default" type="STRING"/>
+					<colinfo id="MOD_POS_YN" size="255" summ="default" type="STRING"/>
+					<colinfo id="IMAG_ACC_NO" size="255" summ="default" type="STRING"/>
+					<colinfo id="SEQ_NO" size="255" summ="default" type="STRING"/>
+					<colinfo id="DPST_DT" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_SEQ_NO" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_zconfirm">
+				<Contents>
+					<colinfo id="CODE" size="1" summ="default" type="STRING"/>
+					<colinfo id="NAME" size="10" summ="default" type="STRING"/>
+					<record>
+						<CODE>0</CODE>
+						<NAME>미수행</NAME>
+					</record>
+					<record>
+						<CODE>1</CODE>
+						<NAME>전송에러</NAME>
+					</record>
+					<record>
+						<CODE>2</CODE>
+						<NAME>전송성공</NAME>
+					</record>
+					<record>
+						<CODE>3</CODE>
+						<NAME>확정에러</NAME>
+					</record>
+					<record>
+						<CODE>4</CODE>
+						<NAME>확정성공</NAME>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_rfndCl">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_rfndinfoTmp">
+				<Contents>
+					<colinfo id="CHK" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_DEAL_CO" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_DT" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_ACC_NO" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_SEQ" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="RFND_CL" size="255" summ="default" type="STRING"/>
+					<colinfo id="POS_AGENCY" size="255" summ="default" type="STRING"/>
+					<colinfo id="DPST_YYMM" size="255" summ="default" type="STRING"/>
+					<colinfo id="DPST_PLC" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_BANK_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_AMT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="PROC_DTM" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROC_USER_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="TRMS_DT" size="255" summ="default" type="STRING"/>
+					<colinfo id="FIX_YN" size="255" summ="default" type="STRING"/>
+					<colinfo id="FIX_DT" size="255" summ="default" type="STRING"/>
+					<colinfo id="REMARK" size="255" summ="default" type="STRING"/>
+					<colinfo id="DPST_PLC_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_DEAL_CO_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROC_USER_ID_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="UKEY_AGENCY_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="MTH_CHK_YN" size="255" summ="default" type="STRING"/>
+					<colinfo id="MOD_POS_YN" size="255" summ="default" type="STRING"/>
+					<colinfo id="IMAG_ACC_NO" size="255" summ="default" type="STRING"/>
+					<colinfo id="SEQ_NO" size="255" summ="default" type="STRING"/>
+					<colinfo id="DPST_DT" size="255" summ="default" type="STRING"/>
+					<colinfo id="RFND_SEQ_NO" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_acc_cl">
+				<Contents>
+					<colinfo id="COMM_CD_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid BindDataset="ds_rfndinfo" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="548" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="460" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" OnCellDBLClick="grd_list_OnCellDblClick" Right="1012" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="29"/>
+						<col fix="left" width="150"/>
+						<col fix="left" width="150"/>
+						<col fix="left" width="71"/>
+						<col width="143"/>
+						<col width="69"/>
+						<col width="69"/>
+						<col width="35"/>
+						<col width="110"/>
+						<col width="82"/>
+						<col width="65"/>
+						<col width="152"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="date" font="돋움,10,Bold"/>
+						<cell bkcolor="user34" col="1" color="user35" display="date" font="돋움,10,Bold" text="입금처"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,10,Bold" text="환불거래처"/>
+						<cell bkcolor="user34" col="3" color="user35" display="date" font="돋움,10,Bold" text="환불일자"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,10,Bold" text="환불계좌"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,10,Bold" text="환불차수"/>
+						<cell bkcolor="user34" col="6" color="user35" display="date" font="돋움,10,Bold" text="입금월"/>
+						<cell bkcolor="user34" col="7" color="user35" display="date" font="돋움,10,Bold" text="구분"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,10,Bold" text="환불액"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" font="돋움,10,Bold" text="환불처리자"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" font="돋움,10,Bold" text="전송여부"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" font="돋움,10,Bold" text="비고"/>
+					</head>
+					<body>
+						<cell col="0" colid="CHK" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" display="expr:iif(&#32;fix_yn&#32;==&#32;&apos;0&apos;&#32;||&#32;fix_yn&#32;==&#32;&apos;1&apos;,&#32;&apos;checkbox&apos;,&#32;&apos;none&apos;)" edit="expr:iif(&#32;fix_yn&#32;==&#32;&apos;0&apos;&#32;||&#32;fix_yn&#32;==&#32;&apos;1&apos;,&#32;&apos;checkbox&apos;,&#32;&apos;none&apos;)"/>
+						<cell align="left" col="1" colid="DPST_PLC_NM" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" display="text"/>
+						<cell align="left" col="2" colid="RFND_DEAL_CO_NM" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" display="normal"/>
+						<cell col="3" colid="RFND_DT" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" display="date"/>
+						<cell align="center" col="4" colid="RFND_ACC_NO" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" display="text"/>
+						<cell align="center" col="5" colid="RFND_SEQ" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" display="text"/>
+						<cell align="center" col="6" colid="DPST_YYMM" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" display="text"/>
+						<cell align="center" col="7" colid="RFND_CL" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" combocol="COMM_CD_VAL" combodataset="ds_acc_cl" combotext="COMM_CD_VAL_NM" display="combo"/>
+						<cell col="8" colid="RFND_AMT" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" display="number"/>
+						<cell align="center" col="9" colid="PROC_USER_ID_NM" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" display="text"/>
+						<cell align="center" col="10" colid="FIX_YN" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" combocol="CODE" combodataset="ds_zconfirm" combotext="NAME" display="combo"/>
+						<cell align="center" col="11" colid="REMARK" color="expr:iif(&#32;mod_pos_yn&#32;==&#32;&apos;N&apos;,&#32;&apos;lightgrey&apos;,&apos;default&apos;)" display="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image3" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="환불&#32;관리" Top="60" Width="192"></Image>
+		<Div Border="Raised" Height="43" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="1004">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="932" LeftMargin="5" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="8" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static1" Left="24" Style="sty_lb_Search" TabOrder="2" Text="대리점" Top="8" VAlign="Middle" Width="53"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyNm" Left="84" LeftMargin="2" OnCharChanged="div_search_edt_agencyNm_OnCharChanged" OnKeyDown="div_search_edt_agencyNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="8" UserData="대리점" Width="130"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="215" OnClick="btn_agency_OnClick" TabOrder="3" Text="Button0" Top="8" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="234" MaxLength="10" Readonly="TRUE" Style="sty_ipt_form" TabOrder="5" TabStop="FALSE" Top="8" UpperOnly="TRUE" Width="74"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCd" Left="309" MaxLength="10" Style="sty_ipt_form" TabOrder="6" TabStop="FALSE" Top="8" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="22" TabOrder="7" Top="8" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="329" TabOrder="9" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static6" Left="332" Style="sty_lb_Search" TabOrder="8" Text="환불월" Top="8" VAlign="Middle" Width="50"></Static>
+				<Static Align="Right" Height="20" Id="Static0" Left="647" Style="sty_lb_Search" TabOrder="12" Text="환불처" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_dealNm" Left="714" LeftMargin="2" OnKeyDown="div_search_edt_dealNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="13" Top="7" Width="110"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_dealCo" ImageID="btn_i_detail" Left="825" OnClick="div_search_btn_dealCo_OnClick" TabOrder="11" Text="Button0" Top="7" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_dealCd" ImeMode="none" Left="844" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="7" Width="66"></Edit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="464" OnClick="btn_monthCalendar_OnClick" TabOrder="15" TabStop="FALSE" Text="Button3" Top="8" Width="17"></Button>
+				<MaskEdit Border="Flat" Height="20" Id="rfnd_dt" Left="389" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" RightMargin="2" Style="sty_ipt_form" TabOrder="14" Top="8" Type="STRING" Width="76"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static2" Left="503" Style="sty_lb_Search" TabOrder="16" Text="환불구분" Top="9" VAlign="Middle" Width="62"></Static>
+				<Combo Border="Flat" Height="20" Id="cmb_rfnd_cl" ImeMode="none" INDEX="0" Left="573" OnChanged="div_search_cmb_rfnd_cl_OnChanged" Style="sty_ipt_form" TabOrder="17" Top="7" Width="72"></Combo>
+				<Image Height="21" Id="Image2" ImageID="bul_mand" Left="498" TabOrder="18" Top="8" Transparent="TRUE" Width="20"></Image>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_new" ImageID="btn_c_6" Left="12" LeftMargin="5" OnClick="btn_new_OnClick" Style="sty_btn_c" TabOrder="4" Text="신규환불처리" Top="556" Width="110"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_4" Left="928" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="5" Text="ERP전송" Top="556" Visible="FALSE" Width="85"></Button>
+		<Button Cursor="HAND" Height="21" Id="Button56" ImageID="btn_i_exceldown_w" Left="991" OnClick="btn_excel_OnClick" TabOrder="6" Text="Button1" ToolTipText="Excel&#32;Download" Top="64" Width="19"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : SACRFD00100
+* 업무명      : 판매회계 - 환불관리
+* 프로그램명  : 환불관리
+--------------------------------------------------------------------------------
+* 작성자      : 하창주
+* 작성일      : 2009.06.22
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 전역변수선언
+//==============================================================================
+var FV_ORG_ID = gds_session.GetColumn(0, "orgId");			//조직코드
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SACRFD00100_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_list);
+	
+	div_search.cmb_rfnd_cl.Index = 0;
+	
+	div_search.rfnd_dt.Value = SubStr(Today(), 0, 6);
+	
+	// 대리점 화면권한 설정
+	uf_enableAgencyByAuth("div_search", "edt_agencyNm,edt_agencyCd,btn_agency", "edt_agencyUkeyCd");
+	//uf_enableDealByAuth("div_search", "edt_dealNm,edt_dealCd,btn_dealCo");
+	
+	div_search.edt_agencyNm.SetFocus();
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	f_setCombo();
+}
+
+
+function f_setCombo()
+{
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("div_search.cmb_rfnd_cl"    , "ZSAC_C_00080", "선택");	
+	cf_setCommonCode("ds_acc_cl"                 , "ZSAC_C_00080");
+	cf_checkCommonCode(); 
+}
+
+/*******************************************************************************
+ * @description    : 대리점 검색 팝업
+*******************************************************************************/
+function btn_agency_OnClick(obj)
+{
+	var sArg  =  "org_id=" + quote(FV_ORG_ID);  // 필수
+	cf_callAgencyPop(sArg, div_search, "edt_agencyNm,edt_agencyCd,edt_agencyUkeyCd");	
+}
+
+/*******************************************************************************
+ * @description    : 대리점 key down팝업
+*******************************************************************************/
+function div_search_edt_agencyNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if ( nChar == "13" ) {
+		var sArg  =  "org_id="+quote(FV_ORG_ID);  // 필수
+		cf_callAgencyPop(sArg, div_search, "edt_agencyNm,edt_agencyCd,edt_agencyUkeyCd");	
+	}
+}
+
+/*******************************************************************************
+ * @description    : 대리점 change
+*******************************************************************************/
+function div_search_edt_agencyNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	div_search.edt_agencyCd.Text = "";
+	div_search.edt_agencyUkeyCd.Text = "";
+}
+
+/*
+function div_search_edt_ordPlcNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == "13"){
+		var sArg  = "org_id="+quote(gds_session.GetColumn(0,"orgId")); // 필수
+		cf_callAgencyPop(sArg, div_search, "edt_ordPlcNm,edt_ordPlcId,edt_ordPlcUkeyId");	
+	}
+}
+*/
+
+
+/*******************************************************************************
+ * @description    : 대리점 OnChar Changed 이벤트
+*******************************************************************************/
+function div_search_edt_ordPlcNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	if(strPreText != strPostText){
+		div_search.edt_ordPlcId.value = "";
+		div_search.edt_ordPlcUkeyId.Text = "";
+	}
+}
+
+
+
+/*******************************************************************************
+ * @description : 조회 
+ ******************************************************************************/
+function btn_search_OnClick(obj)
+{
+	if(uf_IsNull(div_search.edt_agencyCd.value)){
+		alert(cf_getMessage(MSG_00135, "대리점"));
+		div_search.edt_agencyNm.SetFocus();
+		return;
+	}
+
+	if(uf_IsNull(div_search.rfnd_dt.value)){
+		alert(cf_getMessage(MSG_00135, "환불월"));
+		div_search.rfnd_dt.SetFocus();
+		return;
+	}
+	
+	if(uf_IsNull(div_search.cmb_rfnd_cl.Value)){
+		alert(cf_getMessage(MSG_00135, "환불구분"));
+		div_search.cmb_rfnd_cl.SetFocus();
+		return;
+	}
+	
+
+	f_search();
+}
+
+function f_search() {
+	
+	ds_condition.Clear();
+	cf_setParam(ds_condition, "pos_agency"  , div_search.edt_agencyCd.Text);
+	cf_setParam(ds_condition, "rfnd_dt"     , div_search.rfnd_dt.Value);
+	cf_setParam(ds_condition, "rfnd_cl"     , div_search.cmb_rfnd_cl.Value);
+
+	/**
+	 *   환불처 입력 안된 경우 대리점 코드를 환불처에 넣어 준다.
+	 */
+	if(div_search.edt_dealCd.Text == ""){
+		//cf_setParam(ds_condition, "dealCd"      , div_search.edt_agencyCd.Text);
+		cf_setParam(ds_condition, "dealCd"      , "");
+	}else{
+		cf_setParam(ds_condition, "dealCd"      , div_search.edt_dealCd.Text);
+	}
+	
+	var sSvcID = "getRfndInfoList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_rfndinfo=ds_rfndinfo";
+	var sArg = "sktst.sac.RFD#getRfndInfoList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+function f_callBack(sSvcID){
+	if (sSvcID == "getRfndInfoList")  {
+//		trace(ds_rfndinfo.SaveXML());
+	} else if ( sSvcID == "sendRfndRequest" ) {
+		f_search();
+	} else if ( sSvcID == "deleteRfndInfo" ) {
+		f_search();
+	}
+	
+	return;	
+}
+
+
+
+/*******************************************************************************
+ * @description    : 신규환불처리 - 이벤트
+*******************************************************************************/
+function btn_new_OnClick(obj)
+{
+    var sArg  = "sAgencyNm=" + quote(div_search.edt_agencyNm.Value);
+		sArg += " sAgencyUkeyCd=" + quote(div_search.edt_agencyUkeyCd.Value);
+		sArg += " sAgencyCd=" + quote(div_search.edt_agencyCd.Value);
+		sArg += " sRfnd_cl=" + quote(div_search.cmb_rfnd_cl.Value);
+		sArg += " sDpstPlc=" + quote(div_search.edt_dealCd.Text);		
+		sArg += " sDpstPlcNm=" + quote(div_search.edt_dealNm.Text);		
+		sArg += " FV_MOD=" + quote("N");
+
+	//trace("sArg : " + sArg);
+	var sResult = dialog("SAC::SACRFD00200.xml", sArg, 1024,680);
+	
+	if (sResult != null && sResult != 0) {
+		f_search();
+	}
+}
+
+/*******************************************************************************
+ * @description    : ERP전송 - 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	//Vaild Chack
+	var nCnt = ds_rfndinfo.GetRowCount();
+	var nChkCnt = 0;
+	for (var i = 0; i < nCnt; i++) {
+		if (ds_rfndinfo.GetColumn(i, "chk") == "1") {
+			nChkCnt++;
+		}
+	}
+	
+	if (nChkCnt ==  0) {
+		alert(cf_getMessage(MSG_00134, "ERP 전송건"));
+		return;
+	}
+
+	if (confirm("환불요청 ERP 전송 하시겠습니까?") == true) {
+		var sSvcID 	= "sendRfndRequest";
+		var sInDs 	= "ds_rfndinfo=ds_rfndinfo nc_input_fieldDs=ds_condition";
+		var sOutDs 	= "";
+		var sArg 	= "sktst.sac.RFD#sendRfndRequest";
+	
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+}
+
+function btn_delete_OnClick(obj)
+{
+	//Vaild Chack
+	var nCnt = ds_rfndinfo.GetRowCount();
+	var nChkCnt = 0;
+	for (var i = 0; i < nCnt; i++) {
+		if (ds_rfndinfo.GetColumn(i, "chk") == "1") {
+			nChkCnt++;
+		}
+	}
+	
+	if (nChkCnt ==  0) {
+		alert(cf_getMessage(MSG_00134, "삭제건"));
+		return;
+	}
+
+	if (confirm("환불 등록건을 삭제 하시겠습니까?") == true) {
+		var sSvcID 	= "deleteRfndInfo";
+		var sInDs 	= "ds_rfndinfo=ds_rfndinfo";
+		var sOutDs 	= "";
+		var sArg 	= "sktst.sac.RFD#deleteRfndInfo";
+	
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+}
+
+/*******************************************************************************
+ * @description    : excel export
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	cf_exportExcel(grd_list);
+}
+
+
+/*******************************************************************************
+ * @description    :  입금처 키 이벤트
+*******************************************************************************/
+function div_search_edt_dealNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	div_search.edt_dealCd.Text = "";
+	
+	if(nChar == 13)
+	{	
+		var sArg  = "deal_co_cl1="+quote("A2,A3,A4,B1,B2,C1"); // 필수 - 복수시 A1,A2,A3 형태의 콤바구분자로 설정
+			sArg += " pos_agency="+quote(div_search.edt_agencyCd.Text);
+			sArg += " only_stl_plc='Y'";
+			
+		cf_callDealPop(sArg, div_search, "edt_dealNm,edt_dealCd");		
+	}
+}
+
+
+/*******************************************************************************
+ * @description : 환불처  팝업 
+ ******************************************************************************/
+function div_search_btn_dealCo_OnClick(obj)
+{
+	div_search.edt_dealCd.Text = "";
+		
+	var sArg  = "deal_co_cl1="+quote("A2,A3,A4,B1,B2,C1"); // 필수 - 복수시 A1,A2,A3 형태의 콤바구분자로 설정
+		sArg += " pos_agency="+quote(div_search.edt_agencyCd.Text); // 소속 대리점	옵션
+		sArg += " only_stl_plc='Y'";
+		
+	cf_callDealPop(sArg, div_search, "edt_dealNm, edt_dealCd", 0, "Y");
+}
+
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	// 월 달력 사용
+	//  argument: msk_month - 달력에서 선택한 값이 지정될 컴포넌트로 vaule영역에 yyyyMM의 값이 설정된다.
+	cf_callMonthCalendar(div_search.rfnd_dt);
+	// 달력선택후 혹시 수기로 달 조정시 ENABLE시키기 위해 필요함.
+	div_search.rfnd_dt.Enable=true;
+	div_search.rfnd_dt.Readonly=false;
+
+}
+
+
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	ds_rfndinfoTmp.ClearData();
+	ds_rfndinfoTmp.AddRow();
+	ds_rfndinfoTmp.CopyRow(ds_rfndinfoTmp.lastrow,ds_rfndinfo,nRow);
+		
+	var dsParent = "ds_rfndinfoTmp";
+	
+	var sArg  = "dsParent='"+dsParent+"'";
+		sArg += " sAgencyNm=" + quote(div_search.edt_agencyNm.Value);
+		sArg += " sAgencyUkeyCd=" + quote(div_search.edt_agencyUkeyCd.Value);
+		sArg += " sAgencyCd=" + quote(div_search.edt_agencyCd.Value);
+		sArg += " sRfnd_cl=" + quote(div_search.cmb_rfnd_cl.Value);		
+		sArg += " FV_MOD=" + quote("M");
+	
+	var sResult = dialog("SAC::SACRFD00200.xml", sArg, 1024,680);
+	
+	if (sResult != null && sResult != 0) {
+		f_search();	
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 환불구분 change- 이벤트
+*******************************************************************************/
+function div_search_cmb_rfnd_cl_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	if(div_search.cmb_rfnd_cl.Value == "3" || div_search.cmb_rfnd_cl.Value == "4") {
+		div_search.edt_dealNm.Text = "";
+		div_search.edt_dealCd.Text = "";
+		div_search.edt_dealNm.Enable = false;
+		div_search.btn_dealCo.Enable = false;
+	} else {
+		div_search.edt_dealNm.Enable = true;
+		div_search.btn_dealCo.Enable = true;
+	}
+}
+]]></Script>
+</Window>

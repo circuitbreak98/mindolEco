@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="576" Id="DISATR00410" Left="8" OnLoadCompleted="DISATR00410_OnLoadCompleted" PidAttrib="7" Title="판매신청서" Top="8" Ver="1.0" Width="888" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_data"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodEtc_rpt"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodDtl_rpt"></Dataset>
+		</Datasets>
+		<Report Bottom="560" Height="528" Id="Report0" Left="40" Right="424" Top="32" Visible="FALSE" Width="384"></Report>
+		<Edit Height="22" Id="url_str" Left="6" TabOrder="2" Top="5" Width="385"></Edit>
+		<Report Bottom="560" Height="528" Id="Report1" Left="448" Right="872" Top="32" Visible="FALSE" Width="424"></Report>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : DISATR00410
+* 업무명      :  재고관리 - 재고이동
+* 프로그램명  :  거래명세표출력(출고증)
+--------------------------------------------------------------------------------
+* 작성자      : 김중일
+* 작성일      : 2009.02.03
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function DISATR00410_OnLoadCompleted(obj)
+{
+	http.Sync = true;
+	
+	var dsArry = Array();
+	var sXML = "";
+	
+	ds_data.Copy(parent.ds_consult_m);
+	ds_prodDtl_rpt.Copy(parent.ds_prodDtl);
+	ds_prodEtc_rpt.Copy(parent.ds_prodEtc);
+	
+	
+	dsArry[0] = ds_data;
+	dsArry[1] = ds_prodDtl_rpt;
+	dsArry[2] = ds_prodEtc_rpt;
+	
+	url_str.Text = gv_url + "MRD/CST/CSTADV00520.mrd";
+
+	sXML = f_dsToXml(dsArry);
+alert(sXML);	
+	var char_dedt_yn = parent.ds_consult_m.GetColumn(0,"CHAG_DEDT_YN");
+	/**
+	 * 접수증
+	 
+	Report0.setRdata(sXML);
+	Report0.AutoAdjust = false;
+	
+	Report0.ZoomRatio = 100;
+	
+	
+	
+	if(char_dedt_yn == '1'){
+		Report0.FileOpen(gv_url + "MRD/CST/CSTADV00520.mrd", "");
+	}else{
+		Report0.FileOpen(gv_url + "MRD/CST/CSTADV00510.mrd", "");
+	}
+	
+	Report0.CMPrint ();
+	*/
+	
+	
+	/**
+	 * 중고단말기 감정정보
+	 */ 
+	
+	
+	Report1.setRdata(sXML);
+	Report1.AutoAdjust = true;
+	Report1.ZoomRatio = 100;
+	if(char_dedt_yn == '1'){
+		Report1.FileOpen(gv_url + "MRD/CST/CSTADV00540.mrd", "");
+	}else{
+		Report1.FileOpen(gv_url + "MRD/CST/CSTADV00530.mrd", "");
+	}	
+//	Report1.CMPrint ();
+	
+	
+//	if(gds_session.GetColumn(0, "loginid") != 'OPS0040002'){
+		Close();
+//	}
+	
+	
+	http.Sync = false;
+}
+
+/*******************************************************************************
+ * @description    : 데이터셋을 XML 문자열로 바꾼다.
+ * @param sSvcID   : 데이터셋 배열
+ *        delStr   : 구분 문자열
+*******************************************************************************/
+function f_dsToText(dsArr, delStr)
+{
+	var returnStr;
+	var dsLength;	// 배열의 전체 개수 (데이터셋의 개수)
+	var dsColCnt;	// 각 데이터셋의 컬럼 개수.
+	var dsRowCnt;	// 각 데이터셋의 로우 개수.
+	dsLength = length(dsArr);
+	
+	// 데이터셋 배열의 크기가 1보다 작을 경우..
+	if(dsLength < 1)
+	{
+		returnStr = "";
+	}
+	else
+	{
+		var tmpStr = "";
+		for(i=0; i<dsLength; i++)
+		{
+			dsColCnt = dsArr[i].getColCount();
+			dsRowCnt = dsArr[i].getRowCount();
+			for(j=0; j<dsRowCnt; j++)
+			{
+				for(k=0; k<dsColCnt; k++)
+				{
+					// 각 필드의 값을 문자열로 연결.
+					tmpStr += dsArr[i].getColumn(j, dsArr[i].GetColIDXbyorder(k));
+					tmpStr += delStr;		// 각 필드 사이에 구분자 값을 입력
+				}
+				tmpStr += chr(13) + chr(10);	// 각 데이터 로우 사이에 개행 문자 삽입.
+			}
+	
+			// 데이터셋이 두 개 이상일 경우 구분하기 위한 문자 삽입 (RD에서 필요)
+			if(dsLength>1)
+			{
+				tmpStr += "//EOR//";		
+				tmpStr += chr(13) + chr(10);	// 개행 문자 삽입.
+			}
+		}
+		returnStr = tmpStr;
+	}
+	
+	return returnStr;
+}
+
+/*******************************************************************************
+ * @description    : DS to XML
+ * @param arrObj   : 데이터셋 배열
+*******************************************************************************/
+function f_dsToXml(arrObj){
+	var strTemp = "";
+	
+	var dsobj = split(arrObj,",");
+	var ds_cnt = length(dsobj);
+				
+	strTemp += '<?xml version="1.0" encoding="euc-kr"?>' + chr(10);
+	strTemp += '<root>';
+	
+	for (i=0; i<toNumber(ds_cnt); i++){
+	    var sTmp = replace(dsobj[i], "[", "");
+	    sTmp = replace(sTmp, "]", "");
+	    sTmp = replace(sTmp, "Dataset:", "");
+		strTemp += object(sTmp).saveXML(object(sTmp).id, "A", false);
+	}
+	
+	strTemp += chr(10) + '</root>';
+	
+	return strTemp;
+}]]></Script>
+</Window>

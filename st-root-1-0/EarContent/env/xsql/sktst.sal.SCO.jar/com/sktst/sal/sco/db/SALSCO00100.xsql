@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="SALSCO00100">
+	<select id="getSplstAmt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT SM.SALE_PRC
+     , SM.SALE_CMMS 
+     , 0 AS MAR
+     , 'Y' AS SPLST_YN
+  FROM TPOL_SPLST S
+     , TPOL_SPLST_MDL SM 
+ WHERE S.SPLST_ID = SM.SPLST_ID 
+   AND S.APLY_YM = SM.APLY_YM 
+   AND S.ORG_ID = SM.ORG_ID
+   AND S.ORG_ID = 
+       (SELECT ORG_ID 
+         FROM TBAS_DEAL_CO_MGMT CO 
+        WHERE CO.EFF_END_DTM = '99991231235959' 
+              AND CO.DEAL_CO_CD = #deal_co_cd# 
+              AND DEL_YN = 'N'
+       ) 
+   AND S.SALE_TYP_CD = SM.SALE_TYP_CD
+   AND S.APLY_YM = SUBSTR(#sales_dt#,0,6)
+   AND S.SALE_TYP_CD = #sale_typ_cd#
+   AND #sales_dt# BETWEEN SUBSTR(S.APLY_STA_DTM,0,8) AND SUBSTR(S.APLY_END_DTM,0,8)
+   AND SM.MDL_ID = #prod_cd#
+   ]]>
+	</select>
+	<select id="getDisAmt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT NVL(SUM(DECODE(OCCR_CL, '01', 1, '05', -1)*AMT),0) AS DIS_AMT
+  FROM TDIS_PROD_UNIT_PRC 
+ WHERE PROD_CD = #prod_cd# 
+       AND SER_NUM = #ser_num# 
+       AND DEL_YN = 'N' ]]>
+	</select>
+	<select id="getAmtRate" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT SEQ
+  FROM TBAS_SPLST_AMT_MGMT 
+ WHERE #dis_amt# BETWEEN AMT_FROM AND AMT_TO 
+   AND #sales_dt# BETWEEN SUBSTR(EFF_STA_DT,0,8) AND SUBSTR(EFF_END_DT,0,8)]]>
+	</select>
+	<select id="getSplstPreferAmt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT MAR_CL
+     , MAR_FIX_RT
+     , MAR_FIX_AMT
+     , SALE_CMMS_CL
+     , SALE_CMMS_FIX_RT
+     , SALE_CMMS_FIX_AMT 
+  FROM TPOL_SPLST S 
+     , TPOL_SPLST_PREFER SP 
+ WHERE S.SPLST_ID = SP.SPLST_ID 
+       AND S.APLY_YM = SP.APLY_YM 
+       AND S.ORG_ID =  (SELECT ORG_ID 
+                          FROM TBAS_DEAL_CO_MGMT CO 
+                         WHERE CO.EFF_END_DTM = '99991231235959' 
+                           AND CO.DEAL_CO_CD = #deal_co_cd# 
+                           AND DEL_YN = 'N' 
+                        ) 
+   AND S.SALE_TYP_CD = SP.SALE_TYP_CD 
+   AND S.APLY_YM = SUBSTR(#sales_dt#, 0, 6) 
+   AND S.SALE_TYP_CD = #sale_typ_cd#
+/*AND sales_dt BETWEEN SUBSTR(S.APLY_STA_DTM,0,8) AND SUBSTR(S.APLY_END_DTM,0,8)*/
+   AND #sales_dt# BETWEEN SUBSTR(S.APLY_STA_DTM,0,12) AND SUBSTR(S.APLY_END_DTM,0,12)
+   AND PREFER_GRD_CL = (SELECT PREFER_CL 
+                       FROM TBAS_PROD_MGMT 
+                      WHERE PROD_CD = #prod_cd#
+                    ) 
+/*AND AMT_GRD_CL = seq*/
+   AND #dis_amt# BETWEEN SP.AMT_FROM AND SP.AMT_TO    ]]>
+	</select>
+</sqlMap>

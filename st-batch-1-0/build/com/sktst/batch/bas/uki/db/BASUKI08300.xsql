@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUKI08300">
+	<insert id="addBasUkeyIFLog" parameterClass="map"><![CDATA[
+    INSERT INTO /*+ BASUKI08300_insertUkeyIFLog_김연석_김연석 */ TBAS_UKEY_IF_LOG
+             (
+               OP_DT
+             , OP_TM
+             , SEQ
+             , IF_CL
+             , IF_CTT
+             , OP_RSLT
+             , INS_DTM
+             , MOD_DTM
+             )
+             VALUES
+             (
+               #OP_DT#
+             , #OP_TM#
+             , (select nvl(max(seq), 0) + 1 from tbas_ukey_if_log
+                 where op_dt = #OP_DT# and op_tm = #OP_TM#)
+             , #IF_CL#
+             , #IF_CTT#
+             , #OP_RSLT#
+             , #INS_DTM#
+             , #MOD_DTM#
+             )
+	]]>
+	</insert>
+</sqlMap>

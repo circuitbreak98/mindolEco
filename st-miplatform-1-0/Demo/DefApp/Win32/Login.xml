@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form BKColor="user0" Color="#e8e8e8" Height="168" Id="G_Login" Left="8" OnLoadCompleted="G_Login_OnLoadCompleted" OnUnloadCompleted="btn_cancel_OnClick" PidAttrib="7" Title="LOGIN" Top="8" Ver="1.1" Width="392" WorkArea="TRUE">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="DS_comm"></Dataset>
+			<Dataset DataSetType="Dataset" Id="DS_LoginRTN"></Dataset>
+		</Datasets>
+		<Shape BKColor="user1" Bottom="128" Height="78" Id="Shape0" Left="12" LineColor="user2" Right="377" TabOrder="4" Top="50" Type="Rectangle" Width="365"></Shape>
+		<Shape Bottom="162" Height="1" Id="Shape8" Left="2" LineColor="#afafaf" Right="387" TabOrder="1" Top="161" Width="385"></Shape>
+		<Shape Bottom="163" Height="1" Id="Shape9" Left="2" LineColor="user12" Right="387" TabOrder="2" Top="162" Width="385"></Shape>
+		<image Height="26" Id="image0" ImageID="login_logo" Left="20" Static="FALSE" TabOrder="3" Top="12" Width="216"></image>
+		<Image Height="10" Id="Image1" ImageID="top_bg_01" Left="12" TabOrder="5" Top="50" Width="10"></Image>
+		<Image Height="10" Id="Image2" ImageID="top_bg_03" Left="12" TabOrder="6" Top="118" Width="10"></Image>
+		<Image Height="10" Id="Image3" ImageID="top_bg_04" Left="367" TabOrder="7" Top="118" Width="10"></Image>
+		<Image Height="10" Id="Image4" ImageID="top_bg_02" Left="367" TabOrder="8" Top="50" Width="10"></Image>
+		<Edit Border="Flat" Color="black" Height="20" Id="ED_UserID" Left="150" LeftMargin="2" MaxLength="20" Style="top_edit" TabOrder="9" Text="guest" Top="66" Width="121"></Edit>
+		<Image Height="20" Id="Image6" ImageID="top_title_bg" Left="50" Style="top_title" TabOrder="10" Text="USER&#32;ID" Top="66" Width="97"></Image>
+		<Shape Bottom="162" Height="1" Id="Shape1" Left="2" LineColor="#efefef" Right="387" TabOrder="11" Top="161" Width="385"></Shape>
+		<Button ButtonStyle="TRUE" Color="white" Font="굴림,9" Height="23" Id="btn_Login" ImageID="button_style01_60" Left="274" OnClick="btn_Login_OnClick" Style="button_style_03" TabOrder="12" Text="Login" Top="66" Transparent="TRUE" Width="60"></Button>
+		<Button ButtonStyle="TRUE" Color="white" Font="굴림,9" Height="23" Id="btn_cancel" ImageID="button_style01_60" Left="274" OnClick="btn_cancel_OnClick" Style="button_style_03" TabOrder="13" Text="Cancel" Top="94" Transparent="TRUE" Width="60"></Button>
+		<Edit Border="Flat" Color="black" Height="20" Id="ED_Password" Left="150" LeftMargin="2" MaxLength="20" OnKeyDown="ED_Password_OnKeyDown" Password="TRUE" Style="top_edit" TabOrder="14" Top="94" Width="121"></Edit>
+		<Image Height="20" Id="Image7" ImageID="top_title_bg" Left="50" Style="top_title" TabOrder="15" Text="PASSWORD" Top="94" Width="97"></Image>
+		<Image Align="Left" Color="user3" Font="굴림,9,Bold" Height="10" Id="Image10" ImageID="icon_title" Left="17" LeftMargin="25" TabOrder="16" Top="141" Width="12"></Image>
+		<Button ButtonStyle="TRUE" Color="dimgray" Font="Default,-1,Bold" Height="23" Id="btn_set" ImageID="button_style03_4" Left="306" OnClick="btn_set_OnClick" Style="button_style01" TabOrder="17" Text="Enter" Top="135" Width="71"></Button>
+		<Edit BKColor="user0" Border="Flat" Color="black" Height="19" Id="Edit0" Left="72" LeftMargin="5" MaxLength="20" Readonly="TRUE" Style="top_edit" TabOrder="18" Text="PASSWORD&#32;:&#32;tobesoft" Top="136" Width="230"></Edit>
+		<Static Height="13" Id="Static0" Left="32" Style="list_title" TabOrder="19" Text="HELP" Top="139" Width="64"></Static>
+	</Form>
+	<Script><![CDATA[var sCancel = true;
+
+function G_Login_OnLoadCompleted(obj)
+{
+	ED_Password.setFocus();		
+}
+
+function ED_Password_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt)
+{
+	if (nChar == 13) 
+	{
+		TransactionCall(obj);
+	}
+}
+
+function TransactionCall(obj)
+{
+	var UserID = ED_UserID.Value;
+	var Password = ED_Password.Value;
+	
+	if ( UserID.Length() <= 0 )
+	{
+		alert("input USER ID");
+		ED_UserID.SetFocus();
+		return;
+	}
+	
+	if ( Password.Length() <= 0 )
+	{
+		alert("input password");
+		ED_Password.SetFocus();
+		return;
+	} 
+	else 
+	{
+		if (trim(Password) == "tobesoft") 
+		{
+			InitSession(true);
+			sCancel = false;
+			Close();
+		} 
+		else 
+		{
+			alert("confirm Password");
+			ED_Password.SetFocus();		
+		}
+	}
+}
+
+function btn_Login_OnClick(obj)
+{
+	TransactionCall(obj);
+}
+
+function btn_cancel_OnClick(obj)
+{
+    if (sCancel)
+    {
+		Exit();
+	}
+}
+
+function btn_set_OnClick(obj)
+{
+	ed_password.Text = "tobesoft";
+}
+]]></Script>
+</Window>

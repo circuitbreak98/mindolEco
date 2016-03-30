@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="396" Id="BASBCO00600" Left="8" OnLoadCompleted="productP_OnLoadCompleted" PidAttrib="7" Title="색상검색" Top="8" Ver="1.0" Width="490" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_color">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="name" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodColor">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="name" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_color" BkColor2="default" BoldHead="true" Border="Flat" Bottom="352" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="317" Id="grd_color" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" MultiSelect="TRUE" OnCellDBLClick="grd_color_OnCellDblClick" OnHeadClick="cf_allChecknSort" Right="226" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="35" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="216">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="30"/>
+						<col width="63"/>
+						<col width="117"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" display="checkbox" font="돋움,9,Bold"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="색상코드" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="색상명" Valign="Center"/>
+					</head>
+					<body>
+						<cell bkcolor2="user32" col="0" colid="chk" display="checkbox" edit="checkbox" Valign="Center"/>
+						<cell align="center" bkcolor2="user36" col="1" colid="code" combotext="name" display="text"/>
+						<cell align="left" bkcolor2="user36" col="2" colid="name" combocol="code" combotext="name" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Height="24" Id="BTN_CLOSE" ImageID="btn_d_2" Left="251" LeftMargin="5" OnClick="BTN_CLOSE_OnClick" Style="sty_btn_d" TabOrder="2" Text="닫기" Top="362" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Height="24" Id="BTN_CONFIRM" ImageID="btn_c_2" Left="184" LeftMargin="5" OnClick="BTN_CONFIRM_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="362" Width="60"></Button>
+		<Button Height="21" Id="btn_suttle_left" ImageID="btn_i_left_b" Left="239" OnClick="btn_suttle_left_OnClick" TabOrder="4" Text="Button7" Top="206" Width="19"></Button>
+		<Button Height="21" Id="btn_suttle_right" ImageID="btn_i_right_b" Left="239" OnClick="btn_suttle_right_OnClick" TabOrder="5" Text="Button7" Top="176" Width="19"></Button>
+		<Grid AutoFit="TRUE" BindDataset="ds_prodColor" BkColor2="default" BoldHead="true" Border="Flat" Bottom="352" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="317" Id="grd_color_select" InputPanel="FALSE" Left="266" LineColor="user33" MinWidth="100" MultiSelect="TRUE" OnCellDBLClick="grd_color_select_OnCellDblClick" OnHeadClick="cf_allChecknSort" Right="478" RowHeight="21" Style="sty_Grid" TabOrder="6" TabStop="true" Top="35" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="212">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="30"/>
+						<col width="64"/>
+						<col width="120"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" display="checkbox" font="돋움,9,Bold"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="색상코드" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="색상명" Valign="Center"/>
+					</head>
+					<body>
+						<cell bkcolor2="user32" col="0" colid="chk" display="checkbox" edit="checkbox" Valign="Center"/>
+						<cell align="center" bkcolor2="user36" col="1" colid="code" combotext="name" display="text"/>
+						<cell align="left" bkcolor2="user36" col="2" colid="name" combocol="code" combotext="name" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="7" Text="전체색상목록" Top="10" Width="192"></Image>
+		<Image Align="Left" Height="25" Id="Image3" ImageID="bul_tit" Left="266" LeftMargin="15" Style="sty_img_tit" TabOrder="8" Text="상품색상목록" Top="10" Width="192"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : BASBCO00600
+* 업무명      : 공통 
+* 프로그램명  : 색상관리
+--------------------------------------------------------------------------------
+* 작성자      : 심연정 
+* 작성일      : 2009.02.04
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_NAME; // 사용자 이름
+var ds_Parent = "";
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function productP_OnLoadCompleted(obj)
+{
+	//상품의 선택되어진 색상을 가져온다.
+	//cf_setParam(ds_condition, "prod_cd", sProdCd);
+	
+	f_init ();
+	
+    var sSvcID = "getProdColorList";
+    var sInDs  = "nc_input_fieldDs=ds_condition";
+    var sOutDs = "ds_prodColor=prodColorList ds_color=colorList";
+    var sArg   = "sktst.bas.BCO#getProdColorList";
+    
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);  		
+
+}
+
+function f_init ()
+{
+	ds_Parent =  eval("parent."+dsParent);
+	
+}
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function BTN_CLOSE_OnClick(obj)
+{
+	this.close();
+}
+
+
+/*******************************************************************************
+ * @description    : 확인 - 이벤트
+*******************************************************************************/
+function BTN_CONFIRM_OnClick(obj)
+{
+	grd_color_select.Redraw = false;
+	
+	parent.ds_ParentColor.DeleteAll();
+	
+	for(var nRow=0; nRow < ds_prodColor.GetRowCount(); nRow++){
+		parent.ds_ParentColor.AddRow();
+		parent.ds_ParentColor.CopyRow(parent.ds_ParentColor.lastrow,ds_prodColor,nRow);
+	}
+	
+	grd_color_select.Redraw = true;
+	
+	parent.ds_ParentColor.Sort("code");
+	
+	BTN_CLOSE_OnClick(obj);
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	ds_color.AddColumn("chk");
+	ds_prodColor.AddColumn("chk");
+	
+	if(sSvcID == "getProdColorList")
+	{
+		cf_copyDataSet(ds_prodColor, ds_Parent);
+
+		if(ds_prodColor.GetRowCount() >0)
+		{
+			
+			var sFilterStr = "code != ''";
+	
+			for(var i=0; i<ds_prodColor.rowcount; i++)
+			{
+				sFilterStr += " && code != '" + ds_prodColor.GetColumn(i, "code") + "'"; 
+			}
+			
+			ds_color.Filter(sFilterStr);
+		}else{
+			ds_color.UnFilter();
+		}
+		
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 좌측버튼 클릭
+*******************************************************************************/  
+function btn_suttle_right_OnClick(obj)
+{
+
+	if(ds_color.currow == -1 ){
+		alert("전체 색상목록 없습니다");
+		return;
+	}
+	
+	grd_color.Redraw = false;
+	grd_color_select  = false;
+
+	var sHead = grd_color.GetCellProp("head",0,"text");
+	var nTotCnt = ds_color.GetCount();
+	if( nTotCnt > 0 ) nTotCnt = nTotCnt -1;
+
+	for(var nRow=nTotCnt; nRow>=0; nRow--){
+	   var bCheck = false;
+	   if( sHead == "1" ){
+			bCheck = ds_color.GetColumn(nRow,"chk");
+	   }else{
+			bCheck = ds_color.GetColumn(nRow,"chk");
+			if( bCheck == false || bCheck == null || length(bCheck) == 0){
+				bCheck = ds_color.GetSelect(nRow);
+			}
+	   }
+	   
+	   if( bCheck == true){
+			ds_prodColor.AddRow();
+			ds_prodColor.CopyRow(ds_prodColor.lastrow,ds_color,nRow);
+			ds_prodColor.SetColumn(ds_prodColor.lastrow, "chk", "0");
+			ds_color.DeleteRow(nRow);
+	   }
+	}
+
+	ds_prodColor.Sort("code");
+	grd_color.SetCellProp("head",0,"text","0");
+
+	grd_color.Redraw = true;
+	grd_color_select = true;
+}
+
+/*******************************************************************************
+ * @description    : 우측버튼 클릭
+*******************************************************************************/ 
+function btn_suttle_left_OnClick(obj)
+{
+	if(ds_prodColor.currow == -1 ){
+		alert("상품 색상목록 없습니다");
+		return;
+	}
+	
+	if(parent.ds_prod_mgmt.GetColumn(0,"RGST_CL") == "1"){
+		// UKEY 정의 상품.
+		alert("등록구분이 U-key연동인 경우 삭제 할수 없습니다.");
+		return;
+	}
+
+	grd_color.Redraw = false;
+	grd_color_select  = false;
+	
+	var sHead = grd_color_select.GetCellProp("head",0,"text");
+	var nTotCnt = ds_prodColor.GetCount();
+	if( nTotCnt > 0 ) nTotCnt = nTotCnt -1;
+	
+	for(var nRow=nTotCnt; nRow>=0; nRow--){
+	   var bCheck = false;
+	   if( sHead == "1" ){
+			bCheck = ds_prodColor.GetColumn(nRow,"chk");
+	   }else{
+			bCheck = ds_prodColor.GetColumn(nRow,"chk");
+			if( bCheck == false || bCheck == null || length(bCheck) == 0){
+				bCheck = ds_prodColor.GetSelect(nRow);
+			}
+	   }
+	   
+	   if( bCheck == true){
+			ds_color.AddRow();
+			ds_color.CopyRow(ds_color.lastrow,ds_prodColor,nRow);
+			ds_color.SetColumn(ds_color.lastrow, "chk", "0");
+			ds_prodColor.DeleteRow(nRow);
+	   }
+	}
+
+	ds_color.Sort("code");
+	grd_color_select.SetCellProp("head",0,"text","0");
+
+	grd_color.Redraw = true;
+	grd_color_select = true;
+}
+
+
+/*******************************************************************************
+ * @description    : 전체색상목록 리스트 더블클릭시
+*******************************************************************************/
+function grd_color_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	for ( var i=0; i<ds_color.rowcount; i++ ) {		
+		if(ds_color.GetColumn(i, "code") == ds_prodColor.GetColumn(nRow, "code") ){
+			return;
+		}
+    }
+    
+    f_MoveShuttle(ds_color, ds_prodColor);    	
+    ds_prodColor.Sort("code"); 
+}
+
+
+/*******************************************************************************
+ * @description    : 상품색상목록 리스트 더블클릭시 
+*******************************************************************************/
+function grd_color_select_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	for( var i=0; i<ds_prodColor.rowcount; i++ ){		
+		if(ds_prodColor.GetColumn(i, "code") == ds_color.GetColumn(nRow, "code") ){
+			return;
+		}
+    }
+    
+    f_MoveShuttle(ds_prodColor, ds_color);    	
+    ds_color.Sort("code"); 
+}
+
+/*******************************************************************************
+ * @description    : data row 이동 
+*******************************************************************************/
+function f_MoveShuttle(ds, dsTarget)
+{
+	dsTarget.addRow();
+	ds.copyToRow(ds.row, dsTarget.id, dsTarget.row );	
+	ds.DeleteRow(ds.row);
+}
+]]></Script>
+</Window>

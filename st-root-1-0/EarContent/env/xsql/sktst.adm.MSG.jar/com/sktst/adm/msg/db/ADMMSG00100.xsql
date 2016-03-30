@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="ADMMSG00100">
+	<select id="getMessageList" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 									/*+ ADMMSG00100_getMessageList_이경환_최승호 */
+ 	A.LOCALE_XD AS localeXd,
+	A.BIZ_GROUP_XD AS bizGroupXd,
+	A.MESSAGE_ID AS messageId,
+	A.MESSAGE_NAME AS messageName,
+	A.MESSAGE_REASON AS messageReason,
+	A.MESSAGE_TYPE_XD AS messageTypeXd,
+	A.MESSAGE_REMARK AS messageRemark
+FROM 	
+	SKF_MESSAGE A
+WHERE
+	A.LOCALE_XD = 'ko_KR'
+	AND A.BIZ_GROUP_XD = 'SKTPS'
+]]>	<isNotEmpty prepend="AND" property="messageId">
+<![CDATA[		A.MESSAGE_ID = #messageId#
+]]>	</isNotEmpty>
+<![CDATA[]]>	<isNotEmpty prepend="AND" property="messageName">
+<![CDATA[		a.MESSAGE_NAME LIKE '%$messageName$%'
+]]>	</isNotEmpty>
+<![CDATA[]]>	<isNotEmpty prepend="AND" property="messageTypeXd">
+<![CDATA[		A.MESSAGE_TYPE_XD = #messageTypeXd#
+]]>	</isNotEmpty>
+<![CDATA[ORDER BY MESSAGE_ID, MESSAGE_TYPE_XD]]>
+	</select>
+	<insert id="saveMessageList_add" parameterClass="map" ><![CDATA[INSERT /*+ ADMMSG00100_saveMessageList_add_원윤성_이경환 */
+INTO SKF_MESSAGE 
+	(
+	LOCALE_XD,
+	BIZ_GROUP_XD,
+	MESSAGE_ID,
+	MESSAGE_NAME,
+	MESSAGE_REASON,
+	MESSAGE_TYPE_XD,
+	MESSAGE_REMARK
+	)
+VALUES (
+	'ko_KR',
+	'SKTPS',
+	#messageId#,
+	#messageName#,
+	#messageReason#,
+	#messageTypeXd#,
+	#messageRemark#
+	)]]>
+	</insert>
+	<update id="saveMessageList_update" parameterClass="map" ><![CDATA[UPDATE /*+ ADMMSG00100_saveMessageList_update_원윤성_이경환 */
+SKF_MESSAGE
+	SET	
+	MESSAGE_NAME = #messageName#,
+	MESSAGE_REASON = #messageReason#,
+	MESSAGE_TYPE_XD = #messageTypeXd#,
+	MESSAGE_REMARK = #messageRemark#
+WHERE
+	LOCALE_XD = 'ko_KR'
+	AND BIZ_GROUP_XD = 'SKTPS'	
+	AND MESSAGE_ID = #messageId#]]>
+	</update>
+	<delete id="saveMessageList_delete" parameterClass="map" ><![CDATA[DELETE /*+ ADMMSG00100_saveMessageList_delete_원윤성_이경환 */
+FROM SKF_MESSAGE
+WHERE	
+	LOCALE_XD	= 'ko_KR'
+	AND BIZ_GROUP_XD = 'SKTPS'	
+	AND MESSAGE_ID	= #messageId#]]>
+	</delete>
+	<select id="getIpList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "ADMMSG00100_getIpList_인명준_한병곤" */
+       comm_cd_val_nm as ip
+  FROM tbas_comm_cd_dtl
+ WHERE comm_cd_id = 'ZADM_C_00090'
+   AND del_yn = 'N']]>
+	</select>
+</sqlMap>

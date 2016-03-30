@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="446" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="중복상품선택창" Top="8" Ver="1.0" Width="410" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_prodList">
+				<Contents>
+					<colinfo id="PROD_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="COLOR_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="COLOR_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="SER_NUM" size="255" summ="default" type="STRING"/>
+					<colinfo id="HLD_PLC_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="HLD_PLC_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="BAD_YN" size="255" summ="default" type="STRING"/>
+					<colinfo id="DIS_ST" size="255" summ="default" type="STRING"/>
+					<colinfo id="LAST_INOUT_DT" size="255" summ="default" type="STRING"/>
+					<colinfo id="ERRCODE" size="255" summ="default" type="STRING"/>
+					<colinfo id="ERRMSG" size="255" summ="default" type="STRING"/>
+					<colinfo id="DIS_UPD_CNT" size="255" summ="default" type="STRING"/>
+					<colinfo id="DIS_HLD_PLC_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="MFACT_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="MFACT_ID_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROD_CL" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="7" LeftMargin="15" Style="sty_img_tit" TabOrder="1" Text="상품&#32;목록" Top="4" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Height="24" Id="btn_confirm" ImageID="btn_c_2" Left="133" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="412" Width="61"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Height="24" Id="btn_cancel" ImageID="btn_d_2" Left="197" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="2" Text="취소" Top="412" Width="61"></Button>
+		<Grid AutoFit="TRUE" BindDataset="ds_prodList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="408" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="376" Id="grd_prodList" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_prodList_OnCellDblClick" Right="400" RowHeight="21" Style="sty_Grid" TabOrder="4" TabStop="FALSE" Top="32" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="392">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="118"/>
+						<col width="96"/>
+						<col width="129"/>
+						<col width="73"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="제조사" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="상품구분" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="모델명" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="모델코드" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="left" col="0" colid="MFACT_ID_NM" display="normal"/>
+						<cell col="1" colid="PROD_CL" combocol="COMM_CD_VAL" combodataset="ds_prodCl" combotext="COMM_CD_VAL_NM" display="combo"/>
+						<cell align="left" col="2" colid="PROD_NM" display="text"/>
+						<cell align="center" col="3" colid="PROD_CD" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : SALSCO01000
+* 업무명      : 공통
+* 프로그램명  : 오류내용확인창
+--------------------------------------------------------------------------------
+* 작성자      : 정재열 
+* 작성일      : 2009.04.02
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+var FV_PARENT_DS;
+var FV_PARENT_APY_DS;
+var FV_PARENT_DS_ROW;
+var FV_FUNCTION;
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+
+	FV_PARENT_DS     = parentDs;
+	FV_PARENT_APY_DS = apyParentDs;
+	FV_FUNCTION      = exeFunction;
+	FV_PARENT_DS_ROW = row;
+	
+	f_init();
+}
+
+
+/*******************************************************************************
+ * @description    : 초기화
+*******************************************************************************/
+function f_init()
+{
+
+	var oParentDs = eval("parent." + parentDs);
+	cf_copyDataSet(ds_prodList, oParentDs);
+}
+
+
+/*******************************************************************************
+ * @description    : 부모창에 항목 적용
+*******************************************************************************/
+function setParentControl()
+{
+	var oDataset = eval("parent." + FV_PARENT_APY_DS);
+	
+	var nRow = ds_prodList.currow;
+	var sProdCl  = ds_prodList.GetColumn(nRow, "PROD_CL");
+	var sProdCd  = ds_prodList.GetColumn(nRow, "PROD_CD");
+	var sProdNm  = ds_prodList.GetColumn(nRow, "PROD_NM");
+	var sSerNum  = ds_prodList.GetColumn(nRow, "SER_NUM");
+	var sColorCd = ds_prodList.GetColumn(nRow, "COLOR_CD");
+	var sColorNm = ds_prodList.GetColumn(nRow, "COLOR_NM");
+	var sMfactId = ds_prodList.GetColumn(nRow, "MFACT_ID");
+	var sMfactNm = ds_prodList.GetColumn(nRow, "MFACT_ID_NM");
+	
+	oDataset.setColumn(FV_PARENT_DS_ROW, "PROD_CL"    , sProdCl );
+	oDataset.setColumn(FV_PARENT_DS_ROW, "SER_NUM"    , sSerNum );
+	oDataset.setColumn(FV_PARENT_DS_ROW, "MFACT_ID"   , sMfactId);
+	oDataset.setColumn(FV_PARENT_DS_ROW, "MFACT_ID_NM", sMfactNm);
+	oDataset.setColumn(FV_PARENT_DS_ROW, "PROD_CD"    , sProdCd );
+	oDataset.setColumn(FV_PARENT_DS_ROW, "PROD_NM"    , sProdNm );
+	oDataset.setColumn(FV_PARENT_DS_ROW, "COLOR_CD"   , sColorCd);
+	oDataset.setColumn(FV_PARENT_DS_ROW, "COLOR_NM"   , sColorNm);
+	if( uf_isNull(FV_FUNCTION) == false)
+	{
+		eval("parent." + FV_FUNCTION);
+	}
+	
+	Close();
+}
+
+/*******************************************************************************
+ * @description    : 닫기 버튼 클릭 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	Close();
+}
+
+
+/*******************************************************************************
+ * @description    : 확인버튼 클릭 - 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	setParentControl();
+}
+
+
+
+/*******************************************************************************
+ * @description    : 그리드 더블 클릭 - 이벤트
+*******************************************************************************/
+function grd_prodList_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	setParentControl();
+}
+]]></Script>
+</Window>

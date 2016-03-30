@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASSAM00200">
+	<select id="getSamSelect" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASSAM00200_getSamSelect - 김만수 */
+  SEQ
+  , AMT_FROM 
+  , AMT_TO
+  , PRT_SEQ
+  , EFF_STA_DT || '~' || EFF_END_DT AS EFF_DT
+  , EFF_STA_DT
+  , EFF_END_DT
+FROM TBAS_SPLST_AMT_MGMT
+WHERE EFF_STA_DT = #eff_sdt#
+AND EFF_END_DT = #eff_edt#
+AND DEL_YN = 'N'
+ORDER BY PRT_SEQ ASC]]>
+	</select>
+	<select id="getMaxSeq" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASSAM00200_getMaxSeq - 김만수 */
+	NVL(MAX(SEQ), 0) + 1 AS SEQ
+FROM TBAS_SPLST_AMT_MGMT]]>
+	</select>
+	<select id="getMaxPrtSeq" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASSAM00200_getMaxPrtSeq - 김만수 */
+	NVL(MAX(PRT_SEQ), 0) + 1 AS PRT_SEQ
+FROM TBAS_SPLST_AMT_MGMT
+WHERE EFF_STA_DT = #eff_sta_dt#
+AND EFF_END_DT = #eff_end_dt#]]>
+	</select>
+	<update id="saveSamUpdate" parameterClass="map" ><![CDATA[UPDATE TBAS_SPLST_AMT_MGMT SET /*+ BASSAM00200_saveSamUpdate - 김만수 */
+	AMT_FROM = #amt_from#
+	, AMT_TO = #amt_to#
+	, EFF_STA_DT = #eff_sta_dt#
+	, EFF_END_DT = #eff_end_dt#
+	, PRT_SEQ = #prt_seq#
+	, MOD_DTM = TO_CHAR(SYSDATE, 'yyyyMMddHH24MISS')
+	, MOD_USER_ID = #onlineContext.userInfo.loginId#
+WHERE SEQ = #seq#]]>
+	</update>
+	<insert id="saveSamInsert" parameterClass="map" ><![CDATA[INSERT INTO TBAS_SPLST_AMT_MGMT /*+ BASSAM00200_saveSamInsert - 김만수 */
+(
+	SEQ 
+	, PRT_SEQ 
+	, AMT_FROM
+	, AMT_TO 	
+	, EFF_STA_DT
+	, EFF_END_DT
+	, DEL_YN
+	, INS_DTM
+	, INS_USER_ID
+	, MOD_DTM
+	, MOD_USER_ID
+)
+VALUES
+(
+	(SELECT NVL(MAX(SEQ), 0) + 1 FROM TBAS_SPLST_AMT_MGMT)
+	, #prt_seq#
+	, #amt_from#
+	, #amt_to#
+	, #eff_sta_dt#
+	, #eff_end_dt#
+	, 'N'
+	, TO_CHAR(SYSDATE, 'yyyyMMddHH24MISS')
+	, #onlineContext.userInfo.loginId#
+	, TO_CHAR(SYSDATE, 'yyyyMMddHH24MISS')
+	, #onlineContext.userInfo.loginId#
+)]]>
+	</insert>
+	<update id="saveSamDelete" parameterClass="map" ><![CDATA[UPDATE TBAS_SPLST_AMT_MGMT SET /*+ BASSAM00200_saveSamDelete - 김만수 */
+	DEL_YN = 'Y'
+	, MOD_DTM = TO_CHAR(SYSDATE, 'yyyyMMddHH24MISS')
+	, MOD_USER_ID = #onlineContext.userInfo.loginId#
+WHERE SEQ = #seq#]]>
+	</update>
+	<select id="getSamCheckSelect" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASSAM00200_getSamCheckSelect - 김만수 */
+	SEQ
+	, AMT_FROM 
+	, AMT_TO
+	, PRT_SEQ
+	, EFF_STA_DT || '~' || EFF_END_DT AS EFF_DT
+	, EFF_STA_DT
+	, EFF_END_DT
+FROM TBAS_SPLST_AMT_MGMT
+WHERE DEL_YN = 'N'
+AND (
+	#eff_edt# BETWEEN EFF_STA_DT AND EFF_END_DT
+]]>	<isNotEmpty property="eff_sdt" prepend="OR">
+<![CDATA[     #eff_sdt# BETWEEN EFF_STA_DT AND EFF_END_DT  
+]]>	</isNotEmpty> 
+<![CDATA[)]]>
+	</select>
+</sqlMap>

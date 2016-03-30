@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="168" Id="POLSPM00900" Left="8" OnLoadCompleted="POLSPM00900_OnLoadCompleted" PidAttrib="7" Title="상품&#32;그룹&#32;기간변경" Top="8" Ver="1.0" Width="336" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="PROD_GROUP_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="EFF_STA_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="EFF_END_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_YMD" size="256" summ="default" type="STRING"/>
+					<record>
+						<APLY_YMD></APLY_YMD>
+						<EFF_END_DT></EFF_END_DT>
+						<EFF_STA_DT></EFF_STA_DT>
+						<PROD_GROUP_CD></PROD_GROUP_CD>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="RaisedEdge" Height="40" Id="div_search" Left="10" Style="sty_div_dataview" TabOrder="1" Text="Div0" Top="10" Width="310">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static2" Left="25" Style="sty_lb_dataview" TabOrder="1" Text="기존기간" Top="7" VAlign="Middle" Width="52"></Static>
+				<Calendar BindDataset="ds_condition" Border="Flat" ButtonImageID="btn_i_calendar" Column="EFF_STA_DT" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_aplyStaDtm" Left="98" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="1" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Static Align="Center" Height="20" Id="Static4" Left="187" TabOrder="4" Text="~" Top="7" VAlign="Middle" Width="20"></Static>
+				<Calendar BindDataset="ds_condition" Border="Flat" ButtonImageID="btn_i_calendar" Column="EFF_END_DT" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_aplyEndDtm" Left="208" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="2" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="64" Id="div_process" Left="10" Style="sty_div_input" TabOrder="2" Text="Div0" Top="60" Width="310">
+			<Contents>
+				<Calendar BindDataset="ds_condition" Border="Flat" ButtonImageID="btn_i_calendar" Column="APLY_YMD" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_aplyDt" Left="97" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" OnChanged="div_process_cal_inFixDt_OnChanged" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="0" TodayColor="user26" Top="8" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Static Align="Right" Height="20" Id="Static3" Left="8" Style="sty_lb_Basic" TabOrder="0" Text="변경일자" Top="8" VAlign="Middle" Width="68"></Static>
+				<Image Align="Left" Height="20" Id="Image3" ImageID="bul_caution" Left="20" LeftMargin="20" Style="sty_lb_info" TabOrder="3" TabStop="FALSE" Text="변경일자는&#32;적용시작일자&#32;입니다." Top="34" Width="280"></Image>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="104" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="136" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="167" LeftMargin="5" OnClick="btn_cancel_OnClick" Style="sty_btn_d" TabOrder="4" Text="취소" Top="136" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : POLSPM00900
+* 업무명      : 상품 그룹 기간변경
+* 프로그램명  : 상품 그룹 기간변경
+--------------------------------------------------------------------------------
+* 작성자      : 전미량
+* 작성일      : 20120717
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_STR_NAME; // 사용자 이름
+var FV_ORGID;		// 소속
+var FV_ORGCL;		// 소속구분
+
+/*******************************************************************************
+* 함수명 : POLSPM00900_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function POLSPM00900_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	cf_setParam(ds_condition,"PROD_GROUP_ID",PROD_GROUP_ID);
+	cf_setParam(ds_condition,"EFF_STA_DT"	,EFF_STA_DT);
+	cf_setParam(ds_condition,"EFF_END_DT"	,EFF_END_DT);
+	
+}
+
+/*******************************************************************************
+* 함수명 : btn_confirm_OnClick
+* 기능명 : 확인 버튼  OnClick 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	var aplyDate = ds_condition.GetColumn(0,"APLY_YMD");
+	var startDate = ds_condition.GetColumn(0,"EFF_STA_DT");
+	var endtDate = ds_condition.GetColumn(0,"EFF_END_DT");
+	
+	if(uf_isNull(aplyDate) == true){
+		alert(cf_getMessage(MSG_00135, "변경일자"));
+		div_process.cal_aplyDt.SetFocus();
+		return;
+	}
+
+	if( aplyDate >= endtDate || aplyDate < startDate){
+		cf_setParam(ds_condition,"APLY_YMD" ,"");
+		div_process.cal_aplyDt.SetFocus();
+		alert(cf_getMessage(MSG_00131, "변경일자;기존 시작일자;기존 종료일자"));
+		return false;
+	
+	}
+		
+	if(substr(aplyDate,0,6) != substr(endtDate,0,6) || substr(aplyDate,0,6) != substr(startDate,0,6) ){
+		
+		cf_setParam(ds_condition,"APLY_YMD" ,"");
+		div_process.cal_aplyDt.SetFocus();
+		alert(cf_getMessage(MSG_00087, "변경 적용년월"));
+		return false;
+				
+	}
+	
+	parent.ds_modDate.CopyRow(0,ds_condition,0);
+	
+	this.close(1);
+}
+
+/*******************************************************************************
+* 함수명 : btn_cancel_OnClick
+* 기능명 : 취소 버튼  OnClick 이벤트
+*******************************************************************************/
+function btn_cancel_OnClick(obj)
+{
+	this.close(0);
+}
+]]></Script>
+</Window>

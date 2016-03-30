@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="재고월실적" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="org_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_mth_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="dis_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="curr_dis_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="store_nomal_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="store_bad_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="dis_rotation_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="dis_rotation_date" size="256" summ="default" type="STRING"/>
+					<colinfo id="dis_evalu_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="average_amt" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_yyyymm">
+				<Contents>
+					<colinfo id="yyyymm" size="256" summ="default" type="STRING"/>
+					<colinfo id="yyyy-mm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="568" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="488" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="80" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="132"/>
+						<col width="77"/>
+						<col width="66"/>
+						<col width="64"/>
+						<col width="63"/>
+						<col width="63"/>
+						<col width="75"/>
+						<col width="75"/>
+						<col width="110"/>
+						<col width="78"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" rowspan="2" text="영업센터"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" rowspan="2" text="전월재고"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" rowspan="2" text="당월입고"/>
+						<cell bkcolor="user34" col="3" color="user35" colspan="7" display="text" text="재고현황"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" row="1" text="보유재고"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" row="1" text="유통재고"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" row="1" text="창고정상"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" row="1" text="창고불량"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" row="1" text="재고회전일"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" row="1" text="재고평가금액"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" row="1" text="평균단가"/>
+					</head>
+					<body>
+						<cell align="left" col="0" colid="org_nm" display="text"/>
+						<cell align="right" col="1" colid="bf_mth_qty" display="number"/>
+						<cell align="right" col="2" colid="in_qty" display="number"/>
+						<cell align="right" col="3" colid="dis_qty" display="number"/>
+						<cell align="right" col="4" colid="curr_dis_qty" display="number"/>
+						<cell align="right" col="5" colid="store_nomal_qty" display="number"/>
+						<cell align="right" col="6" colid="store_bad_qty" display="number"/>
+						<cell align="right" col="7" colid="dis_rotation_date" display="number"/>
+						<cell align="right" col="8" colid="dis_evalu_amt" display="number"/>
+						<cell align="right" col="9" colid="average_amt" display="number" expr="Truncate(average_amt)"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user36" display="text" font="돋움,9,Bold" text="합계"/>
+						<cell bkcolor="user37" col="1" color="user36" display="number" expr='sum(&quot;bf_mth_qty&quot;)' font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="2" color="user36" display="number" expr='sum(&quot;in_qty&quot;)' font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="3" color="user36" display="number" expr='sum(&quot;dis_qty&quot;)' font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="4" color="user36" display="number" expr='sum(&quot;curr_dis_qty&quot;)' font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="5" color="user36" display="number" expr='sum(&quot;store_nomal_qty&quot;)' font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="6" color="user36" display="number" expr='sum(&quot;store_bad_qty&quot;)' font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="7" color="user36" display="number" expr='Truncate(avg(&quot;dis_rotation_date&quot;))' font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="8" color="user36" display="number" expr='sum(&quot;dis_evalu_amt&quot;)' font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="9" color="user36" display="number" expr='Truncate(avg(&quot;average_amt&quot;))' font="돋움,9,Bold"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Div Height="21" Id="div_btn" Left="799" TabOrder="2" Text="Div2" Top="56" Width="22">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_excelDown" ImageID="btn_i_exceldown_w" Left="2" OnClick="div_btn_btn_excelDown_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Width="19"></Button>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="38" Id="div_search" Left="10" Style="sty_div_search" TabOrder="3" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="27" Style="sty_lb_Search" TabOrder="3" Text="기준년월" Top="6" VAlign="Middle" Width="60"></Static>
+				<Combo Border="Flat" CodeColumn="yyyymm" DataColumn="yyyy-mm" Height="20" Id="cmb_strdYYYYMM" ImeMode="none" InnerDataset="ds_yyyymm" Left="90" Style="sty_ipt_form" TabOrder="1" Top="5" Width="93"></Combo>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="724" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="6" Width="60"></Button>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : DISDSM08200
+* 업무명      : 재고
+* 프로그램명  : 재고월실적
+--------------------------------------------------------------------------------
+* 작성자      : 한병곤
+* 작성일      : 2009.02.11
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_DIS.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var STRD_YYYYMM;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	// 기준년월 셋팅.
+	//div_search.cmb_strdYYYYMM
+	
+	var sStartYYYY = 2009;
+	var sStartMM   = 6;
+	var sEndYYYY = toNumber(substr(cf_getDate(),0,4));
+	var sEndMM   = toNumber(substr(cf_getDate(),4,2));		
+
+	for( var i = sStartYYYY ; i <= sEndYYYY ; i++ ){
+		
+		for(var j = (sStartMM) ; j <= 12 ; j++){
+						
+			var sYYYYMM = toString(i)+decode(length(toString(j)),1,"0"+toString(j),j);
+			var sYM = toString(i)+"-"+decode(length(toString(j)),1,"0"+toString(j),j);
+
+			if(sYYYYMM > substr(GetDate(),0,6)){
+				break;
+			}
+			
+			var irow = ds_yyyymm.AddRow();
+			ds_yyyymm.SetColumn(irow,"yyyymm",sYYYYMM);
+			ds_yyyymm.SetColumn(irow,"yyyy-mm",sYM);
+		}
+	}
+	
+	ds_yyyymm.Sort("yyyymm",false);
+	
+	if(uf_IsNull(STRD_YYYYMM)){
+		div_search.cmb_strdYYYYMM.Index = 0;
+	}else{
+		div_search.cmb_strdYYYYMM.Index = ds_yyyymm.FindRow("yyyymm",STRD_YYYYMM);		
+		div_search_btn_search_OnClick();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "searchIn"){
+		ds_list.Sort("org_nm");
+	}
+}
+/*******************************************************************************
+ 공통 스크립트 영역 끝
+*******************************************************************************/
+
+/*******************************************************************************
+ * @description    : search click - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{	
+	// 넘길 파라메터 설정
+	cf_setParam(ds_condition, "STRD_YYYYMM", div_search.cmb_strdYYYYMM.Value);
+	
+	// 트랜잭션 설정
+	var sSvcID = "searchIn";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=ds_list";
+	var sArg   = "sktst.dis.DSM#getDisMonthHist";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+}
+
+/*******************************************************************************
+ * @description    : excelDown 클릭- 이벤트
+*******************************************************************************/
+function div_btn_btn_excelDown_OnClick(obj)
+{
+	cf_exportExcel(grd_list);	
+}]]></Script>
+</Window>

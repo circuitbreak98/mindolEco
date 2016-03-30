@@ -1,0 +1,613 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <Form Height="600" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="기준정보&#32;Ukey&#32;I/F&#32;관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+        <Datasets>
+            <Dataset DataSetType="Dataset" Id="ds_apply">
+                <Contents>
+                    <colinfo id="code" size="256" summ="default" type="STRING"/>
+                    <colinfo id="text" size="256" summ="default" type="STRING"/>
+                    <record>
+                        <code>N</code>
+                        <text>미반영</text>
+                    </record>
+                    <record>
+                        <code>Y</code>
+                        <text>반영</text>
+                    </record>
+                    <record>
+                        <code>0</code>
+                        <text>전체</text>
+                    </record>
+                </Contents>
+            </Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_list" UpdateControl="False"></Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_service">
+                <Contents>
+                    <colinfo id="code" size="256" summ="default" type="STRING"/>
+                    <colinfo id="text" size="256" summ="default" type="STRING"/>
+                    <record>
+                        <code>1</code>
+                        <text>상품코드</text>
+                    </record>
+                    <record>
+                        <code>2</code>
+                        <text>모델단말기</text>
+                    </record>
+                    <record>
+                        <code>3</code>
+                        <text>공통코드</text>
+                    </record>
+                    <record>
+                        <code>4</code>
+                        <text>U.Key&#32;ID</text>
+                    </record>
+                </Contents>
+            </Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_prod"></Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_model"></Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_comm"></Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_exist">
+                <Contents>
+                    <colinfo id="code" size="256" summ="default" type="STRING"/>
+                    <colinfo id="text" size="256" summ="default" type="STRING"/>
+                    <record>
+                        <code>0</code>
+                        <text>신규</text>
+                    </record>
+                    <record>
+                        <code>1</code>
+                        <text>변경</text>
+                    </record>
+                </Contents>
+            </Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_prodSt">
+                <Contents>
+                    <colinfo id="code" size="256" summ="default" type="STRING"/>
+                    <colinfo id="text" size="256" summ="default" type="STRING"/>
+                    <colinfo id="value" size="256" summ="default" type="STRING"/>
+                    <record>
+                        <code></code>
+                        <text></text>
+                        <value></value>
+                    </record>
+                    <record>
+                        <code></code>
+                        <text></text>
+                        <value></value>
+                    </record>
+                    <record>
+                        <code></code>
+                        <text></text>
+                        <value></value>
+                    </record>
+                </Contents>
+            </Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_svcProdCd">
+                <Contents>
+                    <colinfo id="code" size="256" summ="default" type="STRING"/>
+                    <colinfo id="text" size="256" summ="default" type="STRING"/>
+                    <colinfo id="value" size="256" summ="default" type="STRING"/>
+                    <record>
+                        <code>1</code>
+                        <text>요금제</text>
+                        <value></value>
+                    </record>
+                    <record>
+                        <code>2</code>
+                        <text>부가요금제</text>
+                        <value></value>
+                    </record>
+                    <record>
+                        <code>3</code>
+                        <text>부가서비스</text>
+                        <value></value>
+                    </record>
+                </Contents>
+            </Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_prodCl"></Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_ukey"></Dataset>
+            <Dataset DataSetType="Dataset" Id="ds_deal"></Dataset>
+        </Datasets>
+        <Image Align="Left" Height="25" Id="img_title" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="상품&#32;I/F&#32;목록" Top="57" Width="192"></Image>
+        <Grid AutoFit="TRUE" BindDataset="ds_prod" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="545" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" Format="prod" HeadBorder="Flat" HeadHeight="22" Height="465" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_list_OnCellDblClick" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="80" UseDBuff="true" UseExprCache="Row" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+            <contents>
+                <format id="prod">
+                    <columns>
+                        <col width="38"/>
+                        <col width="69"/>
+                        <col width="81"/>
+                        <col width="150"/>
+                        <col width="80"/>
+                        <col width="55"/>
+                        <col width="70"/>
+                        <col width="70"/>
+                        <col width="70"/>
+                        <col width="62"/>
+                        <col width="56"/>
+                        <col width="48"/>
+                    </columns>
+                    <head>
+                        <cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="번호" Valign="Center"/>
+                        <cell bkcolor="user34" col="1" color="user35" display="text" text="처리일시" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="상품ID" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="상품명" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="상품구분코드" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="상품상태" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" text="출시일" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="7" color="user35" display="text" font="돋움,9,Bold" text="가입중단일" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="8" color="user35" display="text" font="돋움,9,Bold" text="퇴출일" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="9" color="user35" display="text" font="돋움,9,Bold" text="결합상품" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="10" color="user35" display="text" font="돋움,9,Bold" text="반영여부" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="11" color="user35" display="text" font="돋움,9,Bold" text="구분" Valign="Center"/>
+                    </head>
+                    <body>
+                        <cell align="center" bkcolor2="user36" col="0" display="text" expr="row+1"/>
+                        <cell col="1" colid="op_dt" display="date"/>
+                        <cell align="center" bkcolor2="user36" col="2" colid="prod_id" display="text"/>
+                        <cell align="left" bkcolor2="user36" col="3" colid="prod_nm" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="4" colid="svc_prod_cd" combocol="COMM_CD_VAL" combodataset="ds_svcProdCd" combotext="COMM_CD_VAL_NM" display="combo"/>
+                        <cell align="center" bkcolor2="user36" col="5" colid="prod_st" combocol="COMM_CD_VAL" combodataset="ds_prodSt" combotext="COMM_CD_VAL_NM" display="combo"/>
+                        <cell align="center" bkcolor2="user36" col="6" colid="mktg_dt" display="date"/>
+                        <cell align="center" bkcolor2="user36" col="7" colid="scrb_stop_dt" display="date"/>
+                        <cell align="center" bkcolor2="user36" col="8" colid="wdrl_dt" display="date"/>
+                        <cell align="center" bkcolor2="user36" col="9" colid="comb_prod_yn" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="10" colid="aply_yn" combocol="code" combodataset="ds_apply" combofilter="code&#32;&lt;&gt;&#32;0" combotext="text" display="combo"/>
+                        <cell align="center" bkcolor2="user36" col="11" colid="exist" combocol="code" combodataset="ds_exist" combotext="text" display="combo"/>
+                    </body>
+                </format>
+                <format id="model">
+                    <columns>
+                        <col width="45"/>
+                        <col width="71"/>
+                        <col width="66"/>
+                        <col width="111"/>
+                        <col width="69"/>
+                        <col width="70"/>
+                        <col width="60"/>
+                        <col width="60"/>
+                        <col width="74"/>
+                        <col width="70"/>
+                        <col width="70"/>
+                        <col width="56"/>
+                        <col width="50"/>
+                    </columns>
+                    <head>
+                        <cell bkcolor="user34" col="0" color="user35" display="text" text="번호">
+                            <cell align="center" col="0" color="user35" display="text" font="돋움,9,Bold" text="번호" Valign="Center"/>
+                        </cell>
+                        <cell bkcolor="user34" col="1" color="user35" display="text" text="처리일시" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="2" color="user35" display="text" expr="&apos;생산업체\n코드&apos;" font="돋움,9,Bold" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="단말기모델명" Valign="Center"/>
+                        <cell bkcolor="user34" col="4" color="user35" display="text" expr="&apos;단말기\n구분코드&apos;"/>
+                        <cell align="center" bkcolor="user34" col="5" color="user35" display="text" expr="&apos;단말기\n모델코드&apos;" font="돋움,9,Bold" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="6" color="user35" display="text" expr="&apos;연결색상\n건수&apos;" font="돋움,9,Bold" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="7" color="user35" display="text" expr="&apos;연결색상\n코드&apos;" font="돋움,9,Bold" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="8" color="user35" display="text" expr="&apos;유통단말기\n여부&apos;" font="돋움,9,Bold" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="9" color="user35" display="text" font="돋움,9,Bold" text="출시일" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="10" color="user35" display="text" font="돋움,9,Bold" text="단종일" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="11" color="user35" display="text" font="돋움,9,Bold" text="반영여부" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="12" color="user35" display="text" font="돋움,9,Bold" text="구분" Valign="Center"/>
+                    </head>
+                    <body>
+                        <cell align="center" bkcolor2="user36" col="0" display="text" expr="row+1"/>
+                        <cell col="1" colid="op_dt" display="date"/>
+                        <cell align="center" bkcolor2="user36" col="2" colid="mfact_cd" display="text"/>
+                        <cell align="left" bkcolor2="user36" col="3" colid="PROD_NM" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="4" colid="prod_cl" combocol="COMM_CD_VAL" combodataset="ds_prodCl" combotext="COMM_CD_VAL_NM" display="combo"/>
+                        <cell align="center" bkcolor2="user36" col="5" colid="PROD_CD" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="6" colid="link_color_cnt" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="7" colid="link_color_cd" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="8" colid="dstrb_eqp_yn" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="9" colid="mktg_dt" display="date"/>
+                        <cell align="center" bkcolor2="user36" col="10" colid="end_dt" display="date"/>
+                        <cell align="center" bkcolor2="user36" col="11" colid="aply_yn" combocol="code" combodataset="ds_apply" combofilter="code&#32;&lt;&gt;&#32;0" combotext="text" display="combo"/>
+                        <cell align="center" bkcolor2="user36" col="12" colid="exist" combocol="code" combodataset="ds_exist" combotext="text" display="combo"/>
+                    </body>
+                </format>
+                <format id="comm">
+                    <columns>
+                        <col width="45"/>
+                        <col width="81"/>
+                        <col width="80"/>
+                        <col width="114"/>
+                        <col width="87"/>
+                        <col width="56"/>
+                        <col width="56"/>
+                    </columns>
+                    <head>
+                        <cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="번호" Valign="Center"/>
+                        <cell bkcolor="user34" col="1" color="user35" display="text" text="처리일시" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="코드값" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="코드값명" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="코드ID" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="반영여부" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" text="구분" Valign="Center"/>
+                    </head>
+                    <body>
+                        <cell align="center" bkcolor2="user36" col="0" display="text" expr="row+1"/>
+                        <cell col="1" colid="op_dt" display="date"/>
+                        <cell align="center" bkcolor2="user36" col="2" colid="cd_val" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="3" colid="cd_val_nm" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="4" colid="cd_id" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="5" colid="aply_yn" combocol="code" combodataset="ds_apply" combofilter="code&#32;&lt;&gt;&#32;0" combotext="text" display="combo"/>
+                        <cell align="center" bkcolor2="user36" col="6" colid="exist" combocol="code" combodataset="ds_exist" combotext="text" display="combo"/>
+                    </body>
+                </format>
+                <format id="ukey">
+                    <columns>
+                        <col width="45"/>
+                        <col width="81"/>
+                        <col width="94"/>
+                        <col width="114"/>
+                        <col width="145"/>
+                        <col width="145"/>
+                        <col width="145"/>
+                        <col width="56"/>
+                    </columns>
+                    <head>
+                        <cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="번호" Valign="Center"/>
+                        <cell bkcolor="user34" col="1" color="user35" display="text" text="처리일시" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="조직코드" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="서브조직코드" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="로그인&#32;ID" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="U.Key&#32;ID&#32;명" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" text="U.Key&#32;ID" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="7" color="user35" display="text" font="돋움,9,Bold" text="반영여부" Valign="Center"/>
+                    </head>
+                    <body>
+                        <cell align="center" bkcolor2="user36" col="0" display="text" expr="row+1"/>
+                        <cell col="1" colid="op_dt" display="date"/>
+                        <cell align="center" bkcolor2="user36" col="2" colid="org_cd" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="3" colid="sub_org_cd" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="4" colid="ukey_id" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="5" colid="ukey_id_nm" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="6" colid="login_id" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="7" colid="aply_yn" combocol="code" combodataset="ds_apply" combofilter="code&#32;&lt;&gt;&#32;0" combotext="text" display="combo"/>
+                    </body>
+                </format>
+                <format id="deal">
+                    <columns>
+                        <col width="45"/>
+                        <col width="94"/>
+                        <col width="114"/>
+                        <col width="145"/>
+                        <col width="145"/>
+                        <col width="145"/>
+                        <col width="56"/>
+                    </columns>
+                    <head>
+                        <cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="번호" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="조직코드" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="서브조직코드" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="U.Key&#32;ID" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="U.Key&#32;ID&#32;명" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="로그인&#32;ID" Valign="Center"/>
+                        <cell align="center" bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" text="반영여부" Valign="Center"/>
+                    </head>
+                    <body>
+                        <cell align="center" bkcolor2="user36" col="0" display="text" expr="row+1"/>
+                        <cell align="center" bkcolor2="user36" col="1" colid="org_cd" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="2" colid="sub_org_cd" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="3" colid="ukey_id" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="4" colid="ukey_id_nm" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="5" colid="login_id" display="text"/>
+                        <cell align="center" bkcolor2="user36" col="6" colid="aply_yn" combocol="code" combodataset="ds_apply" combofilter="code&#32;&lt;&gt;&#32;0" combotext="text" display="combo"/>
+                    </body>
+                </format>
+            </contents>
+        </Grid>
+        <Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="2" Text="Div0" Top="10" Width="810">
+            <Contents>
+                <Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="739" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="7" Width="60"></Button>
+                <Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_startDate" Left="250" LeftMargin="2" MonthPopupBorder="RAISEDEDGE" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_ipt_search" SundayTextColor="user27" TabOrder="2" TodayColor="user26" Top="7" UserData="처리일자&#32;시작일" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="110"></Calendar>
+                <Static Align="Right" Border="None" Height="20" Id="Static0" Left="163" Style="sty_lb_Search" TabOrder="3" Text="처리일자" Top="7" VAlign="Middle" Width="84"></Static>
+                <Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_endDate" Left="378" LeftMargin="2" MonthPopupBorder="RAISEDEDGE" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_ipt_search" SundayTextColor="user27" TabOrder="4" TodayColor="user26" Top="7" UserData="처리일자&#32;종료일" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="110"></Calendar>
+                <Static Align="Right" Border="None" Height="20" Id="Static4" Left="465" Style="sty_lb_Search" TabOrder="6" Text="반영여부" Top="7" VAlign="Middle" Width="84"></Static>
+                <Radio Border="None" CodeColumn="code" ColumnCount="3" DataColumn="text" Height="20" Id="rdo_applyYn" INDEX="0" InnerDataset="ds_apply" Left="553" LeftMargin="5" OnKeyDown="divS_common_OnKeyDown" RightMargin="5" Style="sty_opt_search" TabOrder="5" Top="7" Value="N" Width="179">
+                    <Contents>
+                        <Layout code="Y" height="20" left="10" text="Y" top="0" width="30"/>
+                        <Layout code="N" height="20" left="60" text="N" top="0" width="30"/>
+                    </Contents>
+                </Radio>
+                <Static Height="20" Id="Static1" Left="365" TabOrder="7" Text="~" Top="11" Width="13"></Static>
+                <Combo Border="Flat" CodeColumn="code" DataColumn="text" Height="20" Id="cmb_service" INDEX="0" InnerDataset="ds_service" Left="79" OnChanged="div_search_cmb_service_OnChanged" ResetIndex="FIRST" Style="sty_ipt_form" TabOrder="8" Top="6" Width="85"></Combo>
+                <Static Align="Right" Border="None" Height="20" Id="Static2" Left="-5" Style="sty_lb_Search" TabOrder="9" Text="서비스구분" Top="7" VAlign="Middle" Width="84"></Static>
+                <Image Height="21" Id="Image1" ImageID="bul_mand" Left="183" TabOrder="10" Top="7" Transparent="TRUE" Width="20"></Image>
+            </Contents>
+        </Div>
+        <Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="758" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="4" Text="저장" Top="562" Visible="FALSE" Width="60"></Button>
+    </Form>
+    <Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BASCDM08100
+* 업무명      : 기준정보 - 
+* 프로그램명  : 기준정보 I/F
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.04.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_INT_AUTH = 0;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+    // 권한 설정
+    cf_setAuth(pFrmNum);
+    
+    if(btn_save.Visible)
+    {
+        FV_INT_AUTH = 1;
+    }
+
+    cf_setGrdChecknSortEvent(grd_list);
+    
+    cf_setCommonCodeDsEnv();
+    cf_setCommonCode("ds_svcProdCd", "ZBAS_C_00320", null, null, false); // 부가상품구분
+    cf_setCommonCode("ds_prodSt", "ZBAS_C_00180", null, null, false); // 상품상태
+    cf_setCommonCode("ds_prodCl", "ZBAS_C_00010", null, null, false); // 단말기 상품구분
+    cf_checkCommonCode();   
+    
+    div_search.cal_startDate.Value = Mid(cf_getDate(),0,8);
+    div_search.cal_endDate.Value = Mid(cf_getDate(),0,8);
+
+    //div_search.cal_startDate.value = "20090416";
+}
+
+/*******************************************************************************
+ * @description    : 조회 버튼 클릭- 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+    f_search();
+}
+
+
+/*******************************************************************************
+ * @description    : 조회 함수 - 이벤트
+*******************************************************************************/
+function f_search()
+{
+    if(!cf_checkObjValues(div_search)){
+        return;
+    }   
+    
+    // 조회 조건 설정
+    ds_condition.ClearData();
+    cf_setParam(ds_condition, "start_date", div_search.cal_startDate.value);
+    cf_setParam(ds_condition, "end_date", div_search.cal_endDate.value);
+    var sApplyYn = div_search.rdo_applyYn.value;
+    if(sApplyYn != "0")
+    {
+        cf_setParam(ds_condition, "apply_yn", sApplyYn);
+    }
+    var sSvrCode = div_search.cmb_service.Value;
+    cf_setParam(ds_condition, "service_code", sSvrCode); 
+
+    // 트랜잭션 설정
+    var sSvcID = "svcList";
+    var sInDs = "nc_input_fieldDs=ds_condition";
+    var sOutDs;
+
+    if(sSvrCode == "1")
+    {
+        sOutDs = "ds_prod=output";
+    }
+    else if(sSvrCode == "2")
+    {
+        sOutDs = "ds_model=output";
+    }
+    else if(sSvrCode == "3")
+    {
+        sOutDs = "ds_comm=output";
+    }
+    else if(sSvrCode == "4")
+    {
+        sOutDs = "ds_ukey=output";
+    }
+    else
+    {
+        sOutDs = "ds_deal=output";
+    }
+    //var sOutDs = "ds_list=output";
+    
+    var sArg = "sktst.bas.CDM#getUkeyIfCd";
+    
+    // 공통 트랜잭션 호출
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 엔터 이벤트 - 이벤트
+*******************************************************************************/
+function f_commonEnterDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+    if(nChar == 13)
+    {
+        div_search_btn_search_OnClick();
+    }
+}
+
+/*******************************************************************************
+ * @description    : 상세 조회 - 이벤트
+*******************************************************************************/
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+    var oGrdDs = object(obj.BindDataset); // 바인드된 데이타셋
+    
+    var sSvrCode = div_search.cmb_service.Value;
+    
+    if(sSvrCode == 2 && oGrdDs.GetColumn(nRow, "aply_yn") == "N")
+    {
+        var sArg;
+        if(oGrdDs.GetColumn(nRow, "EXIST") == "0")
+        {
+            sArg  = "cudFlag="+quote("C");
+            sArg += " ifYn="+quote(nRow);
+            sArg += " rgst_cl=" + quote("1");
+        }
+        else
+        {
+            sArg  = "prod_cd="+quote(oGrdDs.getColumn(nRow,"PROD_CD"));
+            sArg += " cudFlag=" + quote("U");
+            sArg += " rgst_cl=" + quote("1");
+            sArg += " ifYn="+quote(nRow);
+        }
+    
+        cf_openAuthPop("100000011", sArg , 700, 373);   
+    }
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{   
+    if(sSvcID == "svcList")
+    {
+    }
+    
+    if(sSvcID == "svcSave")
+    {
+        f_search();
+    }
+}
+
+/*******************************************************************************
+ * @description    : 서비스 변경시- 이벤트
+*******************************************************************************/
+function div_search_cmb_service_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+    grd_list.HeadHeight = "22";
+    btn_save.Visible = false;
+    if(strCode == 1)
+    {
+        img_title.Text = "상품코드 I/F 목록";
+        grd_list.BindDataset = "ds_prod";
+        grd_list.Format = "prod";
+        if(FV_INT_AUTH)
+        {
+            btn_save.Visible = true;
+        }
+    }
+    else if(strCode == 2)
+    {
+        grd_list.HeadHeight = "30";
+        img_title.Text = "모델단말기코드 I/F 목록";
+        grd_list.BindDataset = "ds_model";
+        grd_list.Format = "model";
+    }
+    else if(strCode == 3)
+    {
+        img_title.Text = "공통코드 I/F 목록";
+        grd_list.BindDataset = "ds_comm";
+        grd_list.Format = "comm";
+        if(FV_INT_AUTH)
+        {
+            btn_save.Visible = true;
+        }
+    }
+    else if(strCode == 4)
+    {
+        img_title.Text = "U.Key 코드 I/F 목록";
+        grd_list.BindDataset = "ds_ukey";
+        grd_list.Format = "ukey";
+    }
+    else
+    {
+        img_title.Text = "대리점코드 I/F 목록";
+        grd_list.BindDataset = "ds_deal";
+        grd_list.Format = "deal";
+    }
+    
+}
+
+/*******************************************************************************
+ * @description    : 저장 버튼 클릭- 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+    f_save();
+}
+
+/*******************************************************************************
+ * @description    : 저장 
+*******************************************************************************/
+function f_save()
+{
+
+    if(!confirm("부가상품 인터페이스 정보를 일괄 반영합니다.")){
+        return;
+    }
+    
+    var sSvrCode = div_search.cmb_service.Value;
+    ds_condition.ClearData();
+    if( sSvrCode == 1)
+    {
+        ds_list.Copy(ds_prod);
+    }
+    else if(sSvrCode == 3)
+    {
+        ds_list.Copy(ds_comm);
+    }
+
+    var nCheckCount = 0;
+    for(var i=0, n=ds_list.GetRowCount(); i<n; i++)
+    {
+        if(ds_list.GetColumn(i, "aply_yn") == "Y")
+        {
+            continue;
+        }
+        
+        var sExist = ds_list.GetColumn(i, "exist");
+        if(sExist == "0")
+        {
+            ds_list.SetRowType(i, "insert");
+            nCheckCount++;
+        }
+        else
+        {
+            ds_list.SetRowType(i, "update");
+            nCheckCount++;
+        }
+
+    }
+
+    if(nCheckCount> 0)
+    {
+        var sInDs;
+        cf_setParam(ds_condition, "service_code", sSvrCode);
+        // 트랜잭션 설정
+        var sSvcID = "svcSave";
+        var sInDs  = "nc_input_fieldDs=ds_condition input=ds_list:U";
+        var sOutDs = "";
+        var sArg   = "sktst.bas.CDM#saveIfTable";
+    
+        // 공통 트랜잭션 호출
+        cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+   }
+   else
+   {
+        alert(MSG_01002);//저장할 데이타가 존재하지 않습니다
+        return;
+   }
+   
+}
+]]></Script>
+</Window>

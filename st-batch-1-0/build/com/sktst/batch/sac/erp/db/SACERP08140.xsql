@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08140">
+	<select id="getDpstSktChagList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        select
+                 b.dpst_dt
+                ,a.org_id
+                ,a.pos_agency as agency
+                ,a.ukey_agency_cd
+                ,'' as dpst_plc
+                ,'' as ukey_sub_cd
+                /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+                ,(select case when min(user_cd) is null and a.org_id = 'C10011' then '140034' else min(user_cd) end
+                    from tbas_user_mgmt
+                   where pos_agency = a.pos_agency
+                     and user_grp = 'D17'
+                     and del_yn = 'N'
+                     and eff_user_yn = 'Y'
+                     and attc_cat in ('1', '2')) as user_cd
+                ,sum(b.dpst_amt) as dpst_amt
+        from    tbas_deal_co_mgmt a,  tacc_imag_acc_if b
+        where   a.pmag_dpst_acc_no = b.imag_acc_no
+        and     b.imag_acc_no not in (SELECT card_imag_acc_no FROM tsac_agency_image_acc
+                                       WHERE card_imag_acc_no is not null
+									  UNION ALL
+                                      SELECT card_imag_acc_no2 FROM tsac_agency_image_acc
+                                       WHERE card_imag_acc_no2 is not null)
+        and     a.hseq_no		= (SELECT max(hseq_no) FROM tbas_deal_co_mgmt
+                                 	WHERE deal_co_cd = a.deal_co_cd)
+        and     a.del_yn		= 'N'
+        and     b.dpst_dt		= #DPST_DT#
+        and		b.deal_no is not null
+        and     b.deal_no   != '9999999'
+	]]>		<isNotEmpty prepend="AND" property="AGENCY">
+	<![CDATA[	a.pos_agency = #AGENCY#
+	]]>		</isNotEmpty>			
+	<![CDATA[
+        and     b.erp_trms_yn is null
+        group by b.dpst_dt, a.org_id, a.pos_agency, a.ukey_agency_cd
+        order by b.dpst_dt, a.pos_agency, a.ukey_agency_cd
+	]]>
+	</select>
+
+	<select id="getObsAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select agency, dpst_amt
+		from
+			(
+			select
+				 agency
+				,(select nvl(sum(dpst_amt), 0)
+					from (
+						select nvl(dpst_amt, 0) as dpst_amt, imag_acc_no
+						  from TACC_IMAG_ACC_IF
+						 where imag_acc_no not in 
+								(
+									select imag_acc_no
+									from (
+											select  imag_acc_no	/*요금 */
+											from TACC_IMAG_ACC_IF a,
+												(select * from tbas_deal_co_mgmt a
+												  where  a.hseq_no   = (SELECT max(hseq_no) FROM tbas_deal_co_mgmt
+																		WHERE deal_co_cd = a.deal_co_cd)
+												) b
+											where a.imag_acc_no = b.PMAG_DPST_ACC_NO
+											  and a.dpst_dt = #DPST_DT#
+											
+											union all
+		
+											select  imag_acc_no	/*기타 */
+											from TACC_IMAG_ACC_IF a,
+												(select * from tbas_deal_co_mgmt a
+												  where  a.hseq_no   = (SELECT max(hseq_no) FROM tbas_deal_co_mgmt
+																		WHERE deal_co_cd = a.deal_co_cd)
+												) b
+											where a.imag_acc_no = b.CASA_DPST_ACC_NO
+											  and a.dpst_dt = #DPST_DT#
+											  
+		    								UNION ALL
+	
+											SELECT card_imag_acc_no FROM tsac_agency_image_acc
+		    								WHERE card_imag_acc_no is not null
+		    								
+		    								UNION ALL
+				                            
+				                            SELECT card_imag_acc_no2 FROM tsac_agency_image_acc
+	             			                WHERE card_imag_acc_no2 is not null
+										) x
+								)
+						 and dpst_dt  = #DPST_DT#
+        				 and deal_no is not null
+                         and deal_no != '9999999'
+					 )
+				where    imag_acc_no BETWEEN z.from_imag_acc_no AND z.to_imag_acc_no ) as dpst_amt
+			from TSAC_AGENCY_IMAGE_ACC z
+			)
+		where dpst_amt <> 0
+	]]>		<isNotEmpty prepend="AND" property="AGENCY">
+	<![CDATA[	agency = #AGENCY#
+	]]>		</isNotEmpty>			
+	</select>
+
+	<select id="getDpstSktPrpList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        select
+                 b.dpst_dt
+                ,a.org_id
+                ,a.pos_agency as agency
+                ,a.ukey_agency_cd
+                ,'' as dpst_plc
+                ,'' as ukey_sub_cd
+                /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+                ,(select case when min(user_cd) is null and a.org_id = 'C10011' then '140034' else min(user_cd) end
+                    from tbas_user_mgmt
+                   where pos_agency = a.pos_agency
+                     and user_grp = 'D17'
+                     and del_yn = 'N'
+                     and eff_user_yn = 'Y'
+                     and attc_cat in ('1', '2')) as user_cd
+                ,sum(b.dpst_amt) as dpst_amt
+        from    tbas_deal_co_mgmt a,  tacc_imag_acc_if b
+        where   a.casa_dpst_acc_no = b.imag_acc_no
+        and     b.imag_acc_no not in (SELECT card_imag_acc_no FROM tsac_agency_image_acc
+                                       WHERE card_imag_acc_no is not null)
+        and     a.hseq_no		= (SELECT max(hseq_no) FROM tbas_deal_co_mgmt
+                					WHERE deal_co_cd = a.deal_co_cd)
+        and     a.del_yn		= 'N'
+        and     b.dpst_dt		= #DPST_DT#
+        and		b.deal_no is not null
+        and     b.deal_no != '9999999'
+	]]>		<isNotEmpty prepend="AND" property="AGENCY">
+	<![CDATA[	a.pos_agency = #AGENCY#
+	]]>		</isNotEmpty>			
+	<![CDATA[
+         and     b.erp_trms_yn is null
+        group by b.dpst_dt, a.org_id, a.pos_agency, a.ukey_agency_cd
+        order by b.dpst_dt, a.pos_agency, a.ukey_agency_cd
+	]]>
+	</select>
+	
+	<select id="getDpstCardList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select
+		         dpst_dt
+		        ,agency
+		        ,'' as dpst_plc
+		        ,ukey_agency_cd
+		        ,'' as ukey_sub_cd
+		        ,sum(dpst_amt) as dpst_amt
+                /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+                , user_cd
+		from (
+				select b.dpst_dt
+				     , a.agency
+				     , c.ukey_agency_cd
+				     , b.dpst_amt
+				     , c.org_id
+				     ,(select case when min(user_cd) is null and c.org_id = 'C10011' then '140034' else min(user_cd) end
+                         from tbas_user_mgmt
+		                where pos_agency = a.agency
+		                  and user_grp = 'D17'
+		                  and del_yn = 'N'
+		                  and eff_user_yn = 'Y'
+		                  and attc_cat in ('1', '2')) as user_cd
+					from tsac_agency_image_acc a, tacc_imag_acc_if b, tbas_deal_co_mgmt c
+					where   a.card_imag_acc_no = b.imag_acc_no
+					and     a.agency	= c.deal_co_cd
+					and		b.dpst_dt	= #DPST_DT#
+			        and		b.deal_no is not null
+					and		c.hseq_no = (SELECT max(hseq_no) FROM tbas_deal_co_mgmt
+										  WHERE deal_co_cd = c.deal_co_cd)
+				union all
+				/* PG사 카드가상계좌번호(card_imag_acc_no2) 추가됨 */
+				select b.dpst_dt
+				     , a.agency
+				     , c.ukey_agency_cd
+				     , b.dpst_amt
+				     , c.org_id
+				     ,(select case when min(user_cd) is null and c.org_id = 'C10011' then '140034' else min(user_cd) end
+                         from tbas_user_mgmt
+		                where pos_agency = a.agency
+		                  and user_grp = 'D17'
+		                  and del_yn = 'N'
+		                  and eff_user_yn = 'Y'
+		                  and attc_cat in ('1', '2')) as user_cd
+					from tsac_agency_image_acc a, tacc_imag_acc_if b, tbas_deal_co_mgmt c
+					where   a.card_imag_acc_no2 = b.imag_acc_no
+					and     a.agency	= c.deal_co_cd
+					and		b.dpst_dt	= #DPST_DT#
+					and		b.deal_no is not null
+					and		c.hseq_no = (SELECT max(hseq_no) FROM tbas_deal_co_mgmt
+										  WHERE deal_co_cd = c.deal_co_cd)
+			) x
+		where 1 = 1
+	]]>		<isNotEmpty prepend="AND" property="AGENCY">
+	<![CDATA[	agency = #AGENCY#
+	]]>		</isNotEmpty>			
+	<![CDATA[
+ 		group by dpst_dt, agency, ukey_agency_cd, user_cd
+	]]>
+	</select>
+
+  <select id="getDpstProdOccrList" resultClass="hmap" fetchSize="50" >
+    <![CDATA[
+      select a.deal_dt     as dpst_dt
+           , b.org_id
+           , b.pos_agency  as agency
+           , '10001'       as dpst_plc
+           , a.org_cd      as ukey_agency_cd
+           , a.sub_org_cd  as ukey_sub_cd
+           , sum(a.erp_rmt_amt) as dpst_amt
+           /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+           , (select case when min(user_cd) is null and b.org_id = 'C10011' then '140034' else min(user_cd) end
+                          from tbas_user_mgmt
+                     where pos_agency = b.pos_agency
+                       and user_grp = 'D17'
+                       and del_yn = 'N'
+                       and eff_user_yn = 'Y'
+                       and attc_cat in ('1', '2')) as user_cd
+        from tacc_deal_dtl_output_if a
+           , tbas_deal_co_mgmt b
+       where a.org_cd     = b.ukey_agency_cd
+         and b.deal_co_cl1 = 'A1'
+         and a.deal_dt     = #DPST_DT#
+         and b.hseq_no     = (select max(hseq_no)
+                                from tbas_deal_co_mgmt
+                               where deal_co_cd = b.deal_co_cd)
+    ]]>   <isNotEmpty prepend="AND" property="AGENCY">
+    <![CDATA[ b.pos_agency = #AGENCY#
+    ]]>   </isNotEmpty>
+    <![CDATA[
+       group by a.deal_dt
+           , b.org_id
+           , b.pos_agency
+           , a.org_cd
+           , a.sub_org_cd
+    ]]>
+  </select>  	
+
+  <select id="getAccessaryIf" resultClass="hmap" fetchSize="50" >
+    <![CDATA[
+      SELECT /* SACERP08140_getAccessaryIf_이강수 */
+             tran_dt                    /* 처리일자*/
+           , pos_agency                 /* 대리점*/
+           , deal_co_cd                 /* 거래처*/
+           , ukey_agency_cd             /* UKey대리점코드 */
+           , ukey_sub_cd                /* 직영점 U.Key 코드 4자리 값  */
+           , sum(amt) amt               /* 금액*/
+           , org_id                     /* 소속조직ID */
+           , user_cd                    /* 담당자ID */
+        FROM (
+              /*  액세서리 IF 테이블  */
+              SELECT  a.tran_dt
+                   ,  b.pos_agency 
+                   ,  decode(#REC_CL#, '03', a.card_co_cd, a.deal_co_cd) deal_co_cd
+                   ,  nvl(a.amt, 0) as amt
+                   ,  org_id
+                   ,  ukey_agency_cd
+                   ,  nvl(ukey_sub_cd, '0000') ukey_sub_cd
+                   /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+                   , (select case when min(user_cd) is null and b.org_id = 'C10011' then '140034' else min(user_cd) end
+                        from tbas_user_mgmt
+                       where pos_agency = b.pos_agency
+                         and user_grp = 'D17'    /* 정산담당자 */
+                         and del_yn = 'N'
+                         and eff_user_yn = 'Y'
+                         and attc_cat in ('1', '2')) as user_cd
+                FROM  tsac_accessary_if a
+                   ,  tbas_deal_co_mgmt b
+               WHERE  a.deal_co_cd  = b.deal_co_cd
+                 AND  b.hseq_no   = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                             hseq_no
+                                        FROM  tbas_deal_co_mgmt
+                                       WHERE deal_co_cd = a.deal_co_cd 
+                                         AND rownum = 1
+                                    )
+                 AND  a.tran_dt     = #DPST_DT#
+                 AND  b.pos_agency  = #AGENCY#
+                 AND  a.rec_cl      = #REC_CL#
+             )
+       WHERE amt <> 0
+       GROUP BY tran_dt
+              , pos_agency
+              , deal_co_cd
+              , ukey_agency_cd
+              , ukey_sub_cd
+              , org_id
+    ]]>
+  </select>  	
+
+  <update id="updateTaccDealDtlOutputIf" parameterClass="map">
+  <![CDATA[
+    UPDATE  /* SACERP08140_updateTaccDealDtlOutputIf_거래내역서전송정보변경-이강수 */
+        tacc_deal_dtl_output_if
+       SET  ERP_TRMS_DTM  = #ZIFDATE#
+         ,  ERP_TRMS_CL   = #ZCONFIRM#
+     WHERE  org_cd        = #ZGSBER#
+       AND  deal_dt       = #ZBUDAT#
+       AND  del_yn        = 'N' /* 삭제여부 */
+  ]]>
+  </update>
+  <update id="updateTsacAccessaryIf" parameterClass="map">
+  <![CDATA[
+    UPDATE  /* SACERP08140_updateTsacAccessaryIf_악세서리 IF 변경-이강수 */
+            tsac_accessary_if
+       SET  trms_dt       = #ZIFDATE#
+         ,  trms_yn       = #ZCONFIRM#
+     WHERE  tran_dt       = #ZBUDAT#
+       AND  rec_cl        = #REC_CL#
+       AND  deal_co_cd   in (select deal_co_cd
+                               from tbas_deal_co_mgmt td
+                              where td.pos_agency = #AGENCY#
+                                and td.hseq_no    = (select max(hseq_no)
+                                                       from tbas_deal_co_mgmt
+                                                      where deal_co_cd = td.deal_co_cd
+                                                    )
+                             )
+       AND  del_yn        = 'N' /* 삭제여부 */
+  ]]>
+  </update>  
+</sqlMap>

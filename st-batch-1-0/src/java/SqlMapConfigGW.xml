@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMapConfig
+        PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+    
+    <settings useStatementNamespaces="true"
+              cacheModelsEnabled="false"/>
+
+    <typeAlias type="java.util.HashMap" alias="hmap"/>
+    <typeAlias type="com.ibatis.sqlmap.engine.type.ClobTypeHandlerCallback" alias="clobHanlder"/>
+    
+    <transactionManager type="JDBC">
+        <dataSource type="SIMPLE">
+            <property name="DataSource" value="jdbc/GroupwareDS"/>
+            <property name="JDBC.Driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+            <property name="JDBC.ConnectionURL"
+                            value="jdbc:sqlserver://10.40.10.57:1433;databasename=SKPSNM_IMS"/>
+            <property name="JDBC.Username" value="imsview"/>
+            <property name="JDBC.Password" value="ims!@#456"/>
+            <property name="Pool.MaximumActiveConnections" value="10" />
+            <property name="Pool.MaximumIdleConnections" value="2" />
+            <property name="Pool.TimeToWait" value="5000" />
+        </dataSource>
+    </transactionManager>
+
+    <!-- 배치 프로그램에서 사용하는 SQL 정의 파일  -->      
+    <sqlMap resource="com/sktst/batch/bas/usm/db/BASUSM08110.xsql"/>
+
+</sqlMapConfig>

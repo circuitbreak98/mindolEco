@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="보유처별&#32;가용재고&#32;내역" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="REQ_DTM" size="255" summ="default" type="STRING"/>
+					<colinfo id="REQ_PLC" size="255" summ="default" type="STRING"/>
+					<colinfo id="REQ_PLC_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="REQ_SEQ" size="255" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="255" summ="default" type="STRING"/>
+					<colinfo id="HLD_PLC_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="HLD_PLC_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROD_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="COLOR_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="COLOR_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="SER_NUM" size="255" summ="default" type="STRING"/>
+					<colinfo id="REQ_QTY" size="255" summ="default" type="STRING"/>
+					<colinfo id="MOV_YN" size="255" summ="default" type="STRING"/>
+					<colinfo id="SALE_YN" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="63" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_searchList" ImageID="btn_a_2" Left="732" LeftMargin="5" OnClick="btn_searchList_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="28" Visible="FALSE" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static1" Left="15" Style="sty_lb_Search" TabOrder="2" Text="요청일자" Top="7" VAlign="Middle" Width="68"></Static>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_reqDtmFrom" Left="87" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="3" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="105"></Calendar>
+				<Static Align="Right" Height="20" Id="Static0" Left="24" Style="sty_lb_Search" TabOrder="4" Text="대리점" Top="32" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyCdNm" Left="87" MaxLength="10" Style="sty_ipt_form" TabOrder="4" TabStop="FALSE" Top="31" UpperOnly="TRUE" Width="181"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="271" MaxLength="10" Style="sty_ipt_form" TabOrder="5" TabStop="FALSE" Top="31" UpperOnly="TRUE" Visible="FALSE" Width="68"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCd" Left="341" MaxLength="10" Style="sty_ipt_form" TabOrder="6" TabStop="FALSE" Top="31" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_reqPlcNm" Left="429" MaxLength="10" Style="sty_ipt_form" TabOrder="8" Top="8" UpperOnly="TRUE" Width="215"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_reqPlc" Left="652" MaxLength="10" Style="sty_ipt_form" TabOrder="9" TabStop="FALSE" Top="8" UpperOnly="TRUE" Visible="FALSE" Width="11"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_reqPlcUkeyCd" Left="664" MaxLength="10" Style="sty_ipt_form" TabOrder="9" TabStop="FALSE" Top="8" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="364" Style="sty_lb_Search" TabOrder="7" Text="요청처" Top="8" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_reqSeq" Left="324" MaxLength="10" Style="sty_ipt_form" TabOrder="12" TabStop="FALSE" Top="7" UpperOnly="TRUE" Visible="FALSE" Width="56"></Edit>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_reqDtmTo" Left="215" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="13" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="105"></Calendar>
+				<Static Align="Center" Height="20" Id="Static9" Left="195" TabOrder="14" Text="~" Top="8" VAlign="Middle" Width="20"></Static>
+				<Static Align="Right" Height="20" Id="Static3" Left="363" Style="sty_lb_Search" TabOrder="15" Text="영업담당" Top="32" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_ChrgrUserNm" Left="428" MaxLength="10" Style="sty_ipt_form" TabOrder="16" Top="32" UpperOnly="TRUE" Width="104"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="551" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="443" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="108" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="40"/>
+						<col width="80"/>
+						<col width="150"/>
+						<col width="110"/>
+						<col width="90"/>
+						<col width="60"/>
+						<col width="150"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="요청일자"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="요청처"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="요청수량"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="보유처"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="일련번호"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="이동여부"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="판매여부"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell col="1" colid="REQ_DTM" display="text"/>
+						<cell col="2" colid="REQ_PLC_NM" display="text"/>
+						<cell col="3" colid="PROD_NM" display="text"/>
+						<cell col="4" colid="COLOR_NM" display="text"/>
+						<cell col="5" colid="REQ_QTY" display="text"/>
+						<cell col="6" colid="HLD_PLC_NM" display="text"/>
+						<cell align="center" col="7" colid="SER_NUM" display="text"/>
+						<cell align="center" col="8" colid="MOV_YN" display="text"/>
+						<cell align="center" col="9" colid="SALE_YN" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Height="21" Id="Div1" Left="620" TabOrder="2" Text="Div2" Top="83" Width="204">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="Button5" ImageID="btn_i_exceldown_w" Left="181" OnClick="btn_excel_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Top="1" Width="19"></Button>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" TabStop="FALSE" Text="보유처&#32;가용재고&#32;내역" Top="83" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="760" LeftMargin="5" OnClick="btn_cancel_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="565" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALSCO00800
+* 업무명      :  영업관리 - 상품배정요청 
+* 프로그램명  : 상품배정요청
+--------------------------------------------------------------------------------
+* 작성자      : 이강수
+* 작성일      : 2010.05.26
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_NAME; // 사용자 이름
+var FV_JOB;
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{	
+	cf_setAuth(pFrmNum);	// 권한 공통
+	cf_setGrdChecknSortEvent(grd_list);	// 그리드 정렬
+	
+	f_init();
+}
+
+/*******************************************************************************
+ 공통 스크립트 영역 끝
+*******************************************************************************/
+
+/*******************************************************************************
+ * @description    : 리스트 조회 - 이벤트
+*******************************************************************************/
+function btn_searchList_OnClick(obj)
+{
+	if(f_validSearch() == false) return;
+	f_searchList();
+}
+
+/*******************************************************************************
+ * @description    : 검색시 유효성 검사
+*******************************************************************************/
+function f_validSearch()
+{
+	if(div_search.cal_reqDtmFrom.Value == "")	{
+		alert(cf_getMessage(MSG_00083, "요청일"));
+		return false;
+	}
+
+	if(div_search.edt_agencyCd.Text == "")	{
+		alert(cf_getMessage(MSG_00083, "대리점"));
+		return false;
+	}
+
+//	if(div_search.edt_reqPlc.Text == "")	{
+//		alert(cf_getMessage(MSG_00083, "요청처"));
+//		return false;
+//	}
+	return true;
+}
+
+
+
+/*******************************************************************************
+ * @description    : 리스트 조회
+*******************************************************************************/
+function f_searchList()
+{
+	ds_condition.Clear();
+
+	// 넘길 파라메터 설정
+	cf_setParam(ds_condition, "flag" 	     , FV_JOB); 
+	cf_setParam(ds_condition, "req_dtm_from" , div_search.cal_reqDtmFrom.Value); 
+	cf_setParam(ds_condition, "req_dtm_to" 	 , div_search.cal_reqDtmTo.Value); 
+	cf_setParam(ds_condition, "agency_cd"    , div_search.edt_agencyCd.Text); 
+	cf_setParam(ds_condition, "req_plc"      , div_search.edt_reqPlc.Text); 	
+	cf_setParam(ds_condition, "req_seq"      , sReqSeq); 
+	cf_setParam(ds_condition, "chrgr_user_id", sChrgrUserId); 
+	cf_setParam(ds_condition, "agency_cd"    , sAgencyCd); 
+
+	var sArg   = "";
+	
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=List";	
+	var sArg   = "sktst.sal.SCO#getPrdAssignList";
+//alert(ds_condition.SaveXML());	              
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	switch(sSvcID)
+	{
+	case "svcList":
+		break;
+
+	default:
+		break;	
+	}	
+}
+
+
+/*******************************************************************************
+ * @description    : 엑셀 출력 - 이벤트
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	// cf_excel(oGrd, nMode)
+	// oGrd - 엑셀화할 그리드 객체 , nMode - 엑셀 저장 모드 1 or null : 엑셀로드 , 2 : 파일 저장
+	cf_exportExcel(grd_list);
+}
+
+
+/*******************************************************************************
+ * @description    : 화면 로딩시
+*******************************************************************************/
+function f_init()
+{
+//trace("MOD");		
+		div_search.cal_reqDtmFrom.Value     = sReqDtmFrom;
+		div_search.cal_reqDtmTo.Value       = sReqDtmTo;
+		div_search.edt_agencyCd.Text        = sAgencyCd;
+		div_search.edt_agencyCdNm.Text      = sAgencyNm;
+		div_search.edt_reqPlc.Text          = sReqPlc;
+		div_search.edt_reqPlcNm.Text        = sReqPlcNm;
+		div_search.edt_reqSeq.Text          = sReqSeq;
+		div_search.edt_ChrgrUserNm.Text     = sChrgrUserNm;
+		
+		btn_searchList_OnClick();
+	}
+
+}
+
+
+
+/*******************************************************************************
+ * @description    : 화면 재설정
+*******************************************************************************/
+function df_reSet(sArg)
+{
+//trace( "df_reSet:" + sArg );
+	if(uf_isNull(sArg) == true)
+	{
+		
+	}
+	else
+	{
+		cf_init(div_search);
+		ds_list.DeleteAll();
+		f_init();
+	}
+}
+
+/*******************************************************************************
+ * @description    :  화면 닫기 이벤트
+*******************************************************************************/
+function btn_cancel_OnClick(obj)
+{
+	Close();
+}
+]]></Script>
+</Window>

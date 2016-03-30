@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUKC09100">
+	<procedure id="callSP_BASUKC09100" parameterClass="map" >
+	<![CDATA[
+	{ call SP_BASUKC09100 /*+ "BASUKC09100.callSP_BASUKC09100_이문규_이문규" */
+	(
+	#ERRCODE,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#ERRMSG,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#OP_PROCDT,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN# 
+	) }]]>
+	</procedure>
+	<select id="getConsultMgmtList" resultClass="hmap" fetchSize="50" >
+		<![CDATA[
+	        select  /* BASUKC09100_getConsultMgmtList */
+                    con_mgmt_no
+                    ,res_no
+                    ,acc_no
+                    ,tel_no
+	         FROM   tcst_consult_mgmt
+	         /*WHERE  con_dt = '20110819'*/
+		]]>
+	</select>
+	<select id="getPrchsMgmtList" resultClass="hmap" fetchSize="50" >
+		<![CDATA[
+	        select  /* BASUKC09100_getPrchsMgmtList 찾기 */
+                    prchs_mgmt_no
+                    ,res_no
+                    ,acc_no
+                    ,tel_no
+	         FROM   tcst_prchs_mgmt
+		]]>
+	</select>
+	<select id="getIfConsultMgmtList" resultClass="hmap" fetchSize="50" >
+		<![CDATA[
+	        select  /* BASUKC09100_getIfConsultMgmtList */
+                     op_dt
+                    ,op_tm
+                    ,seq
+                    ,if_res_no
+                    ,if_acc_no
+                    ,if_tel_no
+	         FROM   tbas_ukey_if_consult_mgmt
+	         /*WHERE  con_dt = '20110819'*/
+		]]>
+	</select>	
+	<update id="updateConsultMgmt" parameterClass="map">
+	<![CDATA[
+    UPDATE /*+ BASUKC09100_updateConsultMgmt */
+           TCST_CONSULT_MGMT
+       SET RES_NO        = #RES_NO#
+         , ACC_NO        = #ACC_NO#
+         , TEL_NO        = #TEL_NO#
+     WHERE CON_MGMT_NO   = #CON_MGMT_NO#
+	]]>
+	</update>		
+	<update id="updatePrchsMgmt" parameterClass="map">
+	<![CDATA[
+    UPDATE /*+ BASUKC09100_updatePrchsMgmt */
+           TCST_PRCHS_MGMT
+       SET RES_NO        = #RES_NO#
+         , ACC_NO        = #ACC_NO#
+         , TEL_NO        = #TEL_NO#
+     WHERE PRCHS_MGMT_NO   = #PRCHS_MGMT_NO#
+	]]>
+	</update>		
+	<update id="updateIfConsultMgmt" parameterClass="map">
+	<![CDATA[
+    UPDATE /*+ BASUKC09100_updateIfConsultMgmt */
+           TBAS_UKEY_IF_CONSULT_MGMT
+       SET IF_RES_NO   = #IF_RES_NO#
+         , IF_ACC_NO   = #IF_ACC_NO#
+         , IF_TEL_NO   = #IF_TEL_NO#
+     WHERE OP_DT   = #OP_DT#
+     AND   OP_TM   = #OP_TM#
+     AND   SEQ     = #SEQ#
+	]]>
+	</update>			
+	
+</sqlMap>

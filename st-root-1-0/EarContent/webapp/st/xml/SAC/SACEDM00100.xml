@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SACEDM00100" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="판매회계&#32;거래처관리" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_zconfirm">
+				<Contents>
+					<colinfo id="CODE" size="1" summ="default" type="STRING"/>
+					<colinfo id="NAME" size="10" summ="default" type="STRING"/>
+					<record>
+						<CODE></CODE>
+						<NAME>전체</NAME>
+					</record>
+					<record>
+						<CODE>0</CODE>
+						<NAME>미수행</NAME>
+					</record>
+					<record>
+						<CODE>1</CODE>
+						<NAME>전송에러</NAME>
+					</record>
+					<record>
+						<CODE>2</CODE>
+						<NAME>전송성공</NAME>
+					</record>
+					<record>
+						<CODE>3</CODE>
+						<NAME>확정에러</NAME>
+					</record>
+					<record>
+						<CODE>4</CODE>
+						<NAME>확정성공</NAME>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_tsac_cust">
+				<Contents>
+					<colinfo id="CHK" size="255" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CL1_NM" size="100" summ="default" type="STRING"/>
+					<colinfo id="ADDR" size="255" summ="default" type="STRING"/>
+					<colinfo id="DTL_ADDR" size="255" summ="default" type="STRING"/>
+					<colinfo id="ZIP_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="TEL_NO" size="255" summ="default" type="STRING"/>
+					<colinfo id="REG_NO" size="255" summ="default" type="STRING"/>
+					<colinfo id="BIZ_NUM" size="255" summ="default" type="STRING"/>
+					<colinfo id="REP_USER_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="TYP_OF_BIZ" size="255" summ="default" type="STRING"/>
+					<colinfo id="BIZ_CON" size="255" summ="default" type="STRING"/>
+					<colinfo id="SLCM_DFRY_ACC_NO" size="255" summ="default" type="STRING"/>
+					<colinfo id="SLCM_DFRY_DEPO" size="255" summ="default" type="STRING"/>
+					<colinfo id="ZSTATE" size="255" summ="default" type="STRING"/>
+					<colinfo id="ORG_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="POS_AGENCY" size="255" summ="default" type="STRING"/>
+					<colinfo id="UKEY_AGENCY_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="U_KEY_SUB_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="U_KEY_CHANNEL_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="ZIFDATE" size="255" summ="default" type="STRING"/>
+					<colinfo id="ZITEM" size="255" summ="default" type="STRING"/>
+					<colinfo id="ZCONFIRM" size="255" summ="default" type="STRING"/>
+					<colinfo id="INS_DTM" size="255" summ="default" type="STRING"/>
+					<colinfo id="INS_USER_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="REG_CL" size="1" summ="default" type="STRING"/>
+					<colinfo id="CUST_CL" size="4" summ="default" type="STRING"/>
+					<colinfo id="DEL_YN" size="1" summ="default" type="STRING"/>
+					<colinfo id="BANK_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="BANK_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="POS_AGENCY_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="ERRLOG" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_reg_cl">
+				<Contents>
+					<colinfo id="CODE" size="1" summ="default" type="STRING"/>
+					<colinfo id="NAME" size="10" summ="default" type="STRING"/>
+					<record>
+						<CODE>I</CODE>
+						<NAME>신규</NAME>
+					</record>
+					<record>
+						<CODE>U</CODE>
+						<NAME>변경</NAME>
+					</record>
+					<record>
+						<CODE>X</CODE>
+						<NAME>죵료</NAME>
+					</record>
+					<record>
+						<CODE>N</CODE>
+						<NAME>정상</NAME>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_zstate">
+				<Contents>
+					<colinfo id="CODE" size="1" summ="default" type="STRING"/>
+					<colinfo id="NAME" size="10" summ="default" type="STRING"/>
+					<record>
+						<CODE>P</CODE>
+						<NAME>보류</NAME>
+					</record>
+					<record>
+						<CODE>X</CODE>
+						<NAME>삭제</NAME>
+					</record>
+					<record>
+						<CODE>R</CODE>
+						<NAME>해제</NAME>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="ins_dt_from" size="10" summ="default" type="STRING"/>
+					<colinfo id="ins_dt_to" size="10" summ="default" type="STRING"/>
+					<colinfo id="zconfirm" size="1" summ="default" type="STRING"/>
+					<colinfo id="reg_cl" size="1" summ="default" type="STRING"/>
+					<colinfo id="del_add" size="1" summ="default" type="STRING"/>
+					<colinfo id="org_id" size="100" summ="default" type="STRING"/>
+					<colinfo id="org_nm" size="100" summ="default" type="STRING"/>
+					<colinfo id="loginid" size="10" summ="default" type="STRING"/>
+					<record>
+						<del_add></del_add>
+						<ins_dt_from></ins_dt_from>
+						<ins_dt_to></ins_dt_to>
+						<loginid></loginid>
+						<org_id></org_id>
+						<org_nm></org_nm>
+						<reg_cl>I</reg_cl>
+						<zconfirm></zconfirm>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="8" Style="sty_div_search" TabOrder="1" Text="질의내용" Top="8" Width="1008">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="Button0" ImageID="btn_a_2" Left="938" LeftMargin="5" OnClick="df_search" Style="sty_btn_a" TabOrder="1" Text="조회" Top="6" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static7" Left="294" Style="sty_lb_Search" TabOrder="2" Text="확정여부" Top="8" VAlign="Middle" Width="64"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" CodeColumn="CODE" Column="zconfirm" DataColumn="NAME" Height="20" Id="cmb_zconfirm" ImeMode="none" INDEX="0" InnerDataset="ds_zconfirm" Left="361" Style="sty_ipt_form" TabOrder="3" Top="6" Width="76"></Combo>
+				<Static Align="Right" Height="20" Id="Static0" Left="438" Style="sty_lb_Search" TabOrder="4" Text="등록구분" Top="8" VAlign="Middle" Width="62"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" CodeColumn="CODE" Column="reg_cl" DataColumn="NAME" Height="20" Id="cmb_reg_cl" ImeMode="none" INDEX="0" InnerDataset="ds_reg_cl" Left="506" Style="sty_ipt_form" TabOrder="5" Top="6" Width="72"></Combo>
+				<Checkbox Color="user12" DisableBKColor="user13" DisableColor="user13" FalseValue="N" Height="20" Id="chk_del_add" Left="851" LeftMargin="5" Style="sty_opt_input" TabOrder="6" Text="삭제포함" Top="7" TrueValue="Y" Value="FALSE" Width="81"></Checkbox>
+				<Static Align="Right" Height="20" Id="Static3" Left="586" Style="sty_lb_Search" TabOrder="9" Text="조직" Top="8" VAlign="Middle" Width="35"></Static>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="org_id" Enable="FALSE" Height="20" Id="edt_orgId" Left="625" LeftMargin="2" OnCharChanged="div_search_edt_orgId_OnCharChanged" OnKeyDown="div_search_edt_orgId_OnKeyDown" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="7" Width="70"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_orgTree" ImageID="btn_i_detail" Left="694" OnClick="div_search_btn_orgTree_OnClick" TabOrder="8" Text="Button0" Top="7" Width="19"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="org_nm" Enable="FALSE" Height="20" Id="edt_orgNm" Left="714" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="7" Width="110"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_lvl" Left="825" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="11" Top="7" Visible="FALSE" Width="10"></Edit>
+				<Static Align="Right" Height="20" Id="Static6" Left="18" Style="sty_lb_Search" TabOrder="12" Text="등록일자" Top="7" VAlign="Middle" Width="60"></Static>
+				<Calendar BindDataset="ds_condition" Border="Flat" ButtonImageID="btn_i_calendar" Column="ins_dt_from" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="zifdate_from" Left="85" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="13" TodayColor="user26" Top="7" UserData="조회기간&#32;시작일" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="91"></Calendar>
+				<Calendar BindDataset="ds_condition" Border="Flat" ButtonImageID="btn_i_calendar" Column="ins_dt_to" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="zifdate_to" Left="197" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="14" TodayColor="user26" Top="7" UserData="조회기간&#32;종료일" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="91"></Calendar>
+				<Static Align="Center" Height="20" Id="Static1" Left="177" TabOrder="15" Text="~" Top="7" VAlign="Middle" Width="20"></Static>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="10" TabOrder="16" Top="6" Transparent="TRUE" Width="20"></Image>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" BindDataset="ds_tsac_cust" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="476" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="420" Id="grd_tsac_cust" InputPanel="FALSE" Left="8" LineColor="user33" OnHeadClick="grd_tsac_cust_OnHeadClick" Right="1016" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="56" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1008">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="30"/>
+						<col width="36"/>
+						<col width="78"/>
+						<col width="159"/>
+						<col width="80"/>
+						<col width="94"/>
+						<col width="135"/>
+						<col width="99"/>
+						<col width="87"/>
+						<col width="74"/>
+						<col width="59"/>
+						<col width="116"/>
+						<col width="361"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="checkbox" edit="checkbox"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="No"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="거래처코드"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="거래처명"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="거래처구분"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="소속영업센터"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="소속대리점"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="법인(주민)번호"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="사업자번호"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="등록일"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" text="확정여부"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" text="전송일시"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" text="ERRLOG"/>
+					</head>
+					<body>
+						<cell col="0" colid="chk" display="expr:iif(DEL_YN&#32;==&#32;&apos;N&apos;&#32;&amp;&amp;&#32;(ZCONFIRM&#32;==&#32;&apos;0&apos;&#32;||&#32;ZCONFIRM&#32;==&#32;&apos;1&apos;),&#32;&apos;checkbox&apos;,&#32;&apos;none&apos;)" edit="expr:iif(DEL_YN&#32;==&#32;&apos;N&apos;&#32;&amp;&amp;&#32;(ZCONFIRM&#32;==&#32;&apos;0&apos;&#32;||&#32;ZCONFIRM&#32;==&#32;&apos;1&apos;),&#32;&apos;checkbox&apos;,&#32;&apos;none&apos;)"/>
+						<cell align="center" col="1" display="text" expr="row+1"/>
+						<cell align="center" col="2" colid="DEAL_CO_CD" display="text"/>
+						<cell align="left" col="3" colid="DEAL_CO_NM" display="text"/>
+						<cell align="center" col="4" colid="DEAL_CO_CL1_NM" display="text"/>
+						<cell align="center" col="5" colid="ORG_NM" display="text"/>
+						<cell align="center" col="6" colid="POS_AGENCY_NM" display="text"/>
+						<cell align="center" col="7" colid="REG_NO" display="text" Mask="######-#######"/>
+						<cell align="center" col="8" colid="BIZ_NUM" display="text" Mask="###-##-#####"/>
+						<cell align="center" col="9" colid="INS_DTM" display="date" edit="date"/>
+						<cell align="center" col="10" colid="ZCONFIRM" combocol="CODE" combodataset="ds_zconfirm" combotext="NAME" display="combo"/>
+						<cell align="center" col="11" colid="ZIFDATE" display="text" Mask="####-##-##&#32;##:##:##"/>
+						<cell align="left" col="12" colid="ERRLOG" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="8" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="거래처&#32;정보" Top="482" Width="96"></Image>
+		<Div Border="Raised" Height="84" Id="div_process1" Left="8" Style="sty_div_input" TabOrder="4" Text="Div0" Top="508" Width="1008">
+			<Contents>
+				<Edit Align="CENTER" BindDataset="ds_tsac_cust" Border="Flat" CheckLength="Byte" Column="ZIP_CD" Enable="FALSE" Height="20" Id="edt_uKeyAgencyCd" ImeMode="english" Left="578" LeftMargin="2" MaxLength="10" OnChanged="div_process1_edt_uKeyAgencyCd_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="29" UpperOnly="TRUE" UseIME="FALSE" Width="52"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="500" Style="sty_lb_Basic" TabOrder="2" Text="주소" Top="31" VAlign="Middle" Width="70"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static2" Left="502" Style="sty_lb_Basic" TabOrder="3" Text="구역" Top="53" VAlign="Middle" Width="70"></Static>
+				<Edit BindDataset="ds_tsac_cust" Border="Flat" CheckLength="Byte" Column="ADDR" Enable="FALSE" Height="20" Id="Edit0" ImeMode="english" Left="634" LeftMargin="2" MaxLength="100" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="29" UpperOnly="TRUE" UseIME="FALSE" Width="356"></Edit>
+				<Edit BindDataset="ds_tsac_cust" Border="Flat" CheckLength="Byte" Column="DTL_ADDR" Enable="FALSE" Height="20" Id="Edit1" ImeMode="english" Left="578" LeftMargin="2" MaxLength="100" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="52" UpperOnly="TRUE" UseIME="FALSE" Width="412"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static3" Left="10" Style="sty_lb_Basic" TabOrder="6" Text="대표자명" Top="9" VAlign="Middle" Width="70"></Static>
+				<Edit BindDataset="ds_tsac_cust" Border="Flat" CheckLength="Byte" Column="REP_USER_NM" Enable="FALSE" Height="20" Id="Edit2" ImeMode="english" Left="90" LeftMargin="2" MaxLength="50" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="7" UpperOnly="TRUE" UseIME="FALSE" Width="150"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static4" Left="10" Style="sty_lb_Basic" TabOrder="8" Text="업종" Top="31" VAlign="Middle" Width="70"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static5" Left="10" Style="sty_lb_Basic" TabOrder="9" Text="업태" Top="53" VAlign="Middle" Width="70"></Static>
+				<Edit BindDataset="ds_tsac_cust" Border="Flat" CheckLength="Byte" Column="TYP_OF_BIZ" Enable="FALSE" Height="20" Id="Edit3" ImeMode="english" Left="90" LeftMargin="2" MaxLength="50" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="30" UpperOnly="TRUE" UseIME="FALSE" Width="150"></Edit>
+				<Edit BindDataset="ds_tsac_cust" Border="Flat" CheckLength="Byte" Column="BIZ_CON" Enable="FALSE" Height="20" Id="Edit4" ImeMode="english" Left="90" LeftMargin="2" MaxLength="50" RightMargin="2" Style="sty_ipt_form" TabOrder="11" Top="53" UpperOnly="TRUE" UseIME="FALSE" Width="150"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static6" Left="500" Style="sty_lb_Basic" TabOrder="12" Text="전화번호" Top="8" VAlign="Middle" Width="70"></Static>
+				<Edit BindDataset="ds_tsac_cust" Border="Flat" CheckLength="Byte" Column="TEL_NO" Enable="FALSE" Height="20" Id="Edit5" ImeMode="english" Left="578" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="13" Top="6" UpperOnly="TRUE" UseIME="FALSE" Width="106"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static7" Left="256" Style="sty_lb_Basic" TabOrder="14" Text="계좌번호" Top="31" VAlign="Middle" Width="70"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static8" Left="258" Style="sty_lb_Basic" TabOrder="15" Text="예금주명" Top="53" VAlign="Middle" Width="70"></Static>
+				<Edit BindDataset="ds_tsac_cust" Border="Flat" CheckLength="Byte" Column="SLCM_DFRY_ACC_NO" Enable="FALSE" Height="20" Id="Edit6" ImeMode="english" Left="336" LeftMargin="2" MaxLength="20" RightMargin="2" Style="sty_ipt_form" TabOrder="16" Top="29" UpperOnly="TRUE" UseIME="FALSE" Width="150"></Edit>
+				<Edit BindDataset="ds_tsac_cust" Border="Flat" CheckLength="Byte" Column="SLCM_DFRY_DEPO" Enable="FALSE" Height="20" Id="Edit7" ImeMode="english" Left="336" LeftMargin="2" MaxLength="50" RightMargin="2" Style="sty_ipt_form" TabOrder="17" Top="52" UpperOnly="TRUE" UseIME="FALSE" Width="150"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static9" Left="256" Style="sty_lb_Basic" TabOrder="18" Text="은행" Top="10" VAlign="Middle" Width="70"></Static>
+				<Edit BindDataset="ds_tsac_cust" Border="Flat" CheckLength="Byte" Column="BANK_NM" Enable="FALSE" Height="20" Id="Edit8" ImeMode="english" Left="336" LeftMargin="2" MaxLength="20" RightMargin="2" Style="sty_ipt_form" TabOrder="19" Top="6" UpperOnly="TRUE" UseIME="FALSE" Width="150"></Edit>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_delete" ImageID="btn_c_2" Left="868" LeftMargin="5" OnClick="btn_delete_OnClick" Style="sty_btn_c" TabOrder="5" Text="삭제" Top="480" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_send" ImageID="btn_c_4" Left="932" LeftMargin="5" OnClick="btn_send_OnClick" Style="sty_btn_c" TabOrder="6" Text="ERP전송" Top="480" Visible="FALSE" Width="85"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : SACEDM00100
+* 업무명      : 판매회계 거래처관리
+* 프로그램명  : 판매회계 거래처관리
+--------------------------------------------------------------------------------
+* 작성자      : 하창주
+* 작성일      : 2009.04.20
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자        :
+수정일        :
+수정 내역     :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+var FV_ORG_ID; 
+var FV_ORG_NM;  
+var FV_USER_GRP;
+
+function form_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	// 그리드 체크박스 설정 및 정렬
+	//cf_setGrdChecknSortEvent(grd_tsac_cust, 0);
+	
+    FV_ORG_ID = gds_session.GetColumn(0,"orgId");
+    FV_ORG_NM = gds_session.GetColumn(0,"orgNm");
+    FV_USER_GRP = gds_session.GetColumn(0, "userGrp");		//사용자그룹
+
+	div_search.edt_orgId.value = FV_ORG_ID;
+    div_search.edt_orgNm.value = FV_ORG_NM;	
+
+	ds_condition.SetColumn(0, "ins_dt_from", substr(today(), 0, 6) + "01");
+	ds_condition.SetColumn(0, "ins_dt_to", today());
+
+}
+
+/*******************************************************************************
+ * @description    : 전체 조직 트리 팝업 호출- 이벤트
+*******************************************************************************/
+function div_search_btn_orgTree_OnClick(obj)
+{
+    // 조직 트리 팝업 호출
+   cf_callOrgTree2("div_search.edt_orgId", "div_search.edt_orgNm","");    
+}
+
+/*******************************************************************************
+ * @description    : 전체 조직 트리 팝업 호출- 이벤트
+*******************************************************************************/
+function div_search_edt_orgId_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+    if(nChar == "13"){
+        // 조직 트리 팝업 호출
+        cf_callOrgTree2("div_search.edt_orgId", "div_search.edt_orgNm",""); 
+    }
+}
+
+/*******************************************************************************
+ * @description    : org OnChar Changed 이벤트
+*******************************************************************************/
+function div_search_edt_orgId_OnCharChanged(obj,strPreText,strPostText)
+{
+    if(strPreText != strPostText){
+        div_search.edt_orgNm.value = "";
+    }   
+}
+
+function df_search(obj)
+{
+	// 조회 조건 설정
+	ds_condition.SetColumn(0, "loginid", gds_session.GetColumn(0, "loginid"));	// 사용자ID
+	var delAdd = div_search.chk_del_add.value;
+	if( delAdd == "N" ) {
+		ds_condition.SetColumn(0, "del_add", delAdd);
+	} else {
+		ds_condition.SetColumn(0, "del_add", "");
+	}
+
+	var sSvcID	= "svcSearch";
+	var sInDs	= "nc_input_fieldDs=ds_condition";
+	var sOutDs	= "ds_tsac_cust=ds_tsac_cust";
+	var sArg	= "sktst.sac.EDM#getSacCustMasterList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if (sSvcID == "svcSearch") {
+	
+	} else if (sSvcID == "deleteSacCustMaster")  {
+
+		//if (confirm("재조회 하시겠습니까?") == true) {
+			df_search(null);
+		//}
+	} else if (sSvcID == "sendSacCustInfo") {
+		df_search(null);
+	}
+
+}
+
+function btn_send_OnClick(obj)
+{
+	//Vaild Chack
+	var nCnt = ds_tsac_cust.GetRowCount();
+	var nChkCnt = 0;
+	
+	var strCustCl = "";
+	for (var i = 0; i < nCnt; i++) {
+		if (ds_tsac_cust.GetColumn(i, "chk") == "1") {
+			strCustCl = ds_tsac_cust.GetColumn(i, "CUST_CL");
+			
+			if (uf_isNull(ds_tsac_cust.GetColumn(i, "DEAL_CO_NM")) == true ) {
+				alert( i + 1 + "번째 라인 거래처의 거래처명이 없습니다[전송불가].");
+				return false;
+			} else if (uf_isNull(ds_tsac_cust.GetColumn(i, "ADDR")) == true ) {
+				alert( i + 1 + "번째 라인 거래처의 주소가 없습니다[전송불가].");
+				return false;
+			} else if (uf_isNull(ds_tsac_cust.GetColumn(i, "DTL_ADDR")) == true ) {
+				alert( i + 1 + "번째 라인 거래처의 상세주소가 없습니다[전송불가].");
+				return false;
+			} else if (uf_isNull(ds_tsac_cust.GetColumn(i, "REP_USER_NM")) == true ) {
+				alert( i + 1 + "번째 라인 거래처의 대포자명 없습니다.[전송불가].");
+				return false;
+			} else if (uf_isNull(ds_tsac_cust.GetColumn(i, "BANK_CD")) == true ) {
+				alert( i + 1 + "번째 라인 거래처의 은행이 없습니다.[전송불가].");
+				return false;
+			} else if (uf_isNull(ds_tsac_cust.GetColumn(i, "SLCM_DFRY_ACC_NO")) == true ) {
+				alert( i + 1 + "번째 라인 거래처의 계좌번호가 없습니다.[전송불가].");
+				return false;
+			} else if (uf_isNull(ds_tsac_cust.GetColumn(i, "SLCM_DFRY_DEPO")) == true ) {
+				alert( i + 1 + "번째 라인 거래처의 예금주명이 없습니다.[전송불가].");
+				return false;
+			}
+
+			if (strCustCl == "02") {
+				if (uf_isNull(ds_tsac_cust.GetColumn(i, "REG_NO")) == true ) {
+					alert( i + 1 + "번째 라인 거래처의 주민번호가 없습니다.[개인의 경우 주민번호 필수. 전송불가].");
+					return false;
+				}
+			} else {
+				if (uf_isNull(ds_tsac_cust.GetColumn(i, "BIZ_NUM")) == true ) {
+					alert( i + 1 + "번째 라인 거래처의 사업자등록번호가 없습니다.[전송불가].");
+					return false;
+				} else if (uf_isNull(ds_tsac_cust.GetColumn(i, "TYP_OF_BIZ")) == true ) {
+					alert( i + 1 + "번째 라인 거래처의 업종이 없습니다.[전송불가].");
+					return false;
+				} else if (uf_isNull(ds_tsac_cust.GetColumn(i, "BIZ_CON")) == true ) {
+					alert( i + 1 + "번째 라인 거래처의 업태가 없습니다.[전송불가].");
+					return false;
+				}
+			}
+
+			nChkCnt++;
+		}
+	}
+
+	if (nChkCnt ==  0) {
+		alert("ERP전송 대상건이 존재하지 않습니다.");
+		return;
+	}
+
+	if (confirm("전송 하시겠습니까?") == true) {
+		// 조회 조건 설정
+		ds_condition.SetColumn(0, "loginid", gds_session.GetColumn(0, "loginid"));	// 사용자ID
+		ds_condition.SetColumn(0, "reg_cl", div_search.cmb_reg_cl.value);
+	
+		var sSvcID 	= "sendSacCustInfo";
+		var sInDs 	= "ds_condition=ds_condition ds_tsac_cust=ds_tsac_cust";
+		var sOutDs 	= "";
+		var sArg 	= "sktst.sac.EDM#sendSacCustInfo";
+	
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 삭제
+*******************************************************************************/
+function btn_delete_OnClick(obj)
+{
+	//Vaild Chack
+	var nCnt = ds_tsac_cust.GetRowCount();
+	var nChkCnt = 0;
+	for (var i = 0; i < nCnt; i++) {
+		if (ds_tsac_cust.GetColumn(i, "chk") == "1") {
+			nChkCnt++;
+		}
+	}
+	
+	if (nChkCnt ==  0) {
+		alert("처리대상건이 존재하지 않습니다.");
+		return;
+	}
+
+	if (confirm("ERP 거래처 등록 대상에서 제외하시겠습니까?") == true) {
+		
+		var sSvcID 	= "deleteSacCustMaster";
+		var sInDs 	= "ds_tsac_cust=ds_tsac_cust";
+		var sOutDs 	= "";
+		var sArg 	= "sktst.sac.EDM#deleteSacCustMaster";
+	
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 그리드 헤더 클릭- 이벤트
+*******************************************************************************/
+function grd_tsac_cust_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+
+	trace("nCell : " + nCell);
+	if(nCell < 1)
+	{
+		var nChekValue = obj.getCellProp("head", 0, "text");
+
+		if(nChekValue == "0" || nChekValue == "")
+		{
+			nChekValue = 1;
+		}
+		else
+		{
+			nChekValue = 0;
+		}
+		
+		obj.setCellProp("head", 0, "text", nChekValue);
+		var nRow = ds_tsac_cust.rowcount;
+		
+		for (var i = 0; i < nRow; i++) {
+			trace("zconfirm : " + ds_tsac_cust.GetColumn(i, "zconfirm"));
+			if ( ds_tsac_cust.GetColumn(i, "del_yn") == "N" &&
+					(ds_tsac_cust.GetColumn(i, "zconfirm") == "0" || ds_tsac_cust.GetColumn(i, "zconfirm") == "1") ) {
+				ds_tsac_cust.SetColumn(i, "chk", nChekValue);
+			}
+		}
+		
+	} else {
+		//cf_markGridSort(obj,nCell,nX,nY,nPivotIndex);
+	}
+	
+}
+]]></Script>
+</Window>

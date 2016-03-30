@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="560" Id="form" Left="8" OnLoadCompleted="CSTPRC00600_OnLoadCompleted" PidAttrib="7" Title="UKEY_IF&#32;상담결과목록" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="OP_FROM_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="OP_TO_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SKN_YN" size="256" summ="default" type="STRING"/>
+					<record>
+						<OP_FROM_DT></OP_FROM_DT>
+						<OP_TO_DT></OP_TO_DT>
+						<SKN_YN></SKN_YN>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list" OnColumnChanged="ds_list_OnColumnChanged">
+				<Contents>
+					<colinfo id="OP_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="SKN_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="IN_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DUPLICATE_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_ERROR_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="UPDATE_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="INSERT_CNT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_skn_yn">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="value" size="256" summ="default" type="STRING"/>
+					<record>
+						<code>A</code>
+						<value>전체</value>
+					</record>
+					<record>
+						<code>Y</code>
+						<value>현장검증</value>
+					</record>
+					<record>
+						<code>N</code>
+						<value>일반검증</value>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="42" Id="div_search" Left="7" Style="sty_div_search" TabOrder="2" Text="질의내용" Top="6" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Style="sty_lb_Search" Text="처리일자" Top="8" VAlign="Middle" Width="60"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="742" LeftMargin="5" OnClick="btn_search_onClick" Style="sty_btn_a" Text="조회" Top="8" Width="60"></Button>
+				<Calendar BindDataset="ds_condition" Border="Flat" ButtonImageID="btn_i_calendar" Column="OP_FROM_DT" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_From" Left="67" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TodayColor="user26" Top="8" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="85"></Calendar>
+				<Calendar BindDataset="ds_condition" Border="Flat" ButtonImageID="btn_i_calendar" Column="OP_TO_DT" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_To" Left="167" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="0" TodayColor="user26" Top="8" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="85"></Calendar>
+				<Static Align="Center" Height="20" Id="Static9" Left="150" TabOrder="4" Text="~" Top="8" VAlign="Middle" Width="20"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static5" Left="279" Style="sty_lb_Search" TabOrder="6" Text="검수구분" Top="8" VAlign="Middle" Width="55"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" CodeColumn="code" Column="SKN_YN" DataColumn="value" Height="22" Id="cmb_sknYn" InnerDataset="ds_skn_yn" Left="337" Style="sty_ipt_form" TabOrder="7" Top="6" Width="101"></Combo>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="520" CellMoving="TRUE" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="30" Height="464" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" OnHeadClick="grd_list_OnHeadClick" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="56" UseDBuff="true" UseExprCache="Row" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="108"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="처리일"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="순번"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="SKN_YN"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="In_Cnt"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="Dup_Cnt"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="Deal_Cnt"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="Update_Cnt"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="Insert_Cnt"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="OP_DT" display="date"/>
+						<cell align="center" col="1" colid="SEQ" display="text"/>
+						<cell align="left" col="2" colid="SKN_CL" display="text"/>
+						<cell align="left" col="3" colid="IN_CNT" display="text"/>
+						<cell align="center" col="4" colid="DUPLICATE_CNT" display="text"/>
+						<cell align="left" col="5" colid="DEAL_ERROR_CNT" display="text"/>
+						<cell align="center" col="6" colid="UPDATE_CNT" display="text"/>
+						<cell align="left" col="7" colid="INSERT_CNT" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID 	: 
+* 업무명      	: 중고단말기영업 - 매입제외목록
+* 프로그램명  	: 매입목록조회
+--------------------------------------------------------------------------------
+* 작성자      	: 민동운
+* 작성일      	: 2011.07.20
+--------------------------------------------------------------------------------
+* 1. 변경이력
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+// 글로벌 세션정보
+var FV_USER_ID;					// 사용자ID
+var FV_USER_NM;					// 사용자명
+
+var	FV_ORG_ID;					// 소속 
+var	FV_ORG_NM;					// 소속명
+var	FV_ORG_CL;					// 소속구분
+var	FV_AGENCY_ID;           	// 소속 팀ID
+var	FV_AGENCY_NM;           	// 소속 팀명
+var	FV_AGENCY_UKEY_ID;      	// 소속 팀UKEY ID	
+	
+var	FV_ORG_AREA_ID;				// 근무지 ID
+var	FV_ORG_AREA_NM;				// 근무지명
+var	FV_ORG_AREA_POS_AGENCY_CD;	// 근무지 
+var	FV_ORG_AREA_UKEY_ID;     	// 근무지ukeyid
+var	FV_ORG_AREA_SUB_CD;      	// 근무지subcd
+var	FV_ORG_AREA_CHANNEL_CD;  	// 근무지 channelcd	
+var	FV_USER_GRP;			 	// 유저그룹
+
+var	FV_DUTY;					// 사용자 직책
+var	FV_ORG_AREA_CL1;			// 근무지 구분
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function CSTPRC00600_OnLoadCompleted(obj)
+{
+	f_getSession();
+	f_init();
+	f_setCombo();
+	
+//	cf_setGrdChecknSortEvent(grd_list);
+	cf_allChecknSort(grd_list);
+}
+
+function f_init()
+{
+	div_search.cal_From.Value = Left(cf_getDate(), 6) + "01";
+	div_search.cal_To.Value = Left(cf_getDate(), 8);
+}
+
+function f_setCombo()
+{
+	div_search.cmb_rtnYn.Index = 0;
+}
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function f_getSession()
+{
+	FV_USER_ID        = gds_session.GetColumn(0, "loginid");						// 사용자ID
+	FV_USER_NM        = gds_session.GetColumn(0, "usernm");							// 사용자명
+}
+
+/*******************************************************************************
+ * @description    : 검수반송목록 조회 
+*******************************************************************************/
+function btn_search_onClick(obj)
+{
+	ds_list.ClearData();
+
+	if (fn_checkSearchVal()) {
+		var sSvcID 	= "getConsultMgmtRtn";
+		var sInDs  	= "nc_input_fieldDs=ds_condition";
+		var sOutDs 	= "ds_list=ds_list";
+		var sArg	= "sktst.cst.ADV#getConsultMgmtRtn";
+		
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+	}
+	
+}
+
+/*******************************************************************************
+ * @description    :  조회조건 체크 
+*******************************************************************************/
+function fn_checkSearchVal()
+{
+
+	var bFlag = true;
+    
+    if(Length(div_search.cal_From.Value) < 1)
+    {
+        alert(cf_getMessage(MSG_00083, "처리일자"));
+        div_search.cal_From.SetFocus();
+        return false;
+    }
+    
+    if(Length(div_search.cal_To.Value) < 1)
+    {
+        alert(cf_getMessage(MSG_00083, "처리일자"));
+        div_search.cal_To.SetFocus();
+        return false;
+    }
+    
+    if(div_search.cal_From.Value > div_search.cal_To.Value)
+    {
+        alert(cf_getMessage(MSG_00086, "시작일;마지막일"));
+        div_search.cal_From.SetFocus();
+        return false;
+    }
+    
+    return bFlag;
+    
+}
+
+/*******************************************************************************
+ * @description    : 엑셀 다운로드
+*******************************************************************************/
+function div_page_btn_excelDown_OnClick(obj)
+{
+	cf_exportExcel(grd_list, 1);
+}
+
+]]></Script>
+</Window>

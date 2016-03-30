@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISATR00900">
+	<select id="selectChkFixList2" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR00900_selectChkFixList2_안희수 */
+		 	NVL(A.SER_NUM,B.SER_NUM) ser_num
+            , b.PROD_CD
+            , b.COLOR_CD
+			, NVL(A.SAVE_FLAG,B.SAVE_FLAG) save_flag
+		    , DECODE(A.SER_NUM, NULL, '0','1') in_fix_yn
+		    , #out_mgmt_no# AS out_mgmt_no
+            , b.OUT_SEQ
+            , #in_mgmt_no# AS in_mgmt_no
+            , b.out_qty
+            , b.IN_PLC_ID
+            , b.OUT_PLC_ID
+            , b.AMT
+            , a.in_seq
+		FROM (
+				SELECT B.SER_NUM, 'N' SAVE_FLAG, b.in_seq
+				FROM TDIS_IN_PROD_DTL_D B 
+				WHERE B.IN_MGMT_NO = #in_mgmt_no#
+				  AND NVL(B.CNCL_YN,'N') ='N'
+				  AND B.IN_FIX_YN = 'Y'
+				  AND B.DEL_YN = 'N'  
+			)A,
+			(
+				SELECT A.SER_NUM, 'Y' SAVE_FLAG, a.out_qty, aa.IN_PLC_ID, aa.OUT_PLC_ID,a.OUT_SEQ, a.AMT, a.PROD_CD, a.COLOR_CD
+				FROM TDIS_PROD_MOV_OUT_DTL_D A , TDIS_PROD_OUT_M aa
+				WHERE a.OUT_MGMT_NO = aa.OUT_MGMT_NO
+				  AND A.OUT_MGMT_NO = #out_mgmt_no#
+				  AND NVL(A.CNCL_YN,'N') ='N'
+				  AND A.DEL_YN = 'N'
+				  AND aa.DEL_YN = 'N' 
+			) B
+			WHERE A.SER_NUM(+) = B.SER_NUM ]]>
+	</select>
+	<select id="selectChkFixList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR00900_selectChkFixList_안희수 */
+		 	NVL(A.SER_NUM,B.SER_NUM) ser_num
+			, NVL(A.SAVE_FLAG,B.SAVE_FLAG) save_flag
+		    , DECODE(A.SER_NUM, NULL, '0','1') in_fix_yn
+		    , #out_mgmt_no# AS out_mgmt_no
+            , #in_mgmt_no# AS in_mgmt_no
+		FROM (
+			SELECT B.SER_NUM, 'N' SAVE_FLAG
+			FROM TDIS_IN_PROD_DTL_D B 
+			WHERE B.IN_MGMT_NO = #in_mgmt_no#
+			  AND NVL(B.CNCL_YN,'N') ='N'
+			  AND B.IN_FIX_YN = 'Y'
+			  AND B.DEL_YN = 'N'
+			  AND B.PROD_CD = #prod_cd#
+			  AND B.COLOR_CD = #color_cd#)A,
+		(
+			SELECT A.SER_NUM, 'Y' SAVE_FLAG
+			FROM TDIS_PROD_MOV_OUT_DTL_D A 
+			WHERE A.OUT_MGMT_NO = #out_mgmt_no#
+			  AND NVL(A.CNCL_YN,'N') ='N'
+			  AND A.DEL_YN = 'N'
+			  AND A.PROD_CD = #prod_cd#
+			  AND A.COLOR_CD = #color_cd# ) B
+			WHERE A.SER_NUM(+) = B.SER_NUM ]]>
+	</select>
+	<select id="selectInFixList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR00900_selectInFixList_안희수 */
+			xx.out_cl
+	          , xx.out_plc_id
+	          , xx.in_plc_id
+	          , xx.out_schd_dt
+	          , xx.out_fix_dt
+	          , xx.tot_out_qty
+	          , xx.out_mgmt_no
+	          , xx.in_mgmt_no
+	          , NVL(SUM(in_qty),0) tot_in_qty
+	          , xx.in_st
+              , xx.in_fix_dt
+              , DECODE(xx.in_st,'03', '1' ,'0') AS in_fix_yn 			/* 입고상태가 입고완료(03)이면 체크, 아니면 미체크 */
+              , DECODE(xx.in_st,'01', 'Y' , '03', 'N' , '02', 'X', 'Y') AS SAVE_FLAG 
+              	/* 입고상태가 미입고(01)이면 화면에서 일괄이동입고저장 가능 */
+              	/*          입고완료(03)이면 화면에서 저장시 일괄이동입고취소저장 가능 부분입고이면 체크박스선택 불가(팝업에서처리)  */
+              , xx.color_cd
+              , xx.prod_cd
+              , xx.rmks
+              , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040',xx.color_cd) color_nm
+              , zz.prod_nm /* 상품명*/
+              , FBAS_GET_COMMCDNM_VAL('ZBAS_P_00090',zz.grade_gb) grade_gb_nm
+			  , zz.mktg_dt
+              , zz.mfact_id 
+              ,(SELECT x.deal_co_nm 
+                    FROM tbas_deal_co_mgmt x
+                    WHERE x.deal_co_cd = zz.mfact_id 
+                      AND x.deal_co_cl1 = '20' 
+                      AND x.DEL_YN='N' 
+                      AND x.DEAL_END_YN='N' 
+                      AND rownum = 1) as mfact_nm
+               , FBAS_GET_AGENCY_NM(xx.out_plc_id, xx.out_schd_dt) as pos_outPosAgency_nm /* 출고대리점*/
+		       , fbas_get_deal_nm(xx.out_plc_id, xx.out_schd_dt) out_plc_nm /* 출고처*/
+		FROM (
+			SELECT  aa.out_cl 
+		          , aa.out_plc_id
+		          , aa.in_plc_id
+		          , aa.out_schd_dt
+		          , aa.out_fix_dt
+		          , aa.tot_out_qty
+		          , aa.out_mgmt_no
+		          , aa.in_mgmt_no
+		          , bb.in_st
+		          , bb.in_fix_dt
+		          , aa.prod_cd
+                  , aa.color_cd
+                  , bb.rmks
+	  		FROM (
+	    		SELECT
+	                     a.out_cl
+	                     ,a.out_plc_id
+	                     ,a.in_plc_id
+	                    , a.out_schd_dt
+	                    , a.out_fix_dt
+	                    , NVL(SUM(b.out_qty),0) tot_out_qty
+	                    , a.out_mgmt_no
+	                    ,(SELECT in_mgmt_no
+	                    FROM TDIS_PROD_MOV_OUT_DTL_D x
+	                        ,TDIS_PROD_INOUT_HST y
+	                    WHERE x.out_mgmt_no = a.out_mgmt_no
+	                        AND x.prod_cd = y.prod_cd
+	                        AND x.color_cd = y.color_cd
+	                        AND x.ser_num = y.ser_num
+	                        AND x.out_mgmt_no = y.out_mgmt_no
+	                        AND y.in_mgmt_no IS NOT null
+	                        AND NVL(x.cncl_yn, 'N') = 'N'
+	                        AND x.del_yn = 'N'
+	                        AND y.del_yn = 'N'
+	                        AND ROWNUM = 1) in_mgmt_no
+	                    , b.prod_cd
+	                    , b.color_cd    
+	            FROM  TDIS_PROD_OUT_M a
+	                , TDIS_PROD_MOV_OUT_DTL_D b
+	            WHERE 1=1
+	            AND a.out_fix_yn = 'Y'
+	            AND a.out_fix_dt >= #str_dt_fr#
+	            AND a.out_fix_dt <= #str_dt_to#
+	            AND a.IN_PLC_ID = #in_plc_id#	/* 입고처 */
+	            AND a.out_cl = '301'
+	            AND a.del_yn = 'N'
+]]>
+<isNotEmpty prepend="AND" property="out_agency_id">  
+<![CDATA[    A.OUT_PLC_ID IN ( SELECT deal_co_cd 		/* 출고팀만 선택했을때 팀에 해당하는 처 모두 조회 */
+		                       FROM tbas_deal_co_mgmt
+		                      WHERE del_yn = 'N'
+		                        AND deal_end_yn != 'Y'
+		                        AND deal_co_cl1 in ('A1','A2','Z1')
+		                       /*AND out_stop_yn = 'N'*/
+		                        AND pos_agency = #out_agency_id#
+		                        AND eff_end_dtm = '99991231235959')
+]]></isNotEmpty>	  
+<isNotEmpty prepend="AND" property="out_plc_id"> 
+<![CDATA[    
+		  A.OUT_PLC_ID = #out_plc_id#				/* 출고팀/출고처 선택했을때 출고처로 조회*/
+]]></isNotEmpty>  
+<![CDATA[]]><isNotEmpty prepend="AND" property="out_mgmt_no">                       
+<![CDATA[    a.out_mgmt_no = #out_mgmt_no#  
+]]></isNotEmpty>
+<![CDATA[             
+	            AND a.out_mgmt_no = b.out_mgmt_no
+	            AND b.del_yn = 'N'
+	            AND NVL(b.cncl_yn,'N')='N'
+	            GROUP BY a.out_cl, a.out_plc_id,a.in_plc_id, a.out_schd_dt, a.out_fix_dt, a.out_mgmt_no,b.prod_cd, b.color_cd
+	    ) aa , TDIS_IN_PROD_M bb
+	    WHERE aa.in_mgmt_no  = bb.in_mgmt_no(+)
+	    AND bb.del_yn(+) = 'N'
+    
+]]><isEqual prepend="AND" property="in_fix_yn" compareValue="Y">
+<![CDATA[    
+		  bb.in_fix_dt IS NOT NULL
+]]></isEqual> 
+<![CDATA[]]><isEqual prepend="AND" property="in_fix_yn" compareValue="N">
+<![CDATA[    
+		  bb.in_fix_dt IS NULL
+]]></isEqual>
+<![CDATA[     
+	   )xx,  TDIS_IN_PROD_DTL_D cc,  tbas_prod_mgmt zz
+	   WHERE xx.in_mgmt_no  = cc.in_mgmt_no(+)
+	   AND cc.del_yn(+) = 'N'
+	   AND NVL(cc.cncl_yn(+),'N') = 'N'
+	   AND xx.color_cd = cc.color_cd(+)
+       AND xx.prod_cd = cc.prod_cd(+)
+       AND xx.prod_cd = zz.prod_cd
+	   AND zz.del_yn = 'N'
+	   GROUP BY xx.out_cl, xx.out_plc_id, xx.in_plc_id, xx.out_schd_dt, xx.out_fix_dt, xx.tot_out_qty, xx.out_mgmt_no, xx.in_mgmt_no
+				, xx.in_st, xx.in_fix_dt, zz.grade_gb, zz.mktg_dt, zz.mfact_id,zz.prod_nm, xx.prod_cd, xx.color_cd, xx.rmks
+	   ORDER BY grade_gb_nm, prod_nm]]>
+	</select>
+</sqlMap>

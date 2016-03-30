@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMSMS08110">
+	<select id="getMsgSerNum" parameterClass="map" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT /*+ ADMSMS08110_getMsgSerNum_원종윤_원종윤 */    
+	SADM_SMS_SEQ.NEXTVAL AS msg_ser_num 
+	FROM DUAL
+	]]>
+	</select>
+
+	<select id="getTranCnt" parameterClass="map" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT  /*+ ADMSMS08110_getTranCnt_원종윤_원종윤 */                                       
+	    NVL(MAX(tran_cnt),0)+1 AS tran_cnt        
+	FROM
+		tadm_sms_tran
+	WHERE
+		tran_dt = #TRAN_DT#
+	]]>
+	</select>
+
+	<insert id="addSmsTran" parameterClass="hmap">
+	<![CDATA[
+	INSERT INTO /*+ ADMSMS08110_addSmsTran_원종윤_원종윤 */ 
+    tadm_sms_tran
+	(
+	    tran_dt,                    /* 전송일 */
+	    tran_cnt,                   /* 전송차수 */
+	    title,                      /* 제목 */
+	    context,                    /* 내용 */
+	    TRAN_USER_ID,               /* 전송자 아이디 */
+	    RTN_TEL_NO,                 /* 전송자 전화번호 */
+	    del_yn,                     /* 삭제 여부 - default : N */
+	    upd_cnt,                    /* 업데이트 카운트 - default : 0 */
+	    ins_dtm,                    /* 등록일 */
+	    ins_user_id,                /* 등록자 */
+	    msg_ser_num                 /* 메시지일련번호 */
+	)
+	VALUES 
+	(
+	    #TRAN_DT#,
+	    #TRAN_CNT#,
+	    #TITLE#,
+	    #CONTEXT#,
+	    'PSADMIN',
+	    '0000',
+	    'N',                
+	    0,            
+	    TO_CHAR(SYSDATE, 'yyyymmddhh24MIss'),			
+		'ADMSMS0811',
+		#MSG_SER_NUM#
+	)
+	]]>
+	</insert>
+	
+	<insert id="addSmsTranDtl" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ ADMSMS08110_addSmsTranDtl_원종윤_원종윤 */ 
+	tadm_sms_tran_dtl
+	(
+		tran_dt,					/* 전송일 */
+		tran_cnt,					/* 전송차수 */
+		seq,						/* 순번 */
+		name,						/* 받는사람 */
+		tel_no,						/* 받는사람 전화번호 */
+		ADDR_CAT,					/* 주소록구분 */
+		del_yn,						/* 삭제 여부 - default : N */
+		upd_cnt,					/* 업데이트 카운트 - default : 0 */
+		ins_dtm,					/* 등록일 */
+		ins_user_id,				/* 등록자 */	
+		skt_yn                      /* SKT 사용자 여부 */
+	)
+	VALUES 
+	(
+		#TRAN_DT#,
+		#TRAN_CNT#,
+		(
+			SELECT NVL(MAX(seq), 0)+1 
+			FROM tadm_sms_tran_dtl 
+			WHERE tran_dt = #TRAN_DT# 
+			AND tran_cnt = #TRAN_CNT# 
+		),
+		#NAME#,
+		#TEL_NO#,
+		null,
+		'N',				
+		0,			
+		TO_CHAR(SYSDATE, 'yyyyMMddHH24miss'),			
+		'ADMSMS0811',	
+		#SKT_YN#	 
+	)
+	]]>
+	</insert>
+</sqlMap>

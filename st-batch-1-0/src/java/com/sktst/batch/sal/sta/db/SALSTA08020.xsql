@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSTA08020">
+	<select id="getYesterDay" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select to_char(to_date(#FILE_DT#, 'YYYYMMDD') - 1, 'YYYYMMDD') as WORK_DT
+	  from dual
+	]]>
+	</select>
+	<select id="getDealAgencyInfo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select deal_co_cd
+	  from tbas_deal_co_mgmt a
+	 where ukey_agency_cd = #UKEY_AGENCY_CD#
+	   and deal_co_cl1    = 'A1'
+	   and deal_end_yn    = 'N'
+	   and hseq_no        = (select max(hseq_no)
+	                           from tbas_deal_co_mgmt
+	                          where deal_co_cd = a.deal_co_cd
+	                            and #EFF_DT# || '120000' between eff_sta_dtm and eff_end_dtm)
+	]]>
+	</select>
+	<select id="getDealPlcInfo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select deal_co_cd
+	  from tbas_deal_co_mgmt a
+	 where ukey_agency_cd = #UKEY_AGENCY_CD#
+	   and ukey_sub_cd    = #UKEY_SUB_CD#
+	   and deal_end_yn    = 'N'
+	   and hseq_no        = (select max(hseq_no)
+	                           from tbas_deal_co_mgmt
+	                          where deal_co_cd = a.deal_co_cd
+	                            and #EFF_DT# || '120000' between eff_sta_dtm and eff_end_dtm)
+	]]>
+	</select>
+	<delete id="deleteUkeyMnpScrb" parameterClass="map" >
+	<![CDATA[
+	delete  /* SALSTA08020_deleteUkeyMnpScrb_U.Key번호이동통계삭제_김연석_김연석 */
+      from   TSAL_Ukey_Mnp_Scrb
+     where   STRD_DT  = #STRD_DT#
+	]]>
+	</delete>
+	<insert id="addUkeyMnpScrb" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSTA08020_addUkeyMnpScrb_UKEY번호이동통계 생성 */
+           TSAL_Ukey_Mnp_Scrb(
+                                 STRD_DT
+                               , UKEY_SEQ
+                               , UKEY_AGENCY_CD
+                               , UKEY_SUB_CD
+                               , AGENCY_CD
+                               , PROC_PLC
+                               , MNP_SCRB_CNT
+                               , MNP_TERM_CNT
+                               , MNP_REAL_ADD_CNT
+                               , MNP_KT_SKT_CNT
+                               , MNP_SKT_KT_CNT
+                               , MNP_SKT_KT_REAL_CNT
+                               , MNP_LGT_SKT_CNT
+                               , MNP_SKT_LGT_CNT
+                               , MNP_SKT_LGT_REAL_CNT
+                               , DEL_YN
+                               , UPD_CNT
+                               , INS_USER_ID
+                               , INS_DTM
+                               , MOD_USER_ID
+                               , MOD_DTM
+            )  VALUES  ( 
+                                 #STRD_DT#
+                               , (select nvl(max(UKEY_SEQ), 0) + 1
+                                    from TSAL_Ukey_Mnp_Scrb
+                                   where STRD_DT  = #STRD_DT#)
+	            	           , #UKEY_AGENCY_CD#
+	            	           , #UKEY_SUB_CD#
+	            	           , #AGENCY_CD#
+	            	           , #PROC_PLC#
+                               , #MNP_SCRB_CNT#
+                               , #MNP_TERM_CNT#
+                               , #MNP_REAL_ADD_CNT#
+                               , #MNP_KT_SKT_CNT#
+                               , #MNP_SKT_KT_CNT#
+                               , #MNP_SKT_KT_REAL_CNT#
+                               , #MNP_LGT_SKT_CNT#
+                               , #MNP_SKT_LGT_CNT#
+                               , #MNP_SKT_LGT_REAL_CNT#
+                               , 'N'
+                               , 1
+                               , #USER_ID#
+                               , TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+                               , #USER_ID#
+                               , TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+    )]]>
+	</insert>
+</sqlMap>

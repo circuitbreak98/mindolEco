@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTSKN00700">
+	<select id="getAllConPrchs" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', NVL(prc.PRC_ST,con.PRC_ST)) PRC_NM
+	 , con.CON_MGMT_NO
+     , con.CON_DT
+     , con.IN_DT
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00020', prod.PROD_CHRTIC_1) PROD_CHRTIC_NM   
+     , FBAS_GET_DEAL_NM(prod.MFACT_ID,'') as MFACT_NM   
+	 , FBAS_GET_PROD_NM(con.PROD_CD) PROD_NM
+     , con.SER_NUM
+     , market.HQ_NM
+	 , market.MARKET_CD
+     , market.MARKET_NM      
+     , FBAS_GET_ORG_NM(deal.ORG_ID) ORG_NM
+     , deal.UKEY_AGENCY_CD 
+     , deal.UKEY_SUB_CD   
+     , FBAS_GET_AGENCY_NM(deal.POS_AGENCY,con.CON_DT) AGENCY_NM      
+     , FBAS_GET_DEAL_NM(con.CON_PLC_CD,con.CON_DT) CON_PLC_NM
+     , con.CUST_NM
+     , con.SVC_DT
+     , DECODE(con.SVC_DT,NULL,NULL,
+           CASE WHEN (SUBSTR(con.CON_DT,7,2) - SUBSTR(con.SVC_DT,7,2)) >= 0
+       			THEN TO_CHAR((SUBSTR(con.CON_DT,0,4) - SUBSTR(con.SVC_DT,0,4)) * 12 + (SUBSTR(con.CON_DT,5,2) - SUBSTR(con.SVC_DT,5,2)) + 1)||'개월'
+				ELSE TO_CHAR((SUBSTR(con.CON_DT,0,4) - SUBSTR(con.SVC_DT,0,4)) * 12 + (SUBSTR(con.CON_DT,5,2) - SUBSTR(con.SVC_DT,5,2)))||'개월'
+			END) USE_MONTH
+     , con.TEL_NO
+     , NVL(prc.EQP_ST, con.EQP_ST) EQP_ST
+	 , NVL(prc.SKN_EQP_ST, con.SKN_EQP_ST) SKN_EQP_ST   
+	 , prc.EQP_ST_DTL             
+     , prc.ADJ_AMT
+     , con.SKN_CON_AMT
+     , prc.PRCHS_AMT
+     , prc.SKN_DIFF_AMT
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00580',prc.SKN_SPPRAISAL_CL) SKN_SPPRAISAL_CL
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00600',prc.SKN_SPPRAISAL_CL_SUB) SKN_SPPRAISAL_CL_SUB
+     , FBAS_GET_USER_NM(prc.CHECK_USER_ID) CHECK_USER_NM
+     , prc.CHECK_DT
+     , prc.SKN_OP_YN
+     , prc.SKN_OP_DT
+     , NVL(prc.AGN_DDCT_YN,'N') AGN_DDCT_YN
+     , prc.RMKS
+     , nvl(prc.CLCT_DT,con.CLCT_DT) CLCT_DT  
+     , NVL(prc.BOX_NO, con.BOX_NO) BOX_NO   
+     , DECODE(con.OLDEQ_PAY_MTHD_CD,'01',con.OLDEQ_PAY_DT,'') OLDEQ_PAY_DT_1
+     , DECODE(con.OLDEQ_PAY_MTHD_CD,'02',con.OLDEQ_PAY_DT,'') OLDEQ_PAY_DT_2     
+     , NVL(prc.IMEI, con.IMEI) IMEI 
+     , DECODE(NVL(prc.PRCHS_AMT,1),1,0,NVL(FBAS_GET_RESERVE_AMT(con.CON_MGMT_NO),0)) UBO_AMT
+     , prc.PRCHS_AMT + NVL(FBAS_GET_RESERVE_AMT(con.CON_MGMT_NO),0) TOT_AMT    
+     , NVL(con.FIRST_DC_YN,'N') FIRST_DC_YN 
+	 , con.CUST_GROUP_NM
+	 , con.CALCULATE_WAY
+     , FBAS_GET_USER_NM(con.IN_USER_ID) IN_USER_NM
+     , FBAS_GET_USER_NM(nvl(prc.BOX_USER_ID,con.BOX_USER_ID)) BOX_USER_NM
+     , substr(nvl(prc.BOX_DTM,con.BOX_DTM),0,8) BOX_DT
+     , substr(nvl(prc.BOX_DTM,con.BOX_DTM),9,2)||':'||substr(nvl(prc.BOX_DTM,con.BOX_DTM),11,2) BOX_TIME
+     , decode(DISP_AFTERIMAGE_CL,'A','강','B','약','') DISP_AFTERIMAGE_CL
+	 , con.U_EQP_AMT	 
+ 	 , NVL(con.U_INCV_AMT,0) U_INCV_AMT
+	 , NVL(con.U_INCV_TAB_AMT,0) U_INCV_TAB_AMT
+	 , NVL(prc.INCV_AMT,0) INCV_AMT    
+	 , DECODE(NVL(prc.EQP_ST,0), NVL(prc.SKN_EQP_ST,0), NVL(prc.U_INCV_TAB_AMT,0), NVL(prc.INCV_AMT,0)) DEC_INCV_AMT
+	 , con.ASIANA_CARD_NO 
+  FROM TCST_CONSULT_MGMT con
+     , TCST_PRCHS_MGMT prc
+     , TBAS_DEAL_CO_MGMT deal
+     , TBAS_PROD_MGMT prod
+     , TBAS_DEAL_CO_MARKETING market
+ WHERE con.CON_PLC_CD = deal.DEAL_CO_CD
+   AND deal.EFF_STA_DTM <= con.CON_DT||'235959'
+   AND deal.EFF_END_DTM >= con.CON_DT||'235959'
+   AND con.CON_MGMT_NO = prc.CON_MGMT_NO(+)  
+   AND con.PROD_CD = prod.PROD_CD 
+   AND deal.UKEY_AGENCY_CD  = market.UKEY_AGENCY_CD(+)
+   AND con.DEL_YN = 'N'
+   AND prc.DEL_YN(+) = 'N'
+   AND deal.DEL_YN = 'N'
+   AND prod.DEL_YN = 'N' 
+   AND market.DEL_YN(+) = 'N' 
+   AND NVL(market.STA_DT,con.CON_DT) <= con.CON_DT
+   AND NVL(market.END_DT,con.CON_DT) >= con.CON_DT
+   AND con.SKN_YN = 'Y'
+   AND prc.SKN_YN(+) = 'Y'   
+]]><isEqual property="DT_GB" compareValue="1"> 
+<![CDATA[   AND con.CON_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isEqual property="DT_GB" compareValue="2"> 
+<![CDATA[   AND prc.CHECK_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isEqual property="DT_GB" compareValue="3"> 
+<![CDATA[   AND prc.SKN_OP_YN = 'Y'
+   AND prc.SKN_OP_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isEqual property="DT_GB" compareValue="4"> 
+<![CDATA[   AND con.IN_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isEqual property="DT_GB" compareValue="5"> 
+<![CDATA[   AND con.CLCT_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[	   deal.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[       con.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>	      
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       con.PROD_CD = #PROD_CD#
+]]></isNotEmpty>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="REMIT_YN">   
+<![CDATA[       NVL(prc.REMIT_YN,'N') = #REMIT_YN#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">
+<![CDATA[       con.SER_NUM = #SER_NUM#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[       con.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       con.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEqual property="FIRST_DC_YN" compareValue="A"> 
+<![CDATA[]]><isEqual property="SRH_GB" compareValue="1">
+<![CDATA[   AND NVL(con.FIRST_DC_YN,'N') = #FIRST_DC_YN#
+]]></isEqual>
+<![CDATA[]]><isEqual property="SRH_GB" compareValue="2">
+<![CDATA[]]><isEqual property="FIRST_DC_YN" compareValue="N">
+<![CDATA[   AND con.ASIANA_CARD_NO IS NULL
+]]></isEqual>
+<![CDATA[]]><isEqual property="FIRST_DC_YN" compareValue="Y">
+<![CDATA[   AND con.ASIANA_CARD_NO IS NOT NULL
+]]></isEqual>   
+<![CDATA[]]></isEqual>   
+<![CDATA[]]></isNotEqual> 
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="Y"> 
+<![CDATA[   AND con.CON_PLC_CD = '11050'
+]]></isEqual>
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="N"> 
+<![CDATA[   AND con.CON_PLC_CD <> '11050'
+]]></isEqual>
+	</select>
+</sqlMap>

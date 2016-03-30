@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="FAQ&#32;조회" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="QUE_CTT" size="256" summ="default" type="STRING"/>
+					<colinfo id="FAQ_CAT" size="256" summ="default" type="STRING"/>
+					<record>
+						<FAQ_CAT></FAQ_CAT>
+						<QUE_CTT></QUE_CTT>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="FAQ_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="QUE_CTT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ANS_CTT" size="256" summ="default" type="STRING"/>
+					<colinfo id="STR_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="END_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEL_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="UPD_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="FAQ_CAT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="21" Style="sty_lb_Search" TabOrder="4" Text="질의내용" Top="7" VAlign="Middle" Width="76"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="551" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="3" Text="조회" Top="7" Visible="FALSE" Width="60"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="QUE_CTT" Height="20" Id="edt_queCtt" Left="100" LeftMargin="2" OnKeyDown="div_search_edt_queCtt_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Width="225"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static1" Left="344" Style="sty_lb_Search" TabOrder="5" Text="FAQ&#32;분류" Top="7" VAlign="Middle" Width="84"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" Column="FAQ_CAT" Height="20" Id="cmb_faqCat" ImeMode="none" INDEX="0" Left="432" Style="sty_ipt_form" TabOrder="2" Top="6" Width="100"></Combo>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_result" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="339" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="254" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="85" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="79"/>
+						<col width="722"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="FAQ&#32;분류"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="질의내용"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="FAQ_CAT" display="combo"/>
+						<cell col="1" colid="QUE_CTT" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="FAQ&#32;목록" Top="60" Width="192"></Image>
+		<Div Border="Raised" Height="184" Id="Div1" Left="8" Style="sty_div_dataview" TabOrder="4" Text="Div0" Top="374" Width="810">
+			<Contents>
+				<TextArea BindDataset="ds_result" Border="Flat" Column="ANS_CTT" Height="164" Id="TextArea1" Left="6" Readonly="TRUE" Style="sty_ipt_readonly" TabOrder="1" Top="7" VScroll="TRUE" Width="791"></TextArea>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="8" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="답변" Top="349" Width="192"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  ADMFAQ00200
+* 업무명      :  Admin-FAQ 관리 
+* 프로그램명  :  FAQ 조회
+--------------------------------------------------------------------------------
+* 작성자      : shimyunjung 
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 최승호
+수정일    :	2009.03.30
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+ 
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+
+	// 그리드 체크박스 설정 및 정렬
+	cf_setGrdChecknSortEvent(grd_list);
+	
+	// 공통 코드 설정
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("div_search.cmb_faqCat", "ZADM_C_00100", "전체"); // FAQ분류	
+	cf_setCommonCode("grd_list", "ZADM_C_00100", null, 0, false);  // FAQ분류 
+	cf_checkCommonCode();		
+	
+	f_search();
+}
+
+/*******************************************************************************
+ * @description    : 조회
+*******************************************************************************/
+function f_search()
+{
+	var sSvcID	= "getFaqByUser";
+	var sInDs 	= "nc_input_fieldDs=ds_condition";
+	var sOutDs	= "ds_result=ds_result";
+	var sArg 	= "sktst.adm.FAQ#getFaqByUser";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 조회 버튼 클릭  - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	f_search();
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "getFaqByUser")
+	{
+		//trace(ds_result.SaveXML());
+	}
+}
+
+    
+ 
+/*******************************************************************************
+ * @description    : 조회조건 엔터키 조회 - 이벤트
+*******************************************************************************/
+function div_search_edt_queCtt_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if (nChar==13) 
+	{
+		applyData();
+		div_search_btn_search_OnClick();
+	}
+}
+]]></Script>
+</Window>

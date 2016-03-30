@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08700">
+  <insert id="insertTbasDeal" parameterClass="hmap">
+  <![CDATA[
+    INSERT INTO TBAS_DEAL (  /* SACERP08700_insertTbasDeal_ERP 거래처 IF 저장_이강수 */
+           DEAL_CO_CD
+         , INSP_NO
+         , INSP_EFF_DT
+    ) VALUES (
+           #DEAL_CO_CD#
+         , substr(#INSP_NO#,0,15)
+         , TO_CHAR(SYSDATE, 'YYYYMMDD')
+      )
+  ]]>
+  </insert>
+
+	<select id="getTbasDeal" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+      SELECT * /* SACERP08700_getTbasDeal_거래처조회_이강수 */
+        FROM TBAS_DEAL
+       WHERE DEAL_CO_CD   = #DEAL_CO_CD#  
+	]]>
+	</select>
+	
+  <delete id="deleteTbasDeal" parameterClass="map">
+  <![CDATA[
+    DELETE /* SACERP08700_deleteTbasDeal_ERP 거래처 IF 삭제_이강수 */
+      FROM TBAS_DEAL
+  ]]>
+  </delete>	
+</sqlMap>

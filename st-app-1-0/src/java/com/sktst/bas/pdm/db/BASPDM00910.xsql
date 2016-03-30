@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASPDM00910">
+	<select id="getPriceList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT FBAS_GET_PROD_NM(PROD_CD) AS PROD_NM,
+       PROD_CD, 
+       SUM(N_GRADE) AS N_GRADE, 
+       SUM(A_GRADE) AS A_GRADE, 
+       SUM(B_GRADE) AS B_GRADE, 
+       SUM(C_GRADE) AS C_GRADE, 
+       SUM(D_GRADE) AS D_GRADE, 
+       SUM(E_GRADE) AS E_GRADE,
+       MAX(ST_DT)   AS ST_DT,
+       MAX(ED_DT)   AS ED_DT
+  FROM 
+       (SELECT PROD_CD, 
+              DECODE(GRADE,'N',PRICE,0) AS N_GRADE, 
+              DECODE(GRADE,'A',PRICE,0) AS A_GRADE, 
+              DECODE(GRADE,'B',PRICE,0) AS B_GRADE, 
+              DECODE(GRADE,'C',PRICE,0) AS C_GRADE, 
+              DECODE(GRADE,'D',PRICE,0) AS D_GRADE, 
+              DECODE(GRADE,'E',PRICE,0) AS E_GRADE,
+              ST_DT,
+              ED_DT                
+         FROM TBAS_PROD_FIX_PRICE 
+        WHERE DEL_YN = 'N'
+]]>        <isNotEmpty prepend="AND" property="PRICE_MASTER_NO">        
+<![CDATA[          PRICE_MASTER_NO = #PRICE_MASTER_NO#
+]]>        </isNotEmpty>          
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="PROD_CD">
+<![CDATA[	      PROD_CD = #PROD_CD#
+]]>        </isNotEmpty>
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="STRD_DT">
+<![CDATA[	      ST_DT <= #STRD_DT#
+]]>        </isNotEmpty>
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="STRD_DT">        
+<![CDATA[	      ED_DT >= #STRD_DT#
+]]>        </isNotEmpty>	      
+<![CDATA[       ) 
+ GROUP BY PROD_CD]]>
+	</select>
+	<update id="updateProdFixPriceMasterDel" parameterClass="map" ><![CDATA[UPDATE TBAS_PROD_FIX_PRICE_MASTER
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') 
+     , MOD_USER_ID = #onlineContext.userInfo.loginId# 
+ WHERE PRICE_MASTER_NO = #PRICE_MASTER_NO#
+   AND DEL_YN = 'N']]>
+	</update>
+	<update id="updateProdFixPriceDel" parameterClass="map" ><![CDATA[UPDATE TBAS_PROD_FIX_PRICE
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') 
+     , MOD_USER_ID = #onlineContext.userInfo.loginId# 
+ WHERE PRICE_MASTER_NO = #PRICE_MASTER_NO#
+   AND DEL_YN = 'N']]>
+	</update>
+	<update id="updateProdFixPriceYet" parameterClass="map" ><![CDATA[UPDATE TBAS_PROD_FIX_PRICE
+   SET ED_DT = '99991231'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') 
+     , MOD_USER_ID = #onlineContext.userInfo.loginId# 
+ WHERE PROD_CD = #PROD_CD#
+   AND ED_DT = TO_CHAR(TO_DATE(#ST_DT#,'YYYYMMDD')-1,'YYYYMMDD')
+   AND DEL_YN = 'N']]>
+	</update>
+</sqlMap>

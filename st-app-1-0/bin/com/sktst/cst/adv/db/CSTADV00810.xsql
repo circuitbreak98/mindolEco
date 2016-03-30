@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTADV00810">
+	<insert id="addConsultMgmtXlsIn" parameterClass="map" ><![CDATA[INSERT INTO TCST_CONSULT_MGMT (
+  CON_MGMT_NO    
+  ,PROD_CD        
+  ,SER_NUM        
+  ,CON_DT         
+  ,CON_PLC_CD     
+  ,COLOR_CD       
+  ,SVC_DT         
+  ,EQP_ST         
+  ,USEPRD_DDCT_AMT
+  ,CORROSION_YN   
+  ,POWER_YN       
+  ,CALL_YN        
+  ,DATA_YN        
+  ,DISP_YN        
+  ,FUNCTION_YN    
+  ,LOST_YN        
+  ,RETURN_YN      
+  ,LEASE_YN       
+  ,FLOOD_YN       
+  ,USIM_YN        
+  ,OTHER_YN       
+  ,RMKS           
+  ,CONFIRM_YN     
+  ,FULLSET_YN     
+  ,CON_AMT        
+  ,BUY_CL         
+  ,RES_NO         
+  ,CUST_NM        
+  ,BANK_CD        
+  ,ACC_NO         
+  ,TEL_NO         
+  ,ZIP_CD1        
+  ,ZIP_CD2        
+  ,ADDR           
+  ,DTL_ADDR       
+  ,OUT_YN         
+  ,DEL_YN         
+  ,UPD_CNT        
+  ,INS_DTM        
+  ,INS_USER_ID    
+  ,MOD_DTM        
+  ,MOD_USER_ID    
+  ,CHAG_DEDT_YN   
+  ,SVC_NO         
+  ,SVC_MGMT_NO    
+  ,IMEI           
+  ,IN_YN          
+  ,IN_DT          
+  ,IN_RMKS        
+  ,OTHER_CPNT     
+  ,POL_YN         
+  ,POL_CD         
+  ,PRC_ST  
+  ,SKN_YN       
+) VALUES (
+   #CON_MGMT_NO#    
+  ,TRIM(#PROD_CD#)
+  ,TRIM(#SER_NUM#)
+  ,NVL(TRIM(#CON_DT#),TO_CHAR(SYSDATE,'YYYYMMDD'))
+  ,TRIM(#CON_PLC_CD#)
+  ,TRIM(#COLOR_CD#)
+  ,NVL(TRIM(#SVC_DT#),TO_CHAR(SYSDATE,'YYYYMMDD'))
+  ,'C'
+  ,NVL(#PRCHS_AMT#,0)
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,NVL(#OTHER_YN#,'N')
+  ,'Excel Upload(IN)'
+  ,''
+  ,''
+  ,NVL(#PRCHS_AMT#,0)
+  ,'C'
+  ,TRIM(#RES_NO#)
+  ,TRIM(#CUST_NM#)
+  ,CASE LENGTH(TRIM(#BANK_CD#))
+     WHEN 2 THEN '0'||TRIM(#BANK_CD#)
+     ELSE TRIM(#BANK_CD#)
+   END  
+  ,TRIM(#ACC_NO#)
+  ,TRIM(#TEL_NO#)
+  ,TRIM(#ZIP_CD1#)
+  ,TRIM(#ZIP_CD2#)
+  ,#ADDR#
+  ,#DTL_ADDR#
+  ,'Y'
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,TRIM(#CHAG_DEDT_YN#)
+  ,TRIM(#SVC_NO#)
+  ,TRIM(#SVC_MGMT_NO#)
+  ,TRIM(#IMEI#)
+  ,'C'
+  ,''
+  ,'Excel Upload(IN)'
+  ,#OTHER_CPNT#
+  ,''
+  ,''
+  ,'02'
+  ,NVL(#SKN_YN#,'N')
+)]]>
+	</insert>
+	<select id="getProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "CSTADV00810_getMovProdList_전미량" */ 
+       A.PROD_CD, 
+       A.PROD_NM, 
+       DECODE(A.DEL_YN, 'N', 'Y', 'N') USE_YN, 
+       A.PROD_CL, 
+       (SELECT COMM_CD_VAL_NM 
+         FROM TBAS_COMM_CD_DTL 
+        WHERE COMM_CD_VAL = A.PROD_CL 
+          AND COMM_CD_ID = 'ZBAS_C_00010'
+       ) AS PROD_CL_NM, 
+       A.MFACT_ID, 
+       FBAS_GET_DEAL_NM(A.MFACT_ID,'') AS MFACT_NM, 
+       A.BAR_CD_TYP 
+  FROM TBAS_PROD_MGMT A 
+ WHERE A.DEL_YN = 'N'  ]]>
+	</select>
+	<select id="getColorList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "CSTADV00810_getColorList_전미량" */
+       B.PROD_CD,
+       B.COLOR_CD,
+       (SELECT COMM_CD_VAL_NM
+          FROM TBAS_COMM_CD_DTL
+         WHERE COMM_CD_VAL = B.COLOR_CD
+           AND COMM_CD_ID = 'ZBAS_C_00040') AS COLOR_NM         
+  FROM TBAS_PROD_COLOR B
+ WHERE B.DEL_YN  = 'N']]>
+	</select>
+	<select id="getDealList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "CSTADV00810_getDealList_전미량" */ 
+       DEAL_CO_CD, 
+       DEAL_CO_NM 
+  FROM TBAS_DEAL_CO_MGMT 
+ WHERE EFF_END_DTM = '99991231235959' 
+   AND DEL_YN = 'N' ]]>
+	</select>
+	<select id="getGradeList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "CSTADV00810_getGradeList_전미량" */ 
+       COMM_CD_VAL_NM 
+     , COMM_CD_VAL
+  FROM TBAS_COMM_CD_DTL 
+ WHERE COMM_CD_ID = 'ZBAS_P_00060'
+   AND DEL_YN = 'N']]>
+	</select>
+	<select id="getBankList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "CSTADV00810_getBankList_전미량" */ 
+       COMM_CD_VAL_NM 
+     , COMM_CD_VAL
+  FROM TBAS_COMM_CD_DTL 
+ WHERE COMM_CD_ID = 'ZBAS_C_00060'
+   AND DEL_YN = 'N']]>
+	</select>
+	<select id="getConsultMgmt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ CSTADV00810_getConsultMgmt_전미량 */
+       CON_MGMT_NO 
+  FROM TCST_CONSULT_MGMT 
+ WHERE PROD_CD = #prod_cd# 
+   AND SER_NUM = #ser_num# 
+   AND COLOR_CD = #color_cd#
+   AND DEL_YN = 'N' 
+   AND PRC_ST NOT IN ('31','32','33','34')]]>
+	</select>
+</sqlMap>

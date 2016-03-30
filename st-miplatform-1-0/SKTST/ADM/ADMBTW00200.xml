@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="808" Id="ADMBTW00200" Left="8" OnLoadCompleted="ADMBTW00200_OnLoadCompleted" PidAttrib="7" Title="할부원금&#32;금액조정&#32;조회" Top="8" Ver="1.0" Width="968" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_input"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_Adjust">
+				<Contents>
+					<colinfo id="from_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="to_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_allot_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_allot_rate" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_cash_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_cash_rate" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_rate" size="256" summ="default" type="STRING"/>
+					<colinfo id="af_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="af_rate" size="256" summ="default" type="STRING"/>
+					<colinfo id="af_allot_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="af_allot_rate" size="256" summ="default" type="STRING"/>
+					<colinfo id="af_cash_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="af_cash_rate" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_General">
+				<Contents>
+					<colinfo id="deal_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="pcode" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_chg_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="sl_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_chg_hst_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="ds_net" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_dtl_typ" size="256" summ="default" type="STRING"/>
+					<colinfo id="settl_cond" size="256" summ="default" type="STRING"/>
+					<colinfo id="eqp_mdl" size="256" summ="default" type="STRING"/>
+					<colinfo id="eqp_ser_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="eqp_chulgo" size="256" summ="default" type="STRING"/>
+					<colinfo id="allot_sale" size="256" summ="default" type="STRING"/>
+					<colinfo id="cash_sale" size="256" summ="default" type="STRING"/>
+					<colinfo id="agrmt_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="chk_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="range_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="adj_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="new_allot_sale" size="256" summ="default" type="STRING"/>
+					<colinfo id="new_cash_sale" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="38" Id="div_condition" Left="10" Style="sty_div_condition" TabOrder="1" TabStop="FALSE" Text="Div0" Top="10" Width="942">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="471" LeftMargin="5" OnClick="Div_Condition_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" TabStop="FALSE" Text="조회" Top="7" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static1" Left="7" Style="sty_lb_Search" TabOrder="2" Text="적용년월" Top="7" VAlign="Middle" Width="60"></Static>
+				<Button Cursor="HAND" Height="21" Id="btn_calMonth" ImageID="btn_i_detail_b" Left="131" OnClick="div_condition_btn_calMonth_OnClick" TabOrder="3" Text="Button0" Top="7" Width="20"></Button>
+				<MaskEdit Border="Flat" Height="19" Id="cal_clsMth" Left="72" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" Type="STRING" UserData="마감월" Width="60"></MaskEdit>
+				<Image Height="21" Id="Image2" ImageID="bul_mand" Left="4" TabOrder="5" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="186" TabOrder="10" TabStop="FALSE" Top="8" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static2" Left="153" Style="sty_lb_Search" TabOrder="9" Text="대리점" Top="7" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCdNm" Left="241" LeftMargin="2" MaxLength="10" OnCharChanged="div_condition_edt_agencyCdNm_OnCharChanged" OnKeyDown="div_condition_edt_agencyCdNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="8" TabStop="FALSE" Top="7" UpperOnly="TRUE" Width="88"></Edit>
+				<Button BindDataset="ds_DlvFee" Cursor="HAND" Height="20" Id="btn_agency" ImageID="btn_i_detail_b" Left="329" OnClick="div_condition_btn_agency_OnClick" TabOrder="7" Text="Button0" Top="7" Width="20"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="347" LeftMargin="2" MaxLength="10" OnKeyDown="div_condition_edt_agencyUkeyCd_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" UpperOnly="TRUE" Width="92"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCd" Left="442" MaxLength="10" Style="sty_ipt_form" TabOrder="8" TabStop="FALSE" Top="7" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_Adjust" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="353" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="280" Id="grd_Adjust" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="960" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="73" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="950">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="60"/>
+						<col width="60"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" colspan="2" display="text" text="보조금"/>
+						<cell bkcolor="user34" col="2" color="user35" colspan="4" display="text" text="할부매출"/>
+						<cell bkcolor="user34" col="6" color="user35" colspan="4" display="text" text="현금매출"/>
+						<cell bkcolor="user34" col="10" color="user35" colspan="4" display="text" text="전체"/>
+						<cell bkcolor="user34" col="12" color="user35" colspan="2" display="text" row="1" text="적용&#32;후"/>
+						<cell bkcolor="user34" col="0" color="user35" display="text" row="1" rowspan="2" text="이상"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" row="1" rowspan="2" text="미만"/>
+						<cell bkcolor="user34" col="2" color="user35" colspan="2" display="text" row="1" text="적용&#32;전"/>
+						<cell bkcolor="user34" col="4" color="user35" colspan="2" display="text" row="1" text="적용&#32;후"/>
+						<cell bkcolor="user34" col="6" color="user35" colspan="2" display="text" row="1" text="적용&#32;전"/>
+						<cell bkcolor="user34" col="8" color="user35" colspan="2" display="text" row="1" text="적용&#32;후"/>
+						<cell bkcolor="user34" col="10" color="user35" colspan="2" display="text" row="1" text="적용&#32;전"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" row="2" text="건수"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" row="2" text="건수"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" row="2" text="비율"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" row="2" text="건수"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" row="2" text="비율"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" row="2" text="건수"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" row="2" text="비율"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" row="2" text="건수"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" row="2" text="비율"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" row="2" text="건수"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" row="2" text="비율"/>
+						<cell bkcolor="user34" col="13" color="user35" display="text" row="2" text="비율"/>
+					</head>
+					<body>
+						<cell align="right" col="0" colid="from_amt" display="number"/>
+						<cell align="right" col="1" colid="to_amt" display="number"/>
+						<cell align="right" col="2" colid="bf_allot_cnt" display="number"/>
+						<cell align="right" col="3" colid="bf_allot_rate" display="number" expr="round(bf_allot_rate,&#32;2)"/>
+						<cell align="right" col="4" colid="af_allot_cnt" display="number"/>
+						<cell align="right" col="5" colid="af_allot_rate" display="number" expr="round(af_allot_rate,&#32;2)"/>
+						<cell align="right" col="6" colid="bf_cash_cnt" display="number"/>
+						<cell align="right" col="7" colid="bf_cash_rate" display="number" expr="round(bf_cash_rate,&#32;2)"/>
+						<cell align="right" col="8" colid="af_cash_cnt" display="number"/>
+						<cell align="right" col="9" colid="af_cash_rate" display="number" expr="round(af_cash_rate,&#32;2)"/>
+						<cell align="right" col="10" colid="bf_cnt" display="number"/>
+						<cell align="right" col="11" colid="bf_rate" display="number" expr="round(bf_rate,&#32;2)"/>
+						<cell align="right" col="12" colid="af_cnt" display="number"/>
+						<cell align="right" col="13" colid="af_rate" display="number" expr="round(af_rate,&#32;2)"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user30" col="0" color="user35" colspan="2" display="text" text="대상건수"/>
+						<cell align="right" bkcolor="user30" col="2" color="user35" display="text" expr='sum(&quot;bf_allot_cnt&quot;)'/>
+						<cell bkcolor="user30" col="3" color="user35" display="text"/>
+						<cell align="right" bkcolor="user30" col="4" color="user35" display="text" expr='sum(&quot;af_allot_cnt&quot;)'/>
+						<cell bkcolor="user30" col="5" color="user35" display="text"/>
+						<cell align="right" bkcolor="user30" col="6" color="user35" display="text" expr='sum(&quot;bf_cash_cnt&quot;)'/>
+						<cell bkcolor="user30" col="7" color="user35" display="text"/>
+						<cell align="right" bkcolor="user30" col="8" color="user35" display="text" expr='sum(&quot;af_cash_cnt&quot;)'/>
+						<cell bkcolor="user30" col="9" color="user35" display="text"/>
+						<cell align="right" bkcolor="user30" col="10" color="user35" display="text" expr='sum(&quot;bf_cnt&quot;)'/>
+						<cell bkcolor="user30" col="11" color="user35" display="text"/>
+						<cell align="right" bkcolor="user30" col="12" color="user35" display="text" expr='sum(&quot;af_cnt&quot;)'/>
+						<cell bkcolor="user30" col="13" color="user35" display="text"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="13" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="보조금기준&#32;조정현황" Top="53" Width="150"></Image>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="11" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="판매목록" Top="360" Width="192"></Image>
+		<Grid AutoEnter="TRUE" BindDataset="ds_General" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="782" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="401" Id="grd_list" InputPanel="FALSE" Left="11" LineColor="user33" Right="959" RowHeight="21" Style="sty_Grid" TabOrder="4" TabStop="true" Top="381" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="948">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="40"/>
+						<col width="46"/>
+						<col width="60"/>
+						<col width="80"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="62"/>
+						<col width="73"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="번호" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="거래처구분" Valign="Center">
+							<cell align="center" col="0" color="user35" display="text" font="돋움,9,Bold" text="거래처" Valign="Center"/>
+							<cell align="center" col="0" color="user35" display="text" font="돋움,9,Bold" row="1" text="구분" Valign="Center"/>
+						</cell>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="채널코드" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="판매처" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="판매일시" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="변경일시" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="영업구분" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="7" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="이력구분" Valign="Center">
+							<cell align="center" col="0" color="user35" display="text" font="돋움,9,Bold" text="판매변경" Valign="Center"/>
+							<cell align="center" col="0" color="user35" display="text" font="돋움,9,Bold" row="1" text="이력" Valign="Center"/>
+						</cell>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="약정구분" Valign="Center"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" rowspan="2" text="판매유형"/>
+						<cell bkcolor="user34" col="10" color="user35" colspan="3" display="text" font="돋움,9,Bold" text="단말기정보" Valign="Center"/>
+						<cell bkcolor="user34" col="13" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="출고가" Valign="Center"/>
+						<cell bkcolor="user34" col="14" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="할부매출" Valign="Center"/>
+						<cell bkcolor="user34" col="15" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="현금매출" Valign="Center"/>
+						<cell bkcolor="user34" col="16" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="기준보조금" Valign="Center">
+							<cell col="0" color="user35" display="text" font="돋움,9,Bold" text="기준" Valign="Center"/>
+							<cell col="0" color="user35" display="text" font="돋움,9,Bold" row="1" text="보조금" Valign="Center"/>
+						</cell>
+						<cell bkcolor="user34" col="17" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="할부지원보조금" Valign="Center">
+							<cell col="0" color="user35" display="text" font="돋움,9,Bold" text="할부지원" Valign="Center"/>
+							<cell col="0" color="user35" display="text" font="돋움,9,Bold" row="1" text="보조금" Valign="Center"/>
+						</cell>
+						<cell bkcolor="user34" col="18" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="적용기준" Valign="Center"/>
+						<cell bkcolor="user34" col="19" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="적용금액" Valign="Center"/>
+						<cell bkcolor="user34" col="20" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="적용할부매출" Valign="Center">
+							<cell col="0" color="user35" display="text" font="돋움,9,Bold" text="적용" Valign="Center"/>
+							<cell col="0" color="user35" display="text" font="돋움,9,Bold" row="1" text="할부매출" Valign="Center"/>
+						</cell>
+						<cell bkcolor="user34" col="21" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="적용현금매출" Valign="Center">
+							<cell col="0" color="user35" display="text" font="돋움,9,Bold" text="적용" Valign="Center"/>
+							<cell col="0" color="user35" display="text" font="돋움,9,Bold" row="1" text="현금매출" Valign="Center"/>
+						</cell>
+						<cell bkcolor="user34" col="10" color="user35" display="text" font="돋움,9,Bold" row="1" text="결제조건" Valign="Center"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" font="돋움,9,Bold" row="1" text="모델" Valign="Center"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" font="돋움,9,Bold" row="1" text="일련번호" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="right" bkcolor2="user36" col="0" display="text" expr="row+1"/>
+						<cell align="center" bkcolor2="user36" col="1" colid="deal_cl" display="text"/>
+						<cell align="center" bkcolor2="user36" col="2" colid="pcode" display="text"/>
+						<cell align="left" bkcolor2="user36" col="3" colid="sale_plc" display="text"/>
+						<cell align="center" bkcolor2="user36" col="4" colid="sale_dtm" display="text" Mask="@@@@-@@-@@&#32;@@:@@"/>
+						<cell align="center" bkcolor2="user36" col="5" colid="sale_chg_dtm" display="text" Mask="@@@@-@@-@@&#32;@@:@@"/>
+						<cell align="left" bkcolor2="user36" col="6" colid="sl_cl" display="text"/>
+						<cell align="left" bkcolor2="user36" col="7" colid="sale_chg_hst_cl" display="text"/>
+						<cell align="left" col="8" colid="ds_net" display="text"/>
+						<cell align="center" bkcolor2="user36" col="9" colid="sale_dtl_typ" display="text"/>
+						<cell align="center" col="10" colid="settl_cond" display="text"/>
+						<cell align="left" bkcolor2="user36" col="11" colid="eqp_mdl" display="text"/>
+						<cell align="center" bkcolor2="user36" col="12" colid="eqp_ser_num" display="text"/>
+						<cell align="right" bkcolor2="user36" col="13" colid="eqp_chulgo" display="number"/>
+						<cell align="right" bkcolor2="user36" col="14" colid="allot_sale" display="number"/>
+						<cell align="right" bkcolor2="user36" col="15" colid="cash_sale" display="number"/>
+						<cell align="right" bkcolor2="user36" col="16" colid="agrmt_amt" display="number"/>
+						<cell align="right" bkcolor2="user36" col="17" colid="chk_amt" display="number"/>
+						<cell align="right" bkcolor2="user36" col="18" colid="range_amt" display="number"/>
+						<cell align="right" bkcolor2="user36" col="19" colid="adj_amt" display="number"/>
+						<cell align="right" bkcolor2="user36" col="20" colid="new_allot_sale" display="number"/>
+						<cell align="right" bkcolor2="user36" col="21" colid="new_cash_sale" display="number"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" colspan="13" display="text" text="합계"/>
+						<cell align="right" bkcolor="user37" col="13" color="user38" display="number" expr='SUM(&quot;eqp_chulgo&quot;)'/>
+						<cell align="right" bkcolor="user37" col="14" color="user38" display="number" expr='SUM(&quot;allot_sale&quot;)'/>
+						<cell align="right" bkcolor="user37" col="15" color="user38" display="number" expr='SUM(&quot;cash_sale&quot;)'/>
+						<cell align="right" bkcolor="user37" col="16" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="17" color="user38" display="number" expr='SUM(&quot;chk_amt&quot;)'/>
+						<cell align="right" bkcolor="user37" col="18" color="user38" colspan="2" display="text"/>
+						<cell align="right" bkcolor="user37" col="20" color="user38" display="number" expr='SUM(&quot;new_allot_sale&quot;)'/>
+						<cell align="right" bkcolor="user37" col="21" color="user38" display="number" expr='SUM(&quot;new_cash_sale&quot;)'/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Div Height="21" Id="Div1" Left="935" TabOrder="4" Text="Div2" Top="358" Width="29">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_ExportGeneral" ImageID="btn_i_exceldown_w" Left="5" OnClick="Div1_btn_ExportGeneral_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Top="1" Width="19"></Button>
+			</Contents>
+		</Div>
+		<Div Height="21" Id="Div0" Left="935" TabOrder="7" Text="Div2" Top="50" Width="29">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_ExportAdjust" ImageID="btn_i_exceldown_w" Left="5" OnClick="Div0_btn_ExportAdjust_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Top="1" Width="19"></Button>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ADMBTW00200
+* 업무명      : 방통위 대리점 관리
+* 프로그램명  : 
+--------------------------------------------------------------------------------
+* 작성자      : 김연석
+* 작성일      : 2011.03.03
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var    FV_ORG_ID;                // 소속 
+var    FV_ORG_NM;                // 소속명
+var    FV_ORG_CL;                // 소소구분
+var    FV_USER_GRP;
+
+var    FV_STR_POP_RESULT;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ADMBTW00200_OnLoadCompleted(obj)
+{
+    cf_setAuth(pFrmNum);    // 권한 공통
+
+    lf_getSession();    
+    lf_formInit();
+}
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function lf_getSession()
+{
+    FV_ORG_ID   = gds_session.GetColumn(0, "orgid");    // 소속 
+    FV_ORG_NM   = gds_session.GetColumn(0, "orgnm");    // 소속명
+    FV_ORG_CL   = gds_session.GetColumn(0, "orgcl");    // 소속구분
+    FV_USER_GRP = gds_session.GetColumn(0, "userGrp");    // 사용자그룹
+}
+
+/*******************************************************************************
+ * @description         : 폼 초기화
+*******************************************************************************/
+function lf_formInit()
+{
+    
+    f_init();
+}
+
+/*******************************************************************************
+* 함수명 : f_init
+* 기능명 : 화면 초기화 및 조회 Parameter Setting
+*******************************************************************************/
+function f_init()
+{
+	div_condition.cal_clsMth.Value = substr(ToDay(), 0, 6);
+}
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+    if (sSvcID == "getBTWProduct")
+    {
+
+    }
+
+    return;
+}
+
+/*******************************************************************************
+* 함수명 : 
+* 기능명 : 적용년월 선택
+*******************************************************************************/
+function div_condition_btn_calMonth_OnClick(obj)
+{
+    cf_callMonthCalendar(div_condition.cal_clsMth);
+}
+
+/*******************************************************************************
+ * @description    :  대리점 버튼 클릭 이벤트
+*******************************************************************************/
+function div_condition_btn_agency_OnClick(obj)
+{	
+	sf_clearControls("div_condition.edt_agencyCd,div_condition.edt_agencyUkeyCd");
+
+	var sArg  = "org_id="+quote("P00000"); 
+		sArg += " org_cl="+quote("1"); 
+
+	cf_callAgencyPop(sArg, div_condition, "edt_agencyCdNm,edt_agencyCd,edt_agencyUkeyCd");
+}
+
+/*******************************************************************************
+ * @description    :  대리점 키 이벤트
+*******************************************************************************/
+function div_condition_edt_agencyCdNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{	
+	if(nChar == 13)
+	{
+		//var sArg  = "org_id="+quote(FV_ORG_ID); 
+		//	sArg += " org_cl="+quote(FV_ORG_CL); 
+		var sArg  = "org_id="+quote("P00000"); 
+			sArg += " org_cl="+quote("1"); 
+			
+		cf_callAgencyPop(sArg, div_condition, "edt_agencyCdNm,edt_agencyCd,edt_agencyUkeyCd");
+	}
+}
+
+/*******************************************************************************
+ * @description    :  대리점 문자값 변경 이벤트
+*******************************************************************************/
+function div_condition_edt_agencyCdNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	sf_clearControls("div_condition.edt_agencyCd,div_condition.edt_agencyUkeyCd");
+}
+
+/*******************************************************************************
+ * @description    : 리스트 조회 - 이벤트
+*******************************************************************************/
+function div_condition_btn_search_OnClick(obj)
+{
+    var sAgency      = div_condition.edt_agencyCd.Text;
+    var sApplyMonth  = div_condition.cal_clsMth.Value;
+
+    if(uf_IsNull(sApplyMonth)){
+
+        alert("적용년월은 필수 조회조건 입니다.");
+        div_condition.cal_clsMth.SetFocus();
+        return;
+
+    }
+
+    if(uf_IsNull(sAgency)){
+
+        alert("대리점은 필수 조회조건 입니다.");
+        div_condition.cal_clsMth.SetFocus();
+        return;
+
+    }
+
+	ds_input.Clear();
+
+	// 넘길 파라메터 설정
+	cf_setParam(ds_input, "apply_month", sApplyMonth); 
+	cf_setParam(ds_input, "pos_agency" , sAgency); 	
+
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs  = "nc_input_fieldDs=ds_input";
+	var sOutDs = "ds_General=ds_General ds_Adjust=ds_Adjust";
+	var sArg   = "sktst.adm.BTW#getGeneralAdjust";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+/*******************************************************************************
+ * @description    : 조회 Grid 내용 Excel Export
+*******************************************************************************/
+function Div1_btn_ExportGeneral_OnClick(obj)
+{
+	cf_exportExcel(grd_list);
+}
+function Div0_btn_ExportAdjust_OnClick(obj)
+{
+	cf_exportExcel(grd_Adjust);
+}
+]]></Script>
+</Window>

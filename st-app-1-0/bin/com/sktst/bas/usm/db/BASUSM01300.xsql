@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM01300">
+	<select id="getPortalUserInfoList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select a.login_id
+     , b.org_cd
+     , b.org_nm
+     , a.han_nm
+     , a.user_id_act_st_cd
+     , fbas_get_commcdnm_val('ZPTL_C_00300', a.user_id_act_st_cd) user_stat
+     , start_dt
+     , end_dt
+     , email_addr
+     , fbas_get_masking(mbl_phon_num, 'T') as mbl_phone
+     , a.rgst_dt
+     , a.ps_apnd_yn
+  from tbas_portal_user a
+     , tbas_portal_org  b
+ where 1=1
+   and a.post_org_id       = b.org_id
+   and b.org_cd = #ORG_CD#
+]]><isNotEmpty prepend="AND" property="HAN_NM">
+<![CDATA[       a.han_nm  like #HAN_NM# || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="USER_ST">
+<![CDATA[       a.user_id_act_st_cd  = #USER_ST#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="LOGIN_ID">
+<![CDATA[       a.LOGIN_ID   = #LOGIN_ID#
+]]></isNotEmpty>
+<![CDATA[ order by 1 desc, 2 desc]]>
+	</select>
+</sqlMap>

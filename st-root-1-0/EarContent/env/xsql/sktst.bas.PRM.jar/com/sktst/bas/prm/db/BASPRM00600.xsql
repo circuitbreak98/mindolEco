@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASPRM00600">
+	<select id="getDealCoHistList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  				/*+ ORDERED */ /* BASPRM00600_getDealCoHistList_조민지_최승호 */ 
+	a.deal_co_cl1, 		/* 거래처 구분1 */
+	a.deal_co_nm,		/* 거래처 명 */
+	a.normal_yn,		/* 거래처 구분 - 정상 */
+	a.deal_end_yn,		/* 거래처 구분 - 거래 종료 */
+	a.pay_stop_yn,		/* 거래처 구분 - 수납 정지 */
+	a.out_stop_yn,		/* 거래처 구분 - 출고 정지 */
+	a.sale_stop_yn,		/* 거래처 구분 - 판매 정지 */
+	a.deal_sta_dt,		/* 거래 개시일 */
+	a.rep_user_nm,		/* 대표자 */
+	a.tel_no,			/* 연락처 */
+	a.deal_co_cd,		/* 거래처 코드 */
+	a.hseq_no,			/* 이력순번 */
+	decode(a.per_biz_cl,'2',a.biz_num,a.reg_num)  as biz_num,           /* 사업자번호 */
+	a.per_biz_cl,        /* 개인/사업자구분 */
+	a.MOD_USER_ID,
+	a.MOD_DTM,
+	FBAS_GET_DEAL_NM(a.POS_AGENCY,'') as pos_agency_nm,
+	FBAS_GET_DEAL_NM(a.STL_PLC,'') as stl_plc_nm
+FROM    
+	tbas_deal_co_mgmt a
+WHERE    
+	a.del_yn = 'N'
+AND 
+    a.deal_co_cd in ( SELECT b.deal_co_cd
+                        FROM tbas_deal_co_mgmt b
+                       WHERE b.eff_end_dtm = '99991231235959' 
+]]>                         <isEqual prepend="AND" property="org_yn" compareValue="Y">	
+<![CDATA[					      b.deal_co_cd in (SELECT z.deal_co_cd
+                                                FROM tbas_deal_co_mgmt z,
+                                                     (SELECT org_id
+                                                        FROM tbas_org_mgmt
+                                                       WHERE del_yn = 'N'
+                                                       START WITH ORG_ID = #org_id#
+                                                     CONNECT BY SUP_ORG = PRIOR ORG_ID) e    
+                                               WHERE z.del_yn = 'N'
+                                                 AND z.eff_end_dtm = '99991231235959'
+                                                 AND z.org_id = e.org_id )
+]]>                         </isEqual>                 
+<![CDATA[]]>                    <isNotEmpty prepend="AND" property="deal_co_cd">	
+<![CDATA[                        b.deal_co_cd = #deal_co_cd#
+]]>                    </isNotEmpty>    
+<![CDATA[
+]]>                    <isNotEmpty prepend="AND" property="deal_co_cl1">
+<![CDATA[                    	b.deal_co_cl1 =  #deal_co_cl1#
+]]>                    </isNotEmpty>
+<![CDATA[
+]]>                    <isNotEmpty prepend="AND" property="biz_num">
+<![CDATA[                        ( b.biz_num = #biz_num# OR b.reg_num = #biz_num# )
+]]>                    </isNotEmpty>
+<![CDATA[
+]]>                    <isNotEmpty prepend="AND" property="ukey_channel_cd">
+<![CDATA[                        b.ukey_channel_cd = #ukey_channel_cd#
+]]>                    </isNotEmpty> )
+<![CDATA[order by a.deal_co_cd, a.hseq_no                   ]]>
+	</select>
+	<select id="getDealCoHistByCd" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  					/*+ BASPRM00600_getDealCoHistByCd_조민지_최승호 */
+a.deal_co_cd,				/* 거래처 코드 */
+a.hseq_no,					/* 이력순번 */
+a.deal_co_nm,				/* 거래처 명 */
+a.deal_co_cl1,				/* 거래처 구분1  */
+a.deal_co_cl2,				/* 거래처 구분2 */
+a.deal_co_cl2 as deal_co_cl2_org,				/* 거래처 구분2 */
+a.tax_strd,					/* 과세구분 */
+a.zip_cd1,		    		/* 우편번호1 */
+a.zip_cd2,					/* 우편번호2 */
+a.addr,						/* 주소 */
+a.dtl_addr,					/* 상세주소 */
+a.sort_seq,					/* 정렬순서 */	
+a.biz_cd,					/* 제조사코드 */
+a.ukey_agency_cd,			/* UKEY_AGENCY_CD 코드 */
+a.ukey_sub_cd,				/* UKEY_SUB_CD 코드 */
+a.ukey_channel_cd,			/* UKEY_CHANNEL_CD 코드 */
+a.biz_num,					/* 사업자번호 */
+a.biz_con,					/* 업태 */
+a.typ_of_biz,				/* 종목 */
+a.rep_user_nm,				/* 대표자명 */
+a.tel_no,					/* 전화번호 */
+a.fax_no,					/* 팩스 */
+a.grt_insu_co,				/* 보증보험사 */
+a.deal_sta_dt,				/* 거래개새일 */
+DECODE(nvl(a.deal_end_yn,'N'),'Y',a.deal_end_dt,'') AS deal_end_dt,				/* 거래종료일 */
+nvl(a.normal_yn,'N') as normal_yn,					/* 거래상태 - 정상 */
+nvl(a.deal_end_yn,'N') as deal_end_yn,				/* 거래상태 - 거래종료 */
+nvl(a.deal_end_yn,'N') as deal_end_yn_org,			/* 거래상태 - 거래종료 */
+nvl(a.pay_stop_yn,'N') as pay_stop_yn,				/* 거래상태 - 수납정지 */
+nvl(a.out_stop_yn,'N') as out_stop_yn,				/* 거래상태 - 출고정지 */
+nvl(a.sale_stop_yn,'N') as sale_stop_yn	,			/* 거래상태 - 판매정지 */
+a.sale_grp,					/* 영업그룹 */
+a.chrgr_user_id,			/* 담당사원 */
+(select user_nm from tbas_user_mgmt where user_id = a.chrgr_user_id) as chrgr_user_nm,			/* 담당사원 */
+a.org_id,					/* 조직 ID */
+(SELECT org_nm FROM tbas_org_mgmt WHERE org_id = a.org_id AND rownum = 1) as org_nm, 							/* 조직명 */
+a.pos_agency ,				/* 소속대리점 */
+(SELECT /*+ INDEX_DESC (x xbas_deal_co_mgmt_pk) */ deal_co_nm FROM tbas_deal_co_mgmt x WHERE deal_co_cd = a.pos_agency AND rownum = 1) as pos_agency_nm,     /* 소속대리점명 */
+a.dis_hld_plc,                /* 재고보유처 */
+(SELECT /*+ INDEX_DESC (x xbas_deal_co_mgmt_pk) */ deal_co_nm FROM tbas_deal_co_mgmt x WHERE deal_co_cd = a.dis_hld_plc AND rownum = 1) as dis_hld_plc_nm,     /* 재고보유처명 */
+a.stl_plc,                    /* 정산처 */
+(SELECT /*+ INDEX_DESC (x xbas_deal_co_mgmt_pk) */ deal_co_nm FROM tbas_deal_co_mgmt x  WHERE deal_co_cd = a.stl_plc AND rownum = 1) as stl_plc_nm,             /* 정산처명 */
+a.rep_mbl_phon,				/* 대표이동전화 */
+a.prac_mbl_phon1,			/* 전화번호1 */
+a.prac_chrgr1,				/* 실무담당자1*/
+a.prac_mbl_phon2,			/* 전화번호2 */
+a.prac_chrgr2,				/* 실무담당자2 */
+a.insp_no,					/* 증권번호 */
+a.insp_eff_dt,				/* 증권유효일 */
+a.insp_exp_dt,				/* 증권만료일 */
+a.insp_gua_amt,				/* 증권담보금액 */
+a.insp_issue_cmms,			/* 증권발급수수료 */
+a.casa_dpst_bank_cd,		/* 현금매출입금 - 은행 */
+a.casa_dpst_acc_no,			/* 현금매출입금 - 계좌 */
+a.casa_dpst_depo,			/* 현금매출입금 - 예금주 */
+a.casa_dpst_cms_cd,			/* 현금매출입금 - CMS */
+a.pmag_dpst_bank_cd,		/* 수납대행입금 - 은행 */
+a.pmag_dpst_acc_no,			/* 수납대행입금 - 계좌 */
+a.pmag_dpst_depo,			/* 수납대행입금 - 예금주 */
+a.pmag_dpst_cms_cd,			/* 수납대행입금 - CMS */
+a.slcm_dfry_bank_cd,		/* 판매수수료출금 - 은행 */
+a.slcm_dfry_acc_no,			/* 판매수수료출금 - 계좌 */
+a.slcm_dfry_depo,			/* 판매수수료출금 - 예금주 */
+a.slcm_dfry_depo,			/* 판매수수료출금 - 예금주 */
+a.card_fee_rate,			/* 카드수수료율 */
+a.eff_end_dtm,				/* 유효 종료 일시 */
+a.rmks,						/* 비고 */
+a.del_yn,					/* 삭제구분 */
+a.upd_cnt,					/* 업데이트 구분 */
+a.ins_dtm,					/* 입력일시 */
+a.ins_user_id,				/* 입력자 */
+a.mod_dtm,					/* 수정일시 */
+a.mod_user_id,				/* 수정자 */
+a.per_biz_cl,               /* 개인/사업자구분 */
+a.reg_num,                  /* 주민등록번호 */
+a.pol_oper_yn,               /* 정책운영사 */
+substr(ins_dtm,0,8) as ins_dt /* 등록일 */
+FROM     tbas_deal_co_mgmt a
+WHERE    a.del_yn = 'N'
+AND      a.deal_co_cd = #deal_co_cd# 
+AND      a.hseq_no = #hseq_no#]]>
+	</select>
+	<select id="getDealCoInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  					/*+ BASPRM00600_getDealCoHistByCd_조민지_최승호 */
+a.deal_co_cd,				/* 거래처 코드 */
+a.hseq_no,					/* 이력순번 */
+a.deal_co_nm,				/* 거래처 명 */
+a.deal_co_cl1,				/* 거래처 구분1  */
+a.deal_co_cl2,				/* 거래처 구분2 */
+a.deal_co_cl2 as deal_co_cl2_org,				/* 거래처 구분2 */
+a.tax_strd,					/* 과세구분 */
+a.zip_cd1,		    		/* 우편번호1 */
+a.zip_cd2,					/* 우편번호2 */
+a.addr,						/* 주소 */
+a.dtl_addr,					/* 상세주소 */
+a.sort_seq,					/* 정렬순서 */	
+a.biz_cd,					/* 제조사코드 */
+a.ukey_agency_cd,			/* UKEY_AGENCY_CD 코드 */
+a.ukey_sub_cd,				/* UKEY_SUB_CD 코드 */
+a.ukey_channel_cd,			/* UKEY_CHANNEL_CD 코드 */
+a.biz_num,					/* 사업자번호 */
+a.biz_con,					/* 업태 */
+a.typ_of_biz,				/* 종목 */
+a.rep_user_nm,				/* 대표자명 */
+a.tel_no,					/* 전화번호 */
+a.fax_no,					/* 팩스 */
+a.grt_insu_co,				/* 보증보험사 */
+a.deal_sta_dt,				/* 거래개새일 */
+DECODE(nvl(a.deal_end_yn,'N'),'Y',a.deal_end_dt,'') AS deal_end_dt,				/* 거래종료일 */
+nvl(a.normal_yn,'N') as normal_yn,					/* 거래상태 - 정상 */
+nvl(a.deal_end_yn,'N') as deal_end_yn,				/* 거래상태 - 거래종료 */
+nvl(a.deal_end_yn,'N') as deal_end_yn_org,			/* 거래상태 - 거래종료 */
+nvl(a.pay_stop_yn,'N') as pay_stop_yn,				/* 거래상태 - 수납정지 */
+nvl(a.out_stop_yn,'N') as out_stop_yn,				/* 거래상태 - 출고정지 */
+nvl(a.sale_stop_yn,'N') as sale_stop_yn	,			/* 거래상태 - 판매정지 */
+a.sale_grp,					/* 영업그룹 */
+a.chrgr_user_id,			/* 담당사원 */
+(select user_nm from tbas_user_mgmt where user_id = a.chrgr_user_id) as chrgr_user_nm,			/* 담당사원 */
+a.org_id,					/* 조직 ID */
+(SELECT org_nm FROM tbas_org_mgmt WHERE org_id = a.org_id AND rownum = 1) as org_nm, 							/* 조직명 */
+a.pos_agency ,				/* 소속대리점 */
+(SELECT /*+ INDEX_DESC (x xbas_deal_co_mgmt_pk) */ deal_co_nm FROM tbas_deal_co_mgmt x WHERE deal_co_cd = a.pos_agency AND rownum = 1) as pos_agency_nm,     /* 소속대리점명 */
+a.dis_hld_plc,                /* 재고보유처 */
+(SELECT /*+ INDEX_DESC (x xbas_deal_co_mgmt_pk) */ deal_co_nm FROM tbas_deal_co_mgmt x WHERE deal_co_cd = a.dis_hld_plc AND rownum = 1) as dis_hld_plc_nm,     /* 재고보유처명 */
+a.stl_plc,                    /* 정산처 */
+(SELECT /*+ INDEX_DESC (x xbas_deal_co_mgmt_pk) */ deal_co_nm FROM tbas_deal_co_mgmt x  WHERE deal_co_cd = a.stl_plc AND rownum = 1) as stl_plc_nm,             /* 정산처명 */
+a.rep_mbl_phon,				/* 대표이동전화 */
+a.prac_mbl_phon1,			/* 전화번호1 */
+a.prac_chrgr1,				/* 실무담당자1*/
+a.prac_mbl_phon2,			/* 전화번호2 */
+a.prac_chrgr2,				/* 실무담당자2 */
+a.insp_no,					/* 증권번호 */
+a.insp_eff_dt,				/* 증권유효일 */
+a.insp_exp_dt,				/* 증권만료일 */
+a.insp_gua_amt,				/* 증권담보금액 */
+a.insp_issue_cmms,			/* 증권발급수수료 */
+a.casa_dpst_bank_cd,		/* 현금매출입금 - 은행 */
+a.casa_dpst_acc_no,			/* 현금매출입금 - 계좌 */
+a.casa_dpst_depo,			/* 현금매출입금 - 예금주 */
+a.casa_dpst_cms_cd,			/* 현금매출입금 - CMS */
+a.pmag_dpst_bank_cd,		/* 수납대행입금 - 은행 */
+a.pmag_dpst_acc_no,			/* 수납대행입금 - 계좌 */
+a.pmag_dpst_depo,			/* 수납대행입금 - 예금주 */
+a.pmag_dpst_cms_cd,			/* 수납대행입금 - CMS */
+a.slcm_dfry_bank_cd,		/* 판매수수료출금 - 은행 */
+a.slcm_dfry_acc_no,			/* 판매수수료출금 - 계좌 */
+a.slcm_dfry_depo,			/* 판매수수료출금 - 예금주 */
+a.slcm_dfry_depo,			/* 판매수수료출금 - 예금주 */
+a.card_fee_rate,			/* 카드수수료율 */
+a.eff_end_dtm,				/* 유효 종료 일시 */
+a.rmks,						/* 비고 */
+a.del_yn,					/* 삭제구분 */
+a.upd_cnt,					/* 업데이트 구분 */
+a.ins_dtm,					/* 입력일시 */
+a.ins_user_id,				/* 입력자 */
+a.mod_dtm,					/* 수정일시 */
+a.mod_user_id,				/* 수정자 */
+a.per_biz_cl,               /* 개인/사업자구분 */
+a.reg_num,                  /* 주민등록번호 */
+a.pol_oper_yn,               /* 정책운영사 */
+substr(ins_dtm,0,8) as ins_dt /* 등록일 */
+FROM     tbas_deal_co_mgmt a
+WHERE    a.del_yn = 'N'
+AND      a.deal_co_cd = #deal_co_cd# 
+AND      a.hseq_no = (SELECT max(hseq_no)
+                        FROM tbas_deal_co_mgmt
+                       WHERE deal_co_cd = #deal_co_cd# )     ]]>
+	</select>
+</sqlMap>

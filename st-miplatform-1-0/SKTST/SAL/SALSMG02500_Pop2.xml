@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SALSMG02500" Left="8" OnLoadCompleted="SALSMG02500_OnLoadCompleted" PidAttrib="7" Title="당일판매실적" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="ORG_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="ORG_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="SALE_S10101" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_S10201" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_S10202" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_NEW" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_S20101" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_S20201" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_S20102" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_CHG" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_DSNET2" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_DSNET1" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_DSNET0" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="SALE_DSNET" size="15" summ="default" type="DECIMAL"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="1" Text="당일판매실적" Top="50" Width="208"></Image>
+		<Div Border="Raised" Height="38" Id="div_search" Left="10" Style="sty_div_search" TabOrder="2" Text="Div0" Top="10" Width="1004">
+			<Contents>
+				<Image Height="20" Id="Image0" ImageID="bul_mand" Left="13" TabOrder="1" Top="8" Transparent="TRUE" Width="20"></Image>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_Search" ImageID="btn_a_2" Left="188" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="6" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static0" Left="533" Style="sty_lb_Search" TabOrder="5" Text="조직" Top="6" VAlign="Middle" Visible="FALSE" Width="60"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_orgId" Left="597" LeftMargin="2" OnCharChanged="div_search_edt_orgId_OnCharChanged" OnKeyDown="div_search_edt_orgId_OnKeyDown" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="6" Visible="FALSE" Width="70"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_orgTree" ImageID="btn_i_detail" Left="666" OnClick="div_search_btn_orgTree_OnClick" TabOrder="4" Text="Button0" Top="6" Visible="FALSE" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_orgNm" Left="686" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="6" Visible="FALSE" Width="110"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_lvl" Left="797" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="6" Visible="FALSE" Width="10"></Edit>
+				<MaskEdit Border="Flat" Height="20" Id="cal_saleDt" Left="92" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="9" Top="6" Type="STRING" Width="77"></MaskEdit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="165" OnClick="btn_monthCalendar_OnClick" TabOrder="9" TabStop="FALSE" Text="Button3" Top="6" Width="17"></Button>
+				<Static Align="Right" Height="20" Id="Static2" Left="6" Style="sty_lb_Search" TabOrder="8" Text="조회년월" Top="6" VAlign="Middle" Width="76"></Static>
+			</Contents>
+		</Div>
+		<Grid BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="560" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="488" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" Right="1012" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="72" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="54"/>
+						<col width="132"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+					</columns>
+					<head>
+						<cell autosizing="none" bkcolor="user34" col="0" color="user35" display="text" rowspan="2" text="번호"/>
+						<cell autosizing="none" bkcolor="user34" col="9" color="user35" colspan="4" display="text" text="유통망(건수)"/>
+						<cell autosizing="none" bkcolor="user34" col="13" color="user35" display="text" rowspan="2" text="합계"/>
+						<cell autosizing="none" col="-1" display="text">
+							<cell col="0" color="user35" display="text" text="기변"/>
+							<cell col="0" display="text" row="1"/>
+						</cell>
+						<cell autosizing="none" bkcolor="user34" col="1" color="user35" display="text" rowspan="2" text="센터"/>
+						<cell autosizing="none" bkcolor="user34" col="2" color="user35" colspan="4" display="text" text="신규가입(건수)"/>
+						<cell autosizing="none" bkcolor="user34" col="6" color="user35" colspan="3" display="text" text="기변(건수)"/>
+						<cell autosizing="none" bkcolor="user34" col="2" color="user35" display="text" row="1" text="일반신규"/>
+						<cell autosizing="none" bkcolor="user34" col="3" color="user35" display="text" row="1" text="KMNP"/>
+						<cell autosizing="none" bkcolor="user34" col="4" color="user35" display="text" row="1" text="LMNP"/>
+						<cell autosizing="none" bkcolor="user34" col="5" color="user35" display="text" row="1" text="소계"/>
+						<cell autosizing="none" bkcolor="user34" col="6" color="user35" display="text" row="1" text="보상기변"/>
+						<cell autosizing="none" bkcolor="user34" col="7" color="user35" display="text" row="1" text="일반기변"/>
+						<cell autosizing="none" bkcolor="user34" col="8" color="user35" display="text" row="1" text="소계"/>
+						<cell autosizing="none" bkcolor="user34" col="9" color="user35" display="text" row="1" text="T기본약정"/>
+						<cell autosizing="none" bkcolor="user34" col="10" color="user35" display="text" row="1" text="T할부지원"/>
+						<cell autosizing="none" bkcolor="user34" col="11" color="user35" display="text" row="1" text="무약정"/>
+						<cell autosizing="none" bkcolor="user34" col="12" color="user35" display="text" row="1" text="소계"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell col="1" colid="ORG_NM" display="text"/>
+						<cell align="right" col="2" colid="SALE_S10101" display="number"/>
+						<cell align="right" col="3" colid="SALE_S10201" display="number"/>
+						<cell align="right" col="4" colid="SALE_S10202" display="number"/>
+						<cell align="right" col="5" colid="SALE_NEW" display="number"/>
+						<cell align="right" col="6" colid="SALE_S20101" display="number"/>
+						<cell align="right" col="7" colid="SALE_S20201" display="number"/>
+						<cell align="right" col="8" colid="SALE_CHG" display="number"/>
+						<cell align="right" col="9" colid="SALE_DSNET2" display="number"/>
+						<cell align="right" col="10" colid="SALE_DSNET1" display="number"/>
+						<cell align="right" col="11" colid="SALE_DSNET0" display="number"/>
+						<cell align="right" col="12" colid="SALE_DSNET" display="number"/>
+						<cell align="right" col="13" display="number" expr="SALE_NEW&#32;+&#32;SALE_CHG&#32;+&#32;SALE_DSNET"/>
+					</body>
+					<summary>
+						<cell bkcolor="user37" col="0" color="user38" display="number"/>
+						<cell align="right" bkcolor="user37" col="1" color="user38" display="text" font="돋움,9,Bold" text="합계"/>
+						<cell bkcolor="user37" col="2" color="user38" display="number" expr='SUM(&quot;SALE_S10101&quot;)'/>
+						<cell bkcolor="user37" col="3" color="user38" display="number" expr='SUM(&quot;SALE_S10201&quot;)'/>
+						<cell bkcolor="user37" col="4" color="user38" display="number" expr='SUM(&quot;SALE_S10202&quot;)'/>
+						<cell bkcolor="user37" col="5" color="user38" display="number" expr='SUM(&quot;SALE_NEW&quot;)'/>
+						<cell bkcolor="user37" col="6" color="user38" display="number" expr='SUM(&quot;SALE_S20101&quot;)'/>
+						<cell bkcolor="user37" col="7" color="user38" display="number" expr='SUM(&quot;SALE_S20201&quot;)'/>
+						<cell bkcolor="user37" col="8" color="user38" display="number" expr='SUM(&quot;SALE_CHG&quot;)'/>
+						<cell bkcolor="user37" col="9" color="user38" display="number" expr='SUM(&quot;SALE_DSNET2&quot;)'/>
+						<cell bkcolor="user37" col="10" color="user38" display="number" expr='SUM(&quot;SALE_DSNET1&quot;)'/>
+						<cell bkcolor="user37" col="11" color="user38" display="number" expr='SUM(&quot;SALE_DSNET0&quot;)'/>
+						<cell bkcolor="user37" col="12" color="user38" display="number" expr='SUM(&quot;SALE_DSNET&quot;)'/>
+						<cell bkcolor="user37" col="13" color="user38" display="number" expr='SUM(&quot;SALE_NEW&#32;+&#32;SALE_CHG&#32;+&#32;SALE_DSNET&quot;)'/>
+					</summary>
+				</format>
+				<format id="Detail">
+					<columns>
+						<col width="50"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="83"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="85"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="60"/>
+					</columns>
+					<head>
+						<cell autosizing="none" bkcolor="user34" col="0" color="user35" display="text" rowspan="3" text="번호"/>
+						<cell autosizing="none" bkcolor="user34" col="4" color="user35" colspan="14" display="text" text="일반판매"/>
+						<cell autosizing="none" bkcolor="user34" col="13" color="user35" colspan="4" display="text" row="1" text="중고"/>
+						<cell autosizing="none" bkcolor="user34" col="17" color="user35" display="text" row="1" rowspan="2" text="일반판매소계"/>
+						<cell autosizing="none" bkcolor="user34" col="21" color="user35" display="text" rowspan="3" text="합계"/>
+						<cell autosizing="none" col="-1" display="text">
+							<cell col="0" color="user35" display="text" text="기변"/>
+							<cell col="0" display="text" row="1"/>
+						</cell>
+						<cell autosizing="none" col="-1" display="text">
+							<cell col="0" color="user35" display="text" text="신규"/>
+							<cell col="1" color="user35" display="text" text="기변"/>
+							<cell col="2" color="user35" display="text" text="중고"/>
+							<cell col="3" color="user35" display="text" text="소계"/>
+						</cell>
+						<cell autosizing="none" bkcolor="user34" col="1" color="user35" display="text" rowspan="3" text="대리점"/>
+						<cell autosizing="none" bkcolor="user34" col="2" color="user35" display="text" rowspan="3" text="판매처"/>
+						<cell autosizing="none" bkcolor="user34" col="3" color="user35" display="text" rowspan="3" text="영업망"/>
+						<cell bkcolor="user34" col="18" color="user35" colspan="3" display="text" text="공기기판매"/>
+						<cell autosizing="none" bkcolor="user34" col="4" color="user35" colspan="5" display="text" row="1" text="일반판매"/>
+						<cell autosizing="none" bkcolor="user34" col="9" color="user35" colspan="4" display="text" row="1" text="기변"/>
+						<cell bkcolor="user34" col="18" color="user35" display="text" row="1" rowspan="2" text="단말기"/>
+						<cell bkcolor="user34" col="19" color="user35" display="text" row="1" rowspan="2" text="USIM"/>
+						<cell bkcolor="user34" col="20" color="user35" display="text" row="1" rowspan="2" text="기타상품"/>
+						<cell autosizing="none" bkcolor="user34" col="9" color="user35" display="text" row="2" text="약정보상"/>
+						<cell autosizing="none" bkcolor="user34" col="10" color="user35" display="text" row="2" text="할부지원보상"/>
+						<cell autosizing="none" bkcolor="user34" col="11" color="user35" display="text" row="2" text="일반기변"/>
+						<cell autosizing="none" bkcolor="user34" col="6" color="user35" display="text" row="2" text="K-MNP"/>
+						<cell autosizing="none" bkcolor="user34" col="7" color="user35" display="text" row="2" text="L-MNP"/>
+						<cell autosizing="none" bkcolor="user34" col="8" color="user35" display="text" row="2" text="소계"/>
+						<cell autosizing="none" col="-1" display="text" row="2"/>
+						<cell autosizing="none" bkcolor="user34" col="4" color="user35" display="text" row="2" text="010신규"/>
+						<cell autosizing="none" bkcolor="user34" col="5" color="user35" display="text" row="2" text="순수신규"/>
+						<cell autosizing="none" bkcolor="user34" col="12" color="user35" display="text" row="2" text="소계"/>
+						<cell autosizing="none" bkcolor="user34" col="13" color="user35" display="text" row="2" text="중고신규"/>
+						<cell autosizing="none" bkcolor="user34" col="14" color="user35" display="text" row="2" text="중고MNP"/>
+						<cell autosizing="none" bkcolor="user34" col="15" color="user35" display="text" row="2" text="Biz중고"/>
+						<cell autosizing="none" bkcolor="user34" col="16" color="user35" display="text" row="2" text="소계"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row&#32;+&#32;1"/>
+						<cell autosizing="none" col="1" colid="AGENCY_NM" display="text"/>
+						<cell col="2" colid="SALE_PLC_NM" display="text"/>
+						<cell col="3" colid="SL_NET_NM" display="text"/>
+						<cell align="right" col="4" colid="S10101_QTY" display="number"/>
+						<cell align="right" col="5" colid="S10102_QTY" display="number"/>
+						<cell align="right" col="6" colid="S10201_QTY" display="number"/>
+						<cell align="right" col="7" colid="S10202_QTY" display="number"/>
+						<cell align="right" col="8" colid="S1_QTY" display="number"/>
+						<cell align="right" col="9" colid="S20101_QTY" display="number"/>
+						<cell align="right" col="10" colid="S20102_QTY" display="number"/>
+						<cell align="right" col="11" colid="S20201_QTY" display="number"/>
+						<cell align="right" col="12" colid="S2_QTY" display="number"/>
+						<cell align="right" col="13" colid="S30101_QTY" display="number"/>
+						<cell align="right" col="14" colid="S30201_QTY" display="number"/>
+						<cell align="right" col="15" colid="S30202_QTY" display="number"/>
+						<cell col="16" colid="S3_QTY" display="number"/>
+						<cell align="right" col="17" colid="GNRL_QTY" display="number"/>
+						<cell align="right" col="18" colid="F_PHONE_QTY" display="number"/>
+						<cell align="right" col="19" colid="F_USIM_QTY" display="number"/>
+						<cell align="right" col="20" colid="F_ETC_QTY" display="number"/>
+						<cell align="right" col="21" colid="TOTAL_QTY" display="number"/>
+					</body>
+					<summary>
+						<cell bkcolor="user37" col="0" color="user38" display="number"/>
+						<cell bkcolor="user37" col="1" color="user38" display="number"/>
+						<cell align="right" bkcolor="user37" col="2" color="user38" display="text" font="돋움,10,Bold"/>
+						<cell align="right" bkcolor="user37" col="3" color="user38" display="text" font="돋움,10,Bold" text="합계"/>
+						<cell bkcolor="user37" col="4" color="user38" display="number" expr='SUM(&quot;S10101_QTY&quot;)'/>
+						<cell bkcolor="user37" col="5" color="user38" display="number" expr='SUM(&quot;S10102_QTY&quot;)'/>
+						<cell bkcolor="user37" col="6" color="user38" display="number" expr='SUM(&quot;S10201_QTY&quot;)'/>
+						<cell bkcolor="user37" col="7" color="user38" display="number" expr='SUM(&quot;S10202_QTY&quot;)'/>
+						<cell bkcolor="user37" col="8" color="user38" display="number" expr='SUM(&quot;S1_QTY&quot;)'/>
+						<cell bkcolor="user37" col="9" color="user38" display="number" expr='SUM(&quot;S20101_QTY&quot;)'/>
+						<cell bkcolor="user37" col="10" color="user38" display="number" expr='SUM(&quot;S20102_QTY&quot;)'/>
+						<cell bkcolor="user37" col="11" color="user38" display="number" expr='SUM(&quot;S20201_QTY&quot;)'/>
+						<cell bkcolor="user37" col="12" color="user38" display="number" expr='SUM(&quot;S2_QTY&quot;)'/>
+						<cell bkcolor="user37" col="13" color="user38" display="number" expr='SUM(&quot;S30101_QTY&quot;)'/>
+						<cell bkcolor="user37" col="14" color="user38" display="number" expr='SUM(&quot;S30201_QTY&quot;)'/>
+						<cell bkcolor="user37" col="15" color="user38" display="number" expr='SUM(&quot;S30202_QTY&quot;)'/>
+						<cell bkcolor="user37" col="16" color="user38" display="number" expr='SUM(&quot;S3_QTY&quot;)'/>
+						<cell bkcolor="user37" col="17" color="user38" display="number" expr='SUM(&quot;GNRL_QTY&quot;)'/>
+						<cell bkcolor="user37" col="18" color="user38" display="number" expr='SUM(&quot;F_PHONE_QTY&quot;)'/>
+						<cell bkcolor="user37" col="19" color="user38" display="number" expr='SUM(&quot;F_USIM_QTY&quot;)'/>
+						<cell bkcolor="user37" col="20" color="user38" display="number" expr='SUM(&quot;F_ETC_QTY&quot;)'/>
+						<cell bkcolor="user37" col="21" color="user38" display="number" expr='SUM(&quot;TOTAL_QTY&quot;)'/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="952" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="565" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALSMG01100
+* 업무명      : 영업관리
+* 프로그램명  : 일별판매현황
+--------------------------------------------------------------------------------
+* 작성자      : 김연석
+* 작성일      : 2009.02.06
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+/*******************************************************************************
+// 2. 폼 변수 정의
+**************************************/
+
+function SALSMG02500_OnLoadCompleted(obj)
+{
+	if(IsExistVar("date", true) == true)
+	{
+		div_search.cal_saleDt.value = date;
+		div_search_btn_search_OnClick();
+	}
+	else
+	{
+		div_search.cal_saleDt.value = Today().substr(0,6);	
+	}
+	
+}
+
+/*******************************************************************************
+* 기능명 : 콤보박스
+*******************************************************************************/
+function f_setCombo()
+{
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+
+//	cf_setCommonCode("div_search.cmb_slCl"    , "ZSAL_C_00260", "전체");	// 영업구분
+	cf_checkCommonCode();
+	
+//	cf_setInitDataForCmb(div_search.cmb_slNetCd, "전체");
+}
+
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcSearch")
+	{		
+	}
+}
+
+/*******************************************************************************
+* 기능명 : 조회 유효성
+*******************************************************************************/
+function f_isValidSearch()
+{
+	if(uf_isNull(div_search.cal_saleDt.Value) == true)
+	{
+		alert(cf_getMessage(MSG_00083, "조회일자"));
+		div_search.cal_saleDt.SetFocus();
+		return false;
+	}
+	return true;
+}
+
+/*******************************************************************************
+* 함수명 : btnSearch_OnClick
+* 기능명 : 조회 Button을 Click 했을 경우
+*******************************************************************************/
+function div_search_btn_Search_OnClick(obj)
+{
+	if(f_isValidSearch() == false) return;
+
+	// 조회
+	cf_setParam(ds_condition, "date"   , div_search.cal_saleDt.Value); 
+	cf_setParam(ds_condition, "org_id" , div_search.edt_orgId.Text); 
+	
+	var sSvcID  = "svcSearch";
+	var sInDs   = "nc_input_fieldDs=ds_condition";  
+	var sOutDs  = "ds_list=List";
+	var sArg    = "sktst.sal.SMG#getMnthResultPop";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+/*******************************************************************************
+ * @description    : 엑셀 출력 - 이벤트
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	// cf_excel(oGrd, nMode)
+	// oGrd - 엑셀화할 그리드 객체 , nMode - 엑셀 저장 모드 1 or null : 엑셀로드 , 2 : 파일 저장
+	cf_exportExcel(grd_SaleReport);
+}
+
+/*******************************************************************************
+ * @description    : 권한 설정
+*******************************************************************************/
+function f_setAuth()
+{
+	f_getSession();
+
+	uf_enableAgencyByAuth("div_search" ,"edt_AgencyCdNm,edt_AgencyCd,btn_Agency","edt_AgencyUkeyCd");
+	uf_enableDealByAuth("div_search" ,"edt_dealNm,edt_dealCd,btn_dealCo","edt_dealUkey");
+}
+
+
+/*******************************************************************************
+ * @description    :  대리점 키 이벤트
+*******************************************************************************/
+function div_search_edt_AgencyCdNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{	
+	if(nChar == 13)
+	{	
+		var sArg  = "org_id="+quote(FV_ORG_ID); 
+			sArg += " org_cl="+quote(FV_ORG_CL); 
+		cf_callAgencyPop(sArg, div_search, "edt_AgencyCdNm,edt_AgencyCd,edt_AgencyUkeyCd");
+		
+		if(uf_isNull(FV_STR_POP_RESULT) == true) return;
+	}
+}
+
+/*******************************************************************************
+ * @description    :  대리점 문자 값 변경 이벤트
+*******************************************************************************/
+function div_search_edt_AgencyCdNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	sf_clearControls("div_search.edt_AgencyUkeyCd,div_search.edt_AgencyCd");	
+	sf_clearControls("div_search.edt_dealNm,div_search.edt_dealCd,div_search.edt_dealUkey");	
+}
+
+
+/*******************************************************************************
+ * @description    :  대리점 버튼 클릭 이벤트
+*******************************************************************************/
+function div_search_btn_Agency_OnClick(obj)
+{
+	sf_clearControls("div_search.edt_AgencyUkeyCd,div_search.edt_AgencyCd");	
+	sf_clearControls("div_search.edt_dealNm,div_search.edt_dealCd,div_search.edt_dealUkey");	
+
+	
+	var sArg  = "org_id="+quote(FV_ORG_ID); 
+	    sArg += " org_cl="+quote(FV_ORG_CL); 
+	cf_callAgencyPop(sArg, div_search, "edt_AgencyCdNm,edt_AgencyCd,edt_AgencyUkeyCd");
+	
+	if(uf_isNull(FV_STR_POP_RESULT) == true) return;
+
+}
+
+/*******************************************************************************
+ * @description    :  판매처 검색 버튼 클릭 이벤트
+*******************************************************************************/
+function div_search_btn_SalePlc_OnClick(obj)
+{
+	sf_clearControls("div_search.edt_SalePlc,div_search.edt_salePlcNm,div_search.edt_salePlc,div_search.edt_salePlcUkeyCd,div_search.edt_SalePlcSubCd,div_search.edt_SalePlcChannelCd");	
+	
+	var sPosAgency = div_search.edt_AgencyCd.Text;
+	var sDealCl    = sf_getDealCoCl1();
+	
+	if( uf_isNull(sPosAgency) == true)
+	{
+		alert(cf_getMessage(MSG_00083, "대리점"));
+		return;
+	}	
+	
+	var sArg  = "deal_co_cl1="+quote(sf_getDealCoCl1());
+		sArg += " pos_agency="+quote(sPosAgency); // 옵션
+	cf_callDealPop(sArg, div_search, "edt_salePlcNm,edt_salePlc,edt_SalePlcUkeyCd,edt_SalePlcSubCd,edt_SalePlcChannelCd");
+}
+
+/*******************************************************************************
+ * @description    :  판매처 검색 키 이벤트
+*******************************************************************************/
+function div_search_edt_salePlcNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		var sPosAgency = div_search.edt_AgencyCd.Text;
+		var sDealCl    = sf_getDealCoCl1();
+
+		if( uf_isNull(sPosAgency) == true)
+		{
+			alert(cf_getMessage(MSG_00083, "대리점"));
+			return;
+		}			
+		var sArg  = "deal_co_cl1="+quote(sf_getDealCoCl1());
+			sArg += " pos_agency="+quote(sPosAgency); // 옵션
+			cf_callDealPop(sArg, div_search, "edt_salePlcNm,edt_salePlc,edt_SalePlcUkeyCd,edt_SalePlcSubCd,edt_SalePlcChannelCd");
+	}
+}
+
+
+/*******************************************************************************
+ * @description    :  판매처 검색 문자값 변경 이벤트
+*******************************************************************************/
+function div_search_edt_SalePlcNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	sf_clearControls("div_search.edt_SalePlc,div_search.edt_salePlc,div_search.edt_salePlcUkeyCd,div_search.edt_SalePlcSubCd,div_search.edt_SalePlcChannelCd");		
+}
+
+
+
+function div_search_btn_orgTree_OnClick(obj)
+{
+	// 조직 트리 팝업 호출
+	cf_callOrgTree2("div_search.edt_orgId", "div_search.edt_orgNm","");    
+}
+
+
+
+function btn_close_OnClick(obj)
+{
+	close();
+}
+
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_saleDt);
+}
+]]></Script>
+</Window>

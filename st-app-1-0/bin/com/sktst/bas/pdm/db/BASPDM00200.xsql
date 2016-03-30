@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASPDM00200">
+	<select id="getProductDetail" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00200-getProductDetail-조민지-전현주 */ 
+	   prod_cd
+	   ,prod_nm
+	   ,mfact_id
+	   ,mktg_dt
+	   ,end_dt
+	   ,prod_cl
+	   ,prod_dtl_cl
+	   ,skt_oper_yn
+	   ,use_yn
+	   ,use_stop_dt
+	   ,prod_chrtic_1
+	   ,prod_chrtic_2
+	   ,prod_chrtic_3
+	   ,prod_chrtic_4
+	   ,bar_cd_typ
+	   ,rgst_cl
+	   ,nvl(reserv_sale_yn, 'N') reserv_sale_yn
+	   ,rmks
+	   ,com_mthd
+	   ,mst_prod_cd
+	   ,fbas_get_prod_nm(mst_prod_cd) mst_prod_nm
+	   ,to_char(ser_len) ser_len
+  FROM tbas_prod_mgmt
+ WHERE prod_cd = #PROD_CD#
+ AND del_yn = 'N']]>
+	</select>
+	<insert id="insertProductMgmt" parameterClass="map" ><![CDATA[INSERT INTO /* BASPDM00200-addProductMgmt-조민지-전현주 */ tbas_prod_mgmt
+     	   (prod_cd
+			,prod_nm
+			,mfact_id
+			,mktg_dt
+			,end_dt
+			,prod_cl
+			,prod_dtl_cl
+			,skt_oper_yn
+			,use_yn
+			,use_stop_dt
+			,prod_chrtic_1
+			,prod_chrtic_2
+			,prod_chrtic_3
+			,prod_chrtic_4
+			,bar_cd_typ
+			,rgst_cl
+			,reserv_sale_yn
+			,rmks
+			,del_yn
+			,upd_cnt
+			,ins_dtm
+			,ins_user_id
+			,mod_dtm
+			,mod_user_id
+			,com_mthd
+			,mst_prod_cd
+			,ser_len
+		   )
+	 VALUES(#PROD_CD#
+		    ,#PROD_NM#
+		    ,#MFACT_ID#
+		    ,#MKTG_DT#
+		 	,#END_DT#
+		 	,#PROD_CL#
+		 	,#PROD_DTL_CL#
+		 	,#SKT_OPER_YN#
+		 	,#USE_YN#
+		 	,#USE_STOP_DT#
+		 	,#PROD_CHRTIC_1#
+		 	,#PROD_CHRTIC_2#
+		 	,#PROD_CHRTIC_3#
+		 	,#PROD_CHRTIC_4#
+		 	,#BAR_CD_TYP#
+		 	,#RGST_CL#
+		 	,#RESERV_SALE_YN#
+		 	,#RMKS#
+		 	,'N'
+		 	,1
+		 	,TO_CHAR(SYSDATE,'YYYYMMDDHH24MM')
+		 	,#onlineContext.userInfo.loginId#
+		 	,TO_CHAR(SYSDATE,'YYYYMMDDHH24MM')
+		 	,#onlineContext.userInfo.loginId#
+		 	,#COM_MTHD#
+			,#MST_PROD_CD#
+			,#SER_LEN#
+		   )     ]]>
+	</insert>
+	<update id="updateProductMgmt" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00200-updateProductMgmt-조민지-전현주 */ tbas_prod_mgmt
+   SET prod_nm         = #PROD_NM#
+   	   ,mfact_id       = #MFACT_ID#
+   	   ,mktg_dt        = #MKTG_DT#
+   	   ,end_dt         = #END_DT#
+   	   ,prod_cl        = #PROD_CL#
+   	   ,prod_dtl_cl    = #PROD_DTL_CL#
+	   ,skt_oper_yn    = #SKT_OPER_YN#
+	   ,use_yn         = #USE_YN#
+	   ,use_stop_dt    = #USE_STOP_DT#
+	   ,prod_chrtic_1  = #PROD_CHRTIC_1#
+	   ,prod_chrtic_2  = #PROD_CHRTIC_2#
+	   ,prod_chrtic_3  = #PROD_CHRTIC_3#
+	   ,prod_chrtic_4  = #PROD_CHRTIC_4#
+	   ,bar_cd_typ     = #BAR_CD_TYP#
+	   ,rgst_cl        = #RGST_CL#
+	   ,reserv_sale_yn = #RESERV_SALE_YN#
+	   ,rmks           = #RMKS#
+	   ,upd_cnt        = upd_cnt+1
+	   ,mod_dtm        = TO_CHAR(SYSDATE,'YYYYMMDDHH24MM')
+	   ,mod_user_id    = #onlineContext.userInfo.loginId#
+	   ,com_mthd       = #COM_MTHD#
+	   ,mst_prod_cd    = #MST_PROD_CD#
+	   ,ser_len        = #SER_LEN#
+ WHERE prod_cd = #PROD_CD#
+ AND del_yn = 'N'
+ ]]>
+	</update>
+	<insert id="insertProductColor" parameterClass="map" ><![CDATA[INSERT INTO /* BASPDM00200-addProductMgmt-조민지-전현주 */ tbas_prod_color
+	(
+	prod_cd
+	,ser_num
+	,color_cd
+	,del_yn
+	,upd_cnt
+	,ins_dtm
+	,ins_user_id
+	,mod_dtm
+	,mod_user_id
+	)
+VALUES (
+	#PROD_CD#
+	,(SELECT  NVL(MAX(ser_num)+1,1) as ser_num
+	  FROM    tbas_prod_color 
+	  WHERE   prod_cd = #PROD_CD#
+	 )
+	,#CODE#
+	,'N'
+	,1
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,#onlineContext.userInfo.loginId#
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,#onlineContext.userInfo.loginId#
+	)]]>
+	</insert>
+	<select id="getColorList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00200-getColorList-조민지-전현주 */ 
+	   comm_cd_val as color_cd 
+	   ,comm_cd_val_nm as name 
+FROM tbas_comm_cd_dtl
+WHERE comm_cd_id = 'ZBAS_C_00040'
+AND del_yn = 'N']]>
+	</select>
+	<select id="getProductColor" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00200-getProductDetail-조민지-전현주 */ 
+  	   a.prod_cd as prod_cd 
+	   ,b.comm_cd_val as code 
+	   ,b.comm_cd_val_nm as name
+FROM tbas_prod_color a, tbas_comm_cd_dtl b
+WHERE a.color_cd = b.comm_cd_val
+AND b.comm_cd_id = 'ZBAS_C_00040'
+AND a.del_yn = 'N'
+AND a.prod_cd= #PROD_CD#]]>
+	</select>
+	<delete id="deleteProductColor" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00200-updateProductMgmt-조민지-전현주 */  tbas_prod_color
+SET del_yn = 'Y'
+WHERE prod_cd = #PROD_CD#]]>
+	</delete>
+	<select id="getProdCodeCheck" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /* BASPDM00200-getProdCodeCheck-조민지-전현주 */ count(*) as CNT1
+FROM tbas_prod_mgmt
+WHERE del_yn = 'N'
+AND prod_cd = #PROD_CD#]]>
+	</select>
+	<select id="getProdNmCheck" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /* BASPDM00200-getProdNmCheck-조민지-전현주 */ count(*) as CNT2
+FROM tbas_prod_mgmt
+WHERE del_yn = 'N'
+AND prod_nm = #PROD_NM#]]>
+	</select>
+	<select id="getChoData" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00200_getChoData_조민지_전현주 */
+	  deal_co_cd as code
+	 ,deal_co_nm as name
+	 ,MAX(hseq_no)
+FROM tbas_deal_co_mgmt
+WHERE deal_co_cl1 = '20'
+AND del_yn = 'N'
+GROUP BY deal_co_cd, deal_co_nm]]>
+	</select>
+	<select id="getUplstAplyMdlCnt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00200-getProductDetail-조민지-전현주 */ count(*) as cnt
+FROM tpol_uplst_aply_mdl
+WHERE del_yn = 'N'
+AND mdl_id = #PROD_CD#]]>
+	</select>
+	<delete id="deleteProductMgmt" parameterClass="map" ><![CDATA[DELETE FROM /* BASPDM00200-deleteProductMgmt-조민지-전현주 */ tbas_prod_mgmt
+ WHERE prod_cd = #PROD_CD#]]>
+	</delete>
+	<update id="updateIfModelApplyYn" parameterClass="map" ><![CDATA[UPDATE						/*+ BASPDM00200_updateIfModelApplyYn_조민지_최승호 */ 			
+	tbas_eqp_mdl_if
+SET
+	aply_yn = 'Y'
+WHERE
+	op_dt = #op_dt#
+AND
+	op_tm = #op_tm#
+AND
+	seq = #seq#]]>
+	</update>
+</sqlMap>

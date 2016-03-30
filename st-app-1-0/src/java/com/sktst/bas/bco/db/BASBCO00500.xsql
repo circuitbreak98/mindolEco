@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO00500">
+	<select id="getDealList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ BASBCO00500_getDealCo_조민지_심연정 */ 
+		        a.deal_co_cd,
+        a.deal_co_nm,
+        a.deal_co_cl1,
+        a.deal_co_cl2,
+        a.UKEY_AGENCY_CD,
+        a.biz_num,
+        a.rep_user_nm,
+        a.zip_cd1,
+        a.zip_cd2,
+        a.addr,
+        a.deal_sta_dt,
+        a.org_id,
+        a.stl_plc,
+        a.rmks,
+        a.del_yn,
+        a.upd_cnt,
+        a.ins_dtm,
+        a.ins_user_id,
+        a.mod_dtm,
+        a.mod_user_id
+FROM    tbas_deal_co_mgmt a
+WHERE   a.DEAL_END_YN != 'Y'
+AND		a.del_yn != 'Y'
+]]><isNotEmpty prepend="AND" property="DEAL_CO_CD">
+<![CDATA[a.DEAL_CO_CD LIKE '$DEAL_CO_CD$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="deal_co_nm">
+<![CDATA[a.deal_co_nm LIKE '$deal_co_nm$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="deal_co_cl1">
+<![CDATA[a.deal_co_cl1 = #deal_co_cl1#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="deal_co_cl2">
+<![CDATA[a.deal_co_cl2 = #deal_co_cl2#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="pos_agency">
+<![CDATA[a.pos_agency  = #pos_agency#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="deal_cl">
+<![CDATA[a.deal_co_cl1 IN ($deal_cl$)
+]]></isNotEmpty>
+<![CDATA[ORDER BY a.deal_co_cl1, a.deal_co_cl2,a.deal_co_cd]]>
+	</select>
+	<select id="getDealCoList" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ BASPRM00100_getDealCoList_조민지_심연정 */ 
+               a.deal_co_cd,
+        a.deal_co_nm,
+        a.deal_co_cl1,
+        a.deal_co_cl2,
+        a.UKEY_AGENCY_CD,
+        a.biz_num,
+        a.rep_user_nm,
+        a.zip_cd1,
+        a.zip_cd2,
+        a.addr,
+        a.deal_sta_dt,
+        a.org_id,
+        a.stl_plc,
+        a.rmks,
+        a.del_yn,
+        a.upd_cnt,
+        a.ins_dtm,
+        a.ins_user_id,
+        a.mod_dtm,
+        a.mod_user_id
+FROM    tbas_deal_co_mgmt a
+WHERE    a.del_yn = 'N'
+AND		a.DEAL_END_YN != 'Y'
+]]><isNotEmpty prepend="AND" property="deal_co_cd">
+<![CDATA[(   a.deal_co_nm LIKE '$deal_co_cd$%'
+ or a.deal_co_cd LIKE '$deal_co_cd$%')
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="DEAL_CO_CL1">
+<![CDATA[a.deal_co_cl1 = #DEAL_CO_CL1#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="DEAL_CO_CL2">
+<![CDATA[a.DEAL_CO_CL2 = #DEAL_CO_CL2#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="pos_agency">
+<![CDATA[a.pos_agency  = #pos_agency#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="deal_cl">
+<![CDATA[a.deal_co_cl1 IN ($deal_cl$)
+]]></isNotEmpty>
+<![CDATA[ORDER BY a.deal_co_cl1, a.deal_co_cl2,a.deal_co_cd]]>
+	</select>
+</sqlMap>

@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCGCA00200" Left="8" OnLoadCompleted="ACCGCA00200_OnLoadCompleted" PidAttrib="7" Title="상품권정산등록(P)" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="pay_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="pos_agency" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_result" OnColumnChanged="ds_result_OnColumnChanged">
+				<Contents>
+					<colinfo id="pos_agency" size="256" summ="default" type="STRING"/>
+					<colinfo id="fix_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="fix_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="acc_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cl1" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cl_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="stl_plc_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="stl_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="stl_plc_ukey" size="256" summ="default" type="STRING"/>
+					<colinfo id="mer_bond_pay_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="mer_bond_pay_amt_y" size="256" summ="default" type="STRING"/>
+					<colinfo id="rmks" size="256" summ="default" type="STRING"/>
+					<colinfo id="acc_mth" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_fixList">
+				<Contents>
+					<colinfo id="org_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="acc_mth" size="256" summ="default" type="STRING"/>
+					<colinfo id="pay_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="dpst_acc_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="skt_rtn_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="un_skt_rtn_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="skt_rtn_amt_rmks" size="256" summ="default" type="STRING"/>
+					<colinfo id="rmks" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="2" Text="Div0" Top="8" Width="810">
+			<Contents>
+				<Edit Border="Flat" Height="20" Id="edt_agencyNm" ImeMode="none" Left="268" LeftMargin="2" OnCharChanged="div_search_edt_agencyNm_OnCharChanged" OnKeyDown="div_search_edt_agencyNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="6" UserData="대리점" Width="93"></Edit>
+				<Static Align="Right" Height="20" Id="Static0" Left="6" Style="sty_lb_Search" TabOrder="3" Text="정산월" Top="6" VAlign="Middle" Width="68"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agency" ImeMode="none" Left="380" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="6" Width="74"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="361" OnClick="btn_agency_OnClick" TabOrder="4" Text="Button0" Top="6" Width="19"></Button>
+				<Static Align="Right" Height="20" Id="Static4" Left="206" Style="sty_lb_Search" TabOrder="5" Text="대리점" Top="6" VAlign="Middle" Width="60"></Static>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="21" TabOrder="6" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="212" TabOrder="7" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Edit Border="Flat" Height="20" Id="edt_agencyId" ImeMode="none" Left="456" LeftMargin="2" OnCharChanged="div_search_edt_agencyNm_OnCharChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="6" Visible="FALSE" Width="16"></Edit>
+				<MaskEdit Border="Flat" Height="20" Id="cal_acc" Left="81" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" OnKeyDown="div_search_common_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="9" Top="7" Type="STRING" Width="104"></MaskEdit>
+				<Button Cursor="HAND" Height="18" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="167" OnClick="btn_monthCalendar_OnClick" TabOrder="10" Text="Button3" Top="8" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="1" Text="상품권&#32;정산&#32;내역" Top="54" Width="192"></Image>
+		<Grid AutoFit="TRUE" AutoScrollBar="FixedVert" BindDataset="ds_result" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="368" CellMoving="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="288" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellClick="grd_list_OnCellClick" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="80" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="30"/>
+						<col width="30"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="70"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="170"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="확정"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="No" wordwrap="word"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="거래처구분" wordwrap="word"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="정산처" wordwrap="word"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="서브코드" wordwrap="word"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="수납금액" wordwrap="word"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" text="입금정산금액" wordwrap="word"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,9,Bold" text="미입금금액" wordwrap="word"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,9,Bold" text="비고"/>
+					</head>
+					<body>
+						<cell col="0" colid="fix_yn" display="checkbox"/>
+						<cell align="center" col="1" colid="deal_co_cl" display="number" expr="row+1" font="돋움,9"/>
+						<cell col="2" colid="deal_co_cl_nm" display="text" font="돋움,9"/>
+						<cell col="3" colid="stl_plc_nm" display="text" font="돋움,9"/>
+						<cell col="4" colid="stl_plc_ukey" display="text" font="돋움,9"/>
+						<cell align="right" col="5" colid="mer_bond_pay_amt" display="number" font="돋움,9"/>
+						<cell align="right" col="6" colid="mer_bond_pay_amt_y" display="number" font="돋움,9"/>
+						<cell align="right" col="7" display="number" expr="mer_bond_pay_amt&#32;-&#32;mer_bond_pay_amt_y" font="돋움,9"/>
+						<cell col="8" colid="rmks" display="text" font="돋움,9"/>
+					</body>
+					<summary>
+						<cell bkcolor="user37" col="0" display="text"/>
+						<cell align="right" bkcolor="user37" col="1" color="user38" display="text" font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="2" color="user38" display="text" font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="3" color="user38" display="text" font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="4" color="user38" display="text" font="돋움,9,Bold" text="합계"/>
+						<cell align="right" bkcolor="user37" col="5" color="user38" display="number" expr='sum(&quot;mer_bond_pay_amt&#32;&quot;)' font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="6" color="user38" display="number" expr='sum(&quot;mer_bond_pay_amt_y&quot;)' font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="7" color="user38" display="number" expr='sum(&quot;mer_bond_pay_amt&#32;-&#32;mer_bond_pay_amt_y&quot;)' font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="8" color="user38" display="text" font="돋움,9,Bold"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="8" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="SKT&#32;반납&#32;확정&#32;금액" Top="374" Width="192"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" AutoScrollBar="None" BindDataset="ds_fixList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="466" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="66" Id="grd_fixList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="22" Style="sty_Grid" TabOrder="5" TabStop="true" Top="400" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="150"/>
+						<col width="100"/>
+						<col width="300"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="항목" wordwrap="word"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="확정금액" wordwrap="word"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="비고"/>
+					</head>
+					<body>
+						<cell col="0" display="text" font="돋움,9" text="SKT&#32;반납&#32;금액"/>
+						<cell align="right" col="1" colid="skt_rtn_amt" display="number" font="돋움,9"/>
+						<cell col="2" display="text" font="돋움,9"/>
+						<cell col="0" display="text" row="1" text="SKT&#32;미반납&#32;금액"/>
+						<cell align="right" col="1" colid="un_skt_rtn_amt" display="number" row="1"/>
+						<cell col="2" display="text" row="1"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="693" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="6" Text="저장" Top="565" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button0" ImageID="btn_d_2" Left="760" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="7" Text="취소" Top="565" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : ACCGCA00200
+* 업무명      : 정산 - 상품권 정산등록
+* 프로그램명  : 상품권 정산등록
+--------------------------------------------------------------------------------
+* 작성자      : 조민지
+* 작성일      : 2009.06.19
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_SAL.js"
+
+var FV_LOGIN_ID 	= gds_session.GetColumn(0, "loginId");	//사용자계정
+var FV_USER_NM		= gds_session.GetColumn(0, "userNm");	//사용자명 
+var FV_DPST_AMT		= "";
+var F_row = "";
+var sumDpst;
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ACCGCA00200_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	ds_condition.ClearData();
+	
+	//cf_setGrdChecknSortEvent(grd_list);
+	
+	div_search.cal_acc.Value = payDtm;
+	div_search.edt_agencyId.Text = posAgency ;
+	div_search.edt_agencyNm.Text = posAgencyNm;
+	div_search.edt_agency.Text = posAgencyId;
+
+	f_set_gridFocus(grd_fixList, 0, 0);
+	
+	cf_setParam(ds_condition, "pay_dtm", payDtm); 
+	cf_setParam(ds_condition, "pos_agency", posAgency); 
+	f_search();
+	ds_fixList.AddRow();
+	ds_fixList.SetColumn(0,"skt_rtn_amt","0");
+	
+
+
+}
+
+/*******************************************************************************
+ * @description    : 상품권 정산 상세내역 조회
+*******************************************************************************/
+function f_search()
+{
+	var sSvcID 	= "svcChag";
+	var sInDs  	= "nc_input_fieldDs=ds_condition";
+	var sOutDs 	= "ds_result=ds_result";
+	var sArg	= "sktst.acc.GCA#getMerBondPayAmtDtl";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    :  콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	 if(sSvcID == "svcChag"){
+
+
+		ds_fixList.SetUpdate(false);
+		ds_fixList.SetColumn(0,"dpst_acc_amt",0);
+		ds_fixList.SetColumn(0,"skt_rtn_amt",sktRtnAmt);
+		ds_fixList.SetColumn(0,"org_cd",posAgency);
+		ds_fixList.SetColumn(0,"acc_mth",payDtm);
+		ds_fixList.SetColumn(0,"pay_amt",merBondPayAmt);
+		ds_fixList.SetColumn(0,"dpst_acc_amt",merBondPayAmt);
+		ds_fixList.SetColumn(0,"un_skt_rtn_amt",unSktRtnAmt);		
+		ds_fixList.SetUpdate(true);	
+
+	}
+		else if(sSvcID == "svcDtl"){
+			parent.div_search_btn_search_OnClick();
+				btn_close_OnClick();
+		}else if(sSvcID == "svcSave"){
+			parent.div_search_btn_search_OnClick();
+	 }
+	
+}
+/*******************************************************************************
+ * @description    : 그리드 포커스 이동
+*******************************************************************************/
+function f_set_gridFocus(gridObj, nRow, nCellIdx) 
+{	
+	var dataSetObj = object(gridObj.bindDataset);
+	dataSetObj.row = nRow;
+	gridObj.SetCellPos(nCellIdx);
+	gridObj.SetFocus();
+}
+
+
+/*******************************************************************************
+ * @description    : 닫기- 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+
+/*******************************************************************************
+ * @description    : 확정클릭시 SKT 반납금액 반영
+*******************************************************************************/
+
+
+function ds_result_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if(strColumnID =="FIX_YN"){
+		if(varNewValue == "1"){
+			ds_fixList.SetColumn(0,"skt_rtn_amt",(toNumber(ds_fixList.GetColumn(0,"skt_rtn_amt"))+toNumber(ds_result.GetColumn(nRow,"mer_bond_pay_amt_y"))));					
+			ds_fixList.SetColumn(0,"un_skt_rtn_amt",(toNumber(ds_fixList.GetColumn(0,"dpst_acc_amt"))-toNumber(ds_fixList.GetColumn(0,"skt_rtn_amt"))));
+		}else if(varNewValue =="0"){		
+			ds_fixList.SetColumn(0,"skt_rtn_amt",(toNumber(ds_fixList.GetColumn(0,"skt_rtn_amt"))-toNumber(ds_result.GetColumn(nRow,"mer_bond_pay_amt_y"))));
+			ds_fixList.SetColumn(0,"un_skt_rtn_amt",(toNumber(ds_fixList.GetColumn(0,"un_skt_rtn_amt"))+toNumber(ds_result.GetColumn(nRow,"mer_bond_pay_amt_y"))));
+		}
+	}
+}
+/*******************************************************************************
+ * @description    : 셀클릭시 체크박스 이벤트
+*******************************************************************************/
+
+function grd_list_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(ds_result.GetColumn(nRow,"fix_yn") != "1"){
+		ds_result.SetColumn(nRow,"fix_yn","1");
+		}
+	else if(ds_result.GetColumn(nRow,"fix_yn") == "1"){
+		ds_result.SetColumn(nRow,"fix_yn","0");
+		}
+}
+
+/*******************************************************************************
+ * @description    : 저장버튼 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	cf_CheckCloseMnth('03',div_search.cal_acc.value,"정산월");  // 03: 정산 	
+    if(FV_BOOLEAN_CLOSE) return; // 입력한 일자가 마감 되었을 경우 '1'(true) 리턴.
+  
+    cf_CheckCloseDay('04',Left(cf_getDate(), 8),"저장일"); 
+	if(FV_BOOLEAN_CLOSE) return; // 입력한 일자가 마감 되었을 경우 '1'(true) 리턴.
+	
+	var nRow = ds_result.rowcount;
+
+	for (var i = 0; i < nRow; i++){
+		if(ds_result.GetColumn(i,"fix_yn") =="1"){
+			ds_result.SetColumn(i,"fix_dt",today());
+			ds_result.SetColumn(i,"acc_dt",today());
+		}
+		else if(ds_result.GetColumn(i,"fix_yn") =="0"){
+			ds_result.SetColumn(i,"fix_dt",'');
+			ds_result.SetColumn(i,"acc_dt",'');
+		}
+		ds_result.SetColumn(i,"acc_mth",payDtm);
+	}
+	// 마감월 체크
+	cf_CheckCloseMnth('03',div_search.cal_acc.value,"정산월"); // 03: 정산
+	if(FV_BOOLEAN_CLOSE) return; // 입력한 일자가 마감 되었을 경우 '1'(true) 리턴.
+	f_saveList();
+	f_saveDtl();
+	
+}
+
+function f_saveList(){
+	var sSvcID 	= "svcSave";
+	var sInDs 	= "ds_fixList=ds_fixList:U";
+	var sOutDs 	= "";
+	var sArg 	= "sktst.acc.GCA#saveMerBondPayAmt";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+function f_saveDtl(){
+	var sSvcID 	= "svcDtl";
+	var sInDs 	= "ds_result=ds_result:U";
+	var sOutDs 	= "";
+	var sArg 	= "sktst.acc.GCA#saveMerBondPayAmtDtl";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+// function Button1_OnClick(obj)
+// {
+	// var nRow = ds_result.rowcount;
+
+	// for (var i = 0; i < nRow; i++){
+		// if(ds_result.GetColumn(i,"fix_yn") =="1"){
+			// ds_result.SetColumn(i,"fix_dt",today());
+		// }
+		// else if(ds_result.GetColumn(i,"fix_yn") =="0"){
+			// ds_result.SetColumn(i,"fix_dt",'');
+		// }
+		// ds_result.SetColumn(i,"acc_mth",payDtm);
+		// cf_debug("ds_result");
+	// }
+// }
+]]></Script>
+</Window>

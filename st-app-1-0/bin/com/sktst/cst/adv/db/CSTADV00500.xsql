@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTADV00500">
+	<select id="getConMgmtNo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 'CON'||LPAD(TO_CHAR(SCST_CON_MGMT_NO.NEXTVAL),9,'0') CON_MGMT_NO
+  FROM DUAL ]]>
+	</select>
+	<insert id="addConsultMgmt" parameterClass="map" ><![CDATA[INSERT INTO TCST_CONSULT_MGMT (
+     CON_MGMT_NO  
+    ,PROD_CD        
+    ,SER_NUM         
+    ,CON_DT          
+    ,CON_PLC_CD      
+    ,COLOR_CD        
+    ,SVC_DT          
+    ,EQP_ST          
+    ,USEPRD_DDCT_AMT 
+    ,RES_NO
+  	,CUST_NM
+  	,BANK_CD
+  	,ACC_NO
+  	,TEL_NO
+  	,ZIP_CD1
+  	,ZIP_CD2
+  	,ADDR
+  	,DTL_ADDR            
+    ,RMKS            
+    ,FULLSET_YN      
+    ,CON_AMT 
+    ,BUY_CL        
+    ,OUT_YN          
+    ,DEL_YN          
+    ,UPD_CNT         
+    ,INS_DTM         
+    ,INS_USER_ID
+    ,MOD_DTM
+    ,MOD_USER_ID
+    ,CHAG_DEDT_YN
+    ,SVC_NO
+    ,SVC_MGMT_NO
+    ,IMEI
+    ,IN_YN
+    ,OTHER_CPNT
+    ,POL_YN
+    ,POL_CD
+    ,PRC_ST
+) VALUES (
+	 #CON_MGMT_NO#
+    ,#PROD_CD#        
+    ,#SER_NUM#       
+    ,TO_CHAR(SYSDATE,'YYYYMMDD')
+    ,#CON_PLC_CD#      
+    ,#COLOR_CD#
+    ,#SVC_DT#
+    ,DECODE(#EQP_ST_TXT#,'선택',' ',#EQP_ST_TXT#)
+    ,#USEPRD_DDCT_AMT#
+    ,#RES_NO#
+  	,#CUST_NM#
+  	,#BANK_CD#
+  	,#ACC_NO#
+  	,#TEL_NO#
+  	,#ZIP_CD1#
+  	,#ZIP_CD2#
+  	,#ADDR#
+  	,#DTL_ADDR#     
+    ,#RMKS#
+    ,#FULLSET_YN#
+    ,#CON_AMT#
+    ,'C'    
+    ,'N'
+    ,'N'
+    ,1
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId# 
+    ,#CHAG_DEDT_YN#
+    ,#SVC_NO#
+    ,#SVC_MGMT_NO#
+    ,#IMEI#
+    ,'C'
+    ,#OTHER_CPNT#
+    ,#POL_YN#
+    ,#POL_CD#
+    ,'01'    
+)]]>
+	</insert>
+	<insert id="addConsultDtl" parameterClass="map" ><![CDATA[INSERT INTO TCST_CONSULT_DTL (
+	 CON_MGMT_NO
+	,CON_SEQ  
+	,PROD_CD
+	,CPNT_PROD_CD
+    ,DTL_CL
+    ,TYPE_CL
+    ,QTY
+    ,NRL_QTY
+    ,HLD_QTY
+    ,DDCT_AMT
+    ,DEL_YN
+    ,UPD_CNT
+    ,INS_DTM
+    ,INS_USER_ID
+    ,MOD_DTM
+    ,MOD_USER_ID
+) VALUES (    
+	 #CON_MGMT_NO#
+	,#CON_SEQ# 
+	,#PROD_CD#
+	,#CMP_PROD_CD#
+    ,#DTL_CL#
+    ,'1'    
+    ,#QTY#
+    ,#NRL_QTY#
+    ,#HLD_QTY#
+    ,#DDCT_AMT#
+    ,'N'
+    ,1
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId# 
+)]]>
+	</insert>
+	<update id="updateConsultDtl" parameterClass="map" ><![CDATA[UPDATE TCST_CONSULT_DTL
+   SET DTL_CL = #DTL_CL#
+      ,QTY = #QTY#
+      ,NRL_QTY = #NRL_QTY#
+      ,HLD_QTY = #HLD_QTY#
+      ,DDCT_AMT = #DDCT_AMT#
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#			     
+WHERE CON_MGMT_NO = #CON_MGMT_NO# 
+  AND CON_SEQ = #CON_SEQ#]]>
+	</update>
+	<update id="updateConsultMgmt" parameterClass="map" ><![CDATA[UPDATE TCST_CONSULT_MGMT
+   SET PROD_CD = #PROD_CD#
+   	  ,SER_NUM = #SER_NUM#
+      ,COLOR_CD = #COLOR_CD# 
+      ,EQP_ST = #EQP_ST_TXT# 
+      ,USEPRD_DDCT_AMT = #USEPRD_DDCT_AMT# 
+      ,CON_AMT = #CON_AMT#
+      ,RES_NO = #RES_NO#
+      ,CUST_NM = #CUST_NM#
+      ,BANK_CD = #BANK_CD#
+      ,ACC_NO = #ACC_NO#
+  	  ,TEL_NO = #TEL_NO#
+  	  ,ZIP_CD1 = #ZIP_CD1#
+  	  ,ZIP_CD2 = #ZIP_CD2#
+      ,ADDR = #ADDR#
+  	  ,DTL_ADDR = #DTL_ADDR#
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#		
+      ,CHAG_DEDT_YN = #CHAG_DEDT_YN#
+      ,SVC_NO = #SVC_NO#
+      ,SVC_MGMT_NO = #SVC_MGMT_NO#
+      ,IMEI = #IMEI#   
+      ,OTHER_CPNT = #OTHER_CPNT#  
+     , POL_YN = #POL_YN#
+     , POL_CD = #POL_CD#
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+	<select id="getConsultMgmt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT con.CON_MGMT_NO
+	 , con.PROD_CD
+	 , FBAS_GET_PROD_NM(con.PROD_CD) PROD_NM
+	 , con.SER_NUM
+	 , con.CON_DT
+	 , mgmt.DEAL_CO_CD
+	 , FBAS_GET_AGENCY_NM(con.CON_PLC_CD, con.CON_DT) DEAL_CO_NM
+	 , FBAS_GET_AGENCY_NM(mgmt.POS_AGENCY,con.CON_DT) AGENCY_NM
+     , con.CON_PLC_CD
+     , FBAS_GET_DEAL_NM(con.CON_PLC_CD,con.CON_DT) CON_PLC_NM
+     , mgmt.UKEY_AGENCY_CD
+     , mgmt.UKEY_SUB_CD
+     , mgmt.POS_AGENCY
+	 , con.CON_PLC_CD
+	 , FBAS_GET_DEAL_NM(con.CON_PLC_CD,con.CON_DT) CON_PLC_NM
+     , mgmt.ADDR || ' ' || mgmt.DTL_ADDR AS DEAL_ADDR
+	 , con.COLOR_CD
+	 , con.SVC_DT
+     , con.EQP_ST
+     , ' ' EQP_ST_TXT
+	 , con.USEPRD_DDCT_AMT
+	 , con.RMKS
+	 , NVL(con.FULLSET_YN,'N') FULLSET_YN
+	 , con.CON_AMT
+	 , con.CON_AMT CON_AMT_BEFORE
+	 , NVL(con.BUY_CL,'N') BUY_CL
+	 , NVL(con.OUT_YN,'N') OUT_YN
+     , con.RES_NO 
+     , con.CUST_NM
+     , con.TEL_NO
+     , con.ZIP_CD1
+     , con.ZIP_CD2
+     , con.BANK_CD
+     , con.ACC_NO
+     , con.ADDR
+     , con.DTL_ADDR
+     , con.UPD_CNT
+	 , con.INS_USER_ID
+	 , FBAS_GET_USER_NM(con.INS_USER_ID) AS INS_USER_NM
+	 , FBAS_GET_USER_NM(con.INS_USER_ID) AS USER_NM
+	 , con.MOD_USER_ID
+	 , con.CHAG_DEDT_YN
+	 , con.SVC_NO
+	 , con.SVC_MGMT_NO
+	 , con.IMEI
+	 , con.OTHER_CPNT
+	 , con.POL_YN
+	 , con.POL_CD
+  FROM TCST_CONSULT_MGMT con
+     , TBAS_DEAL_CO_MGMT mgmt
+ WHERE con.CON_MGMT_NO = #CON_MGMT_NO#
+   AND con.CON_PLC_CD = mgmt.DEAL_CO_CD
+   AND mgmt.EFF_STA_DTM <= CON_DT||'235959'
+   AND mgmt.EFF_END_DTM >= CON_DT||'000000'
+   AND con.DEL_YN = 'N']]>
+	</select>
+	<select id="getConsultDtl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[   SELECT prod.PROD_CD
+   	    , prod.DTL_CL
+        , FBAS_GET_COMMCDNM_VAL('ZBAS_P_00030', prod.DTL_CL) DTL_NM
+        , prod.QTY
+        , prod.PRICE
+        , prod.PRICE UNIT_PRC    
+        , prod.SALE_PRICE
+        , NVL(con.NRL_QTY,0) NRL_QTY
+        , NVL(con.HLD_QTY,0) HLD_QTY
+        , DECODE(con.DDCT_AMT,NULL,prod.PRICE*prod.QTY,con.DDCT_AMT) DDCT_AMT
+        , con.CON_SEQ
+        , TO_CHAR(ADD_MONTHS(TO_DATE(mgmt.MKTG_DT,'YYYYMMDD'),-36),'YYYYMMDD') MKTG_DT
+        , ' ' PRCHS_MGMT_NO
+        , con.CON_MGMT_NO
+        , prod.CMP_PROD_CD
+        , con.UPD_CNT
+     FROM TBAS_PROD_DTL prod
+     	, TBAS_PROD_MGMT mgmt
+        ,(SELECT PROD_CD
+               , CON_SEQ
+               , DTL_CL
+        	   , NRL_QTY
+               , HLD_QTY
+               , DDCT_AMT
+               , CON_MGMT_NO
+               , UPD_CNT
+            FROM TCST_CONSULT_DTL
+           WHERE CON_MGMT_NO = #CON_MGMT_NO#
+     		 AND DEL_YN = 'N'
+          ) con
+        , TCST_CONSULT_MGMT conm
+   WHERE prod.PROD_CD = mgmt.PROD_CD
+     AND CON.CON_MGMT_NO = CONM.CON_MGMT_NO(+)
+     AND prod.PROD_CD = con.PROD_CD(+)
+     AND prod.DTL_CL = con.DTL_CL(+)
+     AND prod.PROD_CD = #PROD_CD#
+     AND prod.TYPE_CL = '1'
+     AND prod.DEL_YN = 'N'
+     AND mgmt.DEL_YN = 'N'
+     AND CONM.CON_DT BETWEEN PROD.ST_DT AND PROD.ED_DT
+   ORDER BY 2]]>
+	</select>
+	<delete id="deleteConsultDtl" parameterClass="map" ><![CDATA[DELETE FROM TCST_CONSULT_DTL
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</delete>
+</sqlMap>

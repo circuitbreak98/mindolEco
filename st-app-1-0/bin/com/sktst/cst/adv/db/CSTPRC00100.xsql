@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTPRC00100">
+	<select id="getPrchsList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT prchs.PRCHS_MGMT_NO
+     , prchs.CON_MGMT_NO
+	 , prchs.PROD_CD
+	 , prchs.SER_NUM
+     , prchs.PRCHS_DT
+     , prchs.CON_DT
+     , prchs.COLOR_CD
+     , market.HQ_NM
+	 , market.MARKET_CD
+     , market.MARKET_NM
+     , deal.UKEY_AGENCY_CD 
+     , deal.UKEY_SUB_CD      
+     , FBAS_GET_DEAL_NM(prchs.CON_PLC_CD,prchs.CON_DT) CON_PLC_NM
+     , FBAS_GET_AGENCY_NM(deal.POS_AGENCY,prchs.CON_DT) AGENCY_NM
+     , prchs.CON_PLC_CD
+     , FBAS_GET_PROD_NM(prchs.PROD_CD) PROD_NM
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', prchs.COLOR_CD) COLOR_NM
+     , prchs.PRCHS_AMT
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00060', prchs.BANK_CD) BANK_NM
+     , prchs.ACC_NO
+     , prchs.CUST_NM
+     , nvl(prchs.REMIT_YN,'N') REMIT_YN
+     , prchs.REMIT_DT
+     , prchs.EQP_ST
+     , prchs.EQP_ST_DTL
+     , deal.POS_AGENCY
+     , '0' PRC_CHECK
+     , NVL(prchs.FIRST_DC_YN,'N') FIRST_DC_YN
+     , NVL(FBAS_GET_RESERVE_AMT(prchs.CON_MGMT_NO),0) UBO_AMT
+     , prchs.PRCHS_AMT + NVL(FBAS_GET_RESERVE_AMT(prchs.CON_MGMT_NO),0) TOT_AMT
+     , (SELECT CUST_GROUP_NM 
+          FROM TCST_CONSULT_MGMT
+         WHERE CON_MGMT_NO = prchs.CON_MGMT_NO
+           AND DEL_YN = 'N') CUST_GROUP_NM
+  FROM TCST_PRCHS_MGMT prchs  
+  	 , TBAS_DEAL_CO_MGMT deal
+     , TBAS_DEAL_CO_MARKETING market   	 
+ WHERE prchs.CON_PLC_CD = deal.DEAL_CO_CD
+/*   AND deal.EFF_END_DTM = '99991231235959'  */
+   AND deal.EFF_STA_DTM <= prchs.CON_DT||'235959'
+   AND deal.EFF_END_DTM >= prchs.CON_DT||'235959'
+   AND deal.UKEY_AGENCY_CD  = market.UKEY_AGENCY_CD(+)
+   AND market.DEL_YN(+) = 'N' 
+   AND NVL(market.STA_DT,prchs.CON_DT) <= prchs.CON_DT
+   AND NVL(market.END_DT,prchs.CON_DT) >= prchs.CON_DT      
+   AND prchs.DEL_YN = 'N'
+   AND prchs.CUST_YN = 'Y'
+   AND prchs.BUY_CL = 'Y'
+   AND prchs.SKN_YN = 'N'
+   AND prchs.PRC_ST NOT IN ('2E','34')
+   AND (prchs.CHAG_DEDT_YN IS NULL OR prchs.CHAG_DEDT_YN = '0')
+   AND (prchs.POL_YN IS NULL OR prchs.POL_YN = '0')
+   AND prchs.ASIANA_CARD_NO IS NULL
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[	   deal.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[       prchs.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">      
+<![CDATA[       prchs.SER_NUM = #SER_NUM#
+]]></isNotEmpty>	         
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       prchs.PROD_CD = #PROD_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[       prchs.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       prchs.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="BOX_NO">   
+<![CDATA[       prchs.BOX_NO = #BOX_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isEmpty prepend="AND" property="BOX_NO">   
+<![CDATA[]]><isEqual property="DT_GB" compareValue="1"> 
+<![CDATA[       prchs.CUST_DT BETWEEN #PRC_FROM_DT# AND #PRC_TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isNotEqual property="DT_GB" compareValue="1"> 
+<![CDATA[       prchs.REMIT_DT BETWEEN #PRC_FROM_DT# AND #PRC_TO_DT#    
+]]></isNotEqual>  
+<![CDATA[]]></isEmpty>
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="Y"> 
+<![CDATA[   AND prchs.CON_PLC_CD = '11050'
+]]></isEqual>
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="N"> 
+<![CDATA[   AND prchs.CON_PLC_CD <> '11050'
+]]></isEqual>
+	</select>
+	<update id="updatePrchsMgmt" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET DEL_YN = 'Y'
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#	     
+ WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#]]>
+	</update>
+	<update id="updateConsultMgmtBuyCl" parameterClass="map" ><![CDATA[UPDATE TCST_CONSULT_MGMT
+   SET BUY_CL = 'N'
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#     
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+	<update id="updatePrchsMgmtIn" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET REMIT_YN = DECODE(REMIT_YN,'Y','N','Y')
+   	  ,REMIT_DT = DECODE(REMIT_YN,'Y','',#REMIT_DT#)
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#	
+      ,PRC_ST = DECODE(REMIT_YN,'Y','21','31')     
+ WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#]]>
+	</update>
+	<select id="getPrchsDtlRemitList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT a.PRCHS_MGMT_NO
+	 , ''               chk
+	 , ''               prod_cl_nm
+	 , ''               mfact_id
+	 , ''               color_nm
+	 , ''               edt_flg
+	 , ''               prod_cd_org
+	 , ''               dis_st
+	 , '99'             color_cd
+	 , ''               color_cd_org
+	 , ''               mod_dtm
+	 , ''               dum_yn
+	 , ''               prod_cd_color_cd
+	 , ''               prod_nm
+	 , ''               bad_yn
+	 , ''               mfact_nm
+	 , ''               nc_rec_status
+	 , ''               fix_yn
+	 , ''               prod_cd_ser_num
+	 , ''               bar_cd_typ
+	 , ''               ser_num
+	 , ''               eqp_st	 	 	 
+     , c.CPNT_PROD_CD   prod_cd
+     , d.PROD_CL        prod_cl
+     , c.HLD_QTY        in_qty
+     , c.UNIT_PRC       in_amt
+  FROM TCST_PRCHS_MGMT a   
+  	 , TBAS_DEAL_CO_MGMT b
+     , TCST_PRCHS_DTL c
+     , TBAS_PROD_MGMT d
+ WHERE a.CON_PLC_CD = b.DEAL_CO_CD
+   AND a.PRCHS_MGMT_NO = c.PRCHS_MGMT_NO
+   AND c.CPNT_PROD_CD = d.PROD_CD(+)
+/*   AND b.EFF_END_DTM = '99991231235959' */
+   AND b.EFF_STA_DTM <= a.CON_DT||'235959'
+   AND b.EFF_END_DTM >= a.CON_DT||'235959'
+   AND a.BUY_CL = 'Y'
+   AND a.CUST_YN = 'Y'
+   AND c.HLD_QTY > 0 
+   AND a.DEL_YN = 'N'
+   AND b.DEL_YN = 'N'
+   AND c.DEL_YN = 'N'
+   AND d.DEL_YN(+) = 'N'
+   AND a.SKN_YN = 'N'
+   AND (a.CHAG_DEDT_YN IS NULL OR a.CHAG_DEDT_YN = '0')
+   AND (a.POL_YN IS NULL OR a.POL_YN = '0')  
+   AND a.ASIANA_CARD_NO IS NULL 
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[	   b.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[       a.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">      
+<![CDATA[       a.SER_NUM = #SER_NUM#
+]]></isNotEmpty>	         
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       a.PROD_CD = #PROD_CD#
+]]></isNotEmpty>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[       a.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       a.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="BOX_NO">   
+<![CDATA[       a.BOX_NO = #BOX_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isEmpty prepend="AND" property="BOX_NO">   
+<![CDATA[]]><isEqual property="DT_GB" compareValue="1"> 
+<![CDATA[       a.CUST_DT BETWEEN #PRC_FROM_DT# AND #PRC_TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isNotEqual property="DT_GB" compareValue="1"> 
+<![CDATA[       a.REMIT_DT BETWEEN #PRC_FROM_DT# AND #PRC_TO_DT#    
+]]></isNotEqual> 
+<![CDATA[]]></isEmpty>
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="Y"> 
+<![CDATA[   AND a.CON_PLC_CD = '11050'
+]]></isEqual>
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="N"> 
+<![CDATA[   AND a.CON_PLC_CD <> '11050'
+]]></isEqual>
+	</select>
+	<select id="getTime" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT TO_CHAR(to_date(TO_CHAR(sysdate,'HH24MISS'),'HH24MISS')+14/24/60,'HH24MISS') ctime 
+     , #onlineContext.userInfo.loginId# cuser
+  FROM dual]]>
+	</select>
+</sqlMap>

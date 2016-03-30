@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="ADMBTW00100">
+	<select id="getBTWAgency" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMBTW00100_getBTWAgencyList-김연석-김연석 */
+       a.org_id
+     , FBAS_GET_ORG_NM(a.org_id)                     org_nm
+     , a.deal_co_cd                                  pos_agency
+     , a.deal_co_nm                                  pos_agency_nm
+     , a.ukey_agency_cd                              pos_dcode
+     , DECODE(NVL(b.apply_yn, 'N'), 'Y', '1', '0')   aply_yn
+     , DECODE(NVL(b.apply_yn, 'N'), 'Y', '1', '0')   old_aply_yn
+     , DECODE(NVL(b.pos_agency, 'X'), 'X', 'N', 'Y') exist_yn
+     , 'N'                                           update_yn
+  FROM TBAS_DEAL_CO_MGMT a
+     , TADM_BTW_AGENCY   b
+ WHERE a.deal_co_cd  = b.pos_agency(+)
+   AND a.deal_co_cl1 = 'A1'
+   AND a.del_yn      = 'N'
+]]><isNotEmpty prepend="AND" property="org_id">
+<![CDATA[       a.org_id     = #org_id#
+]]></isNotEmpty>
+<![CDATA[   AND a.org_id IN (SELECT org_id FROM TBAS_ORG_MGMT
+                     WHERE org_cl     = '3'
+                       AND eff_org_yn = 'Y')                
+   AND a.hseq_no = (SELECT /*+ INDEX_DESC(z xbas_deal_co_mgmt_pk) */ hseq_no
+                      FROM tbas_deal_co_mgmt z
+                     WHERE deal_co_cd = a.deal_co_cd
+                       AND ROWNUM     = 1)
+ ORDER BY 2, 4
+    ]]>
+	</select>
+	<select id="getBTWProduct" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMBTW00200_getBTWProduct-김연석-김연석 */
+       #apply_month#                               apply_month
+     , a.prod_cd
+     , a.prod_nm
+     , DECODE(NVL(b.apply_yn, 'N'), 'Y', '1', '0') apply_yn
+     , DECODE(NVL(b.apply_yn, 'N'), 'Y', '1', '0') old_apply_yn
+     , DECODE(NVL(b.apply_yn, 'X'), 'X', 'N', 'Y') exist_yn
+     , 'N'                                         update_yn
+  FROM TBAS_PROD_MGMT   a
+     , TADM_BTW_PRODUCT b
+ WHERE a.prod_cd     = b.prod_cd(+)
+]]>   <isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[       a.mfact_id = #mfact_id#
+]]>   </isNotEmpty>
+<![CDATA[   AND a.prod_cl     = '1'
+   AND a.use_yn      = 'Y'
+ ORDER BY 1, 2
+    ]]>
+	</select>
+	<select id="getBTWAdjust" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ ADMBTW00100_getBTWAdjust-김연석-김연석 */
+       '0' chk
+     , apply_month
+     , from_amt
+     , to_amt
+     , allot_adj_prc
+     , cash_adj_prc
+     , allot_adj_prc  old_allot
+     , cash_adj_prc   old_cash
+     , 'N'            update_yn
+  FROM TADM_BTW_ADJUST
+ WHERE apply_month = #apply_month#
+ ORDER BY 1
+    ]]>
+	</select>
+	<select id="getBTWRange" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ ADMBTW00100_getBTWRange-김연석-김연석 */
+       '0' chk
+     , apply_month
+     , agrmt_amt
+     , range_amt
+     , 'N' update_yn
+  from TADM_BTW_RANGE
+ order by 2 desc]]>
+	</select>
+	<insert id="addBTWAgency" parameterClass="map" ><![CDATA[insert into TADM_BTW_AGENCY /*+ ADMBTW00100_addBTWAgencyList-김연석-김연석 */
+     ( ORG_ID
+     , POS_AGENCY
+     , APPLY_YN
+     , DEL_YN
+     , UPD_CNT
+     , INS_USER_ID
+     , INS_DTM
+     , MOD_USER_ID
+     , MOD_DTM)
+     values
+     ( #org_id#
+     , #pos_agency#
+     , decode(nvl(#aply_yn#, '0'), '0', 'N', 'Y')
+     , 'N'
+     , 1
+     , #onlineContext.userInfo.loginId#
+     , to_char(sysdate,'yyyyMMddHH24miss')
+     , #onlineContext.userInfo.loginId#
+     , to_char(sysdate,'yyyyMMddHH24miss'))
+    ]]>
+	</insert>
+	<insert id="addBTWProduct" parameterClass="map" ><![CDATA[insert into TADM_BTW_PRODUCT /*+ ADMBTW00200_addBTWProduct-김연석-김연석 */
+     ( APPLY_MONTH
+     , PROD_CD
+     , APPLY_YN
+     , DEL_YN
+     , UPD_CNT
+     , INS_USER_ID
+     , INS_DTM
+     , MOD_USER_ID
+     , MOD_DTM
+     ) values (
+       #apply_month#
+     , #prod_cd#
+     , decode(nvl(#apply_yn#, '0'), '0', 'N', 'Y')
+     , 'N'
+     , 1
+     , #onlineContext.userInfo.loginId#
+     , to_char(sysdate,'yyyyMMddHH24miss')
+     , #onlineContext.userInfo.loginId#
+     , to_char(sysdate,'yyyyMMddHH24miss')
+     )
+    ]]>
+	</insert>
+	<insert id="addBTWAdjust" parameterClass="map" ><![CDATA[insert into TADM_BTW_ADJUST /*+ ADMBTW00100_addBTWAdjust-김연석-김연석 */
+     ( APPLY_MONTH
+     , FROM_AMT
+     , TO_AMT
+     , ALLOT_ADJ_PRC
+     , CASH_ADJ_PRC
+     , DEL_YN
+     , UPD_CNT
+     , INS_USER_ID
+     , INS_DTM
+     , MOD_USER_ID
+     , MOD_DTM)
+     values
+     ( #apply_month#
+     , #from_amt#
+     , #to_amt#
+     , #allot_adj_prc#
+     , #cash_adj_prc#
+     , 'N'
+     , 1
+     , #onlineContext.userInfo.loginId#
+     , to_char(sysdate,'yyyyMMddHH24miss')
+     , #onlineContext.userInfo.loginId#
+     , to_char(sysdate,'yyyyMMddHH24miss'))
+    ]]>
+	</insert>
+	<insert id="addBTWRange" parameterClass="map" ><![CDATA[insert into TADM_BTW_RANGE /*+ ADMBTW00100_addBTWRange-김연석-김연석 */
+     ( APPLY_MONTH
+     , AGRMT_AMT
+     , RANGE_AMT
+     , DEL_YN
+     , UPD_CNT
+     , INS_USER_ID
+     , INS_DTM
+     , MOD_USER_ID
+     , MOD_DTM)
+     values
+     ( #apply_month#
+     , #agrmt_amt#
+     , #range_amt#
+     , 'N'
+     , 1
+     , #onlineContext.userInfo.loginId#
+     , to_char(sysdate,'yyyyMMddHH24miss')
+     , #onlineContext.userInfo.loginId#
+     , to_char(sysdate,'yyyyMMddHH24miss'))
+    ]]>
+	</insert>
+	<update id="saveBTWAgency" parameterClass="map" ><![CDATA[update TADM_BTW_AGENCY /*+ ADMBTW00100_saveBTWAgencyList-김연석-김연석 */
+   set APPLY_YN    = decode(nvl(#aply_yn#, '0'), '0', 'N', 'Y')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+     , MOD_DTM     = to_char(sysdate,'yyyyMMddHH24miss')
+ where ORG_ID      = #org_id#
+   and POS_AGENCY  = #pos_agency#
+    ]]>
+	</update>
+	<update id="saveBTWProduct" parameterClass="map" ><![CDATA[UPDATE TADM_BTW_PRODUCT /*+ ADMBTW00200_saveBTWProduct-김연석-김연석 */
+   SET APPLY_YN    = decode(nvl(#apply_yn#, '0'), '0', 'N', 'Y')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+     , MOD_DTM     = to_char(sysdate,'yyyyMMddHH24miss')
+ WHERE APPLY_MONTH = #apply_month#
+   AND PROD_CD     = #prod_cd#
+    ]]>
+	</update>
+	<update id="saveBTWAdjust" parameterClass="map" ><![CDATA[update TADM_BTW_ADJUST /*+ ADMBTW00100_saveBTWAdjust-김연석-김연석 */
+   set ALLOT_ADJ_PRC = #allot_adj_prc#
+     , CASH_ADJ_PRC  = #cash_adj_prc#
+     , MOD_USER_ID   = #onlineContext.userInfo.loginId#
+     , MOD_DTM       = to_char(sysdate,'yyyyMMddHH24miss')
+ where APPLY_MONTH   = #apply_month#
+   and FROM_AMT      = #from_amt#
+   and TO_AMT        = #to_amt#
+    ]]>
+	</update>
+	<update id="saveBTWRange" parameterClass="map" ><![CDATA[update TADM_BTW_RANGE /*+ ADMBTW00100_saveBTWRange-김연석-김연석 */
+   set AGRMT_AMT   = #agrmt_amt#
+     , RANGE_AMT   = #range_amt#
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+     , MOD_DTM     = to_char(sysdate,'yyyyMMddHH24miss')
+ where APPLY_MONTH = #apply_month#
+    ]]>
+	</update>
+	<delete id="delBTWAdjust" parameterClass="map" ><![CDATA[DELETE FROM TADM_BTW_ADJUST /*+ ADMBTW00100_delBTWAdjust-김연석-김연석 */
+ where APPLY_MONTH   = #apply_month#
+   and FROM_AMT      = #from_amt#
+   and TO_AMT        = #to_amt#
+    ]]>
+	</delete>
+	<delete id="delBTWRange" parameterClass="map" ><![CDATA[DELETE FROM TADM_BTW_RANGE /*+ ADMBTW00100_delBTWRange-김연석-김연석 */
+ where APPLY_MONTH = #apply_month#
+    ]]>
+	</delete>
+</sqlMap>

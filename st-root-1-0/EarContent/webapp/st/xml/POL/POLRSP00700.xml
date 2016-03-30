@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="300" Id="form" Left="8" OnLoadCompleted="POLRSP00700_OnLoadCompleted" PidAttrib="7" Title="가격표&#32;삭제" Top="8" Ver="1.0" Width="490" WorkArea="true">
+		<Div Border="RaisedEdge" Height="109" Id="div_search" Left="10" Style="sty_div_dataview" TabOrder="1" Text="Div0" Top="10" Width="470">
+			<Contents>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_aplyYm" Left="102" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Width="97"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="14" Style="sty_lb_dataview" TabOrder="2" Text="적용년월" Top="7" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_dealCoNm" Left="294" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="163"></Edit>
+				<Static Align="Right" Height="20" Id="Static0" Left="206" Style="sty_lb_dataview" TabOrder="4" Text="대리점" Top="7" VAlign="Middle" Width="84"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="14" Style="sty_lb_dataview" TabOrder="6" Text="영업망코드" Top="30" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_slNetCd" Left="102" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="30" Width="97"></Edit>
+				<Static Align="Right" Height="20" Id="Static3" Left="14" Style="sty_lb_dataview" TabOrder="10" Text="약정기간코드" Top="76" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agrmtPrdCd" Left="102" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="76" Width="97"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_dsNetCd" Left="102" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="53" Width="97"></Edit>
+				<Static Align="Right" Height="20" Id="Static4" Left="14" Style="sty_lb_dataview" TabOrder="8" Text="유통망코드" Top="53" VAlign="Middle" Width="84"></Static>
+				<Static Align="Right" Height="20" Id="Static5" Left="206" Style="sty_lb_dataview" TabOrder="12" Text="판매유형코드" Top="30" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_saleTypCdMax" Left="294" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="30" Width="163"></Edit>
+				<Static Align="Right" Height="20" Id="Static6" Left="206" Style="sty_lb_dataview" TabOrder="16" Text="조직" Top="76" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_orgId" Left="294" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="76" Width="163"></Edit>
+				<Static Align="Right" Height="20" Id="Static7" Left="206" Style="sty_lb_dataview" TabOrder="14" Text="사용자명" Top="53" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_userNm" Left="294" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="53" Width="163"></Edit>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="126" Id="div_process" Left="10" Style="sty_div_input" TabOrder="2" Text="Div0" Top="129" Width="470">
+			<Contents>
+				<TextArea Border="Flat" CheckLength="Byte" Height="106" Id="txt_delRsn" ImeMode="none" Left="75" MaxLength="90" Style="sty_ipt_form" TabOrder="1" Top="7" VScroll="TRUE" Width="380"></TextArea>
+				<Static Align="Right" Height="20" Id="Static8" Left="11" Style="sty_lb_Basic" TabOrder="2" Text="삭제사유" Top="7" VAlign="Middle" Width="60"></Static>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="5" TabOrder="3" Top="5" Transparent="TRUE" Width="20"></Image>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_d_2" Left="183" LeftMargin="5" OnClick="df_delete" Style="sty_btn_d" TabOrder="3" Text="삭제" Top="264" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button0" ImageID="btn_c_2" Left="247" LeftMargin="5" OnClick="df_close" Style="sty_btn_c" TabOrder="4" Text="취소" Top="265" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : POLRSP00700
+* 업무명      : 소매가격표
+* 프로그램명  : 소매가격표 관리
+--------------------------------------------------------------------------------
+* 작성자      : 전승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_STR_NAME; // 사용자 이름
+var FV_ORGID;		// 소속
+var FV_ORGCL;		// 소속구분
+
+/*******************************************************************************
+* 함수명 : POLRSP00700_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function POLRSP00700_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	div_process.txt_delRsn.SetFocus();
+	
+	div_search.edt_aplyYm.Text = APLY_YM;
+    div_search.edt_dealCoNm.Text = DEAL_CO_NM;
+    div_search.edt_dsNetCd.Text = DS_NET_CD;
+    div_search.edt_saleTypCdMax.Text = SALE_TYP_CD_MAX;
+    div_search.edt_slNetCd.Text = SL_NET_CD;
+    div_search.edt_agrmtPrdCd.Text = AGRMT_PRD_CD;
+    div_search.edt_userNm.Text = gds_session.GetColumn(0, "userNm");
+    div_search.edt_orgId.Text = gds_session.GetColumn(0, "orgid");
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "svcDelete"){
+	
+		return;
+		
+	}
+}
+
+
+/*******************************************************************************
+* 함수명 : f_pre_save
+* 기능명 : 저장버튼 전 체크함수 
+*******************************************************************************/
+function f_pre_delete()
+{
+	
+	if(uf_isNull(div_process.txt_delRsn.Text) == true){
+		alert(cf_getMessage(MSG_00135, "삭제사유"));
+		div_process.txt_delRsn.SetFocus();
+		return false;
+	}
+	
+    return true;
+}
+
+/*******************************************************************************
+* 함수명 : df_delete
+* 기능명 : 공통 수정 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function df_delete(sButtonID)
+{
+	
+	if (!(f_pre_delete())) return;
+	
+	ds_condition.setColumn(0,"DEL_RSN",div_process.txt_delRsn.Text);
+	
+	this.close("1");
+	
+}
+
+/*******************************************************************************
+* 함수명 : df_close
+* 기능명 : 화면 종료
+*******************************************************************************/
+function df_close(sButtonID)
+{
+	this.close("0");
+}
+]]></Script>
+</Window>

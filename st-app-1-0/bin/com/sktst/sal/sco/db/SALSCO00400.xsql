@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSCO00400">
+	<select id="getProdListIfYn" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALSCO00400_getProdListIfYn-전미량 */
+       MAX(DECODE(TRMS_YN,'X','Y',TRMS_YN)) AS TRMS_YN 
+  FROM TDIS_PROD_DIS 
+ WHERE SER_NUM IN 
+       (SELECT PROD_SER_NUM 
+         FROM TSAL_EQUIPMENT_SALE 
+        WHERE GNRL_SALE_NO = #gnrl_sale_no#
+          AND GNRL_SALE_CHG_SEQ = #gnrl_sale_chg_seq#
+       )]]>
+	</select>
+</sqlMap>

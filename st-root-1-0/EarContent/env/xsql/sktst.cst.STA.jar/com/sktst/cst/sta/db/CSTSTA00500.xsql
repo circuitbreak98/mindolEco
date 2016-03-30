@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTSTA00500">
+	<select id="getHqAll" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT HQ_NM
+     , SUM(TOT_CNT) TOT_CNT
+     , SUM(SKN_CNT) SKN_CNT
+  FROM  
+     ( SELECT NVL(d.HQ_NM,a.CON_PLC_CD) HQ_NM
+            , 1 TOT_CNT
+            , DECODE(a.SKN_YN, 'Y',1,0) SKN_CNT
+         FROM TCST_CONSULT_MGMT a
+            , TCST_PRCHS_MGMT b
+            , TBAS_DEAL_CO_MGMT c
+            , TBAS_DEAL_CO_MARKETING d
+        WHERE a.CON_DT BETWEEN #CON_FROM_DT# AND #CON_TO_DT#
+          AND a.CON_MGMT_NO = b.CON_MGMT_NO(+)
+          AND a.CON_PLC_CD = c.DEAL_CO_CD
+          AND c.UKEY_AGENCY_CD = d.UKEY_AGENCY_CD(+)
+          AND c.EFF_STA_DTM <= a.CON_DT||'235959'
+          AND c.EFF_END_DTM >= a.CON_DT||'235959'  
+          AND a.DEL_YN = 'N'    	 
+          AND b.del_yn(+) = 'N'
+          AND c.DEL_YN = 'N'
+          AND d.DEL_YN(+) = 'N'
+          AND NVL(d.STA_DT,a.CON_DT) <= a.CON_DT
+         AND NVL(d.END_DT,a.CON_DT) >= a.CON_DT
+     )   
+ GROUP BY HQ_NM
+ ORDER BY HQ_NM]]>
+	</select>
+	<select id="getHqDetail" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT HQ_NM
+     , SUM(TOT_CNT) TOT_CNT
+     , SUM(SKN_CNT) SKN_CNT
+     , MARKET_CD
+     , MARKET_NM
+  FROM  
+     ( SELECT NVL(d.HQ_NM,a.CON_PLC_CD) HQ_NM
+            , 1 TOT_CNT
+            , DECODE(a.SKN_YN, 'Y',1,0) SKN_CNT
+            , MARKET_CD
+            , MARKET_NM           
+         FROM TCST_CONSULT_MGMT a
+            , TCST_PRCHS_MGMT b
+            , TBAS_DEAL_CO_MGMT c
+            , TBAS_DEAL_CO_MARKETING d
+        WHERE a.CON_DT BETWEEN #CON_FROM_DT# AND #CON_TO_DT#
+          AND a.CON_MGMT_NO = b.CON_MGMT_NO(+)
+          AND a.CON_PLC_CD = c.DEAL_CO_CD
+          AND c.UKEY_AGENCY_CD = d.UKEY_AGENCY_CD(+)
+          AND c.EFF_STA_DTM <= a.CON_DT||'235959'
+          AND c.EFF_END_DTM >= a.CON_DT||'235959'  
+          AND a.DEL_YN = 'N'    	 
+          AND b.del_yn(+) = 'N'
+          AND c.DEL_YN = 'N'
+          AND d.DEL_YN(+) = 'N'
+          AND NVL(d.STA_DT,a.CON_DT) <= a.CON_DT
+         AND NVL(d.END_DT,a.CON_DT) >= a.CON_DT
+     )   
+GROUP BY HQ_NM, MARKET_CD, MARKET_NM
+ORDER BY HQ_NM]]>
+	</select>
+</sqlMap>

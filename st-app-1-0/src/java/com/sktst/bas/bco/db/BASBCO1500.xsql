@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO1500">
+	<select id="getFullOrgTree" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT							/*+ BASBCO01500_getFullOrgTree_원윤성_최승호 */
+	id, nm, cl, sup
+FROM
+(
+SELECT						 
+	org_id AS id,				/* 조직 아이디 */
+	org_nm AS nm,				/* 조직 이름 */
+	org_cl AS cl,				/* 조직 구분 */
+	sup_org AS sup				/* 상위 조직 아이디 */
+FROM
+	tbas_org_mgmt
+WHERE 
+	del_yn = 'N'
+
+]]><isEmpty prepend="AND" property="total_yn">
+<![CDATA[	( org_biz_cl = '1' or org_biz_cl is null )
+]]></isEmpty>
+<![CDATA[
+UNION 
+
+SELECT						
+	deal_co_cd AS id,			/* 거래처 코드 */
+	deal_co_nm AS nm,			/* 거래처 이름 */
+	'4' AS cl,				    /* 거래처 구분 */
+	org_id AS sup			    /* 상위 조직 아이디 */
+FROM
+	tbas_deal_co_mgmt
+WHERE
+    deal_co_cl1 = 'A1'
+AND
+	del_yn = 'N'    
+AND 
+	eff_end_dtm = '99991231235959'    
+]]><isNotEmpty prepend="AND" property="total_yn">
+<![CDATA[	deal_co_cd = 'X'
+]]></isNotEmpty>		
+<![CDATA[)
+	
+START WITH
+	id = decode(#total_yn#,'Y','P00000',#org_id#)
+CONNECT BY PRIOR
+	id = sup]]>
+	</select>
+</sqlMap>

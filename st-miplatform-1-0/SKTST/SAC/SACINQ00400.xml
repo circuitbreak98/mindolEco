@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SACINQ00400" Left="8" OnLoadCompleted="SACINQ00400_OnLoadCompleted" PidAttrib="7" Title="일별&#32;입금처리&#32;조회" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="agency" size="256" summ="default" type="STRING"/>
+					<colinfo id="dpst_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="dpst_from_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="dpst_to_dt" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dpst_proc_info">
+				<Contents>
+					<colinfo id="stl_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="stl_plc_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="dpst_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="skt_chag" size="256" summ="default" type="STRING"/>
+					<colinfo id="skt_prp" size="256" summ="default" type="STRING"/>
+					<colinfo id="casa_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="card_sal_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="card_fee" size="256" summ="default" type="STRING"/>
+					<colinfo id="mer_bond" size="256" summ="default" type="STRING"/>
+					<colinfo id="fix_yn" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="43" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="736" LeftMargin="5" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="8" Width="60"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_agencyNm" ImeMode="none" Left="68" LeftMargin="2" OnKeyDown="div_search_edt_agencyNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="8" UserData="대리점" Width="93"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="161" OnClick="btn_agency_OnClick" TabOrder="3" Text="Button0" Top="8" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_ukey_agency" ImeMode="none" Left="180" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="8" Width="55"></Edit>
+				<Static Align="Right" Height="20" Id="Static4" Left="20" Style="sty_lb_Search" TabOrder="4" Text="대리점" Top="8" VAlign="Middle" Width="46"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="499" Style="sty_lb_Search" TabOrder="8" Text="입금처" Top="8" VAlign="Middle" Width="46"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_dealNm" Left="548" LeftMargin="2" OnKeyDown="div_search_edt_dealNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="9" Top="8" Width="90"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_dealCo" ImageID="btn_i_detail" Left="639" OnClick="btn_dealCo_OnClick" TabOrder="7" Text="Button0" Top="8" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_dealCd" ImeMode="none" Left="658" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="8" Width="55"></Edit>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="15" TabOrder="10" Top="8" Transparent="TRUE" Width="20"></Image>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_dpst_from_dt" Left="300" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="11" TodayColor="user26" Top="9" UserData="입금일(from)" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_dpst_to_dt" Left="406" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="12" TodayColor="user26" Top="9" UserData="입금일(to)" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Static Align="Center" Height="16" Id="Static0" Left="383" Style="sty_lb_Search" TabOrder="13" Text="~" Top="11" VAlign="Middle" Width="29"></Static>
+				<Static Align="Right" Height="20" Id="Static2" Left="256" Style="sty_lb_Search" TabOrder="14" Text="입금일" Top="9" VAlign="Middle" Width="42"></Static>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="246" TabOrder="15" Top="8" Transparent="TRUE" Width="20"></Image>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agency" ImeMode="none" Left="180" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="16" Top="26" Visible="FALSE" Width="55"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_dpst_proc_info" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="547" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="30" Height="462" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_list_OnCelDblClick" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="85" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="130"/>
+						<col width="100"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,10,Bold" text="입금처명" wordwrap="word"/>
+						<cell bkcolor="user34" col="1" color="user35" display="date" font="돋움,10,Bold" text="입금일" wordwrap="word"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,10,Bold" text="SKT&#32;요금" wordwrap="word"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,10,Bold" text="SKT예수금" wordwrap="word"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,10,Bold" text="현금매출금" wordwrap="word"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,10,Bold" text="카드매출금" wordwrap="word"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="카드수수료" wordwrap="word"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,10,Bold" text="상품권" wordwrap="word"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,10,Bold" text="ERP&#32;전송여부" wordwrap="word"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="stl_plc_nm" display="text"/>
+						<cell col="1" colid="dpst_dt" display="date"/>
+						<cell align="right" col="2" colid="skt_chag" display="number"/>
+						<cell align="right" col="3" colid="skt_prp" display="number"/>
+						<cell align="right" col="4" colid="casa_amt" display="number"/>
+						<cell align="right" col="5" colid="card_sal_amt" display="number"/>
+						<cell align="right" col="6" colid="card_fee" display="number"/>
+						<cell align="right" col="7" colid="mer_bond" display="number"/>
+						<cell col="8" colid="fix_yn" display="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image3" ImageID="bul_tit" Left="8" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="입금처리" Top="60" Width="192"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : SACINQ00400
+* 업무명      : 판매회계
+* 프로그램명  : 일별 입금처리 조회
+--------------------------------------------------------------------------------
+* 작성자      : 은준기
+* 작성일      : 2009.05.06
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+
+//==============================================================================
+// 전역변수선언
+//==============================================================================
+var FV_LOGIN_ID = gds_session.GetColumn(0, "loginId");		//사용자계정
+var FV_ORG_ID = gds_session.GetColumn(0, "orgId");			//조직코드
+var FV_ORG_CL = gds_session.GetColumn(0, "orgCl");			//조직구분
+var FV_SUP_ORG_ID = gds_session.GetColumn(0, "supOrgId");	//상위조직코드
+var FV_USER_GRP = gds_session.GetColumn(0, "userGrp");		//사용자그룹
+var FV_ORG_AREA = gds_session.GetColumn(0, "orgAreaId");	//근무지코드
+var FV_POS_AGENCY_ID = gds_session.GetColumn(0,"posAgencyId");         	// 소속 대리점ID
+var FV_POS_AGENCY_NM = gds_session.GetColumn(0,"posAgencyNm");       	// 소속 대리점명
+var FV_POS_AGENCY_UKEY_ID = gds_session.GetColumn(0,"posAgencyUkeyId"); // 소속 대리점UKEY ID
+
+function SACINQ00400_OnLoadCompleted(obj)
+{
+    var tempStr = "";
+/*
+    for(var i = 0; i < gds_session.colcount ; i++) {
+        tempStr += "[";
+        tempStr += gds_session.GetColID(i);
+        tempStr += "]";
+        tempStr += "[";
+        tempStr += gds_session.GetColumn(0, gds_session.GetColID(i));
+        tempStr += "]";
+        tempStr += "\n";
+    }
+   alert(tempStr);
+*/
+
+//	  http.Sync  = true;
+	f_init();	//폼 초기화
+//    http.Sync  = false;
+}
+
+/*******************************************************************************
+ * @description    : 폼 초기화 
+*******************************************************************************/
+function f_init()
+{
+    div_search.edt_agency.value   = FV_POS_AGENCY_UKEY_ID;
+    div_search.edt_agencyNm.value = FV_POS_AGENCY_NM;
+    div_search.edt_ukey_agency.value = FV_POS_AGENCY_UKEY_ID;
+    div_search.cal_dpst_from_dt.value = today();
+    div_search.cal_dpst_to_dt.value = today();
+
+	return;	
+}
+
+/*******************************************************************************
+ * @description    : 대리점 검색 팝업
+*******************************************************************************/
+function btn_agency_OnClick(obj)
+{
+    sf_clearControls("div_search.edt_dealNm, div_search.edt_dealCd");
+	var sArg  = "org_id="+quote(FV_ORG_ID);  // 필수
+	    sArg += " org_cl="+quote(FV_ORG_CL); 
+	cf_callAgencyPop(sArg, div_search, "edt_agencyNm, edt_agency, edt_ukey_agency", 0);
+}
+
+function div_search_edt_agencyNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+    sf_clearControls("div_search.edt_agency, div_search.edt_ukey_agency");
+
+	if(nChar == 13) {
+        sf_clearControls("div_search.edt_dealNm, div_search.edt_dealCd");
+	    var sArg  = "org_id="+quote(FV_ORG_ID);  // 필수
+            sArg += " org_cl="+quote(FV_ORG_CL); 
+	    cf_callAgencyPop(sArg, div_search, "edt_agencyNm, edt_agency, edt_ukey_agency", 0);
+    }
+}
+
+/*******************************************************************************
+ * @description : 입금처   팝업 
+ ******************************************************************************/
+function btn_dealCo_OnClick(obj)
+{
+    if(div_search.edt_agency.value == "") {
+       alert("대리점을 입력하여 주십시요.");
+    } else {
+        sf_clearControls("div_search.edt_dealCd");
+	    var sArg  = "deal_co_cl1="+quote("A2,A3,B1,B2"); // 필수 - 복수시 A1,A2,A3 형태의 콤바구분자로 설정
+	    	sArg += " pos_agency="+quote(div_search.edt_agency.Text);
+		
+	    cf_callDealPop(sArg, div_search, "edt_dealNm, edt_dealCd");
+    }
+}
+
+function div_search_edt_dealNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13) {
+        if(div_search.edt_agency.value == "") {
+           alert("대리점을 입력하여 주십시요.");
+        } else {
+            sf_clearControls("div_search.edt_dealCd");
+	        var sArg  = "deal_co_cl1="+quote("A2,A3,B1,B2"); // 필수 - 복수시 A1,A2,A3 형태의 콤바구분자로 설정
+	            sArg += " pos_agency="+quote(div_search.edt_agency.Text);
+		
+	        cf_callDealPop(sArg, div_search, "edt_dealNm, edt_dealCd");
+        }
+    }
+}
+
+function btn_search_OnClick()
+{
+    if ( div_search.edt_agency.value == "" ) {
+        alert("대리점을 입력하여 주십시요.");
+        div_search.edt_agency.SetFocus();
+        return;
+    }
+    if ( div_search.cal_dpst_from_dt.value == "" ) {
+        alert("입금일(from)을 입력하여 주십시요.");
+        div_search.cal_dpst_from_dt.SetFocus();
+        return;
+    }
+    if ( div_search.cal_dpst_to_dt.value == "" ) {
+        alert("입금일(to)을 입력하여 주십시요.");
+        div_search.cal_dpst_to_dt.SetFocus();
+        return;
+    }
+
+    cf_setParam(ds_condition, "agency"      , div_search.edt_agency.value);
+	cf_setParam(ds_condition, "dpst_plc"    , div_search.edt_dealCd.value);
+	cf_setParam(ds_condition, "dpst_from_dt", div_search.cal_dpst_from_dt.value);
+	cf_setParam(ds_condition, "dpst_to_dt"  , div_search.cal_dpst_to_dt.value);
+	
+	var sSvcID = "svcList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_dpst_proc_info=ds_dpst_proc_info";
+	var sArg   = "sktst.sac.INQ#getDpstProcInfo";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+
+function f_callBack(sSvcID){
+	return;	
+}
+
+
+function grd_list_OnCelDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+    var sArg;
+    
+    sArg = "agency=" + quote(div_search.edt_agency.Value);
+    sArg += " agencyNm=" + quote(div_search.edt_agencyNm.Text);
+    sArg += " dpst_dt=" + quote(ds_dpst_proc_info.GetColumn(nRow,"dpst_dt"));
+    sArg += " stl_plc=" + quote(ds_dpst_proc_info.GetColumn(nRow,"stl_plc"));
+    sArg += " stl_plc_nm=" + quote(ds_dpst_proc_info.GetColumn(nRow,"stl_plc_nm"));
+    
+    var sResult = dialog("SAC::SACINQ00500.xml", sArg);
+    
+    // if(obj.GetCellValue(nRow,5) != "0") {
+        // sArg  = "agency="+quote(obj.GetCellValue(nRow,8));
+        // sArg += " agencyNm="+quote(obj.GetCellValue(nRow,9));
+        // sArg += " stl_plc="+quote(obj.GetCellValue(nRow,10));
+        // sArg += " stl_plcNm="+quote(obj.GetCellValue(nRow,0));
+        // sArg += " dpst_dt="+quote(obj.GetCellValue(nRow,1));
+	    // cf_openAuthPop("100000422", sArg);
+	}
+}
+
+
+
+
+
+
+
+]]></Script>
+</Window>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 프레임워크 웹 컴포넌트를 정의한다. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+    <bean id="nc.channel.IXmiRequestHandler"
+        class="com.sktst.common.handler.PsXmiHandler">
+        <property name="description" 
+            value="표준 miplatform UI(XMI) 요청 처리기" />
+        <property name="fieldDataSetId"       value="nc_input_fieldDs" />
+        <property name="recordStatusName"     value="nc_rec_status" />
+        <property name="fileDataSetIdPrefix"  value="nc_fileDs" />
+    </bean>  
+    
+    <bean id="nc.channel.web.IXmiApplicationController"
+        class="nexcore.framework.online.channel.core.internal.DefaultApplicationController">
+        <description>
+            <![CDATA[표준 miplatform UI(XMI) 요청에서 사용하는 ApplicationController임]]>
+        </description>
+        <property name="commandViewMapResolver" 
+            ref="nc.channel.web.IXmiCommandViewMapResolver" />
+        <property name="commandProcessor"
+            ref="nc.channel.web.ICommandProcessor" />
+        <property name="responseProcessor" 
+            ref="nc.channel.web.IResponseProcessor">
+        </property>
+
+    </bean>
+    
+    <bean id="nc.channel.XmiView"
+        class="nexcore.framework.online.channel.web.XMIView">
+        <description>
+            <![CDATA[표준 miplatform UI(XMI) View 정보]]>
+        </description>
+        <constructor-arg value="text" />
+        <property name="fieldDataSetId"         value="nc_output_fieldDs" />
+        <property name="pageNo"                 value="nc_pageNo" />
+        <property name="recordCountPerPage"     value="nc_recordCountPerPage" />
+        <property name="totalRecordCount"       value="nc_totalRecordCount" />
+        <property name="trIdVarName"            value="nc_trId" />
+        <property name="startDateVarName"       value="nc_startDate" />
+        <property name="endDateVarName"         value="nc_endDate" />
+        <property name="msgFlagVarName"         value="msg_flag" />
+        <property name="msgIdVarName"           value="msg_messageId" />
+        <property name="msgVarName"             value="msg_message" />
+        <property name="msgIndexVarName"        value="msg_messageIndex" />
+        <property name="serverDateTimeName"     value="nc_serverDateTime" />
+    </bean>
+
+    <bean id="nc.channel.web.IXmiCommandViewMapResolver"
+        class="nexcore.framework.online.channel.core.internal.DefaultCommandViewMapResolver">
+        <description>
+            <![CDATA[표준 miplatform UI(XMI) 요청에서 사용하는 CommandViewMapResolver임]]>
+        </description>
+        <property name="defaultErrorView" ref="nc.channel.XmiView" />
+        <property name="defaultCommandViewMap">
+            <bean class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                <!-- 커맨드 맵의 커맨드 정보 -->
+                <property name="command">
+                    <bean class="nexcore.framework.online.channel.core.command.StdCommand"></bean>
+                </property>
+                <!-- 커맨드 맵의 View 정보 -->
+                <property name="viewMap">
+                    <map>
+                        <entry key="SUCCESS" value-ref="nc.channel.XmiView" />
+                        <entry key="FAIL" value-ref="nc.channel.XmiView" />
+                    </map>
+                </property>
+            </bean>
+        </property>
+        <property name="commandViewMaps">
+            <map>
+        <!--    
+                <entry key="/standard.xmi">
+                    <bean class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                        <property name="command">
+                            <bean class="com.sktst.common.command.PsCommand"></bean>                            
+                        </property>
+                        <property name="viewMap">
+                            <map>
+                                <entry key="SUCCESS" value-ref="nc.channel.XmiView" />
+                                <entry key="FAIL" value-ref="nc.channel.XmiView" />
+                            </map>
+                        </property>
+                    </bean>
+                </entry>
+        -->                
+                <!--  Login -->
+                <entry key="/login.xmi">
+                    <bean class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                        <property name="command">
+                            <bean class="com.sktst.common.command.PsLoginCommand">
+                                <property name="keys">
+                                    <props>
+                                        <prop key="id">id</prop>
+                                        <prop key="password">password</prop>
+                                    </props>
+                                </property>
+                            </bean>                            
+                        </property>
+                        <property name="viewMap">
+                            <map>
+                                <entry key="SUCCESS" value-ref="nc.channel.XmiView" />
+                                <entry key="FAIL" value-ref="nc.channel.XmiView" />
+                            </map>
+                        </property>
+                    </bean>
+                </entry>
+                
+                <!-- Logout -->
+                <entry key="/logout.xmi">
+                    <bean class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                        <property name="command">
+                            <bean class="com.sktst.common.command.PsLogoutCommand"></bean>
+                        </property>
+                        <property name="viewMap">
+                            <map>
+                                <entry key="SUCCESS" value-ref="nc.channel.XmiView" />
+                            </map>
+                        </property>
+                    </bean>
+                </entry>
+
+                <!-- File Download -->
+                <entry key="/download.xmi">
+                    <bean class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                        <property name="command">
+                            <bean class="com.sktst.common.command.PsDownloadCommand"></bean>
+                        </property>
+                        <property name="viewMap">
+                            <map>
+                                <entry key="SUCCESS">
+                                    <bean class="nexcore.framework.online.channel.web.HttpNullView">
+                                        <constructor-arg value="" />
+                                    </bean>
+                                </entry>
+                                <entry key="FAIL" value-ref="nc.channel.XmiView" />
+                            </map>
+                        </property>
+                    </bean>
+                </entry>
+                <!-- Portal Login -->
+                <entry key="/portal_login.xmi">
+                    <bean class="nexcore.framework.online.channel.core.DefaultCommandViewMap">
+                        <property name="command">
+                            <bean class="com.sktst.common.command.PsPortalLoginCommand"></bean>
+                        </property>
+                        <property name="viewMap">
+                            <map>
+                                <entry key="SUCCESS" value-ref="nc.channel.XmiView" />
+                                <entry key="FAIL" value-ref="nc.channel.XmiView" />
+                            </map>
+                        </property>
+                    </bean>
+                </entry>
+            </map>
+        </property>        
+    </bean>     
+    
+</beans>

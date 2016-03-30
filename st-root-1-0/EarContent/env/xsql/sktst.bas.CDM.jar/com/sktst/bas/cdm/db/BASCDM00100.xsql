@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASCDM00100">
+	<select id="getCommonCodeList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*BASCDM00100_공통코드검색_조민지_조민지  */ 
+		comm_cd_id
+		,comm_cd_nm
+FROM	tbas_comm_cd_lst
+WHERE 	del_yn = 'N'
+AND     1=1
+]]><isEqual prepend="AND" property="condition" compareValue="1">
+<![CDATA[comm_cd_id like '%' || #value# || '%'
+
+]]></isEqual>
+<![CDATA[
+]]><isEqual prepend="AND" property="condition" compareValue="2">
+<![CDATA[comm_cd_nm like '%' || #value# || '%'
+
+]]></isEqual>
+<![CDATA[ORDER BY
+	comm_cd_id]]>
+	</select>
+	<select id="getCommonCodeListByID" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT            /* BASCDM00100_공통코드검색_조민지_최승호  */
+comm_cd_id,       /* 공통 코드 ID */
+comm_cd_val,      /* 공통 코드 값 */
+comm_cd_val_nm,   /* 공통 코드 명칭 */
+sub_comm_cd_id    /* 공통 코드 하위 값 */
+FROM tbas_comm_cd_dtl
+WHERE comm_cd_id IN (  #comm_cd_id0#, #comm_cd_id1#, #comm_cd_id2#
+			 , #comm_cd_id3#, #comm_cd_id4#, #comm_cd_id5#
+			 , #comm_cd_id6#, #comm_cd_id7#, #comm_cd_id8#	)
+AND eff_sta_dt <= to_char(sysdate,'yyyymmdd')	
+AND eff_end_dt >= to_char(sysdate,'yyyymmdd')			 
+ORDER BY prt_seq			 ]]>
+	</select>
+	<select id="getStlPlcListByID" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT            /* BASCDM00100_판매처검색_전현주_전현주  */
+	  'A' as flag
+      ,#org_area# as deal_co_cd
+      , fbas_get_deal_nm(#org_area#, '99991231') as deal_co_nm
+FROM dual
+UNION ALL
+SELECT 'B' as flag
+      , a.deal_co_cd
+      , a.deal_co_nm
+FROM tbas_deal_co_mgmt a
+    , tbas_deal_co_mgmt b
+WHERE a.stl_plc = b.stl_plc
+AND   a.deal_co_cd != b.deal_co_cd
+AND   b.del_yn = 'N'
+AND   b.eff_end_dtm = '99991231235959'
+AND   a.del_yn = 'N'
+AND   a.eff_end_dtm = '99991231235959'
+AND   b.deal_co_cd = #org_area#
+order by flag, deal_co_nm asc ]]>
+	</select>
+</sqlMap>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Nexcore Build Common.jar - example-common.jar" default="all" basedir=".">
+
+	<property environment="env" />
+
+	<!-- ################################################################## -->
+	<!-- ## [Nexbuild] Auto-generated property ############################ -->
+	<!-- ################################################################## -->
+	<property name="project.name" value="st-app-1-0" />
+
+	<!-- default business common.jar name is example-common.jar -->
+	<property name="common.jar.name" value="st-common" />
+
+	<!-- ################################################################## -->
+	<!-- ## [NEXCORE_HOME] common build property ########################## -->
+	<!-- ################################################################## -->
+	<!-- custombuild build.properties -->
+	<property file="${NEXCORE_HOME_ANT}/script/build/${project.name}.build.properties" />
+	<!-- default build.properties -->
+	<property file="${NEXCORE_HOME_ANT}/script/build/nexcore.build.properties" />
+	<!-- custombuild for CI tool (Continuous Integration : quickBuild etc) -->
+	<property file="${ant.home}/${project.name}.build.properties" />
+	<!-- default for CI tool (Continuous Integration : quickBuild etc) -->
+	<property file="${ant.home}/nexcore.build.properties" />
+	<target name="check.nexcore.property" unless="NEXCORE_HOME">
+		<echo message=" find ANT_HOME ..." />
+		<available file="${ant.home}/nexcore.build.properties" property="check.property.ant" />
+		<antcall target="check.nexcore.property.anthome" />
+	</target>
+	<target name="check.nexcore.property.anthome" unless="check.property.ant">
+		<echo message="ERROR: " />
+		<echo message="      define property 'NEXCORE_HOME_ANT' first " />
+		<echo message="      in your Eclipse Preferences [Ant-Runtime-properties]" />
+		<echo message="      before depoying" />
+		<fail message="ERROR: Ant runtime property 에 'NEXCORE_HOME_ANT'을 등록하세요. " />
+	</target>
+
+    <property name="target.commonlib" value="${jeus.ear.lib}" />
+    <property name="target.commonclasses" value="${jeus.ear.path}/APP-INF/classes" />
+    
+	<!-- ################################################################## -->
+	<!-- ## [ CLASSPATH Property ] ############################################# -->
+	<!-- ################################################################## -->
+	<!-- EX) ${NEXCORE_HOME}/lib/j2ee.jar;${wls.ear.lib}/xxxxxxxxxx.jar; -->
+	<property name="add.classpath" value="" />
+
+	<!-- ################################################################## -->
+	<!-- ## default Deployment ############################################ -->
+	<!-- ################################################################## -->
+	<target name="all" depends="check.nexcore.property">
+		<antcall target="all-common.jar" />
+	</target>
+
+	<!-- ################################################################## -->
+	<!-- ## biz-common.jar Deployment ##################################### -->
+	<!-- ## BIZ 공통을 위한 프레임공통 모듈 생성     ################################ -->
+	<!-- ################################################################## -->
+	<target name="all-common.jar" depends="check.nexcore.property">
+
+		<property name="common.jar.working" value="${NEXCORE_HOME}/build/${common.jar.name}" />
+		<property name="common.jar.destfile" value="${common.jar.working}.jar" />
+
+		<!-- delete.common.jar -->
+		<delete dir="${common.jar.working}" failonerror="false" />
+		<delete file="${common.jar.destfile}" failonerror="false" />
+
+		<!-- mkdir.common.jar -->
+		<mkdir dir="${common.jar.working}" />
+
+		<!-- compile.common.jar TODO srcdir-->
+		<javac srcdir="." destdir="${common.jar.working}" includes="**/*.java" excludes="**/*Test.java" encoding="utf-8" debug="true">
+			<classpath>
+				<pathelement path="${NEXCORE_CLASSPATH};${add.classpath}" />
+			    <fileset dir="${target.commonlib}" includes="*.jar" />
+		 	    <fileset dir="${target.commonclasses}" includes="**/*.class"/>
+			</classpath>
+		</javac>
+
+		<!-- copy.src -->
+		<copy todir="${common.jar.working}" verbose="true" preservelastmodified="true">
+			<fileset dir=".">
+				<exclude name="**/*.java" />
+				<exclude name="**/*.svn" />
+				<include name="**/*.xsql" />
+			</fileset>
+		</copy>	
+	    	    
+		<!-- make.common.jar -->
+		<jar destfile="${common.jar.destfile}" duplicate="add">
+			<fileset dir="${common.jar.working}">
+			</fileset>
+		</jar>
+
+		<!-- deploy.common.jar -->
+		<copy todir="${jeus.ear.lib}" overwrite="true" preservelastmodified="true" file="${common.jar.destfile}" />
+
+	    <!-- cleanup -->
+	    <delete dir="${common.jar.working}" failonerror="false" />
+		<delete file="${common.jar.destfile}" failonerror="false" />
+	    
+	</target>
+
+</project>

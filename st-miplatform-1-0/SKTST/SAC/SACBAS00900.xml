@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="363" Id="SACBAS00900" Left="8" OnLoadCompleted="SACBAS00900_OnLoadCompleted" PidAttrib="7" Title="계정코드조회" Top="8" Ver="1.0" Width="330" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_acc_cd_lst">
+				<Contents>
+					<colinfo id="chk" size="256" summ="default" type="STRING"/>
+					<colinfo id="acc_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="acc_cd_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="acc_cd_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_acc_cd_lst" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="320" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="233" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellClick="grd_list_OnCellClick" OnCellDBLClick="grd_list_OnCellDblClick" Right="320" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="87" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="310">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="0"/>
+						<col width="30"/>
+						<col width="96"/>
+						<col width="179"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="선택"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="계정코드"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="계정코드명"/>
+					</head>
+					<body>
+						<cell col="0" display="text"/>
+						<cell align="center" col="1" colid="chk" display="checkbox" edit="checkbox"/>
+						<cell align="left" col="2" colid="acc_cd" display="text"/>
+						<cell align="left" col="3" colid="acc_cd_nm" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="검색결과" Top="60" Width="192"></Image>
+		<Div Border="Raised" Height="40" Id="Div1" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="310">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="236" LeftMargin="5" OnClick="Div1_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="7" Width="60"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_search" Left="93" LeftMargin="2" OnKeyDown="Div1_edt_search_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" UpperOnly="TRUE" Width="135"></Edit>
+				<Static Align="Right" Height="20" Id="Static6" Left="5" Style="sty_lb_Search" TabOrder="3" Text="계정코드명" Top="7" VAlign="Middle" Width="79"></Static>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button0" ImageID="btn_c_2" Left="103" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="4" Text="확인" Top="328" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button1" ImageID="btn_d_2" Left="167" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="5" Text="닫기" Top="328" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 전역변수선언
+//==============================================================================
+var FV_LOGIN_ID = gds_session.GetColumn(0, "loginId");		//사용자계정
+var FV_ORG_ID = gds_session.GetColumn(0, "orgId");			//조직코드
+var FV_ORG_CL = gds_session.GetColumn(0, "orgCl");			//조직구분
+var FV_SUP_ORG_ID = gds_session.GetColumn(0, "supOrgId");	//상위조직코드
+var FV_USER_GRP = gds_session.GetColumn(0, "userGrp");		//사용자그룹
+var FV_ORG_AREA = gds_session.GetColumn(0, "orgAreaId");	//근무지코드
+var FV_POS_AGENCY_ID = gds_session.GetColumn(0,"posAgencyId");         	// 소속 대리점ID
+var FV_POS_AGENCY_NM = gds_session.GetColumn(0,"posAgencyNm");       	// 소속 대리점명
+var FV_POS_AGENCY_UKEY_ID = gds_session.GetColumn(0,"posAgencyUkeyId"); // 소속 대리점UKEY ID
+
+function SACBAS00900_OnLoadCompleted(obj)
+{
+	Div1.edt_search.Text = param1;
+	Div1_btn_search_OnClick();
+}
+
+function Div1_btn_search_OnClick(obj)
+{
+	cf_setParam(ds_condition, "acc_cd_nm", Div1.edt_search.Text);
+
+
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_acc_cd_lst=ds_acc_cd_lst";
+	var sArg = "sktst.sac.BAS#getGLAcc";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+function f_callBack(sSvcID)
+{
+	if(ds_acc_cd_lst.GetRowCount() = 1){
+		ds_acc_cd_lst.SetColumn(0,"chk","1");
+		btn_confirm_OnClick();
+	}
+
+	
+}
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+function btn_confirm_OnClick(obj)
+{
+	//ds_save.SetColumn(0,"gl_acc",ds_acc_cd_lst.GetColumn(ds_acc_cd_lst.currow,"acc_cd"));
+	//ds_save.SetColumn(0,"gl_acc_nm",ds_acc_cd_lst.GetColumn(ds_acc_cd_lst.currow,"acc_cd_nm"));
+	parent.div_dtl_info.edt_gl_acc.Value = ds_acc_cd_lst.GetColumn(ds_acc_cd_lst.currow,"acc_cd_nm");
+	parent.div_dtl_info.edt_gl_acc_nm.Value = ds_acc_cd_lst.GetColumn(ds_acc_cd_lst.currow,"acc_cd");
+	this.close(1);
+}
+
+function grd_list_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+
+	for(var i=0; i<ds_acc_cd_lst.rowcount; i++)
+    {
+		ds_acc_cd_lst.SetColumn(i, "chk", "0");
+    }
+    
+	ds_acc_cd_lst.SetColumn(nRow, "chk", "1");	
+}
+
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	btn_confirm_OnClick();
+}
+
+
+
+function Div1_edt_search_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		Div1_btn_search_OnClick();
+	}
+}
+]]></Script>
+</Window>

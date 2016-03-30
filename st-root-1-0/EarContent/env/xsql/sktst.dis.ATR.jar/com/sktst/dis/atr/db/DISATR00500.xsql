@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="DISATR00500">
+	<select id="selectOutFixRegOrgList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR00500_selectOutFixRegList_이문규 */
+       '' act_flag,
+       b.prod_cl,
+       b.mfact_id,
+       fbas_get_deal_nm(b.mfact_id, d.out_schd_dt) mfact_nm,
+       b.bar_cd_typ,
+       a.out_mgmt_no,
+       a.prod_cd,
+       b.prod_nm,
+       a.color_cd,
+       TO_CHAR(a.mov_seq) mov_seq,
+       a.ser_num,
+       TO_CHAR(NVL(a.mov_out_qty, 0)) mov_out_qty,
+       a.out_fix_yn,
+       TO_CHAR(NVL(a.out_fix_qty, 0)) out_fix_qty,
+       a.out_fix_dt,
+       a.in_fix_yn,
+       a.bad_yn,
+       a.dis_st,
+       d.out_schd_dt,
+       d.out_cl,
+       d.rmks,
+       d.out_plc_id,
+       d.in_plc_id,
+       Decode(a.out_fix_yn, 'Y', '1', '0') row_flg,
+       e.upd_cnt
+FROM   tdis_mov_out_dtl_d a,
+       tbas_prod_mgmt b,
+       tdis_out_m d,
+       tdis_dis e
+WHERE  a.out_mgmt_no > ' '
+AND    a.out_mgmt_no = #out_mgmt_no#
+AND    a.del_yn = 'N'
+AND    a.prod_cd = b.prod_cd(+)
+AND    b.del_yn(+) = 'N'
+AND    a.out_mgmt_no = d.out_mgmt_no(+)
+AND    a.prod_cd = e.prod_cd
+AND    a.color_cd = e.color_cd
+AND    a.ser_num = e.ser_num
+UNION ALL
+SELECT 
+       '' act_flag,
+       b.prod_cl,
+       b.mfact_id,
+       fbas_get_deal_nm(b.mfact_id, d.out_schd_dt) mfact_nm,
+       b.bar_cd_typ,
+       a.out_mgmt_no,
+       a.prod_cd,
+       b.prod_nm,
+       a.color_cd,
+       TO_CHAR(a.mov_seq) mov_seq,
+       a.ser_num,
+       TO_CHAR(NVL(a.mov_out_qty, 0)) mov_out_qty,
+       a.out_fix_yn,
+       TO_CHAR(NVL(a.out_fix_qty, 0)) out_fix_qty,
+       a.out_fix_dt,
+       a.in_fix_yn,
+       a.bad_yn,
+       a.dis_st,
+       d.out_schd_dt,
+       d.out_cl,
+       d.rmks,
+       d.out_plc_id,
+       d.in_plc_id,
+       Decode(a.out_fix_yn, 'Y', '1', '0') row_flg,
+       e.upd_cnt
+FROM   tdis_mov_out_dtl_d a,
+       tbas_prod_mgmt b,
+       tdis_out_m d,
+       tdis_etc_dis e
+WHERE  a.out_mgmt_no > ' '
+AND    a.out_mgmt_no = #out_mgmt_no#
+AND    a.del_yn = 'N'
+AND    a.prod_cd = b.prod_cd(+)
+AND    b.del_yn(+) = 'N'
+AND    a.out_mgmt_no = d.out_mgmt_no(+)
+AND    a.prod_cd = e.prod_cd
+AND    a.color_cd = e.color_cd
+AND    e.hld_plc_id = #out_plc_id#]]>
+	</select>
+	<select id="selectProdMapInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR00500_selectProdMapInfo_이문규 */
+       prod_map_cd,
+       prod_map_cl,
+       prod_cd,
+       color_cd
+FROM   tbas_prod_info_map_mgmt
+WHERE  prod_map_cd = #prod_map_cd#]]>
+	</select>
+</sqlMap>

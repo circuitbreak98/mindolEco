@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="512" Id="BASPDM00610" Left="8" OnLoadCompleted="BASPDM00610_OnLoadCompleted" PidAttrib="7" Title="상품고정가격" Top="8" Ver="1.0" Width="560" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_prod_fix_price">
+				<Contents>
+					<colinfo id="GRADE" size="256" summ="default" type="STRING"/>
+					<colinfo id="GRADE_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="GRADE_GB" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRICE" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="PROD_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="GRADE_GB" size="256" summ="default" type="STRING"/>
+					<record>
+						<GRADE_GB></GRADE_GB>
+						<PROD_CD></PROD_CD>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="9" LeftMargin="15" Style="sty_img_tit" TabOrder="1" Text="상품&#32;고정&#32;가격&#32;등록" Top="57" Width="192"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_prod_fix_price" BkColor2="user36" BoldHead="true" Border="Flat" Bottom="472" CellMoving="TRUE" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="382" Id="grd_grade" InputPanel="FALSE" Left="9" LineColor="user33" MinWidth="100" MultiSelect="TRUE" Right="544" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="FALSE" Top="90" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="535">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="32"/>
+						<col width="300"/>
+						<col width="0"/>
+						<col width="0"/>
+						<col width="0"/>
+						<col width="161"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="No" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="등급" Valign="Center"/>
+						<cell col="2" display="text" text="등급" Valign="Center"/>
+						<cell col="3" display="text" text="등급구분" Valign="Center"/>
+						<cell col="4" display="text" text="SEQ" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="금액" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell col="1" colid="GRADE_NM" display="text"/>
+						<cell col="2" colid="GRADE" display="text"/>
+						<cell col="3" colid="GRADE_GB" display="text"/>
+						<cell col="4" colid="SEQ" display="text"/>
+						<cell col="5" colid="PRICE" display="number" edit="number"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Border="Raised" Height="40" Id="div_search" Left="9" Style="sty_div_search" TabOrder="3" Text="질의내용" Top="10" Width="539">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="6" Style="sty_lb_Search" TabOrder="1" Text="상품" Top="7" VAlign="Middle" Width="76"></Static>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="PROD_CD" Enable="FALSE" Height="20" Id="prod_cd" Left="92" MaxLength="10" Style="sty_ipt_form" TabOrder="2" Top="7" UpperOnly="TRUE" Width="103"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="prod_nm" Left="196" MaxLength="10" Style="sty_ipt_form" TabOrder="3" Top="7" UpperOnly="TRUE" Width="199"></Edit>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="485" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="5" Text="닫기" Top="479" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="422" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="4" Text="저장" Top="479" Visible="FALSE" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : BASPDM00610
+* 업무명      : 기준정보- 상품고정가격등록
+* 프로그램명  : 영업일수관리 
+--------------------------------------------------------------------------------
+* 작성자      : 전미량 
+* 작성일      : 2011.09.15
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_POS_AGENCY_ID;		// 대리점 코드
+var FV_POS_AGENCY_UKEY_ID;	// 대리점 UKey 코드
+var FV_POS_AGENCY_NM;		// 대리점명
+var FV_CLOSE_DT;
+
+function BASPDM00610_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	div_search.prod_cd.Text = p_prod_cd;
+	div_search.prod_nm.Text = p_prod_nm;
+	
+	ds_condition.SetColumn(0,"GRADE_GB",p_grade_gb);
+	
+	var sSvcID = "getProdFixPrice";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_prod_fix_price=ds_prod_fix_price";
+	var sArg = "sktst.bas.PDM#getProdFixPrice";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	
+}
+
+function btn_close_OnClick(obj)
+{
+	Close();
+}
+
+function btn_save_OnClick()
+{
+	var sSvcID = "saveProdFixPrice";
+	var sInDs = "nc_input_fieldDs=ds_condition ds_prod_fix_price=ds_prod_fix_price:u";
+	var sOutDs = "";
+	var sArg = "sktst.bas.PDM#saveProdFixPrice";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "saveProdFixPrice")
+	{
+        alert("저장되었습니다.");
+        Close();
+	}
+}
+]]></Script>
+</Window>

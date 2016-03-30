@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08400">
+	<select id="getDealCoCd" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select  /* SACERP08400_getDealCoCd_직영점 U.Key 정보 찾기 */
+                DEAL_CO_CD
+              , DEAL_CO_NM
+              , UKEY_AGENCY_CD
+              , UKEY_SUB_CD
+              , DEAL_END_YN
+              , DEAL_CO_CL1
+              , DEAL_CO_CL2
+              , #TRAN_DT#  as TRAN_DT
+           FROM TBAS_DEAL_CO_MGMT TDCM
+          WHERE DEAL_CO_CL1 = 'A2'
+            AND DEL_YN      = 'N'
+            AND DEAL_END_YN = 'N'
+            AND UKEY_SUB_CD IS NOT NULL
+            AND hseq_no   = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                     hseq_no
+                                FROM tbas_deal_co_mgmt
+                               WHERE deal_co_cd  = TDCM.deal_co_cd 
+                                 AND rownum      = 1
+                            )
+	]]>
+	</select>
+  <insert id="insertTsacErpCostIf" parameterClass="hmap">
+  <![CDATA[
+    INSERT INTO TSAC_ERP_COST_IF (  /* SACERP08400_insertTsacErpCostIf_ERP 비용 IF 저장_이강수 */
+           TRAN_DT
+         , DEAL_CO_CD
+         , COST_SEQ
+         , ZGSBER
+         , ZGCODE
+         , BUDAT
+         , COST_CL
+         , COST_AMT
+         , INS_DTM
+         , INS_USER_ID
+         , MOD_DTM
+         , MOD_USER_ID
+    ) VALUES (
+           #TRAN_DT#
+         , #DEAL_CO_CD#
+         , (SELECT NVL(MAX(COST_SEQ), 0) + 1
+              FROM TSAC_ERP_COST_IF
+             WHERE TRAN_DT    = #TRAN_DT#
+               AND DEAL_CO_CD = #DEAL_CO_CD#)
+         , #ZGSBER#
+         , #ZGCODE#
+         , #BUDAT#
+         , #COST_CL#
+         , #COST_AMT#
+         , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+         , #USER_ID#
+         , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+         , #USER_ID#
+      )
+  ]]>
+  </insert>
+
+  <delete id="deleteTsacErpCostIf" parameterClass="map">
+  <![CDATA[
+    DELETE /* SACERP08100_deleteTsacErpCostIf_ERP 비용 IF 삭제_이강수 */
+      FROM  TSAC_ERP_COST_IF
+     WHERE  TRAN_DT      = #TRAN_DT#
+       AND  DEAL_CO_CD   = #DEAL_CO_CD#
+  ]]>
+  </delete>	
+</sqlMap>

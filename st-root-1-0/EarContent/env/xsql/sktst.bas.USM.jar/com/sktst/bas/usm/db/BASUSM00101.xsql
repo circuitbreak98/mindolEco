@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://150.2.236.145/sql-map-2.dtd">
+<sqlMap namespace="BASUSM00101">
+	<select id="getUserCnv" resultClass="hmap" fetchSize="50" ><![CDATA[select * from
+(
+		SELECT 
+         a.biz_jm_num
+       , ( case when d.org_nm = '성장센터' or d.org_nm = '성장채널팀' THEN '1048620016' ELSE b.biz_num END ) as biz_num
+       , ( CASE WHEN a.user_grp = 'D14' THEN c.ukey_channel_cd
+                ELSE ( case when (d.org_nm in ('성장센터' , '성장채널팀') and a.pos_agency is null) THEN 'D14908'
+                            else b.ukey_agency_cd END ) END) as ORG_ID
+       , ( CASE WHEN a.user_grp = 'D14' THEN c.deal_co_nm 
+                ELSE ( case when d.org_nm = 'PS본사' or d.org_nm = '마케팅본부' or d.org_nm = '영업기획팀' THEN '유통경쟁력TF'
+                            else d.org_nm END ) END) as ORG_NM
+       , a.user_nm
+       , a.email1||'@'||a.email2 as email
+       , ( CASE WHEN a.user_grp = 'D14' THEN c.zip_cd1||'-'||c.zip_cd2
+                ELSE ( case when (d.org_nm in ('성장센터' , '성장채널팀') and a.pos_agency is null) THEN '100-411'
+                            else b.zip_cd1||'-'||b.zip_cd2 END ) END) as zip_cd
+       , ( CASE WHEN a.user_grp = 'D14' THEN c.addr||' '||c.dtl_addr
+                ELSE ( case when (d.org_nm in ('성장센터' , '성장채널팀') and a.pos_agency is null) THEN '서울 중구 광희동1가 237 광희별관 12F'
+                            else b.addr||' '||b.dtl_addr END ) END) as addr
+       , a.mbl_phon
+       , a.wphon
+       , a.biz_jm_num as m_biz_jm_num
+       , ( CASE WHEN a.user_grp = 'D14' THEN c.ukey_agency_cd ELSE '' END) as m_agency_cd
+       , ( CASE WHEN a.user_grp = 'D14' THEN c.ukey_channel_cd 
+                ELSE ( case when (d.org_nm = '성장센터' or d.org_nm = '성장채널팀') and a.pos_agency is null THEN 'D14908'
+                            when d.org_nm = 'PS본사' or d.org_nm = '마케팅본부' or d.org_nm = '영업기획팀' THEN '유통경쟁력TF'
+                            else b.ukey_agency_cd END ) END) as m_org_id
+       , a.user_id as m_user_id
+       , a.user_grp as m_user_grp
+       , a.pwd as spwd
+       , a.user_cd
+FROM tbas_user_mgmt a
+   , (select *
+        from tbas_deal_co_mgmt a
+       where del_yn = 'N'
+         and hseq_no = (select max(hseq_no)
+                          from tbas_deal_co_mgmt
+                         where deal_co_cd = a.deal_co_cd
+                           and del_yn = 'N')) b
+   , (select *
+        from tbas_deal_co_mgmt a
+       where del_yn = 'N'
+         and hseq_no = (select max(hseq_no)
+                          from tbas_deal_co_mgmt
+                         where deal_co_cd = a.deal_co_cd
+                           and del_yn = 'N')) c
+   , tbas_org_mgmt     d
+WHERE 1=1
+  AND a.pos_agency = b.deal_co_cd(+)
+  and a.org_area = c.deal_co_cd(+)
+  and a.org_id = d.org_id
+  AND d.del_yn = 'N'
+  AND a.eff_user_yn = 'Y'
+]]><isEqual property="user_grp" compareValue="D14"> 
+<![CDATA[  AND a.user_grp = 'D14'
+]]></isEqual> 
+<![CDATA[]]><isNotEqual property="user_grp" compareValue="D14"> 
+<![CDATA[  AND a.user_grp <> 'D14'
+]]></isNotEqual> 
+<![CDATA[order by a.user_grp
+) z
+]]><isEqual property="hist_yn" compareValue="N"> 
+<![CDATA[where z.m_user_id not in (
+    SELECT
+         a.sys_job_id      as a_portal_user_id
+      /* , c.portal_user_id  as c_portal_user_id*/
+    FROM tbas_user_mgmt c
+       , tbas_portal_mapping_recv a
+    WHERE 1=1
+      AND a.sys_job_id    = c.user_id
+]]><isEqual property="user_grp" compareValue="D14"> 
+<![CDATA[  AND c.user_grp = 'D14'
+]]></isEqual> 
+<![CDATA[]]><isNotEqual property="user_grp" compareValue="D14"> 
+<![CDATA[  AND c.user_grp <> 'D14'
+]]></isNotEqual> 
+<![CDATA[
+)
+]]></isEqual> 
+	</select>
+	<update id="updateUserCnv" ><![CDATA[UPDATE tbas_user_mgmt
+SET pwd = #pwd#
+WHERE 1=1
+AND user_id = #user_id# AND eff_user_yn = 'Y']]>
+	</update>
+</sqlMap>

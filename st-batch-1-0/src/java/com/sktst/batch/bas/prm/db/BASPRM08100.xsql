@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASPRM08100">
+	<insert id="saveDealIf" parameterClass="hmap">
+	<![CDATA[
+        INSERT INTO tbas_agn_add_chg_if
+            (
+                op_dt,
+                op_tm,
+                seq,
+                
+                rec_typ,
+                org_cd,
+                sub_org_cd,
+                org_nm,
+                biz_num,
+                biz_typ_nm,
+                biz_knd_nm,
+                repve_nm,
+                chrgr_nm,
+                zip,
+                addr,
+                mbl_phon_num,
+                phon_num,
+                fax_num,
+                cntr_org_cd,
+                cntr_sub_org_cd,
+                cntr_org_nm,
+                mkt_div_org_cd,
+                mkt_div_sub_org_cd,
+                mkt_div_org_nm,
+                a_name,
+                cl,
+                
+                aply_yn,
+                ins_dtm,
+                mod_dtm
+            )
+            VALUES
+            (
+				TO_CHAR(SYSDATE, 'YYYYMMDD'),
+				#OP_TM#,
+				NVL((SELECT MAX(SEQ)+1 FROM tbas_agn_add_chg_if WHERE op_dt = TO_CHAR(SYSDATE, 'YYYYMMDD') AND op_tm = #OP_TM#), 1),
+				
+				
+				TRIM(SUBSTRB(#REC_STR#, 1, 2)),
+				TRIM(SUBSTRB(#REC_STR#, 3, 6)),
+				TRIM(SUBSTRB(#REC_STR#, 9, 4)),
+				TRIM(SUBSTRB(#REC_STR#, 13, 40)),
+				TRIM(SUBSTRB(#REC_STR#, 53, 10)),
+				TRIM(SUBSTRB(#REC_STR#, 63, 100)),
+				TRIM(SUBSTRB(#REC_STR#, 163, 100)),
+				TRIM(SUBSTRB(#REC_STR#, 263, 40)),
+				TRIM(SUBSTRB(#REC_STR#, 303, 40)),
+				TRIM(SUBSTRB(#REC_STR#, 343, 6)),
+				TRIM(SUBSTRB(#REC_STR#, 349, 100)),
+				TRIM(SUBSTRB(#REC_STR#, 449, 11)),
+				TRIM(SUBSTRB(#REC_STR#, 460, 11)),
+				TRIM(SUBSTRB(#REC_STR#, 471, 11)),
+				TRIM(SUBSTRB(#REC_STR#, 482, 6)),
+				TRIM(SUBSTRB(#REC_STR#, 488, 4)),
+				TRIM(SUBSTRB(#REC_STR#, 492, 40)),
+				TRIM(SUBSTRB(#REC_STR#, 532, 6)),
+				TRIM(SUBSTRB(#REC_STR#, 538, 4)),
+				TRIM(SUBSTRB(#REC_STR#, 542, 40)),
+				TRIM(SUBSTRB(#REC_STR#, 582, 100)),
+				TRIM(SUBSTRB(#REC_STR#, 682, 1)),
+				
+				
+				'N',
+				TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+				TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            )
+	]]>
+	</insert>
+
+</sqlMap>

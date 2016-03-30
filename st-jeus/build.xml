@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<!-- ====================================================================== 
+     2007. 10. 22 오후 1:12:41                                                        
+
+     ant-jeus    
+     jeus build용 템플릿
+                   
+     author : 이상은                                                                
+     ====================================================================== -->
+<project name="ant-jeus" default="default" basedir=".">
+
+    <description>
+            jeus build용 템플릿
+    </description>
+
+    <target name="default" depends="depends" description="jeus build용 템플릿">
+        <copy todir="${jeus.home}/bin" overwrite="true">
+            <fileset dir="${source.dir}/bin">
+                <include name="*" />
+            </fileset>
+            <filterset begintoken="$[" endtoken="]">
+                <filter token="node" value="${node}" />
+                <filtersfile file="${filter}" />
+            </filterset>
+        </copy>
+        
+        <copy todir="${jeus.home}/lib" overwrite="true">
+            <fileset dir="${source.dir}/lib">
+               	<include name="**/*" />
+            </fileset>
+        </copy>
+        
+        <copy todir="${jeus.home}/config" overwrite="true">
+            <fileset dir="${source.dir}">
+                <include name="NODE/**/*" />
+                <include name="vhost.xml" />
+            </fileset>
+            <filterset begintoken="$[" endtoken="]">
+                <filter token="node" value="${node}" />
+                <filter token="jeus.system.classpath" value="${jeus.system.classpath}" />
+                <filtersfile file="${filter}" />
+            </filterset>
+        </copy>
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: depends                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="depends">
+        <property name="source.dir" value="./src" />
+        <echo>build.properties를 읽습니다..</echo>
+        <property file="./build.properties" />
+        <property name="filter" value="./build.properties" />
+        <exec executable="cmd" failifexecutionfails="true" outputproperty="node">
+            <env key="ROOT" value="c:/" />
+            <arg line="/c hostname" />
+        </exec>
+        <exec executable="cscript" failifexecutionfails="true" outputproperty="jeus.system.classpath">
+            <arg line="//nologo getJarsList.vbs ${project.home}/EarContent/APP-INF/lib" />
+        </exec>
+    </target>
+
+</project>

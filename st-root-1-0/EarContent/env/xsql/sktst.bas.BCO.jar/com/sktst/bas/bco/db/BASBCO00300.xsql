@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO00300">
+	<select id="getChrgrList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT	/*+ BASBCO00300_getChrgrList_조민지_심연정 */
+		b.org_nm, 
+        a.user_id,
+		a.user_cd, 
+		a.user_nm, 
+        b.org_id,
+		a.wphon,
+        a.u_key_id,
+        a.pwd,
+        a.mbl_phon,
+        a.user_grp,
+        a.org_area,
+        a.rmks,
+        a.duty,
+        a.email1,
+        a.email2
+FROM 	tbas_user_mgmt a, 
+		tbas_org_mgmt b
+WHERE 	a.user_id >= ' '
+AND 	a.org_id = b.org_id
+AND     a.eff_user_yn = 'Y'
+]]><isNotEmpty prepend="AND" property="org_nm">
+<![CDATA[b.org_nm LIKE '$org_nm$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="user_cd">
+<![CDATA[a.user_cd LIKE '$user_cd$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="user_nm">
+<![CDATA[a.user_nm LIKE '$user_nm$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="org_id">
+<![CDATA[b.org_id LIKE '$org_id$%'
+]]></isNotEmpty>
+	</select>
+</sqlMap>

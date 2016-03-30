@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="134" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="월달력" Top="8" Ver="1.0" Width="154" WorkArea="true">
+		<Div BKColor="white" Border="Raised" Height="134" Id="div_date" Style="sty_div_input" TabOrder="1" Text="Div0" Width="154">
+			<Contents>
+				<Image FillType="STRETCH" Height="21" Id="Image0" ImageID="calendar_head" Left="-3" TabOrder="1" Top="-3" Width="154"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_01" ImageID="calendar_01" Left="4" OnClick="f_setMonth" Static="FALSE" TabOrder="2" Text="1" Top="27" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_02" ImageID="calendar_02" Left="40" OnClick="f_setMonth" Static="FALSE" TabOrder="3" Text="2" Top="27" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_03" ImageID="calendar_03" Left="76" OnClick="f_setMonth" Static="FALSE" TabOrder="4" Text="3" Top="27" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_04" ImageID="calendar_04" Left="112" OnClick="f_setMonth" Static="FALSE" TabOrder="5" Text="4" Top="27" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_08" ImageID="calendar_08" Left="112" OnClick="f_setMonth" Static="FALSE" TabOrder="9" Text="8" Top="62" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_07" ImageID="calendar_07" Left="76" OnClick="f_setMonth" Static="FALSE" TabOrder="8" Text="7" Top="62" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_06" ImageID="calendar_06" Left="40" OnClick="f_setMonth" Static="FALSE" TabOrder="7" Text="6" Top="62" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_05" ImageID="calendar_05" Left="4" OnClick="f_setMonth" Static="FALSE" TabOrder="6" Text="5" Top="62" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_12" ImageID="calendar_12" Left="112" OnClick="f_setMonth" Static="FALSE" TabOrder="13" Text="12" Top="97" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_11" ImageID="calendar_11" Left="76" OnClick="f_setMonth" Static="FALSE" TabOrder="12" Text="11" Top="97" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_10" ImageID="calendar_10" Left="40" OnClick="f_setMonth" Static="FALSE" TabOrder="11" Text="10" Top="97" VAlign="Top" Width="31"></Image>
+				<Image Cursor="HAND" Font="돋움,9,Bold" Height="27" Id="img_09" ImageID="calendar_09" Left="4" OnClick="f_setMonth" Static="FALSE" TabOrder="10" Text="9" Top="97" VAlign="Top" Width="31"></Image>
+				<Static Align="Center" Color="white" Font="돋움,9,Bold" Height="15" Id="stl_year" Left="55" TabOrder="14" Text="2000" Top="2" Width="40"></Static>
+			</Contents>
+		</Div>
+		<Button Cursor="HAND" Height="15" Id="btn_previous" ImageID="calendar_prev" Left="8" OnClick="btn_previous_OnClick" TabOrder="2" Text="Button0" Top="4" Width="10"></Button>
+		<Button Cursor="HAND" Height="15" Id="btn_next" ImageID="calendar_next" Left="136" OnClick="btn_next_OnClick" TabOrder="3" Text="Button0" Top="4" Width="10"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : monthCalendar
+* 업무명      : 공통 
+* 프로그램명  : 월달력
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	var sDate = substr(today(),0,6);
+	var sYear = substr(sDate,0,4);
+	var sMonth = substr(sDate,4,2);
+	div_date.stl_year.Text = sYear;
+	object("div_date.img_"+sMonth).color = "red";
+}
+
+/*******************************************************************************
+ * @description    : 현재 설정된 해의 다음 해
+*******************************************************************************/
+function btn_next_OnClick(obj)
+{
+	var sDate = substr(today(),0,6);
+	var sMonth = substr(sDate,4,2);
+	object("div_date.img_"+sMonth).color = "";
+	var nYear = parseInt(div_date.stl_year.Text);
+	nYear++;
+	div_date.stl_year.Text = nYear;
+	
+	if(substr(sDate,0,4) == nYear)
+	{
+		
+		object("div_date.img_"+sMonth).color = "red";
+	}
+}
+
+/*******************************************************************************
+ * @description    : 현재 설정된 해의 이전 해
+*******************************************************************************/
+function btn_previous_OnClick(obj)
+{
+	var sDate = substr(today(),0,6);
+	var sMonth = substr(sDate,4,2);
+	object("div_date.img_"+sMonth).color = "";
+	var nYear = parseInt(div_date.stl_year.Text);
+	nYear--;
+	div_date.stl_year.Text = nYear;
+
+	if(substr(sDate,0,4) == nYear)
+	{
+		
+		object("div_date.img_"+sMonth).color = "red";
+	}
+}
+
+/*******************************************************************************
+ * @description    : 선택한 월의 폰트 색 설정
+*******************************************************************************/
+function f_setMonth(obj,nX,nY)
+{
+	var sDate = div_date.stl_year.Text+substr(obj.id,4,2);
+	ClosePopup(sDate);
+}]]></Script>
+</Window>

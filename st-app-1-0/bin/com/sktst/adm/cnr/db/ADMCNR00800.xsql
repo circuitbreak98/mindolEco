@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMCNR00800">
+	<select id="getConnectListByUser" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMCNR00800_getConnectListByUser_김연석_전현주 */
+	fbas_get_org_nm(usr.org_id)                       org_nm
+	, fbas_get_deal_nm(usr.pos_agency, TO_CHAR(sysdate, 'yyyyMMdd')) agency_nm
+	, fbas_get_commcdnm_val('ZBAS_C_00250', usr.user_grp) user_grp
+	, usr.user_id
+	, usr.user_nm
+	,mnu.top_prefix_cd
+	,(CASE WHEN mnu.top_prefix_cd = 'DIS'
+		 THEN '재고관리'
+		 WHEN mnu.top_prefix_cd = 'ACC'
+		 THEN '정산관리'
+		 WHEN mnu.top_prefix_cd = 'ADM'
+		 THEN 'ADMIN'
+		 WHEN mnu.top_prefix_cd = 'SAL'
+		 THEN '영업관리'
+		 WHEN mnu.top_prefix_cd = 'POL'
+		 THEN '정책관리'
+		 WHEN mnu.top_prefix_cd = 'SAC'
+		 THEN '판매회계'
+		 WHEN mnu.top_prefix_cd = 'BAS'
+		 THEN '기준정보'
+	 ELSE ''
+	END) as group_nm
+	,mnu.menu_nm
+	,count(log.seq) as cnt
+   FROM   tadm_connect_log log
+        ,      tadm_menu        mnu
+        ,      tbas_user_mgmt   usr
+	WHERE  1=1
+	AND    usr.user_id = log.user_id
+	AND    log.menu_num  = mnu.menu_num
+	AND    log.tran_dt BETWEEN #conn_from# and #conn_to#
+]]><isNotEmpty prepend="and" property="pos_agency">
+<![CDATA[       usr.pos_agency = #pos_agency#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="and" property="user_id">
+<![CDATA[       usr.user_id   = #user_id#
+]]></isNotEmpty>
+<![CDATA[ 
+	GROUP BY usr.org_id  
+	,usr.pos_agency
+	,usr.user_grp  
+	, usr.user_id
+	, usr.user_nm
+	,      mnu.menu_nm
+	,mnu.top_prefix_cd
+	ORDER BY usr.user_grp,usr.user_nm,mnu.top_prefix_cd asc]]>
+	</select>
+</sqlMap>

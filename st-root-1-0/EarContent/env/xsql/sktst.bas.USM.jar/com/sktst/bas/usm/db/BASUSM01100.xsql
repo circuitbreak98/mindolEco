@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM01100">
+	<select id="getMMUserList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM01100_getMMUserList_조민지_이영진" */
+		'0'                                    	CHK
+	    , a.login_id                            LOGIN_ID
+	    , ''                             		UKEY_ID
+	    , a.han_nm                              HAN_NM
+	    , a.pwd                                 PWD
+	    , fbas_get_masking(a.mbl_phon_num, 'T') MBL_PHON
+	    , a.mbl_phon_num                        MBL_PHON_NUM
+	    , a.email_addr                          EMAIL_ADDR
+	    , ''                         			ORG_ID
+	    , b.org_nm                              ORG_NM
+	    , ''                         			REL_ORG_ID
+	    , ''                                    USER_TYPE_CD
+	    , '10'                                  HND_STS_CD
+	    , ''                                    EFF_STA_DT
+	    , ''                                    EFF_END_DT
+	    , ''                                    AUDIT_USER_ID
+	    , ''                                    AUDIT_DTM
+	    , ''                                    TRANS_DTM
+	    , b.org_cd								ORG_CD
+	    , 'D14' 								USER_GRP
+	    , fbas_get_commcdnm_val('ZPTL_C_00300', a.user_id_act_st_cd) USER_ST
+		from tbas_portal_user a
+		    , tbas_portal_org  b
+		where a.post_org_id = b.org_id
+		and b.org_typ_cd like '6%'
+		and a.user_id_act_st_cd in ('UAS_002', 'UAS_004')
+]]>    <isNotEmpty prepend="AND" property="org_cd">
+<![CDATA[        b.org_cd = #org_cd#
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="user_nm">
+<![CDATA[        a.han_nm LIKE '%'||#user_nm#||'%'
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="portal_user_id">
+<![CDATA[        a.login_id = #portal_user_id#
+]]>    </isNotEmpty>
+<![CDATA[ORDER BY 1, 2, 3]]>
+	</select>
+	<update id="saveMappingUser" parameterClass="map" ><![CDATA[UPDATE TBAS_USER_MGMT  /*+ "BASUSM01100_saveMappingUser_김연석_김연석" */
+   set portal_user_id = #LOGIN_ID#
+     , pwd            = #PWD#
+     , mod_dtm        = to_char(sysdate, 'yyyymmddhh24miss')
+     , mod_user_id    = #onlineContext.userInfo.loginId#
+ where user_id        = #USER_ID#]]>
+	</update>
+</sqlMap>

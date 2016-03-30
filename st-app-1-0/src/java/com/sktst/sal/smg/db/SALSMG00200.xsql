@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSMG00200">
+	<select id="getProdDisDetailList" parameterClass="map" resultClass="hmap" fetchSize="1" ><![CDATA[SELECT /*+ SALSMG00100_getProdDisList_안희수 */
+		  a.prod_cd
+		, b.prod_nm
+		, b.grade_gb
+		, FBAS_GET_COMMCDNM_VAL('ZBAS_P_00090',b.grade_gb) grade_gb_nm
+		, b.mktg_dt
+		, b.mfact_id 
+		,(SELECT x.deal_co_nm 
+			FROM tbas_deal_co_mgmt x
+        	WHERE x.deal_co_cd = b.mfact_id 
+        	  AND x.deal_co_cl1 = '20' 
+        	  AND x.DEL_YN='N' 
+        	  AND x.DEAL_END_YN='N' 
+        	  AND rownum = 1) as mfact_nm
+		, b.prefer_cl
+		, FBAS_GET_COMMCDNM_VAL('ZBAS_P_00070',b.prefer_cl) prefer_cl_nm
+		, a.color_cd
+		, FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040',a.color_cd) color_nm
+		, a.ser_num
+		, FBAS_GET_AGENCY_NM(a.hld_plc_id, a.last_inout_dt) as agency_nm		/* 보유팀 */
+		, FBAS_GET_DEAL_NM(a.hld_plc_id, a.last_inout_dt) plc_nm				/* 보유처 */
+		, a.hld_plc_id
+		, a.eqp_st
+		, a.dis_st
+		, a.last_inout_dt
+		, a.last_inout_cl
+		, a.last_inout_dtl_cl
+		, FBAS_GET_COMMCDNM_VAL('ZDIS_C_00050',a.last_inout_dtl_cl) last_inout_dtl_cl_nm
+		, a.dis_amt
+		, a.fix_sale_amt
+		, a.fix_sale_dt
+		, a.rmks
+		, a.old_ser_num
+		, FBAS_GET_COMMCDNM_VAL('ZBAS_C_00440',b.com_mthd) com_mthd_nm
+		FROM tdis_prod_dis a, tbas_prod_mgmt b
+		WHERE 1=1
+		  AND a.prod_cd	 = #prod_cd#
+		  AND a.color_cd = #color_cd#
+		  AND a.ser_num	 = #ser_num#
+		  AND a.prod_cd	= b.prod_cd
+		  AND b.del_yn	= 'N'
+		 ]]>
+	</select>
+</sqlMap>

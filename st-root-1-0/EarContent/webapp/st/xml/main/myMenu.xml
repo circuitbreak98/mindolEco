@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="336" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="마이메뉴" Top="8" Ver="1.0" Width="535" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_menuList"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_myMenu">
+				<Contents>
+					<colinfo id="menu_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="menu_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="user_cd" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<TreeView BindDataset="ds_menuList" Border="Flat" BorderColor="user9" Color="#262626" Expand="FALSE" Font="돋움,9" Height="293" Id="tre_menu" ImageID="left_menu_tree" InnerImageCount="3" Left="6" LevelColumn="treeStep" Style="sty_ipt_form" TabOrder="1" TEXTColumn="menuShotNm" Top="6" Width="242"></TreeView>
+		<Button Cursor="HAND" Height="21" Id="btn_right" ImageID="btn_i_right_b" Left="255" OnClick="btn_right_OnClick" TabOrder="3" Text="Button1" ToolTipText="오른쪽이동" Top="101" Width="19"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_left" ImageID="btn_i_left_b" Left="255" OnClick="btn_left_OnClick" TabOrder="2" Text="Button1" ToolTipText="왼쪽이동" Top="132" Width="19"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="467" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="4" Text="닫기" Top="305" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="405" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="5" Text="저장" Top="305" Width="60"></Button>
+		<List Border="Flat" CodeColumn="menu_num" DataColumn="menu_nm" Height="293" Id="lst_selectedTarget" InnerDataset="ds_myMenu" Left="283" Style="sty_ipt_form" TabOrder="6" Top="6" UserData="공지대상" Width="242"></List>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : myMenu
+* 업무명      : main - 공통
+* 프로그램명  : 마이메뉴
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.04.20
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	ds_menuList.Copy(gds_leftMenu);
+	
+	if(gds_myMenu.GetRowCount() < 1)
+	{
+		f_search();
+	}
+	else
+	{
+		ds_myMenu.Copy(gds_myMenu);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 메뉴 추가 - 이벤트
+*******************************************************************************/
+function btn_right_OnClick(obj)
+{
+	var nCurrentRow = ds_menuList.currow;
+	var sCurrentMenuNum = ds_menuList.GetColumn(nCurrentRow, "menuNum");
+	if(ds_myMenu.FindRow("menu_num", sCurrentMenuNum) != -1)
+	{
+		alert("이미 등록된 메뉴입니다.");
+		return;
+	}
+	
+	if(ds_menuList.GetColumn(nCurrentRow, "menuLvlCd") == "4")
+	{
+		var nRow = ds_myMenu.AddRow();
+		ds_myMenu.SetColumn(nRow, "menu_num", sCurrentMenuNum);
+		ds_myMenu.SetColumn(nRow, "menu_nm", ds_menuList.GetColumn(nCurrentRow, "menuShotNm"));
+	}
+}
+
+/*******************************************************************************
+ * @description    : 메뉴 삭제 - 이벤트
+*******************************************************************************/
+function btn_left_OnClick(obj)
+{
+	var nCurrentRow = lst_selectedTarget.Index;
+	ds_myMenu.DeleteRow(nCurrentRow);
+	//ds_myMenu.row = nCurrentRow-2;
+	lst_selectedTarget.SetSel(nCurrentRow-1, true);
+
+}
+
+/*******************************************************************************
+ * @description    : 메뉴 저장 - 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	var sSvcID = "svcSave";
+	var sInDs = "input=ds_myMenu:U";
+	var sOutDs = "";		
+	var sArg = "sktst.adm.MNU#saveMyMenu";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 메뉴 취득 - 이벤트
+*******************************************************************************/
+function f_search(obj)
+{
+	//cf_setParam(ds_condition, "user_cd",  div_search.cmb_chrgrUser.value);
+	
+	var sSvcID = "svcList";
+	var sInDs = "";
+	var sOutDs = "ds_myMenu=output";		
+	var sArg = "sktst.adm.MNU#getMyMenu";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcSave")
+	{
+		gds_myMenu.Copy(ds_myMenu);
+		this.Close();
+	}
+	
+	if(sSvcID == "svcList")
+	{
+		trace(ds_myMenu.SaveXML());
+	}
+}]]></Script>
+</Window>

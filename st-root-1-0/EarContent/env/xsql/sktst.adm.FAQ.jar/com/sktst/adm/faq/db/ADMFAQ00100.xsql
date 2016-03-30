@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="ADMFAQ00100">
+	<select id="getFaqList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ ADMFAQ00100_getFaqList_원윤성_심연정 */ 
+        '0' chk
+		,faq_num
+        ,que_ctt
+        ,ans_ctt
+        ,str_dt
+        ,end_dt
+        ,del_yn
+        ,upd_cnt
+        ,ins_dtm
+        ,ins_user_id
+        ,mod_dtm
+        ,mod_user_id
+        ,faq_cat
+FROM    tadm_faq
+WHERE   del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="que_ctt">
+<![CDATA[que_ctt LIKE '%'||#que_ctt#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="faq_cat">
+<![CDATA[faq_cat = #faq_cat#
+]]></isNotEmpty>
+<![CDATA[ORDER BY end_dt DESC]]>
+	</select>
+	<insert id="addFaqList" parameterClass="map" ><![CDATA[INSERT INTO /*+ ADMFAQ00100_addFaqList_원윤성_심연정 */ 
+	tadm_faq
+	(
+	faq_num
+    ,que_ctt
+    ,ans_ctt
+    ,str_dt
+    ,end_dt
+    ,del_yn
+    ,upd_cnt
+    ,ins_dtm
+    ,ins_user_id
+    ,mod_dtm
+    ,mod_user_id
+    ,faq_cat
+	)
+VALUES (
+	(SELECT NVL(MAX(faq_num),1)+1 FROM tadm_faq)
+    ,#que_ctt#
+    ,#ans_ctt#
+    ,#str_dt#
+    ,#end_dt#
+    ,'N'
+    ,1
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,#faq_cat#
+	)]]>
+	</insert>
+	<update id="updateFaqList" parameterClass="map" ><![CDATA[UPDATE /*+ ADMFAQ00100_updateFaqList_원윤성_심연정 */  tadm_faq
+    SET    
+    que_ctt = #que_ctt#
+    ,ans_ctt = #ans_ctt#
+    ,str_dt = #str_dt#
+    ,end_dt = #end_dt#
+    ,upd_cnt = upd_cnt+1
+    ,mod_dtm =to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,mod_user_id = #onlineContext.userInfo.loginId#
+    ,faq_cat = #faq_cat#
+WHERE
+    faq_num = #faq_num#
+ ]]>
+	</update>
+	<select id="getFaqByUser" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ ADMFAQ00100_getFaqByUser_원윤성_심연정 */ 
+        '0' chk
+		,faq_num
+        ,que_ctt
+        ,ans_ctt
+        ,str_dt
+        ,end_dt
+        ,del_yn
+        ,upd_cnt
+        ,ins_dtm
+        ,ins_user_id
+        ,mod_dtm
+        ,mod_user_id
+        ,faq_cat
+FROM    tadm_faq
+WHERE   del_yn = 'N'
+AND		to_char(sysdate,'yyyymmdd') >= str_dt
+AND     end_dt >= to_char(sysdate,'yyyymmdd')
+]]><isNotEmpty prepend="AND" property="que_ctt">
+<![CDATA[que_ctt LIKE '%'||#QUE_CTT#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="faq_cat">
+<![CDATA[faq_cat = #faq_cat#
+]]></isNotEmpty>
+<![CDATA[ORDER BY faq_num DESC]]>
+	</select>
+	<update id="deleteFaqList" parameterClass="map" ><![CDATA[UPDATE /*+ ADMFAQ00100_deleteFaqList_원윤성_심연정 */  tadm_faq
+SET    
+    del_yn     = 'Y',
+    upd_cnt = upd_cnt+1,
+    mod_dtm =to_char(sysdate,'YYYYMMDDHH24MISS'),
+    mod_user_id = #onlineContext.userInfo.loginId#
+WHERE
+    faq_num = #faq_num#]]>
+	</update>
+</sqlMap>

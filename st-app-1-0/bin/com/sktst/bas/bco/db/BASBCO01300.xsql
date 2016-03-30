@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO01300">
+	<select id="getAgencyPop" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT                            /*+ BASBCO01300_getAgencyPop_조민지_최승호 */ 
+        b.deal_co_nm,                /* 대리점 이름 */
+        b.deal_co_cd,                /* 대리점 이름 */
+        b.deal_co_cd as uKey_agency_cd,             /* U-KEY 코드 - 대리점 코드 */
+        b.UKEY_AGENCY_CD ||  b.UKEY_SUB_CD AS UKEY_CD,
+        a.org_id,                    /* 조직 아이디 */
+        (SELECT org_nm 
+           FROM tbas_org_mgmt  
+          WHERE org_id = a.org_id 
+            AND rownum = 1) as org_nm,                 /* 조직 이름 */    
+        a.sup_org,                    /* 상위 조직 아이디 */
+        c.org_nm AS sup_org_nm             /* 상위 조직 이름 */    
+  FROM tbas_org_mgmt a, 
+       tbas_deal_co_mgmt b , 
+       tbas_org_mgmt c
+ WHERE a.org_id = b.org_id
+   AND c.org_id = a.sup_org
+   AND a.eff_org_yn = 'Y'    
+   AND a.del_yn <> 'Y'
+   AND b.del_yn <> 'Y'    
+   AND a.org_biz_cl = '1'
+   AND b.deal_co_cl1 = 'A1'
+   AND b.org_id in ( SELECT org_id
+                       FROM TBAS_ORG_MGMT
+                      WHERE DEL_YN = 'N'
+                        AND ORG_CL = '1'
+                      START WITH ORG_ID = #org_id#
+                    CONNECT BY PRIOR ORG_ID = SUP_ORG )
+   AND b.hseq_no = ( SELECT /*+ INDEX_DESC (x xbas_deal_co_mgmt_pk) */
+                            hseq_no
+                       FROM tbas_deal_co_mgmt x
+                      WHERE x.deal_co_cd = b.deal_co_cd
+                        AND x.eff_sta_dtm <= #eff_end_dtm#
+                        AND x.eff_end_dtm >= #eff_str_dtm#
+                        AND x.del_yn = 'N'
+                        AND rownum =1 
+                   )
+   AND b.deal_end_dt > substr(#eff_end_dtm#,0,8)
+
+/*대리점 명 */
+]]><isNotEmpty prepend="AND" property="deal_co_nm">
+<![CDATA[	upper(b.deal_co_nm) LIKE upper('%'||#deal_co_nm#||'%')
+]]></isNotEmpty>
+<![CDATA[
+
+/* ukey_agency_cd 코드 */
+]]><isNotEmpty prepend="AND" property="pos_agency">
+<![CDATA[	upper(b.deal_co_cd) LIKE upper(#pos_agency#||'%') 
+]]></isNotEmpty>
+<![CDATA[
+/* ukey_agency_cd 코드 */
+]]><isNotEmpty prepend="AND" property="ukey_agency_cd">
+<![CDATA[	upper(b.UKEY_AGENCY_CD ||  b.UKEY_SUB_CD) LIKE upper(#ukey_agency_cd#||'%') 
+]]></isNotEmpty>
+<![CDATA[
+/* 부모창 조회 조건 코드 */
+]]><isNotEmpty prepend="AND" property="search_condition">
+<![CDATA[	( upper(b.deal_co_nm) LIKE upper('%'||#search_condition#||'%') OR upper(b.ukey_agency_cd) LIKE upper(#search_condition#||'%') )
+]]></isNotEmpty>
+<![CDATA[
+]]><isNotEmpty prepend="AND" property="sup_org">
+<![CDATA[    a.sup_org = #sup_org#
+]]></isNotEmpty>
+<![CDATA[    
+ORDER BY c.dept_cd, b.deal_co_nm]]>
+	</select>
+	<select id="getAgencyPopForMax" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASBCO01300_getAgencyPopForMax_조민지_최승호 */
+       c.deal_co_nm,                    /* 대리점 이름 */
+       c.deal_co_cd,                    /* 대리점 이름 */
+       c.deal_co_cd as uKey_agency_cd,             /* U-KEY 코드 - 대리점 코드 */
+       c.UKEY_AGENCY_CD ||  c.UKEY_SUB_CD AS UKEY_CD,
+       a.org_id,                        /* 조직 아이디 */
+       (SELECT org_nm FROM tbas_org_mgmt  WHERE org_id = a.org_id AND rownum = 1) as    
+       org_nm,                     /* 조직 이름 */    
+       a.sup_org,                    /* 상위 조직 아이디 */
+       e.org_nm AS sup_org_nm                    /* 상위 조직 이름 */    
+  FROM ( SELECT b.deal_co_cd,                /* 대리점 코드 */
+                max(b.hseq_no) as hseq_no
+           FROM tbas_deal_co_mgmt b 
+          WHERE b.del_yn <> 'Y'    
+            AND b.deal_co_cl1 = 'A1'       
+          GROUP BY b.deal_co_cd ) d,
+       tbas_deal_co_mgmt c,
+       tbas_org_mgmt a, tbas_org_mgmt e
+ WHERE d.deal_co_cd = c.deal_co_cd
+   AND d.hseq_no = c.hseq_no
+   AND e.org_id = a.sup_org
+   AND c.deal_end_dt > to_char(sysdate,'YYYYMMDD')
+   AND a.org_id = c.org_id
+   AND a.eff_org_yn = 'Y'    
+   AND a.del_yn <> 'Y'
+   AND a.org_biz_cl = '1'
+    /*대리점 명 */
+]]>    <isNotEmpty prepend="AND" property="deal_co_nm">
+<![CDATA[        upper(c.deal_co_nm) LIKE upper('%'||#deal_co_nm#||'%')
+]]>    </isNotEmpty>
+<![CDATA[    /* ukey_agency_cd 코드 */
+]]>    <isNotEmpty prepend="AND" property="pos_agency">
+<![CDATA[        upper(c.deal_co_cd) LIKE upper(#pos_agency#||'%')
+]]>    </isNotEmpty>
+<![CDATA[    /* ukey_agency_cd 코드 */
+]]>	<isNotEmpty prepend="AND" property="ukey_agency_cd">
+<![CDATA[	upper(c.UKEY_AGENCY_CD ||  c.UKEY_SUB_CD) LIKE upper(#ukey_agency_cd#||'%') 
+]]>	</isNotEmpty>
+<![CDATA[    /* 부모창 조회 조건 코드 */
+]]>    <isNotEmpty prepend="AND" property="search_condition">
+<![CDATA[        ( upper(c.deal_co_nm) LIKE upper('%'||#search_condition#||'%') 
+        OR upper(c.ukey_agency_cd) LIKE upper(#search_condition#||'%') )
+]]>    </isNotEmpty>        
+<![CDATA[    AND a.org_id in (
+                      SELECT org_id
+                      FROM TBAS_ORG_MGMT
+                      WHERE DEL_YN = 'N'
+                      AND ORG_CL = '1'
+                      START WITH ORG_ID = #org_id#
+                      CONNECT BY PRIOR ORG_ID = SUP_ORG  
+                    )    
+]]><isNotEmpty prepend="AND" property="sup_org">
+<![CDATA[    a.sup_org = #sup_org#
+]]></isNotEmpty>                    
+<![CDATA[ ORDER BY e.dept_cd, c.deal_co_nm]]>
+	</select>
+</sqlMap>

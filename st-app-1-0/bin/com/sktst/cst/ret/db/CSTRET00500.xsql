@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTRET00500">
+	<select id="getTargetList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT '' AS CHK  
+     , FBAS_GET_PROD_NM(PROD_CD) AS PROD_NM  
+     , A.SER_NUM 
+     , DEAL.UKEY_AGENCY_CD 
+     , FBAS_GET_DEAL_NM(A.CON_PLC_CD,A.CON_DT) CON_PLC_NM
+     , FBAS_GET_AGENCY_NM(DEAL.POS_AGENCY,A.CON_DT) AGENCY_NM  
+     , DEAL.UKEY_SUB_CD   
+     , DEAL.ZIP_CD1 ||'-'|| DEAL.ZIP_CD2 AS ZIP_CD 
+     , DEAL.ADDR
+     , DEAL.TEL_NO
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490',PRC_ST) AS PRC_NM
+     , A.CUST_NM
+     , A.PRCHS_MGMT_NO
+     , A.CON_MGMT_NO
+     , A.DATA_GB
+     , A.RTN_RMKS
+  FROM (
+        SELECT PROD_CD
+             , SER_NUM 
+             , CON_PLC_CD
+             , CON_DT
+             , PRCHS_MGMT_NO
+             , '' AS CON_MGMT_NO 
+             , CON_MGMT_NO BARCODE
+             , PRC_ST
+             , CUST_NM
+             , 'P' AS DATA_GB
+             , '' AS RTN_RMKS
+          FROM TCST_PRCHS_MGMT
+         WHERE DEL_YN = 'N' 
+           AND RTN_CL = '1' 
+           AND PRC_ST IN ('24','27','28') 
+           AND SKN_YN = 'N'
+           AND CON_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]>        <isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[           CON_PLC_CD = #CONPLC_CD#
+]]>        </isNotEmpty>	      
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[           PROD_CD = #PROD_CD#
+]]>        </isNotEmpty>   
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="REMIT_YN">   
+<![CDATA[           NVL(REMIT_YN,'N') = #REMIT_YN#
+]]>        </isNotEmpty>
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="SER_NUM">
+<![CDATA[           SER_NUM = #SER_NUM#
+]]>        </isNotEmpty> 
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[           CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]>        </isNotEmpty>
+<![CDATA[        UNION ALL 
+        SELECT PROD_CD
+             , SER_NUM 
+             , CON_PLC_CD
+             , CON_DT
+             , '' AS PRCHS_MGMT_NO 
+             , CON_MGMT_NO
+             , CON_MGMT_NO BARCODE
+             , PRC_ST
+             , CUST_NM
+             , 'C' AS DATA_GB
+             , IN_RMKS AS RTN_RMKS
+          FROM TCST_CONSULT_MGMT
+         WHERE DEL_YN = 'N' 
+           AND PRC_ST = '12'
+           AND SKN_YN = 'N'
+           AND CON_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]>        <isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[           CON_PLC_CD = #CONPLC_CD#
+]]>        </isNotEmpty>	      
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[           PROD_CD = #PROD_CD#
+]]>        </isNotEmpty>   
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="REMIT_YN">   
+<![CDATA[           NVL(REMIT_YN,'N') = #REMIT_YN#
+]]>        </isNotEmpty>
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="SER_NUM">
+<![CDATA[           SER_NUM = #SER_NUM#
+]]>        </isNotEmpty> 
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[           CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]>        </isNotEmpty>
+<![CDATA[          ) A, TBAS_DEAL_CO_MGMT DEAL
+  WHERE A.CON_PLC_CD = DEAL.DEAL_CO_CD
+/*    AND DEAL.EFF_END_DTM = '99991231235959' */
+   AND DEAL.EFF_STA_DTM <= A.CON_DT||'235959'
+   AND DEAL.EFF_END_DTM >= A.CON_DT||'235959'
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[    DEAL.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[    BARCODE = #CON_MGMT_NO#
+]]></isNotEmpty>
+	</select>
+</sqlMap>

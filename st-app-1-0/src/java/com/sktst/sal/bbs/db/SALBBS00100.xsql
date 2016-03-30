@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALBBS00100">
+	<select id="getSaleList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALAES00100_getSaleList-전희경 */
+	   A.SALE_DTM SALE_DTM
+	 , A.SALE_CHG_DTM AS SALE_CHG_DTM
+     , FBAS_GET_DEAL_NM(A.SALE_PLC, A.SALE_DTM) SALE_PLC_NM 
+     , AG.UKEY_AGENCY_CD AS SALE_PLC_UKEY
+     , FBAS_GET_DEAL_NM(A.SALE_PRC_PLC, A.SALE_DTM) AS SALE_PRC_PLC_NM
+     , AG2.UKEY_AGENCY_CD AS SALE_PRC_PLC_UKEY
+	 , '1' AS PROD_CL
+     , (SELECT COUNT(*) 
+          FROM TSAL_EQUIPMENT_SALE TES
+         WHERE TES.GNRL_SALE_NO = A.GNRL_SALE_NO
+	  	   AND TES.GNRL_SALE_CHG_SEQ = A.GNRL_SALE_CHG_SEQ
+	  	   AND TES.DEL_YN = 'N') AS SALE_QTY
+	 , (SELECT SUM(SALE_AMT) 
+          FROM TSAL_EQUIPMENT_SALE TES
+         WHERE TES.GNRL_SALE_NO = A.GNRL_SALE_NO
+           AND TES.GNRL_SALE_CHG_SEQ = A.GNRL_SALE_CHG_SEQ
+           AND TES.DEL_YN = 'N') AS SALE_AMT
+	 , (SELECT SUM(SALE_PRC) 
+          FROM TSAL_EQUIPMENT_SALE TES
+         WHERE TES.GNRL_SALE_NO = A.GNRL_SALE_NO
+           AND TES.GNRL_SALE_CHG_SEQ = A.GNRL_SALE_CHG_SEQ
+           AND TES.DEL_YN = 'N') AS SALE_PRC
+	 , NVL(C.CASH_PAY_AMT,0)      AS CASH_PAY_AMT
+	 , NVL(C.CRDTCRD_PAY_AMT1, 0) AS CRDTCRD_PAY_AMT1
+	 , NVL(C.CRDTCRD_PAY_AMT2, 0) AS CRDTCRD_PAY_AMT2
+	 , NVL(C.CRDTCRD_PAY_AMT1, 0) + NVL(C.CRDTCRD_PAY_AMT2, 0) AS CRDTCRD_PAY_AMT
+	 , NVL(C.CASH_PAY_AMT,0) + NVL(C.CRDTCRD_PAY_AMT1, 0) + NVL(C.CRDTCRD_PAY_AMT2, 0) AS TOT_PAY_AMT
+     , A.GNRL_SALE_NO AS GNRL_SALE_NO
+     , A.GNRL_SALE_CHG_SEQ AS GNRL_SALE_CHG_SEQ
+	 , A.SALE_CHG_HST_CL AS SALE_CHG_HST_CL
+     , A.SALE_PLC AS SALE_PLC
+	 , A.STL_PLC AS STL_PLC
+	 , AG.POS_AGENCY AGENCY_CD
+	 , AG.ORG_ID
+     , FBAS_GET_ORG_NM(AG.ORG_ID) ORG_NM
+     , FBAS_GET_UKEY_AGENCY_NM(AG.UKEY_AGENCY_CD, A.SALE_DTM) UKEY_AGENCY_NM
+	 , FBAS_GET_DEAL_NM(AG.POS_AGENCY, A.SALE_DTM) AGENCY_CD_NM 
+  FROM TSAL_GNRL_SALE A ,
+	   (SELECT GNRL_SALE_NO 
+		      ,SUM(CASH_PAY_AMT) CASH_PAY_AMT
+		      ,SUM(CRDTCRD_PAY_AMT1) CRDTCRD_PAY_AMT1
+		      ,SUM(CRDTCRD_PAY_AMT2) CRDTCRD_PAY_AMT2
+		  FROM TSAL_PAYMENT
+         WHERE GNRL_SALE_NO IN (SELECT GNRL_SALE_NO
+        						  FROM TSAL_GNRL_SALE A1
+                                      ,TBAS_DEAL_CO_MGMT AG1
+                                 WHERE A1.GNRL_SALE_CHG_SEQ = (SELECT MAX(GNRL_SALE_CHG_SEQ)
+								                                 FROM TSAL_GNRL_SALE
+								    							WHERE GNRL_SALE_NO = A1.GNRL_SALE_NO)	
+                                   AND A1.SALE_PLC = AG1.DEAL_CO_CD
+                                   AND AG1.EFF_STA_DTM <= A1.SALE_DTM
+                                   AND AG1.EFF_END_DTM >= A1.SALE_DTM
+                                   AND A1.SALE_DTM BETWEEN #sale_dtm_from# AND #sale_dtm_to#
+                                   AND A1.SALE_TYP_CD IN ('01','03')
+]]>                                   <isNotEqual prepend="AND" property="sale_plc" compareValue="">
+<![CDATA[                                   	A1.SALE_PLC = #sale_plc#  
+]]>                                   </isNotEqual>
+<![CDATA[]]>                                   <isNotEqual prepend="AND" property="agency_cd" compareValue="">
+<![CDATA[                                   	AG1.POS_AGENCY = #agency_cd#      
+]]>                                   </isNotEqual>
+<![CDATA[                                   AND A1.SALE_CHG_HST_CL NOT IN ( '07','08')	
+                                   AND A1.DEL_YN = 'N'
+                                   AND AG1.DEL_YN = 'N')
+		   AND DEL_YN = 'N'
+		GROUP BY GNRL_SALE_NO) C
+      , TBAS_DEAL_CO_MGMT AG
+      , TBAS_DEAL_CO_MGMT AG2
+ WHERE A.GNRL_SALE_NO = C.GNRL_SALE_NO
+   AND A.GNRL_SALE_CHG_SEQ = (SELECT MAX(GNRL_SALE_CHG_SEQ)
+	                            FROM TSAL_GNRL_SALE
+		  					   WHERE GNRL_SALE_NO = A.GNRL_SALE_NO)
+   AND A.SALE_PLC = AG.DEAL_CO_CD
+   AND AG.EFF_STA_DTM <= A.SALE_DTM
+   AND AG.EFF_END_DTM >= A.SALE_DTM
+   AND A.SALE_PRC_PLC = AG2.DEAL_CO_CD (+)
+   AND AG2.EFF_STA_DTM (+) <= A.SALE_DTM
+   AND AG2.EFF_END_DTM (+) >= A.SALE_DTM
+   AND A.DEL_YN = 'N'
+ORDER BY  SALE_DTM DESC, SALE_CHG_DTM DESC]]>
+	</select>
+</sqlMap>

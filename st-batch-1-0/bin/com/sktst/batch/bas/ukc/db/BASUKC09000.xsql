@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUKC09000">
+	<select id="getConsultPrcStList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[SELECT /* BASUKC09000_getConsultPrcStList_상담처리상태_이문규_이문규 */
+       RPAD(TRIM(CON_MGMT_NO),10) 
+    || RPAD(TRIM(PROD_CD),10) 
+    || RPAD(TRIM(SER_NUM),15) 
+    || RPAD(NVL(prc_st,''),2)
+    || RPAD(NVL(OLDEQ_PAY_MTHD_CD,' '),2)
+    || RPAD(NVL(OLDEQ_PAY_DT,' '),8)
+    || RPAD(TRIM(CON_AMT),7)
+    || RPAD(NVL(EQP_ST,' '),2)
+    || RPAD(NVL(ADJ_AMT,0),7) AS msg   
+FROM  (
+        SELECT /* 입금*/
+                a.CON_MGMT_NO 
+               ,a.PROD_CD 
+               ,a.SER_NUM 
+               ,a.prc_st
+               ,a.OLDEQ_PAY_MTHD_CD
+               ,a.OLDEQ_PAY_DT
+               ,a.CON_AMT
+               ,a.EQP_ST
+               ,0 ADJ_AMT                                 
+        FROM    TCST_CONSULT_MGMT a
+        WHERE   'CON' != SUBSTR(a.con_mgmt_no,1,3) 
+        AND     a.del_yn = 'N'
+        AND     a.oldeq_pay_dt is not null
+        AND     substr(a.mod_dtm,0,8) = #IF_CON_DT#
+        and     a.OLDEQ_PAY_SEND_YN IS null
+        AND     a.OLDEQ_PAY_MTHD_CD = '01'
+        UNION ALL  
+        SELECT /* 입고*/
+                a.CON_MGMT_NO 
+               ,a.PROD_CD 
+               ,a.SER_NUM 
+               ,a.prc_st
+               ,a.OLDEQ_PAY_MTHD_CD
+               ,a.OLDEQ_PAY_DT
+               ,a.CON_AMT
+               ,a.EQP_ST
+               ,0 ADJ_AMT                                 
+        FROM    TCST_CONSULT_MGMT a
+        WHERE   'CON' != SUBSTR(a.con_mgmt_no,1,3) 
+        AND     a.del_yn = 'N'
+        AND     a.prc_st in ('11','12')
+        AND     a.in_dt = #IF_CON_DT#
+        UNION ALL                    
+        SELECT  /* 검수*/
+                a.CON_MGMT_NO 
+               ,a.PROD_CD 
+               ,a.SER_NUM 
+               ,b.prc_st
+               ,a.OLDEQ_PAY_MTHD_CD
+               ,a.OLDEQ_PAY_DT
+               ,b.PRCHS_AMT  as CON_AMT
+               ,b.EQP_ST
+               ,b.ADJ_AMT                                 
+         FROM TCST_CONSULT_MGMT a
+             ,TCST_PRCHS_MGMT b
+        WHERE b.prc_st in ('13','14')
+        AND   b.check_dt = #IF_CON_DT#
+        AND   b.del_yn = 'N'
+        AND   b.con_mgmt_no = a.con_mgmt_no
+        AND   'CON' != SUBSTR(a.con_mgmt_no,1,3)
+        AND   'CON' != SUBSTR(b.con_mgmt_no,1,3)
+        AND   a.del_yn = 'N'    
+        UNION all  
+        SELECT  /* 고객확인*/
+                a.CON_MGMT_NO 
+               ,a.PROD_CD 
+               ,a.SER_NUM 
+               ,b.prc_st
+               ,a.OLDEQ_PAY_MTHD_CD
+               ,a.OLDEQ_PAY_DT
+               ,b.PRCHS_AMT  as CON_AMT
+               ,b.EQP_ST
+               ,b.ADJ_AMT                                 
+         FROM TCST_CONSULT_MGMT a
+             ,TCST_PRCHS_MGMT b
+        WHERE b.prc_st = '21'
+        AND   b.cust_dt = #IF_CON_DT#
+        AND   b.del_yn = 'N'
+        AND   b.con_mgmt_no = a.con_mgmt_no
+        AND   'CON' != SUBSTR(a.con_mgmt_no,1,3)
+        AND   'CON' != SUBSTR(b.con_mgmt_no,1,3)
+        AND   a.del_yn = 'N'        
+        UNION all               
+        SELECT  /* 31 송금완료     remit_dt */
+                a.CON_MGMT_NO 
+               ,a.PROD_CD 
+               ,a.SER_NUM 
+               ,b.prc_st
+               ,'01' as OLDEQ_PAY_MTHD_CD
+               ,b.REMIT_DT as OLDEQ_PAY_DT
+               ,b.PRCHS_AMT  as CON_AMT
+               ,b.EQP_ST
+               ,b.ADJ_AMT               
+         FROM TCST_CONSULT_MGMT a
+             ,TCST_PRCHS_MGMT b
+        WHERE b.prc_st = '31'
+        AND   b.remit_dt = #IF_CON_DT#
+        AND   b.del_yn = 'N'
+        AND   b.con_mgmt_no = a.con_mgmt_no
+        AND   'CON' != SUBSTR(a.con_mgmt_no,1,3)
+        AND   'CON' != SUBSTR(b.con_mgmt_no,1,3)
+        AND   a.del_yn = 'N'
+        UNION ALL
+        SELECT  /* 32 요금공제완료 chag_dedt_op_dt */
+                a.CON_MGMT_NO 
+               ,a.PROD_CD 
+               ,a.SER_NUM 
+               ,b.prc_st
+               ,'02' as OLDEQ_PAY_MTHD_CD
+               ,b.CHAG_DEDT_OP_DT as OLDEQ_PAY_DT
+               ,b.PRCHS_AMT as CON_AMT
+               ,b.EQP_ST
+               ,b.ADJ_AMT               
+        FROM  TCST_CONSULT_MGMT a
+             ,TCST_PRCHS_MGMT b
+        WHERE b.prc_st = '32'
+        AND   b.chag_dedt_op_dt = #IF_CON_DT#
+        AND   b.del_yn = 'N'
+        AND   b.con_mgmt_no = a.con_mgmt_no
+        AND   'CON' != SUBSTR(a.con_mgmt_no,1,3)
+        AND   'CON' != SUBSTR(b.con_mgmt_no,1,3)
+        AND   a.del_yn = 'N'   
+        UNION ALL
+        SELECT  /* 33 정책대상완료 pol_op_dt */
+                a.CON_MGMT_NO 
+               ,a.PROD_CD 
+               ,a.SER_NUM 
+               ,b.prc_st
+               ,a.OLDEQ_PAY_MTHD_CD
+               ,a.OLDEQ_PAY_DT
+               ,b.PRCHS_AMT  as CON_AMT
+               ,b.EQP_ST
+               ,b.ADJ_AMT                                 
+        FROM TCST_CONSULT_MGMT a
+             ,TCST_PRCHS_MGMT b
+        WHERE b.prc_st = '33'
+        AND   b.pol_op_dt = #IF_CON_DT#
+        AND   b.del_yn = 'N'
+        AND   b.con_mgmt_no = a.con_mgmt_no
+        AND   'CON' != SUBSTR(a.con_mgmt_no,1,3)
+        AND   'CON' != SUBSTR(b.con_mgmt_no,1,3)
+        AND   a.del_yn = 'N'
+        UNION ALL
+        SELECT  /* 34 강제매입완료 CORN_PRCHS_OP_DT */
+                a.CON_MGMT_NO 
+               ,a.PROD_CD 
+               ,a.SER_NUM 
+               ,b.prc_st
+               ,a.OLDEQ_PAY_MTHD_CD
+               ,a.OLDEQ_PAY_DT
+               ,b.PRCHS_AMT  as CON_AMT
+               ,b.EQP_ST
+               ,b.ADJ_AMT                                 
+        FROM TCST_CONSULT_MGMT a
+             ,TCST_PRCHS_MGMT b
+        WHERE b.prc_st = '34'
+        AND   b.corn_prchs_op_dt = #IF_CON_DT#
+        AND   b.del_yn = 'N'
+        AND   b.con_mgmt_no = a.con_mgmt_no
+        AND   'CON' != SUBSTR(a.con_mgmt_no,1,3)
+        AND   'CON' != SUBSTR(b.con_mgmt_no,1,3)
+        AND   a.del_yn = 'N'
+        UNION ALL   
+        SELECT  /* 35 현장감정매입완료 CORN_PRCHS_OP_DT */
+                a.CON_MGMT_NO 
+               ,a.PROD_CD 
+               ,a.SER_NUM 
+               ,b.prc_st
+               ,a.OLDEQ_PAY_MTHD_CD
+               ,a.OLDEQ_PAY_DT
+               ,b.PRCHS_AMT  as CON_AMT
+               ,b.EQP_ST
+               ,b.ADJ_AMT                                 
+        FROM TCST_CONSULT_MGMT a
+             ,TCST_PRCHS_MGMT b
+        WHERE b.prc_st = '35'
+        AND   b.skn_op_dt = #IF_CON_DT#
+        AND   b.del_yn = 'N'
+        and   b.skn_yn = 'Y'
+        AND   b.con_mgmt_no = a.con_mgmt_no
+        AND   'CON' != SUBSTR(a.con_mgmt_no,1,3)
+        AND   'CON' != SUBSTR(b.con_mgmt_no,1,3)
+        AND   a.del_yn = 'N'
+        UNION ALL              
+        SELECT  /* 24 고객거부반송, 27 정책대상반송, 28 검수제외반송, 29 검수제외폐기 con_dt*/
+                a.CON_MGMT_NO 
+               ,a.PROD_CD 
+               ,a.SER_NUM 
+               ,b.prc_st
+               ,a.OLDEQ_PAY_MTHD_CD
+               ,a.OLDEQ_PAY_DT
+               ,b.PRCHS_AMT  as CON_AMT
+               ,b.EQP_ST
+               ,b.ADJ_AMT                                 
+         FROM TCST_CONSULT_MGMT a
+             ,TCST_PRCHS_MGMT b
+        WHERE b.prc_st IN ('22','23','24','26','27','28','29','2A','2B','2C','2D','2E','2F')
+        AND   substr(b.mod_dtm,0,8) = #IF_CON_DT#
+        AND   b.del_yn = 'N'
+        AND   b.con_mgmt_no = a.con_mgmt_no
+        AND   'CON' != SUBSTR(a.con_mgmt_no,1,3)
+        AND   'CON' != SUBSTR(b.con_mgmt_no,1,3)
+        AND   a.del_yn = 'N'
+       ) sm
+WHERE  'T' != SUBSTR(con_mgmt_no,1,1)        
+ORDER by sm.con_mgmt_no       
+	]]>
+	</select>
+	<update id="updateConsultMgmtSend" parameterClass="map">
+	<![CDATA[
+    UPDATE /*+ BASUKC09000_updateConsultMgmtSend */
+           TCST_CONSULT_MGMT
+       SET OLDEQ_PAY_SEND_YN = 'Y'
+     WHERE 'CON' != SUBSTR(con_mgmt_no,1,3) 
+       AND del_yn = 'N'
+       AND oldeq_pay_dt is not null
+       AND substr(mod_dtm,0,8) = #IF_CON_DT#
+	]]>
+	</update>	
+</sqlMap>

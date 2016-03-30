@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="316" Id="ACCPDS00600" Left="8" OnLoadCompleted="ACCPDS00600_OnLoadCompleted" PidAttrib="7" Title="재고보상기준일&#32;팝업" Top="8" Ver="1.0" Width="330" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="CHK" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_STA_DTM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_MTH></ACC_MTH>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_strdDt">
+				<Contents>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_STA_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRCHS_PLC" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_MTH>&#32;</ACC_MTH>
+						<APLY_STA_DTM></APLY_STA_DTM>
+						<ORG_CD></ORG_CD>
+						<PRCHS_PLC></PRCHS_PLC>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_preList">
+				<Contents>
+					<colinfo id="STRD_DT" size="256" summ="default" type="STRING"/>
+					<record>
+						<STRD_DT></STRD_DT>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="167" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="1" Text="닫기" Top="282" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_confirm" ImageID="btn_c_2" Left="101" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="2" Text="확인" Top="282" Width="60"></Button>
+		<Grid AutoFit="TRUE" BindDataset="ds_result" BkColor2="default" BoldHead="true" Border="Flat" Bottom="276" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="212" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellClick="grd_list_OnCellClick" Right="318" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="64" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="310">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="37"/>
+						<col width="164"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="선택" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="정산기준일" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="center" bkcolor2="user36" col="0" colid="CHK" display="checkbox" edit="checkbox"/>
+						<cell align="left" bkcolor2="user36" col="1" colid="APLY_STA_DTM" color="user11" display="text" Mask="@@@@-@@-@@:@@:@@"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="5" Text="Div0" Top="10" Width="310">
+			<Contents>
+				<Button ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="181" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="7" Width="60"></Button>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="4" Style="sty_lb_Search" TabOrder="1" Text="조회월" Top="7" VAlign="Middle" Width="61"></Static>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="ACC_MTH" Height="20" Id="cal_acc_mth" Left="68" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" Type="STRING" Width="104"></MaskEdit>
+				<Button Cursor="HAND" Height="18" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="154" OnClick="btn_monthCalendar_OnClick" TabOrder="3" Text="Button3" Top="8" Width="17"></Button>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCPDS00600
+* 업무명      : 재고보상 - 재고보상기준일 목록
+* 프로그램명  : 재고보상조회
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.02.25
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 1. 전 처리기
+//==============================================================================
+#include "lib::lib_commF.js"
+
+var F_PRE_STRD_DT;
+var F_ORG_CD;
+var F_PRCHS_PLC;
+var F_PRE_CHK;
+var F_CUD_FLAG;
+
+function ACCPDS00600_OnLoadCompleted(obj)
+{
+	// 그리드 체크박스 설정 및 정렬
+	cf_setGrdChecknSortEvent(grd_list,0);
+	
+	F_ORG_CD = sOrgCd;
+	F_PRCHS_PLC = sPrchsPlc;
+	F_CUD_FLAG = sModFlag;
+}
+
+
+/*******************************************************************************
+ * @description    :  정산월 컴퍼넌트 호출 
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_acc_mth);
+}
+
+/***********************************************************************************
+ * @description    : 운영모델 단가표에서 매입가 차이가 있는 적용시작일시 갖고오기
+************************************************************************************/
+function btn_search_OnClick(obj)
+{
+	var sStrdDt = div_search.cal_acc_mth.Value;
+
+	if(uf_CheckDate(sStrdDt, "YYYYMM") == false)
+	{
+		alert(cf_getMessage(MSG_00047,"정산월을"));
+		div_search.cal_acc_mth.SetFocus();
+		return false;		
+	}
+		
+	var sSvcID = "getAplyStaDtm";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_result=strdDtList";
+	var sArg   = "sktst.acc.PDS#getStrdDtList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    :  콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{		
+	if(sSvcID == "getAplyStaDtm") {
+	} 
+	
+	if(sSvcId == "getPreAccCheck"){
+		/*
+		F_PRE_CHK = ds_preList.GetColumn(0,"CNT");
+		F_PRE_STRD_DT = substr(ds_preList.GetColumn(0, "STRD_DT"),0,4)+"-"+substr(ds_preList.GetColumn(0, "STRD_DT"),4,2)+"-"+substr(ds_preList.GetColumn(0, "STRD_DT"),6,2);
+		*/
+		
+		F_PRE_CHK = ds_preList.GetRowCount();
+		F_PRE_STRD_DT = substr(ds_preList.GetColumn(0, "STRD_DT"),0,4)+"-"+substr(ds_preList.GetColumn(0, "STRD_DT"),4,2)+"-"+substr(ds_preList.GetColumn(0, "STRD_DT"),6,2);
+	}
+}
+
+
+/*******************************************************************************
+ * @description    :  닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+function btn_confirm_OnClick(obj)
+{
+
+	if(ds_result.CaseCount("CHK==" + quote("1")) == 0){
+		alert("재고보상 기준일을 선택해주십시오. ");
+		return false;
+	}
+
+	http.Sync = true;
+	
+	f_isValidStrdDt();
+	
+	http.Sync = false;
+	
+	if(F_CUD_FLAG != "U" && ds_preList.GetColumn(0, "STRD_DT") != null){
+		alert(F_PRE_STRD_DT+"일의 재고보상 등록을 먼저 해주십시오.");
+		return;
+	}
+		
+	if(parent.ds_strd_dt.GetRowCount() < 1)
+	{
+		parent.ds_strd_dt.addRow();
+	}
+	
+	parent.ds_strd_dt.SetColumn(0,"APLY_STA_DTM",substr(ds_result.GetColumn(ds_result.currow,"APLY_STA_DTM"),0,8));
+	this.close();
+	
+}
+
+
+/******************************************************************************
+* @description    :  이전 재고보상 등록 일 찾기
+*******************************************************************************/
+
+function f_isValidStrdDt(){
+	
+	F_PRE_CHK = "";
+	F_PRE_STRD_DT = "";
+	F_CUD_FLAG = "";
+	
+	var sAccMth = div_search.cal_acc_mth.Value;
+	var sStrdDt = ds_result.GetColumn(ds_result.FindRow("CHK","1"),"APLY_STA_DTM");
+	
+	ds_strdDt.SetColumn(0,"ACC_MTH", sAccMth);
+	ds_strdDt.SetColumn(0,"APLY_STA_DTM", sStrdDt);
+	ds_strdDt.SetColumn(0,"ORG_CD", F_ORG_CD);
+	ds_strdDt.SetColumn(0,"PRCHS_PLC", F_PRCHS_PLC);
+		
+	var sSvcID = "getPreAccCheck";
+	var sInDs  = "nc_input_fieldDs=ds_strdDt";
+	var sOutDs = "ds_preList=rs_preList";
+	var sArg   = "sktst.acc.PDS#getPreAccCheck";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+
+function grd_list_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell ==0){
+				
+		if(ds_result.GetRowCount() >0){
+		
+			for(var i=0; i<ds_result.rowcount; i++){
+				
+				if(i != nRow && (ds_result.GetColumn(i,"CHK") == "1")){
+					ds_result.SetColumn(i,"CHK","0");
+				}
+			}
+		}
+	}
+}
+]]></Script>
+</Window>

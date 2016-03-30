@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="248" Id="BASBCO00100" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="비밀번호&#32;변경" Top="8" Ver="1.0" Width="330" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents></Contents>
+			</Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="167" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="1" Text="닫기" Top="210" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_save" ImageID="btn_c_2" Left="101" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="2" Text="저장" Top="210" Width="60"></Button>
+		<Div Border="Raised" Height="192" Id="div_process" Left="9" Style="sty_div_input" TabOrder="3" Text="Div1" Top="8" Width="312">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static14" Left="54" Style="sty_lb_Basic" TabOrder="2" Text="현재&#32;비밀번호" Top="54" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_passWord" ImeMode="english" Left="142" LeftMargin="2" MaxLength="20" Password="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="54" UseIME="FALSE" UserData="현재&#32;비밀번호" Width="120"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="54" Style="sty_lb_Basic" TabOrder="4" Text="새&#32;비밀번호" Top="102" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_newPassWord" ImeMode="english" Left="142" LeftMargin="2" MaxLength="20" Password="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="102" UseIME="FALSE" UserData="새&#32;비밀번호" Width="120"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static1" Left="33" Style="sty_lb_Basic" TabOrder="6" Text="새&#32;비밀번호&#32;확인" Top="136" VAlign="Middle" Width="105"></Static>
+				<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_confirmNewPassWord" ImeMode="english" Left="142" LeftMargin="2" MaxLength="20" Password="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="136" UseIME="FALSE" UserData="새&#32;비밀번호&#32;확인" Width="120"></Edit>
+				<Image Align="Left" Color="user27" Height="20" Id="Image0" ImageID="bul_caution" Left="16" LeftMargin="20" Style="sty_lb_info" TabOrder="7" Text="반드시&#32;현재&#32;비밀번호와&#32;다르게&#32;입력하셔야&#32;합니다." Top="84" Width="276"></Image>
+				<Image Height="21" Id="Image3" ImageID="bul_mand" Left="44" TabOrder="8" Top="52" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="56" TabOrder="9" Top="101" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image2" ImageID="bul_mand" Left="24" TabOrder="10" Top="134" Transparent="TRUE" Width="20"></Image>
+				<Image Align="Left" Height="27" Id="Image4" ImageID="bul_caution" Left="7" LeftMargin="20" Style="sty_lb_info" TabOrder="11" Text="아이디와&#32;동일한&#32;비밀번호를&#32;사용하는&#32;경우,&#32;비밀번호&#32;&#10;노출의&#32;위험이&#32;있습니다." Top="11" Width="295"></Image>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : BASUSM00400 
+* 업무명      : 패스워드변경
+* 프로그램명  : 패스워드변경(P)
+--------------------------------------------------------------------------------
+* 작성자      : han byung gon
+* 작성일      : 2009.01.16
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+
+}
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    :  콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "savePassWord"){
+		this.close();
+	}
+}
+
+/*******************************************************************************
+ * @description    :  저장
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	if(!cf_checkObjValues(div_process)) return;
+	
+	if(div_process.edt_passWord.value == div_process.edt_newPassWord.value){
+		alert(MSG_00164);
+		div_process.edt_newPassWord.SetFocus();
+		return;
+	}
+	
+	if(div_process.edt_newPassWord.value != div_process.edt_confirmNewPassWord.value){
+		alert(MSG_00165);
+		div_process.edt_confirmNewPassWord.SetFocus();
+		return;
+	}	
+	
+	if(confirm(MSG_00166)){
+
+		cf_setParam(ds_condition, "passWord", div_process.edt_passWord.value);
+		cf_setParam(ds_condition, "newPassWord", div_process.edt_newPassWord.value);
+		cf_setParam(ds_condition, "confirmNewPassWord", div_process.edt_confirmNewPassWord.Value);
+		
+		// 트랜잭션 설정
+		var sSvcID = "savePassWord";
+		var sInDs  = "nc_input_fieldDs=ds_condition";
+		var sOutDs = "";
+		var sArg   = "sktst.bas.USM#updatePassWord";
+		
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+}
+]]></Script>
+</Window>

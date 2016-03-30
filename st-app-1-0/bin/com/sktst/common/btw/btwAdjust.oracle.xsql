@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="biz.btwAdjust">
+	<select id="getBTWProduct" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT prod_cd
+  FROM  TADM_BTW_PRODUCT
+ WHERE apply_month = substr(#apply_month#, 1, 6)
+   AND apply_yn    = 'Y'
+   AND del_yn      = 'N']]>
+	</select>
+	<select id="getBTWProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT a.pos_agency
+     , b.prod_cd
+     , FBAS_GET_PROD_NM(b.prod_cd) eqp_nm
+     , c.agrmt_amt
+     , c.range_amt
+     , e.sale_from
+     , e.sale_to
+     , e.cash_chulgo
+     , e.allot_chulgo
+  FROM TADM_BTW_AGENCY  a
+     , TADM_BTW_PRODUCT b
+     , TADM_BTW_RANGE   c
+  ,  ( SELECT y.mdl_id             eqp_mdl
+            , x.aply_sta_dtm       sale_from
+            , x.aply_end_dtm       sale_to
+            , y.fix_cash_prchs_prc cash_chulgo
+            , y.fix_crdt_prchs_prc allot_chulgo
+         FROM TPOL_UPLST          x
+            , TPOL_UPLST_APLY_MDL y
+        WHERE x.uplst_id = y.uplst_id
+          AND x.pol_ym   = y.pol_ym
+          AND x.pol_ts   = y.pol_ts
+          AND x.aply_sta_dtm >= substr(#apply_month#, 1, 6) || '010000'
+          AND x.aply_end_dtm <= substr(#apply_month#, 1, 6) || '312359'
+          AND x.del_yn        = 'N' ) e 
+ WHERE 1=1
+]]><isNotEmpty prepend="AND" property="pos_agency">
+<![CDATA[        a.pos_agency = #pos_agency#  
+]]></isNotEmpty>
+<![CDATA[
+   AND b.prod_cd     = e.eqp_mdl
+   AND a.apply_yn    = 'Y'
+   AND a.del_yn      = 'N'
+   AND b.apply_month = substr(#apply_month#, 1, 6)
+   AND b.apply_yn    = 'Y'
+   AND b.del_yn      = 'N'
+   AND c.apply_month = substr(#apply_month#, 1, 6)
+   AND c.del_yn      = 'N'
+ ORDER BY 1, 2, 5, 9]]>
+	</select>
+	<select id="getBTWEquipList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT a.pos_agency
+     , b.prod_cd
+     , FBAS_GET_PROD_NM(b.prod_cd) eqp_nm
+     , c.agrmt_amt
+     , c.range_amt
+     , e.sale_from
+     , e.sale_to
+     , e.cash_chulgo
+     , e.allot_chulgo
+  FROM TADM_BTW_AGENCY  a
+     , TBAS_PROD_MGMT   b
+     , TADM_BTW_RANGE   c
+  ,  ( SELECT y.mdl_id             eqp_mdl
+            , x.aply_sta_dtm       sale_from
+            , x.aply_end_dtm       sale_to
+            , y.fix_cash_prchs_prc cash_chulgo
+            , y.fix_crdt_prchs_prc allot_chulgo
+         FROM TPOL_UPLST          x
+            , TPOL_UPLST_APLY_MDL y
+        WHERE x.uplst_id = y.uplst_id
+          AND x.pol_ym   = y.pol_ym
+          AND x.pol_ts   = y.pol_ts
+          AND x.aply_sta_dtm >= substr(#apply_month#, 1, 6) || '010000'
+          AND x.aply_end_dtm <= substr(#apply_month#, 1, 6) || '312359'
+          AND x.del_yn        = 'N' ) e 
+ WHERE 1=1
+]]><isNotEmpty prepend="AND" property="pos_agency">
+<![CDATA[        a.pos_agency = #pos_agency#  
+]]></isNotEmpty>
+<![CDATA[
+   AND b.prod_cd     = e.eqp_mdl
+   AND a.apply_yn    = 'Y'
+   AND a.del_yn      = 'N'
+   AND b.prod_cl     = '1'
+   AND b.use_yn      = 'Y'
+   AND b.del_yn      = 'N'
+   AND c.apply_month = substr(#apply_month#, 1, 6)
+   AND c.del_yn      = 'N'
+ ORDER BY 1, 2, 5, 9]]>
+	</select>
+	<select id="getBTWAdjust" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT from_amt
+	 , to_amt
+	 , allot_adj_prc
+	 , cash_adj_prc
+  FROM TADM_BTW_ADJUST
+ WHERE apply_month = substr(#apply_month#, 1, 6)
+   AND del_yn      = 'N'
+ ORDER BY 1, 2]]>
+	</select>
+ </sqlMap>

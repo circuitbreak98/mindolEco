@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ADMQNA00100" Left="8" OnLoadCompleted="ADMQNA00100_OnLoadCompleted" PidAttrib="7" Title="Q&#32;&amp;&#32;A&#32;관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_rdo">
+				<Contents>
+					<colinfo id="value" size="256" summ="default" type="STRING"/>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<record>
+						<code></code>
+						<value>전체</value>
+					</record>
+					<record>
+						<code>Y</code>
+						<value>답변</value>
+					</record>
+					<record>
+						<code>N</code>
+						<value>미답변</value>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="qna_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="title" size="256" summ="default" type="STRING"/>
+					<colinfo id="que_ctt" size="256" summ="default" type="STRING"/>
+					<colinfo id="type_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="ans_ctt" size="256" summ="default" type="STRING"/>
+					<colinfo id="ans_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="doc_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="del_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="upd_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="mod_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="mod_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="write_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="write_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="answer_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="answer_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="write_user_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="write_org_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="write_org_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="answer_user_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="answer_org_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="answer_org_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="ans_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="title" size="256" summ="default" type="STRING"/>
+					<record>
+						<ans_yn></ans_yn>
+						<title></title>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_file">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_tmp"></Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="21" Style="sty_lb_Search" TabOrder="1" Text="답변여부" Top="7" VAlign="Middle" Width="76"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="615" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="7" Visible="FALSE" Width="60"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="title" Height="20" Id="edt_title" Left="380" LeftMargin="2" OnKeyDown="div_search_common_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="225"></Edit>
+				<Radio BindDataset="ds_condition" Border="None" CodeColumn="code" Column="ans_yn" ColumnCount="3" DataColumn="value" Height="20" Id="Radio0" INDEX="-1" InnerDataset="ds_rdo" Left="100" LeftMargin="5" OnKeyDown="div_search_common_OnKeyDown" RightMargin="10" Style="sty_opt_search" TabOrder="4" Top="7" Width="184"></Radio>
+				<Static Align="Right" Height="20" Id="Static0" Left="301" Style="sty_lb_Search" TabOrder="5" Text="제목" Top="7" VAlign="Middle" Width="76"></Static>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_result" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="248" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="171" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellPosChanged="grd_list_OnCellPosChanged" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="77" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="33"/>
+						<col width="442"/>
+						<col width="85"/>
+						<col width="102"/>
+						<col width="77"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="선택"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="제목"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="작성자"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="작성일"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="답변여부"/>
+					</head>
+					<body>
+						<cell col="0" colid="chk" display="checkbox" edit="checkbox"/>
+						<cell col="1" colid="title" display="text"/>
+						<cell align="center" col="2" colid="write_user_nm" display="text"/>
+						<cell align="center" col="3" colid="write_dt" display="date"/>
+						<cell align="center" col="4" colid="ans_yn" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="Q&amp;A&#32;목록" Top="52" Width="192"></Image>
+		<Div Border="Raised" Height="290" Id="div_process" Left="8" Style="sty_div_input" TabOrder="4" Text="Div0" Top="272" Width="810">
+			<Contents>
+				<Edit BindDataset="ds_tmp" Border="Flat" Column="qna_num" Enable="FALSE" Height="20" Id="Edit0" Left="102" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="6" Width="121"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="23" Style="sty_lb_Basic" TabOrder="2" Text="Q&amp;A&#32;번호" Top="7" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static0" Left="606" Style="sty_lb_Basic" TabOrder="4" Text="작성일" Top="4" VAlign="Middle" Width="68"></Static>
+				<Calendar BindDataset="ds_tmp" Border="Flat" ButtonImageID="btn_i_calendar" Column="write_dt" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="Calendar1" Left="677" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="3" TodayColor="user26" Top="4" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="121"></Calendar>
+				<Static Align="Right" Height="20" Id="Static1" Left="23" Style="sty_lb_Basic" TabOrder="5" Text="질문내용" Top="30" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static4" Left="238" Style="sty_lb_Basic" TabOrder="7" Text="작성자&#32;소속" Top="4" VAlign="Middle" Width="76"></Static>
+				<Edit BindDataset="ds_tmp" Border="Flat" Column="write_org_nm" Enable="FALSE" Height="20" Id="Edit1" Left="317" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="4" Width="136"></Edit>
+				<Edit BindDataset="ds_tmp" Border="Flat" Column="write_user_nm" Enable="FALSE" Height="20" Id="Edit2" Left="524" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="4" Width="80"></Edit>
+				<Static Align="Right" Height="20" Id="Static9" Left="445" Style="sty_lb_Basic" TabOrder="9" Text="작성자" Top="4" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static3" Left="23" Style="sty_lb_Basic" TabOrder="10" Text="첨부파일" Top="113" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static6" Left="606" Style="sty_lb_Basic" TabOrder="12" Text="답변일" Top="195" VAlign="Middle" Width="68"></Static>
+				<Calendar BindDataset="ds_tmp" Border="Flat" ButtonImageID="btn_i_calendar" Column="answer_dt" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_answerDt" Left="677" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="11" TodayColor="user26" Top="195" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="121"></Calendar>
+				<TextArea BindDataset="ds_tmp" Border="Flat" CheckLength="Byte" Column="ans_ctt" Height="62" Id="txt_ansQtt" ImeMode="native" Left="102" MaxLength="4000" Style="sty_ipt_readonly" TabOrder="13" Top="218" UserData="답변내용" VScroll="TRUE" Width="695"></TextArea>
+				<Static Align="Right" Height="20" Id="Static7" Left="23" Style="sty_lb_Basic" TabOrder="14" Text="답변내용" Top="218" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static8" Left="23" Style="sty_lb_Basic" TabOrder="16" Text="답변자&#32;소속" Top="195" VAlign="Middle" Width="76"></Static>
+				<Edit BindDataset="ds_tmp" Border="Flat" Column="answer_org_nm" Enable="FALSE" Height="20" Id="edt_anwerOrgNm" ImeMode="none" Left="102" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="15" Top="195" Width="351"></Edit>
+				<Edit BindDataset="ds_tmp" Border="Flat" Column="answer_user_nm" Enable="FALSE" Height="20" Id="edt_answerNm" Left="524" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="17" Top="195" Width="80"></Edit>
+				<Static Align="Right" Height="20" Id="Static10" Left="445" Style="sty_lb_Basic" TabOrder="18" Text="답변자" Top="195" VAlign="Middle" Width="76"></Static>
+				<Shape Bottom="191" Height="1" Id="Shape0" Left="-8" LineColor="user9" Right="812" TabOrder="19" Top="190" Width="820"></Shape>
+				<TextArea BindDataset="ds_tmp" Border="Flat" Column="que_ctt" Height="60" Id="TextArea1" Left="102" Readonly="TRUE" Style="sty_ipt_readonly" TabOrder="20" Top="28" VScroll="TRUE" Width="695"></TextArea>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_new" ImageID="btn_e_4" Left="12" LeftMargin="15" OnClick="btn_new_OnClick" Style="sty_btn_e" TabOrder="21" Text="신규등록" Top="569" Width="85"></Button>
+				<Grid AutoFit="TRUE" BindDataset="ds_file" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="186" Enable="true" EndLineColor="default" HeadBorder="Flat" HeadHeight="22" Height="71" Id="grd_file" InputPanel="FALSE" Left="102" LineColor="user33" MinWidth="100" OnCellClick="div_process_grd_file_OnCellClick" Right="797" RowHeight="21" Style="sty_Grid" TabOrder="22" TabStop="true" Top="115" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="695">
+					<contents>
+						<format id="Default">
+							<columns>
+								<col width="55"/>
+								<col width="347"/>
+								<col width="71"/>
+							</columns>
+							<head>
+								<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+								<cell bkcolor="user34" col="1" color="user35" display="text" text="파일명"/>
+								<cell bkcolor="user34" col="2" color="user35" display="text" text="크기"/>
+							</head>
+							<body>
+								<cell align="center" col="0" display="text" expr="row+1"/>
+								<cell col="1" colid="FILE_NM" cursor="expr:decode(FILE_PASS,null,&apos;arrow&apos;,&apos;hand&apos;)" display="text"/>
+								<cell align="center" col="2" colid="FILE_SIZE" display="text"/>
+							</body>
+						</format>
+					</contents>
+				</Grid>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_allDown" ImageID="btn_a_6" Left="688" LeftMargin="5" OnClick="btn_allDown_OnClick" Style="sty_btn_b" TabOrder="23" Text="전체다운로드" Top="91" Width="110"></Button>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="35" TabOrder="24" Top="216" Transparent="TRUE" Width="20"></Image>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="8" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="Q&amp;A&#32;답변등록" Top="248" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="696" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="6" Text="저장" Top="567" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_delete" ImageID="btn_d_2" Left="760" LeftMargin="5" OnClick="btn_del_OnClick" Style="sty_btn_d" TabOrder="7" Text="삭제" Top="568" Visible="FALSE" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  ADMQNA00100
+* 업무명      :  Admin-Q&A 관리 
+* 프로그램명  :  Q&A 관리 
+--------------------------------------------------------------------------------
+* 작성자      : shimyunjung 
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 최승호
+수정일    : 2009.04.03
+수정 내역 : 사용자 데이터 변경 유무 체크 ,  첨부 파일 기능, 유효성 체크 
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_INT_SELECTED_ROW = 0;  // 선택된 로우
+var FV_BOOLEAN_CHECK = true; // 필수 체크 통과 유무
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ADMQNA00100_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	// 그리드  정렬
+	cf_setGrdChecknSortEvent(grd_list,0);
+	
+	// 기본 조회
+	f_search();
+}
+
+/*******************************************************************************
+ * @description    : 조회 - 이벤트
+*******************************************************************************/
+function f_search()
+{
+	var sSvcID	= "getQna";
+	var sInDs 	= "nc_input_fieldDs=ds_condition";
+	var sOutDs	= "ds_result=ds_result";
+	var sArg 	= "sktst.adm.QNA#getQna";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 조회
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	f_search();
+}
+
+/*******************************************************************************
+ * @description    		: 첨부파일 정보 취득
+ * @param sDocId        : 문서번호
+*******************************************************************************/
+function f_getAttatchList(sDocId)
+{
+	// 조회를 위한 필수 인자 SCREEN_ID ,  DOC_ID
+	var sScreenId = "ADMQNA00300";
+	cf_setParam(ds_condition, "SCREEN_ID", sScreenId); 
+	cf_setParam(ds_condition, "DOC_ID", sDocId); 
+
+	// 트랜잭션 설정
+	var sSvcID = "svcAttatchList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_file=nc_fileDs";
+	var sArg = "sktst.adm.NTC#getAttatchList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 저장 함수 - 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{	 
+	if (cf_checkObjValues(div_process)) 
+	{
+		ds_result.CopyRow(ds_result.currow, ds_tmp, ds_tmp.currow);
+		
+		if (!ds_result.GetUpdate()) 
+		{
+			return ;
+		} 
+		else
+		{
+			var sSvcID	= "saveQna";
+			var sInDs 	= "ds_result=ds_result:U";
+			var sOutDs	= "";
+			var sArg 	= "sktst.adm.QNA#saveQna";
+			
+			cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if (sSvcID == "getQna") 
+	{
+		FV_INT_SELECTED_ROW = 0;
+		cf_setOrgDs(ds_result);
+		ds_tmp.copy(ds_result);
+		f_setAnwserInfo();
+	}
+	
+	if(sSvcID == "svcAttatchList")
+	{
+		//trace(ds_file.SaveXML());
+	}
+	
+	if(sSvcID == "saveQna")
+	{
+		f_search();
+	}
+	
+	if(sSvcID == "svcDel")
+	{
+		f_search();
+	}	
+	
+}
+
+/*******************************************************************************
+ * @description    : enter key 조회
+*******************************************************************************/
+function div_search_common_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{	
+	if (nChar==13) 
+	{
+		applyData();
+		f_search();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 전체 다운로드 - 이벤트
+*******************************************************************************/
+function btn_allDown_OnClick(obj)
+{
+	cf_allDownLoad(ds_file);
+}
+
+ /*******************************************************************************
+ * @description    : 필수 체크 및 상세 내용 보기 - 이벤트
+*******************************************************************************/
+function grd_list_OnCellPosChanged(obj,nRow,nCell,nOldRow,nOldCell,nPivotIndex,nOldPivotIndex)
+{
+	if(nOldRow != -1)
+	{
+		if(FV_BOOLEAN_CHECK)
+		{
+			if(FV_INT_SELECTED_ROW != null)
+			{
+				if(trim(ds_tmp.GetColumn(ds_tmp.currow, "ans_ctt")).length > 0)
+				{
+					ds_result.CopyRow(nOldRow, ds_tmp, ds_tmp.currow);
+				}
+			}
+			FV_INT_SELECTED_ROW = nRow;
+			ds_tmp.row = nRow;
+		}
+		else
+		{
+			FV_BOOLEAN_CHECK = true;
+		}
+	}
+
+	f_setAnwserInfo();
+}
+
+ /*******************************************************************************
+ * @description    : 답변 정보 설정 
+*******************************************************************************/
+function f_setAnwserInfo()
+{
+	if(FV_INT_SELECTED_ROW != null)
+	{
+		var sDocId = ds_result.GetColumn(FV_INT_SELECTED_ROW, "doc_id");;
+		ds_file.ClearData();
+		if(trim(sDocId).length  > 0)
+		{
+			f_getAttatchList(sDocId);
+		}
+		
+		var sAnsYn = ds_result.GetColumn(FV_INT_SELECTED_ROW, "ans_yn");
+		
+		var sUserId = ds_result.GetColumn(FV_INT_SELECTED_ROW, "answer_user_id");
+		if(sAnsYn == "N" || sUserId == gds_session.GetColumn(0, "loginId"))
+		{
+			if(ds_tmp.currow == -1)
+			{
+				ds_tmp.row = FV_INT_SELECTED_ROW;
+			}
+			if(sAnsYn == "N")
+			{
+				ds_tmp.SetColumn(FV_INT_SELECTED_ROW, "answer_org_id", gds_session.getColumn(0, "orgId"));
+				ds_tmp.SetColumn(FV_INT_SELECTED_ROW, "answer_org_nm", gds_session.getColumn(0, "orgNm"));
+				ds_tmp.SetColumn(FV_INT_SELECTED_ROW, "answer_user_id", gds_session.getColumn(0, "userId"));
+				ds_tmp.SetColumn(FV_INT_SELECTED_ROW, "answer_user_nm", gds_session.getColumn(0, "userNm"));
+				ds_tmp.SetColumn(FV_INT_SELECTED_ROW, "answer_dt", today());
+			}
+			div_process.txt_ansQtt.Enable = true;
+			//div_process.txt_ansQtt.SetFocus();
+		}
+		else
+		{
+			div_process.txt_ansQtt.Enable = false;
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : 첨부 파일 내려 받기- 이벤트
+*******************************************************************************/
+function div_process_grd_file_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell == 1)
+	{
+		var oGrdDs = object(obj.BindDataset);
+		var sScreenId = oGrdDs.getColumn(nRow, "SCREEN_ID");
+		var sDocId = oGrdDs.getColumn(nRow, "DOC_ID");
+		var sFileName = oGrdDs.getColumn(nRow, "FILE_NM");
+		var sFileType = oGrdDs.getColumn(nRow, "FILE_TYPE");
+		cf_downLoad(sScreenId, sDocId, sFileName, sFileType);	
+	}
+}
+
+/*******************************************************************************
+ * @description    : 삭제 버튼 클릭- 이벤트
+*******************************************************************************/
+function btn_del_OnClick(obj)
+{
+	if(ds_result.FindRow("chk","1") == -1){
+		alert('삭제할 데이터를 선택하세요.');
+		return;
+	}
+
+	if(confirm(cf_getMessage(MSG_00102,"")) == true)
+	{
+		var sSvcID	= "svcDel";
+		var sInDs 	= "ds_result=ds_result:U";
+		var sOutDs	= "";
+		var sArg 	= "sktst.adm.QNA#deleteQnaBySelect";
+		
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}	
+}
+]]></Script>
+</Window>

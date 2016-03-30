@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSUI08400">
+	<select id="getGeneralTermIF" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT  /* SALSUI08400_getGeneralTermIF_미처리해지 정보 취득_김연석_김연석 */
+            a.op_dt
+         ,  a.op_tm
+         ,  a.seq
+         ,  a.svc_mgmt_num
+         ,  a.eqp_mdl_cd
+         ,  a.eqp_ser_num
+         ,  a.ukey_agency_cd
+         ,  a.ukey_sub_cd
+         ,  a.ukey_channel_cd
+         ,  a.proc_dt
+         ,  a.proc_tm
+         ,  b.user_id
+      FROM  tsal_general_term_if a
+         ,  tbas_user_mgmt       b
+     WHERE  a.proc_id              =  b.u_key_id
+       and  nvl(a.ps_apnd_yn, 'N') = 'N'
+	]]>
+	</select>
+	<select id="getGeneralInfo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT  /* SALSUI08400_getGeneralInfo_판매정보 취득_김연석_김연석 */
+            distinct a.gnrl_sale_no as GNRL_SALE_NO
+      FROM  TSAL_GENERAL_SALE   a
+         ,  TSAL_EQUIPMENT_SALE b
+     WHERE  a.gnrl_sale_no      = b.gnrl_sale_no
+       AND  a.gnrl_sale_chg_seq = b.gnrl_sale_chg_seq
+       AND  a.svc_mgmt_num      = #SVC_MGMT_NUM#
+       AND  b.eqp_mdl_cd        = #EQP_MDL_CD#
+       AND  b.eqp_ser_num       = #EQP_SER_NUM#
+	]]>
+	</select>
+	<update id="saveGeneralSale" parameterClass="map">
+	<![CDATA[
+    UPDATE /*+ SALSUI08400_saveGeneralSale_영업판매 해지정보UPDATE-김연석-김연석 */
+           TSAL_GENERAL_SALE
+       SET TERM_YN            = 'Y'
+         , TERM_DTM           = #PROC_DTM#
+         , TERM_PLC           = #PROC_PLC#
+         , TERM_USER          = #USER_ID#
+     WHERE GNRL_SALE_NO       = #GNRL_SALE_NO#
+	]]>
+	</update>
+	<update id="saveGeneralTermIF" parameterClass="map">
+	<![CDATA[
+    UPDATE /*+ SALSUI08400_saveGeneralTermIF_해지전문UPDATE-김연석-김연석 */
+           TSAL_GENERAL_TERM_IF
+       SET PS_APND_YN  = 'Y'
+         , MOD_USER_ID = 'SALSUI0840'
+         , MOD_DTM     = TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+     WHERE op_dt       = #OP_DT#
+       AND op_tm       = #OP_TM#
+       AND seq         = #SEQ#
+	]]>
+	</update>
+	<procedure id="call_SP_SALDEALINFO" resultClass="java.util.Map" parameterClass="hmap" >
+	<![CDATA[
+	{ call SP_SALDEALINFO /*+ call_SP_SALDEALINFO_김연석_김연석 */
+	( #ov_ErrorCl,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_ErrorMsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_SalePLC,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_StlPLC,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_DisPLC,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_DealCl1,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_DealCl2,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_SaleStopYN,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_PayStopYn,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_SlCl,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #ov_SlNetCd,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+    , #iv_SaleDtm,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#
+    , #iv_ProcDtm,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#
+    , #iv_AgencyCd,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#
+    , #iv_SubCd,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#
+    , #iv_ChannelCd,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN# ) }]]>
+	</procedure>
+</sqlMap>

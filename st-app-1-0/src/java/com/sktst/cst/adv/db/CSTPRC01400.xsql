@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTPRC01400">
+	<select id="getSaleEqpList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', NVL(prc.PRC_ST,con.PRC_ST)) PRC_NM
+     , con.CON_MGMT_NO
+     , con.CON_DT
+     , con.IN_DT
+     , FBAS_GET_DEAL_NM(prod.MFACT_ID,'') as MFACT_NM   
+     , FBAS_GET_PROD_NM(NVL(prc.PROD_CD,con.PROD_CD)) PROD_NM
+     , con.SER_NUM
+     , prc.EQP_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', NVL(prc.COLOR_CD,con.COLOR_CD)) COLOR_NM
+     , prc.SALE_EQP_ST
+     , prc.PRCHS_AMT
+     , FBAS_GET_USER_NM(sale.INS_USER_ID) INS_USER_NM
+     , sale.PROC_DT
+     , NVL(prc.BOX_NO, con.BOX_NO) BOX_NO
+     , prc.EQP_ST_DTL
+     , NVL(prc.IMEI,con.IMEI) IMEI
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00630', substr(sale.POWER_ST,0,2)) POWER_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00640', substr(sale.CHARGE_ST,0,2)) CHARGE_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00650', substr(sale.USIM_ST,0,2)) USIM_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00660', substr(sale.BELL_ST,0,2)) BELL_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00670', substr(sale.VIBRATION_ST,0,2)) VIBRATION_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00680', substr(sale.CPNT_ST,0,2)) CPNT_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00690', substr(sale.JODO_ST,0,2)) JODO_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00700', substr(sale.GYRO_ST,0,2)) GYRO_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00710', substr(sale.PROXIMITY_ST,0,2)) PROXIMITY_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00720', substr(sale.CAMERA_ST,0,2)) CAMERA_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00730', substr(sale.BATTERY_ST,0,2)) BATTERY_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00740', substr(sale.AFTERIMAGE_ST,0,2)) AFTERIMAGE_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00750', substr(sale.TOUCH_ST,0,2)) TOUCH_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00760', substr(sale.WIFI_ST,0,2)) WIFI_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00770', substr(sale.STAIN_ST,0,2)) STAIN_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00780', substr(sale.BRUISE_ST,0,2)) BRUISE_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00790', substr(sale.SQUASH_ST,0,2)) SQUASH_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00800', substr(sale.LIQUEFIED_ST,0,2)) LIQUEFIED_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00810', substr(sale.LED_ST,0,2)) LED_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00820', substr(sale.BUTTON_ST,0,2)) BUTTON_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00830', substr(sale.BOTTOM_ST,0,2)) BOTTOM_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00840', substr(sale.BODY_ST,0,2)) BODY_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00850', substr(sale.DMB_ST,0,2)) DMB_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00860', substr(sale.GLASS_ST,0,2)) GLASS_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00870', substr(sale.TEETH_ST,0,2)) TEETH_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00870', substr(sale.WINDOW_ST,0,2)) WINDOW_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00880', substr(sale.EDGE_ST,0,2)) EDGE_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00890', substr(sale.RETURN_ST,0,2)) RETURN_ST
+     , DECODE(RETURN_CL,1,'Y','') RETURN_CL
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00900', prc.COM_AGENCY) COM_AGENCY
+     , DECODE(NVL(prc.JOIN_WAY,'A'),'C','기변','T','클럽T','') JOIN_WAY
+     , NVL(prc.SKN_EQP_ST, con.SKN_EQP_ST) SKN_EQP_ST
+     , NVL(prc.AGN_DDCT_YN,'N') AGN_DDCT_YN 
+  FROM TCST_CONSULT_MGMT con
+     , TCST_PRCHS_MGMT prc
+     , TBAS_PROD_MGMT prod
+     , PS_MNG.TCST_SALE_EQP sale
+ WHERE con.CON_MGMT_NO = prc.CON_MGMT_NO
+   AND prc.CON_MGMT_NO = sale.CON_MGMT_NO
+   AND con.PROD_CD = prod.PROD_CD 
+   AND con.DEL_YN = 'N'
+   AND prc.DEL_YN = 'N'
+   AND prod.DEL_YN = 'N'
+   AND sale.DEL_YN = 'N'
+]]><isEqual property="DT_GB" compareValue="1"> 
+<![CDATA[   AND con.CON_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isEqual property="DT_GB" compareValue="2"> 
+<![CDATA[   AND prc.CHECK_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isEqual property="DT_GB" compareValue="3">
+<![CDATA[   AND con.IN_YN = 'Y'
+   AND con.IN_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       NVL(prc.PROD_CD,con.PROD_CD) = #PROD_CD#
+]]></isNotEmpty>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">
+<![CDATA[       NVL(prc.SER_NUM,con.SER_NUM) = #SER_NUM#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       con.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEqual property="SALE_EQP_ST" compareValue="A"> 
+<![CDATA[   AND prc.SALE_EQP_ST = #SALE_EQP_ST#
+]]></isNotEqual>
+<![CDATA[]]><isNotEqual property="JOIN_WAY" compareValue="A"> 
+<![CDATA[   AND con.JOIN_WAY = #JOIN_WAY#
+]]></isNotEqual>
+<![CDATA[   ORDER BY con_dt]]>
+	</select>
+</sqlMap>

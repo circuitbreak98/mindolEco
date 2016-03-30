@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMQNA00300">
+	<insert id="addQna" parameterClass="map" ><![CDATA[INSERT INTO /*+ ADMFAQ00300_addQna_원윤성_심연정 */ tadm_qna
+    (
+    qna_num,
+    title,
+    que_ctt,
+    type_cd,
+    ans_ctt,
+    ans_yn,
+    doc_id,
+    write_user_id,
+    write_dt,
+    del_yn,
+    upd_cnt,
+    ins_dtm,
+    ins_user_id,
+    mod_dtm,
+    mod_user_id
+    )
+VALUES (
+    (SELECT NVL(MAX(qna_num)+1,1) FROM tadm_qna)
+    ,#title#
+    ,#que_ctt#
+    ,#type_cd#
+    ,#ans_ctt#
+    ,'N'
+    ,#doc_id#
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'yyyymmdd')
+    ,'N'
+    ,0
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    )]]>
+	</insert>
+	<update id="updateQna" parameterClass="map" ><![CDATA[UPDATE /*+ ADMFAQ00300_updateQna_원윤성_심연정 */ tadm_qna
+	SET	
+title 		= #title#,
+que_ctt 	= #que_ctt#,
+type_cd 	= #type_cd#,
+doc_id 		= #doc_id#,
+mod_dtm 	= to_char(sysdate,'YYYYMMDDHH24MISS'),
+mod_user_id = #onlineContext.userInfo.loginId#
+WHERE
+qna_num 	= #qna_num# ]]>
+	</update>
+	<delete id="deleteQnA" parameterClass="map" ><![CDATA[DELETE FROM /*+ ADMQNA00300_deleteQna_원윤성_최승호 */ 
+	tadm_qna
+WHERE
+	del_yn = 'N'
+AND	 
+	qna_num = #qna_num#]]>
+	</delete>
+</sqlMap>

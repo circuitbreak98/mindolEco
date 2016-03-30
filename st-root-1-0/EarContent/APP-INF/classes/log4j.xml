@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="Console" class="org.apache.log4j.ConsoleAppender">
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d] %-5p %C{1}.%M(%F:%L) - %m%n" />
+        </layout>
+        <filter class="org.apache.log4j.varia.StringMatchFilter">
+            <param name="StringToMatch" value="Result" />
+            <param name="AcceptOnMatch" value="false" />
+        </filter>
+    </appender>
+
+    <appender name="file"
+        class="org.apache.log4j.RollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="MaxFileSize" value="512KB" />
+        <param name="MaxBackupIndex" value="4" />
+        <param name="File" value="${NEXCORE_LOG_HOME}/application.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="%n%d%n\%p : %l%n%m%n%n" />
+        </layout>
+    </appender>
+        
+    <appender name="file_ioc"
+        class="org.apache.log4j.RollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="MaxFileSize" value="512KB" />
+        <param name="MaxBackupIndex" value="4" />
+        <param name="File" value="${NEXCORE_LOG_HOME}/ioc.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%d] %-5p %C{1}.%M(%F:%L) - %m%n" />
+        </layout>
+    </appender>
+
+    <appender name="file_debug"
+        class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <param name="File" value="${NEXCORE_LOG_HOME}/devlog/devlog.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                value="![%d]_[%p]_[ %l]_[%m]%n" />
+        </layout>
+    </appender>
+
+    <appender name="file_access"
+        class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <param name="File" value="${NEXCORE_LOG_HOME}/access/accesslog.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="![%d]_%m%n" />
+        </layout>
+    </appender>
+
+    <appender name="file_system"
+        class="nexcore.framework.core.log.impl.IncrementalRollingAppender">
+        <param name="encoding" value="MS949" />
+        <param name="MaxFileSize" value="512KB" />
+        <param name="MaxBackupIndex" value="4" />
+        <param name="File" value="${NEXCORE_LOG_HOME}/system.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="![%d]_%m%n" />
+        </layout>
+    </appender>
+
+    <appender name="file_fwk"
+        class="org.apache.log4j.RollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="MaxFileSize" value="512KB" />
+        <param name="MaxBackupIndex" value="4" />
+        <param name="File" value="${NEXCORE_LOG_HOME}/fwklog.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="![%d]_[%p]_[ %l]_[%m]%n" />
+        </layout>
+    </appender>
+
+    <appender name="file_txsql"
+        class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <param name="File" value="${NEXCORE_LOG_HOME}/txsql/txsql.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="![%d]_%m%n" />
+        </layout>
+    </appender>
+ 
+    <appender name="file_tx"
+        class="nexcore.framework.core.log.impl.IncrementalRollingAppender">
+        <param name="encoding" value="MS949" />
+        <param name="MaxFileSize" value="512KB" />
+        <param name="MaxBackupIndex" value="4" />
+        <param name="File" value="${NEXCORE_LOG_HOME}/transaction/transaction.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="![%d]_%m%n" />
+        </layout>
+    </appender>
+   
+    <appender name="file_error"
+        class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <param name="File" value="${NEXCORE_LOG_HOME}/error/errorlog.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="![%d]_%m%n" />
+        </layout>
+    </appender>
+
+    <appender name="sql"
+        class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="encoding" value="MS949" />
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+        <param name="File" value="${NEXCORE_LOG_HOME}/sql/sql.log" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%n%d : %m%n" />
+        </layout>
+    </appender>
+
+    <!-- org.xx -->
+    <category name="org" additivity="false">
+        <priority value="warn" />
+        <appender-ref ref="Console" />
+    </category>
+    
+    <!-- EhCache -->
+    <category name="net.sf.ehcache" additivity="false">
+        <priority value="error" />
+        <appender-ref ref="Console" />
+    </category>
+    
+    <!-- Spring Framework -->
+    <category name="org.springframework" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file_ioc" />
+    </category>
+    
+    <!-- Nexcore Framework -->
+    <category name="nexcore" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file" />
+    </category>
+
+    <!-- JDBC (for iBatis) : Statement, PreparedStatement, ResultSet -->
+    <category name="java.sql" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="sql" />
+    </category>
+
+    <category name="__devlog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file_debug" />
+        <appender-ref ref="Console" />
+    </category>
+
+    <category name="__accesslog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file_access" />
+    </category>
+
+    <category name="__systemlog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file_system" />
+    </category>
+
+    <category name="__fwklog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file_fwk" />
+    </category>
+
+    <category name="__txsqllog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file_txsql" />
+    </category>
+    
+    <category name="__txlog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file_tx" />
+    </category>
+    
+    <category name="__errorlog" additivity="false">
+        <priority value="debug" />
+        <appender-ref ref="file_error" />
+    </category>
+    
+    <root>
+        <level value="OFF"/>
+        <appender-ref ref="Console" />
+    </root>
+    
+</log4j:configuration>

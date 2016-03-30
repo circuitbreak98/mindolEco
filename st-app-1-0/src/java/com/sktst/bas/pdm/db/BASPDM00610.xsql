@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASPDM00610">
+	<select id="getProdFixPrice" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT
+	FX.SEQ 			AS SEQ
+	, FX.GRADE 		AS GRADE
+    , FX.PRICE 		AS PRICE
+    , FX.ST_DT 		AS START_DT
+    , FX.ED_DT 		AS END_DT
+FROM TBAS_RATE_MGMT RM,
+	(SELECT * FROM TBAS_PROD_FIX_PRICE WHERE PROD_CD = #PROD_CD#) FX
+WHERE FX.ST_DT <= #MOD_DTM#
+	AND FX.ED_DT >= #MOD_DTM#
+    AND RM.DEL_YN = 'N'
+	AND RM.TYPE_CL = '1'
+	AND RM.GRADE_GB = #GRADE_GB#
+	AND RM.GRADE = FX.GRADE
+ORDER BY PRICE DESC]]>
+	</select>
+	<update id="saveProdFixPrice_update" parameterClass="map" ><![CDATA[UPDATE TBAS_PROD_FIX_PRICE
+	SET GRADE = #GRADE#
+	, RMKS = #RMKS#
+	, UPD_CNT = NVL(UPD_CNT,0)+1
+	, MOD_DTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+	, MOD_USER_ID = #onlineContext.userInfo.loginId#
+    , ED_DT = TO_CHAR(SYSDATE, 'YYYYMMDD') - 1
+WHERE PROD_CD = #PROD_CD#
+    AND SEQ = #SEQ#]]>
+	</update>
+	<insert id="saveProdFixPrice_insert" parameterClass="map" ><![CDATA[INSERT INTO TBAS_PROD_FIX_PRICE (
+	PROD_CD
+	, SEQ
+    , GRADE
+    , PRICE
+    , RMKS
+    , DEL_YN
+    , UPD_CNT
+    , INS_DTM
+    , INS_USER_ID
+    , MOD_DTM
+    , MOD_USER_ID
+    , ST_DT
+    , ED_DT
+)
+VALUES (
+	#PROD_CD#
+    , (SELECT NVL(MAX(SEQ),0)+1 FROM TBAS_PROD_FIX_PRICE WHERE PROD_CD = #PROD_CD# )
+    , #GRADE#
+    , #PRICE#
+    , #RMKS#
+    , 'N'
+    , '0'
+    , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+    , #onlineContext.userInfo.loginId#
+    , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+    , #onlineContext.userInfo.loginId#
+    , TO_CHAR(SYSDATE, 'YYYYMMDD')
+    , '99991231'
+)]]>
+	</insert>
+</sqlMap>

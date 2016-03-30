@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="490" Id="ACCACO00400" Left="8" OnLoadCompleted="ACCACO00400_OnLoadCompleted" PidAttrib="7" Title="중고미반납환수&#32;엑셀업로드" Top="8" Ver="1.0" Width="850" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="POS_AGENCY" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_UKEY" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="ERP_FIX_YN" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_DTM></ACC_DTM>
+						<DEAL_NM></DEAL_NM>
+						<DEAL_UKEY></DEAL_UKEY>
+						<POS_AGENCY></POS_AGENCY>
+						<SL_NET_CD></SL_NET_CD>
+						<STL_PLC></STL_PLC>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_oldRtnEquipExcelList">
+				<Contents>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="OLDRTN_OBJ_QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="OLDRTN_QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="OLDRTN_UNLOCK_QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="OLDUNRTN_OBJ_QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNOLDRTN_RPAY_SCHD_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNOLDRTN_RPAY_ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNOLDRTN_RPAY_FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_tempExcelList">
+				<Contents>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="OLDRTN_OBJ_QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="OLDRTN_QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="OLDRTN_UNLOCK_QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="OLDUNRTN_OBJ_QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNOLDRTN_RPAY_SCHD_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNOLDRTN_RPAY_ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNOLDRTN_RPAY_FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_errorExcelList">
+				<Contents>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNOLDRTN_RPAY_ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="774" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="4" Text="닫기" Top="333" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="중고&#32;미반납&#32;환수&#32;엑셀업로드" Top="60" Width="192"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_oldRtnEquipExcelList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="324" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="237" Id="grd_oldRtnEquip" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="840" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="87" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="830">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="120"/>
+						<col width="70"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" colspan="2" display="text" font="돋움,9,Bold" text="정산" Valign="Center"/>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" row="1" text="정산처" Valign="Center"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" row="1" text="정산처코드" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="반납대상&#10;수량" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="반납수량" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="4" color="user35" colspan="2" display="text" font="돋움,9,Bold" text="미반납" Valign="Center"/>
+						<cell bkcolor="user34" col="6" color="user35" colspan="3" display="text" font="돋움,9,Bold" text="환수금액" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" row="1" text="미반납수량" Valign="Center"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" row="1" text="환수예정" Valign="Center"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,9,Bold" row="1" text="가감금액" Valign="Center"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,9,Bold" row="1" text="환수확정" Valign="Center"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="비고" Valign="Center"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" row="1" text="LOCK해제" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="left" bkcolor2="user36" col="0" colid="DEAL_CO_NM" display="text"/>
+						<cell align="center" bkcolor2="user36" col="1" colid="ACC_PLC" display="text"/>
+						<cell align="right" bkcolor2="user36" col="2" colid="OLDRTN_OBJ_QTY" display="number"/>
+						<cell align="right" bkcolor2="user36" col="3" colid="OLDRTN_QTY" display="number"/>
+						<cell align="right" bkcolor2="user36" col="4" colid="OLDRTN_UNLOCK_QTY" display="number"/>
+						<cell align="right" bkcolor2="user36" col="5" colid="OLDUNRTN_OBJ_QTY" display="number"/>
+						<cell align="right" bkcolor2="user32" col="6" colid="UNOLDRTN_RPAY_SCHD_AMT" display="number"/>
+						<cell align="right" bkcolor="user25" col="7" colid="UNOLDRTN_RPAY_ADD_SUB_AMT" display="number" edit="integer" limit="9"/>
+						<cell align="right" bkcolor2="user32" col="8" colid="UNOLDRTN_RPAY_FIX_AMT" display="number"/>
+						<cell align="left" bkcolor2="user32" col="9" colid="RMKS" display="text" edit="normal"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" colspan="2" display="text" text="합계"/>
+						<cell align="right" bkcolor="user37" col="2" color="user38" display="number" expr='sum(&quot;OLDRTN_OBJ_QTY&quot;)'/>
+						<cell align="right" bkcolor="user37" col="3" color="user38" display="number" expr='sum(&quot;OLDRTN_QTY&quot;)'/>
+						<cell align="right" bkcolor="user37" col="4" color="user38" display="number" expr='sum(&quot;OLDRTN_UNLOCK_QTY&quot;)'/>
+						<cell align="right" bkcolor="user37" col="5" color="user38" display="number" expr='sum(&quot;OLDUNRTN_OBJ_QTY&quot;)'/>
+						<cell align="right" bkcolor="user37" col="6" color="user38" display="number" expr='sum(&quot;UNOLDRTN_RPAY_SCHD_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="7" color="user38" display="number" expr='sum(&quot;UNOLDRTN_RPAY_ADD_SUB_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="8" color="user38" display="number" expr='sum(&quot;UNOLDRTN_RPAY_FIX_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="9" color="user38" display="number"/>
+					</summary>
+				</format>
+				<format id="ExcelGrd">
+					<columns>
+						<col width="120"/>
+						<col width="70"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" colspan="2" display="text" font="돋움,9,Bold" text="정산" Valign="Center"/>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" row="1" text="정산처" Valign="Center"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" row="1" text="정산처코드" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="반납대상&#10;수량" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="반납수량" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="4" color="user35" colspan="2" display="text" font="돋움,9,Bold" text="미반납" Valign="Center"/>
+						<cell bkcolor="user34" col="6" color="user35" colspan="3" display="text" font="돋움,9,Bold" text="환수금액" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" row="1" text="미반납수량" Valign="Center"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" row="1" text="환수예정" Valign="Center"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,9,Bold" row="1" text="가감금액" Valign="Center"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,9,Bold" row="1" text="환수확정" Valign="Center"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="비고" Valign="Center"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" row="1" text="LOCK해제" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="left" bkcolor2="user36" col="0" colid="DEAL_CO_NM" display="text"/>
+						<cell align="center" bkcolor2="user36" col="1" colid="ACC_PLC" display="text"/>
+						<cell align="right" bkcolor2="user36" col="2" colid="OLDRTN_OBJ_QTY" display="number"/>
+						<cell align="right" bkcolor2="user36" col="3" colid="OLDRTN_QTY" display="number"/>
+						<cell align="right" bkcolor2="user36" col="4" colid="OLDRTN_UNLOCK_QTY" display="number"/>
+						<cell align="right" bkcolor2="user36" col="5" colid="OLDUNRTN_OBJ_QTY" display="number"/>
+						<cell align="right" bkcolor2="user32" col="6" colid="UNOLDRTN_RPAY_SCHD_AMT" display="number"/>
+						<cell align="right" bkcolor="user25" col="7" colid="UNOLDRTN_RPAY_ADD_SUB_AMT" display="number" edit="integer"/>
+						<cell align="right" bkcolor2="user32" col="8" colid="UNOLDRTN_RPAY_FIX_AMT" display="number"/>
+						<cell align="left" bkcolor2="user32" col="9" colid="RMKS" display="text" edit="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="710" LeftMargin="5" OnClick="btn_save_onClick" Style="sty_btn_c" TabOrder="3" Text="저장" Top="333" Width="60"></Button>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="5" Text="Div0" Top="10" Width="830">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="3" Style="sty_lb_Search" TabOrder="1" Text="대리점" Top="8" VAlign="Middle" Width="45"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCdNm" Left="52" LeftMargin="2" OnKeyDown="div_search_edt_agencyCdNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" UserData="발주처" Width="80"></Edit>
+				<Button Cursor="HAND" Height="20" Id="btn_agency" ImageID="btn_i_detail" Left="132" OnClick="div_search_btn_agency_OnClick" TabOrder="3" Text="Button0" Top="7" Width="20"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="150" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="80"></Edit>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="POS_AGENCY" Enable="FALSE" Height="20" Id="edt_agencyCd" Left="230" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Visible="FALSE" Width="10"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="244" Style="sty_lb_dataview" TabOrder="6" Text="정산월" Top="8" VAlign="Middle" Width="60"></Static>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="ACC_MTH" Height="20" Id="cal_accMth" Left="307" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="8" Type="STRING" Width="77"></MaskEdit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="384" OnClick="btn_monthCalendar_OnClick" TabOrder="8" TabStop="FALSE" Text="Button3" Top="8" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Button Cursor="HAND" Height="21" Id="btn_upload" ImageID="btn_i_excelup_w" Left="789" OnClick="btn_upload_OnClick" TabOrder="7" Text="Button1" ToolTipText="Excel&#32;Download" Top="60" Width="19"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="816" OnClick="btn_export_OnClick" TabOrder="6" Text="Button1" ToolTipText="Excel&#32;Download" Top="60" Width="19"></Button>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="8" Text="오류데이터" Top="348" Width="90"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_errorExcelList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="461" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="86" Id="grd_errorExcelList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="840" RowHeight="21" Style="sty_Grid" TabOrder="8" TabStop="true" Top="375" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="830">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="180"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="400"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="정산처" Valign="Center"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="정산처코드" Valign="Center"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="가감금액" Valign="Center"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="오류내역" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="left" bkcolor2="user36" col="0" colid="DEAL_CO_NM" display="text"/>
+						<cell align="center" bkcolor2="user36" col="1" colid="ACC_PLC" display="text"/>
+						<cell align="right" bkcolor2="user36" col="2" colid="UNOLDRTN_RPAY_ADD_SUB_AMT" display="text"/>
+						<cell align="left" bkcolor2="user32" col="3" colid="RMKS" display="text" edit="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Static Align="Right" Height="13" Id="st_errorTotCount" Left="86" Style="sty_lb_info" TabOrder="10" Text="0&#32;건" Top="355" Width="40"></Static>
+		<Button Cursor="HAND" Height="21" Id="btn_errorExcel" ImageID="btn_i_exceldown_w" Left="135" OnClick="btn_errorExport_OnClick" TabOrder="11" Text="Button1" ToolTipText="Excel&#32;Download" Top="349" Width="19"></Button>
+		<Image Align="Left" Height="20" Id="img_polChg" ImageID="bul_caution" Left="207" LeftMargin="20" Style="sty_lb_info" TabOrder="12" Text="비고:200자&#32;이하&#32;작성!" Top="62" Width="140"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCACO00400
+* 업무명      : 정산 - 판매점정산관리
+* 프로그램명  : 중고반납환수 엑셀업로드
+--------------------------------------------------------------------------------
+* 작성자      : 전승호
+* 작성일      : 2009.03.09
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_LOGIN_ID;      	//사용자계정     
+var FV_ORG_ID;         	//조직코드    
+var FV_ORG_CL;         	//조직구분      
+var FV_SUP_ORG_ID;      //상위조직코드   
+var FV_USER_GRP;        //사용자그룹   
+var FV_ORG_AREA_ID; 	// 근무지 cd.
+var FV_ORG_AREA_NM; 	// 근무지 nm.       
+var FV_POS_AGENCY_ID;   // 소속 대리점ID 
+var FV_POS_AGENCY_NM;   // 소속 대리점명 
+var FV_POS_AGENCY_UKEY_ID; // 소속 대리점UKEY ID 
+
+
+/*******************************************************************************
+* 함수명 : ACCSAC00200_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function ACCACO00400_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_oldRtnEquip);	// 그리드 정렬
+	cf_setGrdChecknSortEvent(grd_errorExcelList);	// 그리드 정렬
+	
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	http.Sync = true;
+	
+	btn_save.Visible = false;
+	
+	f_initSearchSet();
+	
+	grd_oldRtnEquip.Format = "Default";
+	
+	df_search(); //중고기기 미반납 환수여부 조회
+	
+	ds_oldRtnEquipExcelList.Sort("DEAL_CO_NM");
+	
+	var objNm = object("parent."+PARENT_GRDDS);
+	
+	for( var nRow=0; nRow<ds_oldRtnEquipExcelList.rowcount; nRow++ ){
+	
+	
+		ACC_PLC = ds_oldRtnEquipExcelList.GetColumn(nRow,"ACC_PLC");
+		ACC_MTH = ds_oldRtnEquipExcelList.GetColumn(nRow,"ACC_MTH");
+		SL_CL   = ds_oldRtnEquipExcelList.GetColumn(nRow,"SL_CL");
+		
+		var findRow = objNm.SearchRow("ACC_PLC==" + quote(ACC_PLC) +
+									  " && ACC_MTH==" + quote(ACC_MTH) +
+									  " && SL_CL==" + quote(SL_CL));
+		if(findRow != -1){
+			
+			var UNOLDRTN_RPAY_AMT = toNumber(objNm.GetColumn(findRow,"UNOLDRTN_RPAY_AMT"));
+			
+			if(UNOLDRTN_RPAY_AMT > 0 ){
+				ds_oldRtnEquipExcelList.SetColumn(nRow,"UNOLDRTN_RPAY_FIX_AMT",UNOLDRTN_RPAY_AMT);
+				ds_oldRtnEquipExcelList.SetColumn(nRow,"UNOLDRTN_RPAY_ADD_SUB_AMT",toNumber(ds_oldRtnEquipExcelList.GetColumn(nRow,"UNOLDRTN_RPAY_FIX_AMT")) -
+																				   toNumber(ds_oldRtnEquipExcelList.GetColumn(nRow,"UNOLDRTN_RPAY_SCHD_AMT")));
+			}																	  
+			
+		}
+	
+	}
+	
+	http.Sync = false;
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack
+* 기능명 : 트랜잭션 콜백
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "getOldRtnEquipList")
+	{	
+		return;
+	}
+		
+}
+
+/*******************************************************************************
+* 함수명 : df_search
+* 기능명 : 공통 조회 버튼 클릭
+*******************************************************************************/
+function df_search(sButtonID)
+{
+	var sSvcID = "getOldRtnEquipList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_oldRtnEquipExcelList=ds_oldRtnEquipExcelList";
+	var sArg   = "sktst.acc.ACO#getOldRtnEquipExcelList";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+/*******************************************************************************
+* 함수명 : f_initSearchSet
+* 기능명 : 중고반납환수 검색조건 세팅
+*******************************************************************************/
+function f_initSearchSet()
+{
+	cf_setParam(ds_condition,"ACC_MTH"   	   ,ACC_MTH);	//정산월
+	cf_setParam(ds_condition,"SL_CL"   	   	   ,SL_CL);		//영업구분
+	cf_setParam(ds_condition,"POS_AGENCY"      ,POS_AGENCY);//영업구분
+	div_search.edt_agencyCdNm.Text = POS_AGENCY_NM;			//대리점명
+	div_search.edt_agencyUkeyCd.Text = POS_AGENCY;			//대리점코드
+	
+	uf_ObjComponentEnable(div_search,false);
+	
+}
+
+/*******************************************************************************
+* 함수명 : f_pre_save
+* 기능명 : 저장버튼 전 체크함수 
+*******************************************************************************/
+function f_pre_save()
+{	
+    return true;
+}
+
+/*******************************************************************************
+ * @description    : 저장
+*******************************************************************************/
+function btn_save_onClick(obj)
+{
+	if (!(f_pre_save())) return;
+	
+	var ACC_PLC = "";
+	var ACC_MTH = "";
+	var SL_CL = "";
+	var ERP_FIX_YN = "";
+	var SALE_CMMS_FIX_YN = "";
+	var objNm = object("parent."+PARENT_GRDDS);
+		
+	for( var nRow=0; nRow<ds_oldRtnEquipExcelList.rowcount; nRow++ ){
+	
+		ACC_PLC = ds_oldRtnEquipExcelList.GetColumn(nRow,"ACC_PLC");
+		ACC_MTH = ds_oldRtnEquipExcelList.GetColumn(nRow,"ACC_MTH");
+		SL_CL   = ds_oldRtnEquipExcelList.GetColumn(nRow,"SL_CL");
+		
+		if( objNm.GetColumn(objNm.FindRow("ACC_PLC",ACC_PLC),"ERP_FIX_YN") != "Y" &&
+		    objNm.GetColumn(objNm.FindRow("ACC_PLC",ACC_PLC),"SALE_CMMS_FIX_YN") = "Y" )
+		{
+		
+			var findRow = parent.ds_oldRtnEquip.SearchRow("ACC_PLC==" + quote(ACC_PLC) +
+														  " && ACC_MTH==" + quote(ACC_MTH) +
+														  " && SL_CL==" + quote(SL_CL));
+			if(nRow != -1){
+				parent.ds_oldRtnEquip.DeleteRow(findRow);
+			}
+			
+			//부모데이터의 중고환수 금액 입력
+			var PARENT_CURROW = objNm.SearchRow("ACC_PLC==" + quote(ACC_PLC) +
+												" && ACC_MTH==" + quote(ACC_MTH) +
+												" && SL_CL==" + quote(SL_CL));
+			objNm.setColumn(PARENT_CURROW,"UNOLDRTN_RPAY_AMT",ds_oldRtnEquipExcelList.GetColumn(nRow,"UNOLDRTN_RPAY_FIX_AMT"));
+			
+			objNm.setColumn(PARENT_CURROW,"UNOLDRTN_RPAY_DTL_YN","Y");
+			objNm.setColumn(PARENT_CURROW,"CHK","1");
+		}
+	}
+		
+	//부모데이트의 중고반납 Data 이관
+	parent.ds_oldRtnEquip.AppendDataSet(ds_oldRtnEquipExcelList);
+	
+	this.close("1");
+}
+
+/*******************************************************************************
+* 함수명 : btn_export_OnClick
+* 기능명 :  엑셀 export
+*******************************************************************************/
+function btn_export_OnClick(obj)
+{
+	grd_oldRtnEquip.Format = "ExcelGrd";
+	
+	f_exportExcel(grd_oldRtnEquip);
+	
+}
+
+/*******************************************************************************
+* 함수명 : btn_errorExport_OnClick
+* 기능명 :  엑셀 export
+*******************************************************************************/
+function btn_errorExport_OnClick(obj)
+{
+	cf_exportExcel(grd_errorExcelList);
+}
+
+/*******************************************************************************
+* 함수명 : btn_upload_OnClick
+* 기능명 :  엑셀 inport
+*******************************************************************************/
+function btn_upload_OnClick(obj)
+{
+	grd_oldRtnEquip.Redraw = false;
+	grd_errorExcelList.Redraw = false;
+	
+	var UNOLDRTN_RPAY_ADD_SUB_AMT = "";
+	var RMKS = "";
+	var ERP_FIX_YN = "N";
+	var nLimit;
+	var dupCnt = 0;
+	
+	ds_tempExcelList.clearData();
+	ds_errorExcelList.clearData();
+	
+	f_importExcel("ds_tempExcelList");
+	
+	if(ds_tempExcelList.rowcount > 0) {
+	
+		for(var nRow = ds_oldRtnEquipExcelList.rowCount-1; nRow>=0; nRow--) {	
+			
+			var ACC_PLC = ds_oldRtnEquipExcelList.GetColumn(nRow,"ACC_PLC");
+			var findRow = ds_tempExcelList.FindRow("ACC_PLC",ACC_PLC);
+			     
+			dupCnt = ds_tempExcelList.CaseCount("ACC_PLC==" + quote(ACC_PLC));
+			
+			if(dupCnt > 1 ){ 
+				ds_errorExcelList.AddRow();
+				ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_tempExcelList",findRow);
+				ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","중복된 정산처 코드가 있습니다.");
+				ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"UNOLDRTN_RPAY_ADD_SUB_AMT","");
+				continue;
+			}
+			
+			if(findRow >= 0){
+			
+				nLimit   = grd_oldRtnEquip.GetCellProp('body',7,'Limit');
+			
+				UNOLDRTN_RPAY_ADD_SUB_AMT = trim(ds_tempExcelList.GetColumn(findRow,"UNOLDRTN_RPAY_ADD_SUB_AMT"));
+				
+				if(uf_isNull(UNOLDRTN_RPAY_ADD_SUB_AMT) == true){
+		
+					UNOLDRTN_RPAY_ADD_SUB_AMT = 0;
+				}
+		
+				if( f_isNumber(UNOLDRTN_RPAY_ADD_SUB_AMT) == true)
+				{
+					if(nLimit != "0")
+					{
+						if( length(UNOLDRTN_RPAY_ADD_SUB_AMT) > toNumber(nLimit)){
+							
+							ds_errorExcelList.AddRow();
+							ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_oldRtnEquipExcelList",nRow);
+							ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","가감금액이 한도초과하였습니다.");
+							ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"UNOLDRTN_RPAY_ADD_SUB_AMT",UNOLDRTN_RPAY_ADD_SUB_AMT);
+							
+						}else{
+							if( parent.ds_monthClsList.GetColumn(parent.ds_monthClsList.FindRow("ACC_PLC",ACC_PLC),"ERP_FIX_YN") == "Y"){
+								
+								ds_errorExcelList.AddRow();
+								ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_oldRtnEquipExcelList",nRow);
+								ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","정산완료된 정산처 입니다.");
+								ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"UNOLDRTN_RPAY_ADD_SUB_AMT",UNOLDRTN_RPAY_ADD_SUB_AMT);
+									
+							}else if( parent.ds_monthClsList.GetColumn(parent.ds_monthClsList.FindRow("ACC_PLC",ACC_PLC),"SALE_CMMS_FIX_YN") != "Y"){
+								
+								ds_errorExcelList.AddRow();
+								ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_oldRtnEquipExcelList",nRow);
+								ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","추정일마감 미완료된 정산처 입니다.");
+								ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"UNOLDRTN_RPAY_ADD_SUB_AMT",UNOLDRTN_RPAY_ADD_SUB_AMT);
+									
+							}else{
+								
+								RMKS = ds_tempExcelList.GetColumn(findRow,"RMKS");
+								
+								ds_oldRtnEquipExcelList.SetColumn(nRow,"UNOLDRTN_RPAY_ADD_SUB_AMT",UNOLDRTN_RPAY_ADD_SUB_AMT);
+							
+								ds_oldRtnEquipExcelList.setColumn(nRow,"UNOLDRTN_RPAY_FIX_AMT",toNumber(ds_oldRtnEquipExcelList.GetColumn(nRow,"UNOLDRTN_RPAY_SCHD_AMT")) +
+																							   toNumber(UNOLDRTN_RPAY_ADD_SUB_AMT));
+																							   
+								ds_oldRtnEquipExcelList.SetColumn(nRow,"RMKS",RMKS);								
+								
+							}
+						}
+					}
+					
+				}else{
+					
+					ds_errorExcelList.AddRow();
+					ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_oldRtnEquipExcelList",nRow);
+					ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","가감금액은 숫자만을 입력하십시오.");
+					ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"UNOLDRTN_RPAY_ADD_SUB_AMT",UNOLDRTN_RPAY_ADD_SUB_AMT);
+					
+				}
+		
+			}
+			
+		}
+		
+		btn_save.Visible = true;
+		
+	}
+	
+	grd_oldRtnEquip.Format = "Default";
+	
+	f_setTotalCount(ds_errorExcelList.RowCount());
+	
+	ds_oldRtnEquipExcelList.Sort("DEAL_CO_NM");
+	
+	ds_errorExcelList.Sort("DEAL_CO_NM");
+	
+	grd_errorExcelList.Redraw = true;
+	grd_oldRtnEquip.Redraw = true;
+	btn_save.Visible = true;
+	
+}
+
+/*******************************************************************************
+ * @description         : 그리드의 데이터를 엑셀화로 출력
+ * @param oGrd   		: 그리드 객체 
+		  nMode   		: 엑셀 저장 모드 - 1 or null : 엑셀로드 , 2 : 파일 저장
+*******************************************************************************/
+function f_exportExcel(oGrd, nMode)
+{
+	var sFilePath = "";
+	var sFileName = "";
+	var sSavedName = "";
+	var sSheetName = "중고반납환수";
+	var stmp;
+	
+	var oGrdDs = object(oGrd.BindDataset);
+	
+	if (oGrdDs.GetRowCount() < 1) 
+	{
+		alert(MSG_00983);
+		return;
+	}
+	
+	if(nMode != null && nMode == 2)
+	{
+		if( fld_excel.Open( "C:\\" ) )
+		{
+			sFilePath = fld_excel.FilePath;
+			sFileName = fld_excel.FileName;
+			sTmp = substr(sFileName, length(sFileName) - 3, length(sFileName));
+			if (sTmp != "xls")
+			{
+			   sFileName = sFileName + ".xls";
+			}
+			sSavedName = sFilePath + "\\" + sFileName;
+			oGrd.SaveExcel(sSavedName, sSheetName);
+		}
+		else
+		{
+			alert(MSG_00982);
+		}
+	}
+	else
+	{
+		oGrd.ExportExcelEx(sSheetName, "A1", false, true);
+	}
+	
+	grd_oldRtnEquip.Format = "ExcelGrd";
+}
+
+/*******************************************************************************
+ * @description             : 엑셀 파일을 읽어 지정하는 데이타셋에 로드
+ * @param sDsName   		: 데이타셋 아이디
+		  nUseDsInfo   		: 데이타셋 칼럼 정보 사용 유무 - 1: 사용, 0: 무시
+		  nStartIndex   	: 엑셀을 읽을 시작 행 위치
+ * @return	                : 선택한 엑셀파일의 풀패스 
+ * @etc                     : DS 칼럼 정보 사용시 엑셀의 셀 순서와 DS 칼럼 순서가 같아야 함!
+*******************************************************************************/
+function f_importExcel(sDsName, nUseDsInfo, nStartIndex, nSheetIndex)
+{
+	fld_excel.Type = "OPEN";
+	var bResult = fld_excel.Open();
+	
+	if ( bResult )
+	{
+		var sFullPath = fld_excel.FilePath + '\\' + fld_excel.FileName;
+
+		if(nUseDsInfo == null)
+		{
+			nUseDsInfo = 1;
+		}
+		
+		if(nStartIndex == null)
+		{
+			nStartIndex = 1;
+		}
+		
+		if(nSheetIndex == null)
+		{
+			nSheetIndex = 0;
+		}
+
+		var nResult = ext_ExcelImportByIndex(sFullPath, nSheetIndex, sDsName, nUseDsInfo, 0, 0, nStartIndex);
+
+		if(ds_tempExcelList.colcount + 3 != grd_oldRtnEquip.GetCellCount("Head")){
+			
+			alert("EXCEL CELL 의 갯수가 일치하지 않습니다. \r\n 파일을 다시 한번 확인해주세요.");
+			return false;
+		}
+		
+		ds_tempExcelList.DeleteRow(0); //엑셀의 헤드첫행 삭제
+		ds_tempExcelList.DeleteRow(0); //엑셀의 헤드두번째행 삭제
+		
+		if (ds_tempExcelList.count == 0){
+			alert("업로드할 자료가 없습니다.");
+			return false;
+		}	
+		
+		if(nResult == 0)
+		{
+			return sFullPath;
+		}
+		
+	}
+	
+}
+
+/*******************************************************************************
+* 함수명 : f_isNumber
+* 기능명 :  숫자인지 check
+*******************************************************************************/
+function f_isNumber(sNumber)
+{
+	var i;
+	
+	var digit = replace(sNumber,'-',''); //-은 제외
+	//숫자인지 check
+	for(i=0; i<length(digit); i++) {
+		if(asc(CharAt(digit, i)) < 48
+		   || asc(CharAt(digit, i)) > 57) {
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+/*******************************************************************************
+* 함수명 : f_setTotalCount
+* 기능명 :  오류데이터 건수 Display  
+*******************************************************************************/
+function f_setTotalCount(stErrorTotCount) {
+	st_errorTotCount.Text = stErrorTotCount + " 건";
+}
+
+/*******************************************************************************
+ * @description    : 닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+]]></Script>
+</Window>

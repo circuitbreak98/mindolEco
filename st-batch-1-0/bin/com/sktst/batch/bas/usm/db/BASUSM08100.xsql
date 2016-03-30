@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM08100">
+	<insert id="saveUKeyCdIf" parameterClass="hmap">
+	<![CDATA[
+        INSERT INTO tbas_ukey_id_if
+            (
+                op_dt,
+                op_tm,
+                seq,
+                
+                org_cd,
+                sub_org_cd,
+                ukey_id,
+                login_id,
+                ukey_id_nm,
+
+                aply_yn,
+                ins_dtm,
+                mod_dtm
+            )
+            VALUES
+            (
+				TO_CHAR(SYSDATE, 'YYYYMMDD'),
+				#OP_TM#,
+				NVL((SELECT MAX(SEQ)+1 FROM tbas_ukey_id_if WHERE op_dt = TO_CHAR(SYSDATE, 'YYYYMMDD') AND op_tm = #OP_TM#), 1),
+
+				TRIM(SUBSTRB(#REC_STR#, 3, 6)),
+				TRIM(SUBSTRB(#REC_STR#, 9, 4)),
+				TRIM(SUBSTRB(#REC_STR#, 13, 15)),
+				TRIM(SUBSTRB(#REC_STR#, 28, 15)),
+				TRIM(SUBSTRB(#REC_STR#, 43, 40)),
+
+				
+				'N',
+				TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+				TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            )
+	]]>
+	</insert>
+</sqlMap>

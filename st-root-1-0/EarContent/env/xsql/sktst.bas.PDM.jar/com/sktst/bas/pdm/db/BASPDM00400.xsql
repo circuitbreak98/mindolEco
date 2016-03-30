@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASPDM00400">
+	<select id="getProductBarcodeList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASPDM00400_getProductBarcodeList_조민지_조민지 */
+        (SELECT b.comm_cd_val_nm FROM tbas_comm_cd_dtl  b
+          WHERE b.comm_cd_id = 'ZBAS_C_00010'  AND b.comm_cd_val = a.prod_cl) AS prod_nm
+        ,(SELECT c.comm_cd_val_nm from tbas_comm_cd_dtl c WHERE c.comm_cd_id ='ZBAS_C_00090' AND a.bar_cd_typ = c.comm_cd_val) AS bar_cd_typ_nm
+        ,a.all_len_num
+        ,a.mdl_sta_len
+        ,a.mdl_end_len
+        ,a.mdl_len_num
+        ,a.color_sta_len
+        ,a.color_end_len
+        ,a.color_len_num
+        ,a.ser_num_sta_len
+        ,a.ser_num_end_len
+        ,a.ser_num_len_num
+        ,a.upd_cnt
+        ,a.ins_dtm
+        ,a.ins_user_id
+        ,a.mod_dtm
+        ,a.mod_user_id
+        ,a.prod_cl
+        ,a.bar_cd_typ
+FROM    tbas_prod_bar_cd_mgmt a
+WHERE	1=1
+]]><isNotEqual prepend="AND" property="value" compareValue="">
+<![CDATA[	a.prod_cl = #value#
+]]></isNotEqual>
+	</select>
+	<select id="getProdClChoData" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+BASPDM00400_getProdClChoData_조민지_조민지+*/
+        comm_cd_val
+        ,comm_cd_val_nm
+FROM    tbas_comm_cd_dtl
+WHERE   comm_cd_id ='ZBAS_C_00010']]>
+	</select>
+	<insert id="addProductBarcodeList" parameterClass="map" ><![CDATA[INSERT INTO tbas_prod_bar_cd_mgmt/*BASPDM00400_saveProductBarcodeList_조민지_조민지 */
+	(
+	prod_cl 
+    ,bar_cd_typ 
+    ,all_len_num
+    ,mdl_sta_len
+    ,mdl_end_len
+    ,mdl_len_num
+    ,color_sta_len
+    ,color_end_len
+    ,color_len_num
+    ,ser_num_sta_len
+    ,ser_num_end_len
+    ,ser_num_len_num
+    ,del_yn
+    ,upd_cnt
+    ,ins_dtm
+    ,ins_user_id
+    ,mod_dtm
+    ,mod_user_id    
+	)
+VALUES
+	(
+	#prod_cl#
+    ,#bar_cd_typ#
+    ,#all_len_num#
+    ,#mdl_sta_len#
+    ,#mdl_end_len#
+    ,#mdl_len_num#
+    ,#color_sta_len#
+    ,#color_end_len#
+    ,#color_len_num#
+    ,#ser_num_sta_len#
+    ,#ser_num_end_len#
+    ,#ser_num_len_num#
+    ,'N' 
+	,'0' 
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') 
+	,#onlineContext.userInfo.loginId#
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,#onlineContext.userInfo.loginId#   
+	)]]>
+	</insert>
+	<update id="updateProductBarcodeList" ><![CDATA[UPDATE /*+ BASPDM00400_saveProductBarcodeList_조민지_조민지 */ tbas_prod_bar_cd_mgmt
+	SET all_len_num = #all_len_num#
+        ,mdl_sta_len = #mdl_sta_len#
+        ,mdl_end_len = #mdl_end_len#
+        ,mdl_len_num = #mdl_len_num#
+        ,color_sta_len = #color_sta_len#
+		,color_end_len = #color_end_len#
+        ,color_len_num = #color_len_num#
+        ,ser_num_sta_len = #ser_num_sta_len#
+        ,ser_num_end_len = #ser_num_end_len#
+        ,ser_num_len_num = #ser_num_len_num#
+        ,upd_cnt = upd_cnt + 1
+        ,mod_dtm =TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+        ,mod_user_id = #onlineContext.userInfo.loginId#
+WHERE prod_cl = #prod_cl# and bar_cd_typ = #bar_cd_typ#]]>
+	</update>
+</sqlMap>

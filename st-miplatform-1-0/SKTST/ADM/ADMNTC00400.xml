@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="320" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="공지사항팝업" Top="8" UserData="공" Ver="1.0" Width="392" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_popNoticeInfo"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_file"></Dataset>
+		</Datasets>
+		<Div Border="SunkenEdge" Height="256" Id="div_screen" Left="2" Style="sty_div_dataview" TabOrder="1" Text="Div0" Top="32" Width="382">
+			<Contents>
+				<TextArea BindDataset="ds_popNoticeInfo" Border="Flat" Column="contents" Height="147" Id="TextArea1" Left="7" Readonly="TRUE" Style="sty_ipt_readonly" TabOrder="1" Top="30" VScroll="TRUE" Width="365"></TextArea>
+				<Grid AutoFit="TRUE" BindDataset="ds_file" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="247" Enable="true" EndLineColor="default" HeadBorder="Flat" HeadHeight="22" Height="66" Id="grd_file" InputPanel="FALSE" Left="7" LineColor="user33" MinWidth="100" OnCellDBLClick="div_screen_grd_file_OnCellDblClick" Right="371" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="181" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="364">
+					<contents>
+						<format id="Default">
+							<columns>
+								<col width="55"/>
+								<col width="347"/>
+								<col width="71"/>
+							</columns>
+							<head>
+								<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+								<cell bkcolor="user34" col="1" color="user35" display="text" text="파일명"/>
+								<cell bkcolor="user34" col="2" color="user35" display="text" text="크기"/>
+							</head>
+							<body>
+								<cell align="center" col="0" display="text" expr="row+1"/>
+								<cell col="1" colid="FILE_NM" cursor="expr:decode(FILE_PASS,null,&apos;arrow&apos;,&apos;hand&apos;)" display="text"/>
+								<cell align="center" col="2" colid="FILE_SIZE" display="text"/>
+							</body>
+						</format>
+					</contents>
+				</Grid>
+				<Edit BindDataset="ds_popNoticeInfo" Border="Flat" Column="title" Height="20" Id="edt_prod_cd" ImeMode="english" Left="7" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="6" UpperOnly="TRUE" UseIME="FALSE" Width="365"></Edit>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="2" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="공지사항" Top="4" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="325" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="291" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="263" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="4" Text="읽음" Top="291" Width="60"></Button>
+		<Checkbox Height="20" Id="chk_notToday" Left="8" TabOrder="5" Text="오늘&#32;하루&#32;안보기!" Top="294" Value="FALSE" Width="120"></Checkbox>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  ADMNTC00400
+* 업무명      :  ADMIN-공지사항팝업
+* 프로그램명  :  공지사항 팝업
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.04.18
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 
+수정일    : 
+수정 내역 : 
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+
+var nTargetRow = 0;
+var FV_STR_ATTATCH_SCREEN_ID = "ADMNTC00100"; //첨부대상 화면 아이디
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	if(IsExistVar("nRow", true))
+	{
+		nTargetRow  = nRow;
+	}
+
+	var oParentDs = parent.ds_notice;
+	cf_setParam(ds_popNoticeInfo, "title", oParentDs.getColumn(nTargetRow,"title"));
+	cf_setParam(ds_popNoticeInfo, "contents", oParentDs.getColumn(nTargetRow,"contents"));
+	cf_setParam(ds_popNoticeInfo, "NOTICE_NUM", oParentDs.getColumn(nTargetRow,"NOTICE_NUM"));
+	cf_setParam(ds_popNoticeInfo, "seq_no", oParentDs.getColumn(nTargetRow,"seq_no"));
+
+	// 첨부파일 정보 취득
+	var sDocId = oParentDs.GetColumn(nTargetRow, "doc_id");
+	ds_file.ClearData();
+	if(trim(sDocId).length  > 0)
+	{
+		f_getAttatchList(sDocId);
+	}
+}
+
+/*******************************************************************************
+ * @description    		: 첨부파일 정보 취득
+ * @param sDocId        : 문서번호
+*******************************************************************************/
+function f_getAttatchList(sDocId)
+{
+	// 조회를 위한 필수 인자 SCREEN_ID ,  DOC_ID
+	//var sScreenId = substr(pFrmUrl, pFrmUrl.indexOf("::")+2);
+	//cf_setParam(ds_condition, "SCREEN_ID", FV_STR_ATTATCH_SCREEN_ID); 
+	cf_setParam(ds_condition, "SCREEN_ID", "ADMNTC00100"); 
+	cf_setParam(ds_condition, "DOC_ID", sDocId); 
+
+	// 트랜잭션 설정
+	var sSvcID = "svcAttatchList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_file=nc_fileDs";
+	var sArg = "sktst.adm.NTC#getAttatchList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcAttatchList")
+	{
+		//trace(ds_file.SaveXML());
+	}
+	
+	if(sSvcID == "svcRead")
+	{
+		var sNoticeNum = parent.ds_notice.getColumn(nTargetRow, "notice_num");
+		var sNoticePopInfo = getReg("noticePop");
+		var nFindedIndex = sNoticePopInfo.indexOf(sNoticeNum);
+		if(nFindedIndex != -1)
+		{
+			var sTargetStr = substr(sNoticePopInfo, nFindedIndex-1, 15);
+			sNoticePopInfo = replace(sNoticePopInfo, sTargetStr, "");
+			SetReg("noticePop", sNoticePopInfo);
+		}
+
+		this.Close();
+	}
+}	
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	if(chk_notToday.value == true)
+	{
+		var sNoticeNum = parent.ds_notice.getColumn(nTargetRow, "notice_num");
+		var sNoticePopInfo = getReg("noticePop");
+		var nFindedIndex = sNoticePopInfo.indexOf(sNoticeNum);
+		if(nFindedIndex == -1)
+		{
+			sNoticePopInfo += "^"+sNoticeNum+"_"+today();
+		}
+		else
+		{
+			var sTargetStr = substr(sNoticePopInfo, nFindedIndex-1, 15);
+			sNoticePopInfo = replace(sNoticePopInfo, sTargetStr, "^"+sNoticeNum+"_"+today());
+		}
+
+		SetReg("noticePop", sNoticePopInfo);
+	}
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 첨부 파일 내려 받기- 이벤트
+*******************************************************************************/
+function div_screen_grd_file_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell == 1)
+	{
+		var oGrdDs = object(obj.BindDataset);
+		var sScreenId = oGrdDs.getColumn(nRow, "SCREEN_ID");
+		var sDocId = oGrdDs.getColumn(nRow, "DOC_ID");
+		var sFileName = oGrdDs.getColumn(nRow, "FILE_NM");
+		var sFileType = oGrdDs.getColumn(nRow, "FILE_TYPE");
+		cf_downLoad(sScreenId, sDocId, sFileName, sFileType);	
+	}
+}
+
+/*******************************************************************************
+ * @description    : 읽음 처리- 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	// 트랜잭션 설정
+	var sSvcID = "svcRead";
+	var sInDs = "nc_input_fieldDs=ds_popNoticeInfo";
+	var sOutDs = "";
+	var sArg = "sktst.adm.NTC#updateReadInfo";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+]]></Script>
+</Window>

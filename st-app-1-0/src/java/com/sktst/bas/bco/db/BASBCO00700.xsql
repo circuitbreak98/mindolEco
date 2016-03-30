@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO00700">
+	<select id="getProductList" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT prod_cl,
+       (select comm_cd_val_nm
+       from tbas_comm_cd_dtl
+       where comm_cd_id = 'ZBAS_C_00010'
+       and   comm_cd_val = prod_cl) AS prod_cl_nm,
+       mfact_id,
+       FBAS_GET_DEAL_NM(mfact_id,'') as mfact_nm,
+       prod_nm,
+       prod_cd,
+       prod_chrtic_1,
+       prod_chrtic_2,
+       mktg_dt,
+       end_dt,
+       prod_cl,
+       sale_yn as use_yn,
+       sale_stop_dt as use_stop_dt,
+       rgst_cl,
+       rmks,
+       del_yn,
+       upd_cnt,
+       ins_dtm,
+       ins_user_id,
+       mod_dtm,
+       mod_user_id,bar_cd_typ
+  FROM tbas_prod_mgmt
+ WHERE del_yn = 'N'
+ AND   sale_yn = 'N'
+]]><isNotEmpty prepend="AND" property="PROD_CD">
+<![CDATA[	PROD_CD LIKE '%'||upper(#PROD_CD#)||'%'
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CL">
+<![CDATA[	PROD_CL = #PROD_CL#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_NM">
+<![CDATA[	PROD_NM LIKE '%'||upper(#PROD_NM#)||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="MFACT_ID">
+<![CDATA[	MFACT_ID = #MFACT_ID#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CHRTIC_1">
+<![CDATA[	PROD_CHRTIC_1 = #PROD_CHRTIC_1#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CHRTIC_2">
+<![CDATA[	PROD_CHRTIC_2 = #PROD_CHRTIC_2#
+]]></isNotEmpty>
+	</select>
+	<select id="getProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT prod_cl,
+       (select comm_cd_val_nm
+       from tbas_comm_cd_dtl
+       where comm_cd_id = 'ZBAS_C_00010'
+       and   comm_cd_val = prod_cl) AS prod_cl_nm,
+       mfact_id,
+       FBAS_GET_DEAL_NM(mfact_id,'') as mfact_nm,
+       prod_nm,
+       prod_cd,
+       prod_chrtic_1,
+       prod_chrtic_2,
+       mktg_dt,
+       end_dt,
+       prod_cl,
+       sale_yn as use_yn,
+       sale_stop_dt as use_stop_dt,
+       rgst_cl,
+       rmks,
+       del_yn,
+       upd_cnt,
+       ins_dtm,
+       ins_user_id,
+       mod_dtm,
+       mod_user_id ,bar_cd_typ
+  FROM tbas_prod_mgmt
+ WHERE del_yn = 'N'
+ AND   sale_yn = 'N'
+]]><isNotEmpty prepend="AND" property="PROD_CD">
+<![CDATA[		(  PROD_CD LIKE  '%'||upper(#PROD_CD#)||'%'
+	or PROD_NM LIKE  '%'||upper(#PROD_CD#)||'%')
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CL">
+<![CDATA[	PROD_CL = #PROD_CL#
+]]></isNotEmpty>
+	</select>
+</sqlMap>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08120">
+	<select id="getAgencyList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        select  /* SACERP08120_getAgencyList_대리점목록조회_하창주 */
+				 b.org_id
+				,a.agency				/*대리점*/
+				,b.ukey_agency_cd
+                /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+                ,(select case when min(user_cd) is null and b.org_id = 'C10011' then '140034' else min(user_cd) end
+                    from tbas_user_mgmt
+                   where pos_agency = a.agency
+                     and user_grp = 'D17'
+                     and del_yn = 'N'
+                     and eff_user_yn = 'Y'
+                     and attc_cat in ('1', '2')) as user_cd
+		  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+		 where  a.agency	= b.deal_co_cd
+           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+										hseq_no 
+								FROM	tbas_deal_co_mgmt
+								WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+							  )
+		   and	a.yymm		= #YYMM#
+	]]>
+			<isNotEmpty prepend="AND" property="AGENCY">
+	<![CDATA[	a.agency 	= #AGENCY#		]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="DPST_PLC">
+	<![CDATA[	a.dpst_plc 	= #DPST_PLC#	]]>
+			</isNotEmpty>
+	<![CDATA[
+		group by b.org_id, a.agency, b.ukey_agency_cd
+		order by agency
+	]]>
+	</select>
+
+	<select id="getChagOcctAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+				select  /* SACERP08120_getChagOcctAmtList_입금발생금액조회_하창주 */
+						 a.yymm					/*입금년월*/
+						,a.agency				/*대리점*/
+						,a.dpst_plc				/*입금처*/
+						,sum(nvl(a.chag_occt_amt, 0)) as chag_occt_amt		/*SKT요금발생액*/
+						,b.ukey_agency_cd
+						,b.ukey_sub_cd
+				  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+				 where  a.dpst_plc	= b.deal_co_cd
+		           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+												hseq_no 
+										FROM	tbas_deal_co_mgmt
+										WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+									  )
+				   and	a.yymm		= #YYMM#
+				   and	a.agency	= #AGENCY#
+			]]>
+					<isNotEmpty prepend="AND" property="DPST_PLC">
+			<![CDATA[	a.dpst_plc	= #DPST_PLC#		]]>
+					</isNotEmpty>
+			<![CDATA[
+				group by a.yymm, a.agency, a.dpst_plc, b.ukey_agency_cd, b.ukey_sub_cd
+			 )
+		where chag_occt_amt <> 0
+	]]>
+	</select>
+	
+	<select id="getChagOcctAmtList2" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+				select  /* SACERP08120_getChagOcctAmtList2_입금발생금액조회_하창주 */
+						 a.yymm					/*입금년월*/
+						,a.agency				/*대리점*/
+						,a.dpst_plc				/*입금처*/
+						,sum(nvl(a.chag_occt_amt_a, 0)) as chag_occt_amt_a		/*SKT요금발생액a*/
+						,b.ukey_agency_cd
+						,b.ukey_sub_cd
+				  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+				 where  a.dpst_plc	= b.deal_co_cd
+		           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+												hseq_no 
+										FROM	tbas_deal_co_mgmt
+										WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+									  )
+				   and	a.yymm		= #YYMM#
+				   and	a.agency	= #AGENCY#
+			]]>
+					<isNotEmpty prepend="AND" property="DPST_PLC">
+			<![CDATA[	a.dpst_plc	= #DPST_PLC#		]]>
+					</isNotEmpty>
+			<![CDATA[
+				group by a.yymm, a.agency, a.dpst_plc, b.ukey_agency_cd, b.ukey_sub_cd
+			 )
+		where chag_occt_amt_a <> 0
+	]]>
+	</select>
+
+	<select id="getPrprcOccrAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+				select  /* SACERP08120_getPrprcOccrAmtList_SKT예수금발생액조회_하창주 */
+						 a.yymm					/*입금년월*/
+						,a.agency				/*대리점*/
+						,a.dpst_plc				/*입금처*/
+						,sum(nvl(a.prprc_occr_amt, 0)) as prprc_occr_amt		/*SKT예수금발생액*/
+						,b.ukey_agency_cd
+						,b.ukey_sub_cd
+				  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+				 where  a.dpst_plc	= b.deal_co_cd
+		           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+												hseq_no 
+										FROM	tbas_deal_co_mgmt
+										WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+									  )
+				   and	a.yymm		= #YYMM#
+				   and	a.agency	= #AGENCY#
+			]]>
+					<isNotEmpty prepend="AND" property="DPST_PLC">
+			<![CDATA[	a.dpst_plc	= #DPST_PLC#		]]>
+					</isNotEmpty>
+			<![CDATA[
+				group by a.yymm, a.agency, a.dpst_plc, b.ukey_agency_cd, b.ukey_sub_cd
+			 )
+		where prprc_occr_amt <> 0
+	]]>
+	</select>
+
+	<select id="getPrxpayAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+				select	/* SACERP08120_getPrxpayAmtList_당월발생대납금액조회_하창주 */
+						 yymm
+						,org_id
+						,agency
+						,'' as dpst_plc
+						,ukey_agency_cd
+						,'' as ukey_sub_cd
+						,sum(prxpay_amt) as prxpay_amt
+		                /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+		                ,(select case when min(user_cd) is null and x.org_id = 'C10011' then '140034' else min(user_cd) end
+		                    from tbas_user_mgmt
+		                   where pos_agency = x.agency
+		                     and user_grp = 'D17'
+		                     and del_yn = 'N'
+		                     and eff_user_yn = 'Y'
+		                     and attc_cat in ('1', '2')) as user_cd
+				from
+					(
+						select
+								 a.yymm					/*입금년월*/
+								,a.agency				/*대리점*/
+								,nvl(a.chag_prxpay_amt, 0) + nvl(a.prprc_prxpay_amt, 0)
+								 as prxpay_amt			/*SKT요금대납액+SKT예수금대납액*/
+								,b.ukey_agency_cd
+								,b.ukey_sub_cd
+								,b.org_id
+						  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+						 where  a.dpst_plc	= b.deal_co_cd
+						   and	a.yymm		= #YYMM#
+					]]>
+							<isNotEmpty prepend="AND" property="AGENCY">
+					<![CDATA[	a.agency 	= #AGENCY#		]]>
+							</isNotEmpty>
+							<isNotEmpty prepend="AND" property="DPST_PLC">
+					<![CDATA[	a.dpst_plc 	= #DPST_PLC#	]]>
+							</isNotEmpty>
+					<![CDATA[
+				           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+														hseq_no 
+												FROM	tbas_deal_co_mgmt
+												WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+											  )
+					) x
+				group by yymm, org_id, agency, ukey_agency_cd
+			 )
+		where prxpay_amt <> 0
+	]]>
+	</select>
+
+	<update id="updateCashDpstInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08120_updateCashDpstInfo_현금입금정보변경-하창주 */
+				tsac_cash_dpst_info
+		   SET	 trms_dt	= #ZIFDATE#
+				,fix_yn		= #ZCONFIRM#
+		 WHERE	yymm		= #YYMM#
+		 AND	agency		= #AGENCY#
+	]]>
+	</update>
+
+</sqlMap>

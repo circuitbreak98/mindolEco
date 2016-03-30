@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSUI08110">
+	<select id="getYesterDay" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select to_char(to_date(#FILE_DT#, 'YYYYMMDD') - 1, 'YYYYMMDD') as WORK_DT
+	  from dual
+	]]>
+	</select>
+	<select id="getSaleInfo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select  /* SALSUI08110_getSaleInfo_판매정보 취득 */
+             GS.GNRL_SALE_NO
+         ,   MAX(GS.GNRL_SALE_CHG_SEQ) AS GNRL_SALE_CHG_SEQ
+         ,   GS.SALE_DTM
+         ,   GS.SALE_DTL_TYP
+         ,   GS.SL_NET_CD
+         ,   GS.DS_NET_CD
+         ,   GS.SALE_CNCL_YN
+         ,   nvl(SC.ASMPT_CLOSE_YN, 'N')     AS DT_CLS_YN
+         ,   nvl(DC.POS_AGENCY, 'NOT FOUND') AS AGENCY_CD
+      from   TSAL_GENERAL_SALE   GS
+         ,   TSAL_SALE_CMMS      SC
+         ,   TBAS_DEAL_CO_MGMT   DC
+     where   GS.GNRL_SALE_NO      =  SC.GNRL_SALE_NO
+       and   GS.GNRL_SALE_CHG_SEQ =  SC.GNRL_SALE_CHG_SEQ
+       and   GS.SALE_PLC          =  DC.DEAL_CO_CD(+)
+       and   DC.DEAL_STA_DT(+)   <=  SUBSTR(GS.SALE_DTM, 1, 8)
+       and   DC.DEAL_END_DT(+)   >=  SUBSTR(GS.SALE_DTM, 1, 8)
+       and   DC.EFF_STA_DTM(+)   <=  GS.SALE_DTM
+       and   DC.EFF_END_DTM(+)   >=  GS.SALE_DTM  
+       and   GS.GNRL_SALE_NO      = #GNRL_SALE_NO#
+       and   GS.GNRL_SALE_CHG_SEQ = (SELECT MAX(GNRL_SALE_CHG_SEQ)
+                                       FROM TSAL_GENERAL_SALE
+                                      WHERE GNRL_SALE_NO = GS.GNRL_SALE_NO)
+       and   nvl(GS.SALE_CNCL_YN, 'N') = 'N'
+       and   GS.DEL_YN            = 'N'
+     group by GS.GNRL_SALE_NO,   GS.SALE_DTM,   GS.SALE_DTL_TYP
+          ,   GS.SL_NET_CD,      GS.DS_NET_CD,   GS.SALE_CNCL_YN
+          ,   DC.POS_AGENCY,     nvl(SC.ASMPT_CLOSE_YN, 'N')
+	]]>
+	</select>
+	<select id="getGnrlSaleInfo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select  /* SALSUI08110_getGnrlSaleInfo_최종판매변경일시 취득 */
+             GS.GNRL_SALE_NO
+         ,   MAX(SALE_CHG_DTM) AS SALE_CHG_DTM
+      from   TSAL_GENERAL_SALE   GS
+     where   GS.GNRL_SALE_NO      = #GNRL_SALE_NO#
+     group by GS.GNRL_SALE_NO
+	]]>
+	</select>
+	<select id="getSuplList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[    
+    SELECT /* SALSUI08110_getSuplList_부가상품대상 목록 */
+           DISTINCT G.SUPL_SVC_CD  as SUPL_SVC_CD
+      FROM TPOL_IPOL           A    
+         , TPOL_IPOL_PAY_INFO  G    
+         , TBAS_SUPL_SVC_MGMT  B
+     WHERE A.IPOL_ID         = G.IPOL_ID
+       AND A.POL_YM          = G.POL_YM
+       AND A.POL_TS          = G.POL_TS
+       AND G.SUPL_SVC_CD     = B.SUPL_SVC_CD
+       AND B.RGST_CL         = '1'
+       AND A.POL_TYP_CD      = '04'
+       AND A.DEL_YN          = 'N'
+       AND #SCRB_DTM#     BETWEEN A.APLY_STA_DTM
+                              AND A.APLY_END_DTM
+	]]>
+	</select>
+	<select id="getSuplInfo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select  /* SALSUI08110_getSuplInfo_부가상품 정보 취득 */
+             SP.SUPL_SVC_CD
+         ,   SP.SVC_STA_DT
+         ,   SP.SVC_END_DT
+      from   TSAL_SUPLSERVICE    SP
+     where   SP.GNRL_SALE_NO      =  #GNRL_SALE_NO#
+       and   SP.SUPL_SVC_CD       =  #SUPL_SVC_CD#
+       and   SP.DEL_YN            = 'N'
+	]]>
+	</select>
+	<select id="getMonthClose" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select  /* SALSUI08110_getMonthClose_월마감여부 Check */
+             facc_get_close_info('01') as CLOSE_YYYYMM
+      FROM   dual
+	]]>
+	</select>
+	<insert id="addGeneralSale" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addGeneralSale_일반판매 변경이력 생성 */
+           TSAL_GENERAL_SALE( 
+                              GNRL_SALE_NO
+                           ,  GNRL_SALE_CHG_SEQ
+                           ,  SALE_DTM
+                           ,  SALE_CHGRG_ID
+                           ,  SALE_CHG_HST_CL
+                           ,  ACC_CHG_HST_CL
+                           ,  SALE_CHG_DTM
+                           ,  SALE_MOD_USER_ID
+                           ,  STL_PLC
+                           ,  SALE_PLC
+                           ,  SALE_CHG_PLC
+                           ,  DIS_HLD_PLC
+                           ,  SVC_MGMT_NUM
+                           ,  INDEN_NUM
+                           ,  SALE_APRV_NUM
+                           ,  CUST_CL
+                           ,  CUST_NM
+                           ,  CUST_BIZ_NUM
+                           ,  CUST_BIRTH_YEAR
+                           ,  SVC_PLC
+                           ,  SVC_NUM
+                           ,  SVC_DTM
+                           ,  SVC_CHGRG_ID
+                           ,  SL_CL
+                           ,  SL_NET_CD
+                           ,  DS_NET_CD
+                           ,  SALE_DTL_TYP
+                           ,  SETTL_COND
+                           ,  USIM_ALLOT_CL
+                           ,  ALLOT_PRD_CD
+                           ,  AGRMT_PRD_CD
+                           ,  ADD_SUPRT_CD
+                           ,  EQP_ALLOT_BOND_CORP
+                           ,  USIM_ALLOT_BOND_CORP
+                           ,  SALE_CMMS_FIX_YN
+                           ,  ONLINE_CMMS_FIX_YN
+                           ,  ETC_PROD_SALE_YN
+                           ,  SALE_CNCL_YN
+                           ,  SALE_CNCL_DTM
+                           ,  DT_CLS_YN
+                           ,  SALE_CNCL_CL
+                           ,  ONLINE_PAYMENT_CL
+                           ,  RMKS
+                           ,  DEL_YN
+                           ,  UPD_CNT
+                           ,  INS_USER_ID
+                           ,  INS_DTM
+                           ,  MOD_USER_ID
+                           ,  MOD_DTM) 
+                      SELECT  GNRL_SALE_NO
+                           ,  #NEW_CHG_SEQ#                        AS GNRL_SALE_CHG_SEQ
+                           ,  SALE_DTM
+                           ,  SALE_CHGRG_ID
+                           ,  '06'                                 AS SALE_CHG_HST_CL
+                           ,  '06'                                 AS ACC_CHG_HST_CL
+                           ,  #SALE_CHG_DTM#                       AS SALE_CHG_DTM
+                           ,  #CHGRG_ID#                           AS SALE_MOD_USER_ID
+                           ,  STL_PLC
+                           ,  SALE_PLC
+                           ,  SALE_PLC
+                           ,  DIS_HLD_PLC
+                           ,  SVC_MGMT_NUM
+                           ,  INDEN_NUM
+                           ,  SALE_APRV_NUM
+                           ,  CUST_CL
+                           ,  CUST_NM
+                           ,  CUST_BIZ_NUM
+                           ,  CUST_BIRTH_YEAR
+                           ,  SVC_PLC
+                           ,  SVC_NUM
+                           ,  SVC_DTM
+                           ,  SVC_CHGRG_ID
+                           ,  SL_CL
+                           ,  SL_NET_CD
+                           ,  DS_NET_CD
+                           ,  SALE_DTL_TYP
+                           ,  SETTL_COND
+                           ,  USIM_ALLOT_CL
+                           ,  ALLOT_PRD_CD
+                           ,  AGRMT_PRD_CD
+                           ,  ADD_SUPRT_CD
+                           ,  EQP_ALLOT_BOND_CORP
+                           ,  USIM_ALLOT_BOND_CORP
+                           ,  'N'                                  AS SALE_CMMS_FIX_YN
+                           ,  'N'                                  AS ONLINE_CMMS_FIX_YN
+                           ,  ETC_PROD_SALE_YN
+                           ,  SALE_CNCL_YN
+                           ,  SALE_CNCL_DTM
+                           ,  'N'                                  AS DT_CLS_YN
+                           ,  SALE_CNCL_CL
+                           ,  ONLINE_PAYMENT_CL
+                           ,  RMKS
+                           ,  DEL_YN
+                           ,  UPD_CNT
+                           ,  INS_USER_ID
+                           ,  INS_DTM
+                           ,  #USER_ID#                            AS MOD_USER_ID
+                           ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                        FROM  TSAL_GENERAL_SALE
+                       WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                         AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addEquipmentSale" parameterClass="map" >
+	<![CDATA[                                                                 
+	INSERT INTO /*+ SALSUI08110_addEquipmentSale_단말기판매 변경이력 생성 */
+           TSAL_EQUIPMENT_SALE( GNRL_SALE_NO                     
+                             ,  GNRL_SALE_CHG_SEQ                
+                             ,  EQP_SER_NUM                      
+                             ,  EQP_MDL_CD                       
+                             ,  EQP_COLOR_CD                     
+                             ,  EQP_OLD_SALE_YN                  
+                             ,  DEL_YN                           
+                             ,  UPD_CNT                          
+                             ,  INS_USER_ID                      
+                             ,  INS_DTM                          
+                             ,  MOD_USER_ID                      
+                             ,  MOD_DTM)                         
+                      SELECT    GNRL_SALE_NO                     
+                             ,  #NEW_CHG_SEQ#                        AS GNRL_SALE_CHG_SEQ
+                             ,  EQP_SER_NUM                      
+                             ,  EQP_MDL_CD                       
+                             ,  EQP_COLOR_CD                     
+                             ,  EQP_OLD_SALE_YN                  
+                             ,  DEL_YN                           
+                             ,  UPD_CNT                          
+                             ,  INS_USER_ID                      
+                             ,  INS_DTM                          
+                             ,  #USER_ID#                            AS MOD_USER_ID
+                             ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                          FROM  TSAL_EQUIPMENT_SALE              
+                         WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                           AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addUsimSale" parameterClass="map" >
+	<![CDATA[                                                                 
+	INSERT INTO /*+ SALSUI08110_addUsimSale_USIM판매 변경이력 생성 */
+           TSAL_USIM_SALE( GNRL_SALE_NO
+                        ,  GNRL_SALE_CHG_SEQ
+                        ,  USIM_SER_NUM
+                        ,  USIM_MDL_CD
+                        ,  USIM_OLD_SALE_YN
+                        ,  DEL_YN
+                        ,  UPD_CNT
+                        ,  INS_USER_ID
+                        ,  INS_DTM
+                        ,  MOD_USER_ID
+                        ,  MOD_DTM)                         
+                   SELECT  GNRL_SALE_NO
+                        ,  #NEW_CHG_SEQ#                       AS GNRL_SALE_CHG_SEQ
+                        ,  USIM_SER_NUM
+                        ,  USIM_MDL_CD
+                        ,  USIM_OLD_SALE_YN
+                        ,  DEL_YN
+                        ,  UPD_CNT
+                        ,  INS_USER_ID
+                        ,  INS_DTM
+                        ,  #USER_ID#                            AS MOD_USER_ID        
+                        ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                     FROM  TSAL_USIM_SALE              
+                    WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                      AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addOldrtnEquipment" parameterClass="map" >
+	<![CDATA[                                                                 
+	INSERT INTO /*+ SALSUI08110_addOldrtnEquipment_중고반납기기 변경이력 생성 */
+           TSAL_OLDRTN_EQUIPMENT( GNRL_SALE_NO
+                               ,  GNRL_SALE_CHG_SEQ
+                               ,  OLD_RTN_MDL
+                               ,  OLD_RTN_SER_NUM
+                               ,  OLD_RTN_TYP
+                               ,  OLD_RTN_CUST_RTN_TYP
+                               ,  OLD_RTN_SCHD_DT
+                               ,  DEL_YN
+                               ,  UPD_CNT
+                               ,  INS_USER_ID
+                               ,  INS_DTM
+                               ,  MOD_USER_ID
+                               ,  MOD_DTM)                         
+                          SELECT  GNRL_SALE_NO
+                               ,  #NEW_CHG_SEQ#                        AS GNRL_SALE_CHG_SEQ
+                               ,  OLD_RTN_MDL
+                               ,  OLD_RTN_SER_NUM
+                               ,  OLD_RTN_TYP
+                               ,  OLD_RTN_CUST_RTN_TYP
+                               ,  OLD_RTN_SCHD_DT
+                               ,  DEL_YN
+                               ,  UPD_CNT
+                               ,  INS_USER_ID
+                               ,  INS_DTM
+                               ,  #USER_ID#                            AS MOD_USER_ID
+                               ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                            FROM  TSAL_OLDRTN_EQUIPMENT              
+                           WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                             AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addAllotSale" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addAllotSale_할부매출 변경이력 생성 */
+           TSAL_ALLOT_SALE( GNRL_SALE_NO
+                         ,  GNRL_SALE_CHG_SEQ
+                         ,  BF_EQP_ALLOT_SALE_PRC
+                         ,  BF_USIM_ALLOT_SALE_PRC
+                         ,  EQP_ALLOT_SALE_PRC
+                         ,  USIM_ALLOT_SALE_PRC
+                         ,  PS_EQP_ALLOT_SALE_PRC
+                         ,  PS_USIM_ALLOT_SALE_PRC
+                         ,  DEL_YN
+                         ,  UPD_CNT
+                         ,  INS_USER_ID
+                         ,  INS_DTM
+                         ,  MOD_USER_ID
+                         ,  MOD_DTM)
+                    SELECT  GNRL_SALE_NO
+                         ,  #NEW_CHG_SEQ#                       AS GNRL_SALE_CHG_SEQ
+                         ,  NVL(EQP_ALLOT_SALE_PRC, 0)          AS BF_EQP_ALLOT_SALE_PRC
+                         ,  NVL(USIM_ALLOT_SALE_PRC, 0)         AS BF_USIM_ALLOT_SALE_PRC
+                         ,  NVL(EQP_ALLOT_SALE_PRC, 0)          AS EQP_ALLOT_SALE_PRC 
+                         ,  NVL(USIM_ALLOT_SALE_PRC, 0)         AS USIM_ALLOT_SALE_PRC
+                         ,  PS_EQP_ALLOT_SALE_PRC
+                         ,  PS_USIM_ALLOT_SALE_PRC
+                         ,  DEL_YN
+                         ,  UPD_CNT
+                         ,  INS_USER_ID
+                         ,  INS_DTM
+                         ,  #USER_ID#                            AS MOD_USER_ID
+                         ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                      FROM  TSAL_ALLOT_SALE
+                     WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                       AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addSktPrprc" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addSktPrprc_SKT예수금 변경이력 생성 */
+           TSAL_SKT_PRPRC( GNRL_SALE_NO
+                        ,  GNRL_SALE_CHG_SEQ
+                        ,  BF_SCRB_FEE
+                        ,  BF_TU_SCRB_FEE
+                        ,  BF_BOND_PREM
+                        ,  BF_MNP_CMMS
+                        ,  BF_FRG_GRT_INSU_FEE
+                        ,  SCRB_FEE_CL
+                        ,  SCRB_FEE
+                        ,  TU_SCRB_FEE_CL
+                        ,  TU_SCRB_FEE
+                        ,  BOND_PREM
+                        ,  MNP_CMMS_CL
+                        ,  MNP_CMMS
+                        ,  FRG_GRT_INSU_CL
+                        ,  FRG_GRT_INSU_FEE
+                        ,  SCRB_FEE_PRXPAY_YN
+                        ,  TU_SCRB_FEE_PRXPAY_YN
+                        ,  BOND_PREM_PRXPAY_YN
+                        ,  MNP_CMMS_PRXPAY_YN
+                        ,  FRG_GRT_INSU_FEE_PRXPAY_YN
+                        ,  DEL_YN
+                        ,  UPD_CNT
+                        ,  INS_USER_ID
+                        ,  INS_DTM
+                        ,  MOD_USER_ID
+                        ,  MOD_DTM)
+                   SELECT  GNRL_SALE_NO
+                        ,  #NEW_CHG_SEQ#                        AS GNRL_SALE_CHG_SEQ
+                        ,  NVL(SCRB_FEE, 0)                     AS BF_SCRB_FEE
+                        ,  NVL(TU_SCRB_FEE, 0)                  AS BF_TU_SCRB_FEE
+                        ,  NVL(BOND_PREM, 0)                    AS BF_BOND_PREM
+                        ,  NVL(MNP_CMMS, 0)                     AS BF_MNP_CMMS
+                        ,  NVL(FRG_GRT_INSU_FEE, 0)             AS BF_FRG_GRT_INSU_FEE
+                        ,  SCRB_FEE_CL
+                        ,  NVL(SCRB_FEE, 0)                     AS SCRB_FEE
+                        ,  TU_SCRB_FEE_CL
+                        ,  NVL(TU_SCRB_FEE, 0)                  AS TU_SCRB_FEE
+                        ,  NVL(BOND_PREM, 0)                    AS BOND_PREM
+                        ,  MNP_CMMS_CL
+                        ,  NVL(MNP_CMMS, 0)                     AS MNP_CMMS
+                        ,  FRG_GRT_INSU_CL
+                        ,  NVL(FRG_GRT_INSU_FEE, 0)             AS FRG_GRT_INSU_FEE
+                        ,  SCRB_FEE_PRXPAY_YN
+                        ,  TU_SCRB_FEE_PRXPAY_YN
+                        ,  BOND_PREM_PRXPAY_YN
+                        ,  MNP_CMMS_PRXPAY_YN
+                        ,  FRG_GRT_INSU_FEE_PRXPAY_YN
+                        ,  DEL_YN
+                        ,  UPD_CNT
+                        ,  INS_USER_ID
+                        ,  INS_DTM
+                        ,  #USER_ID#                            AS MOD_USER_ID
+                        ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                     FROM  TSAL_SKT_PRPRC
+                    WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                      AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addAgreementAstamt" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addAgreementAstamt_약정금액 변경이력 생성 */
+           TSAL_AGREEMENT_ASTAMT( GNRL_SALE_NO
+                               ,  GNRL_SALE_CHG_SEQ
+                               ,  BF_AGRMT_ASTAMT
+                               ,  BF_ADD_AGRMT_ASTAMT
+                               ,  AGRMT_ASTAMT
+                               ,  ADD_AGRMT_ASTAMT
+                               ,  DEL_YN
+                               ,  UPD_CNT
+                               ,  INS_USER_ID
+                               ,  INS_DTM
+                               ,  MOD_USER_ID
+                               ,  MOD_DTM)
+                          SELECT  GNRL_SALE_NO
+                               ,  #NEW_CHG_SEQ#                        AS GNRL_SALE_CHG_SEQ
+                               ,  NVL(AGRMT_ASTAMT, 0)                 AS BF_AGRMT_ASTAMT
+                               ,  NVL(ADD_AGRMT_ASTAMT, 0)             AS BF_ADD_AGRMT_ASTAMT
+                               ,  NVL(AGRMT_ASTAMT, 0)                 AS AGRMT_ASTAMT
+                               ,  NVL(ADD_AGRMT_ASTAMT, 0)             AS ADD_AGRMT_ASTAMT
+                               ,  DEL_YN
+                               ,  UPD_CNT
+                               ,  INS_USER_ID
+                               ,  INS_DTM
+                               ,  #USER_ID#                            AS MOD_USER_ID
+                               ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                            FROM  TSAL_AGREEMENT_ASTAMT
+                           WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                             AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addCashSale" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addCashSale_현금매출 변경이력 생성 */
+           TSAL_CASH_SALE( GNRL_SALE_NO
+                        ,  GNRL_SALE_CHG_SEQ
+                        ,  BF_EQP_CASH_SALE_PRC
+                        ,  BF_USIM_CASH_SALE_PRC
+                        ,  BF_ETC_PROD_SALE_PRC
+                        ,  BF_ETC_PROD_ORG_PRC
+                        ,  EQP_CASH_SALE_PRC
+                        ,  USIM_CASH_SALE_PRC
+                        ,  ETC_PROD_SALE_PRC
+                        ,  ETC_PROD_ORG_PRC
+                        ,  FIX_CASH_SALE
+                        ,  DEL_YN
+                        ,  UPD_CNT
+                        ,  INS_USER_ID
+                        ,  INS_DTM
+                        ,  MOD_USER_ID
+                        ,  MOD_DTM)
+                   SELECT  GNRL_SALE_NO
+                        ,  #NEW_CHG_SEQ#                        AS GNRL_SALE_CHG_SEQ
+                        ,  NVL(EQP_CASH_SALE_PRC, 0)            AS BF_EQP_CASH_SALE_PRC
+                        ,  NVL(USIM_CASH_SALE_PRC, 0)           AS BF_USIM_CASH_SALE_PRC
+                        ,  NVL(ETC_PROD_SALE_PRC, 0)            AS BF_ETC_PROD_SALE_PRC
+                        ,  NVL(ETC_PROD_ORG_PRC, 0)             AS BF_ETC_PROD_ORG_PRC
+                        ,  NVL(EQP_CASH_SALE_PRC, 0)            AS EQP_CASH_SALE_PRC
+                        ,  NVL(USIM_CASH_SALE_PRC, 0)           AS USIM_CASH_SALE_PRC
+                        ,  NVL(ETC_PROD_SALE_PRC, 0)            AS ETC_PROD_SALE_PRC
+                        ,  NVL(ETC_PROD_ORG_PRC, 0)             AS ETC_PROD_ORG_PRC
+                        ,  NVL(FIX_CASH_SALE, 0)                AS FIX_CASH_SALE
+                        ,  DEL_YN
+                        ,  UPD_CNT
+                        ,  INS_USER_ID
+                        ,  INS_DTM
+                        ,  #USER_ID#                            AS MOD_USER_ID
+                        ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                     FROM  TSAL_CASH_SALE
+                    WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                      AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addPayment" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addPayment_수납정보 변경이력 생성 */
+           TSAL_PAYMENT( GNRL_SALE_NO
+                      ,  GNRL_SALE_CHG_SEQ
+                      ,  BF_CASH_PAY_AMT
+                      ,  BF_CRDTCRD_CORP1
+                      ,  BF_CRDTCRD_PAY_AMT1
+                      ,  BF_CRDTCRD_DPST_ACC_AMT1
+                      ,  BF_CRDTCRD_DPST_ACC_CMMS1
+                      ,  BF_CRDTCRD_CORP2
+                      ,  BF_CRDTCRD_PAY_AMT2
+                      ,  BF_CRDTCRD_DPST_ACC_AMT2
+                      ,  BF_CRDTCRD_DPST_ACC_CMMS2
+                      ,  BF_SKT_PRPRC_CASH_PAY_AMT
+                      ,  BF_SKT_PRPRC_PRXPAY_AMT
+                      ,  CASH_PAY_AMT
+                      ,  CRDTCRD_CORP1
+                      ,  CRDTCRD_PAY_FIX_YN1
+                      ,  CRDTCRD_PAY_FIX_DT1
+                      ,  CRDTCRD_PAY_AMT1
+                      ,  CRDTCRD_DPST_ACC_AMT1
+                      ,  CRDTCRD_DPST_ACC_CMMS1
+                      ,  CRDTCRD_CORP2
+                      ,  CRDTCRD_PAY_FIX_YN2
+                      ,  CRDTCRD_PAY_FIX_DT2
+                      ,  CRDTCRD_PAY_AMT2
+                      ,  CRDTCRD_DPST_ACC_AMT2
+                      ,  CRDTCRD_DPST_ACC_CMMS2
+                      ,  SKT_PRPRC_CASH_PAY_AMT
+                      ,  SKT_PRPRC_PRXPAY_AMT
+                      ,  DEL_YN
+                      ,  UPD_CNT
+                      ,  INS_USER_ID
+                      ,  INS_DTM
+                      ,  MOD_USER_ID
+                      ,  MOD_DTM)
+                 SELECT  GNRL_SALE_NO
+                      ,  #NEW_CHG_SEQ#                            AS GNRL_SALE_CHG_SEQ
+                      ,  NVL(CASH_PAY_AMT, 0)                     AS BF_CASH_PAY_AMT
+                      ,  CRDTCRD_CORP1
+                      ,  NVL(CRDTCRD_PAY_AMT1, 0)                 AS BF_CRDTCRD_PAY_AMT1
+                      ,  NVL(CRDTCRD_DPST_ACC_AMT1, 0)            AS BF_CRDTCRD_DPST_ACC_AMT1
+                      ,  NVL(CRDTCRD_DPST_ACC_CMMS1, 0)           AS BF_CRDTCRD_DPST_ACC_CMMS1
+                      ,  CRDTCRD_CORP2
+                      ,  NVL(CRDTCRD_PAY_AMT2, 0)                 AS BF_CRDTCRD_PAY_AMT2
+                      ,  NVL(CRDTCRD_DPST_ACC_AMT2, 0)            AS BF_CRDTCRD_DPST_ACC_AMT2
+                      ,  NVL(CRDTCRD_DPST_ACC_CMMS2, 0)           AS BF_CRDTCRD_DPST_ACC_CMMS2
+                      ,  NVL(SKT_PRPRC_CASH_PAY_AMT, 0)           AS BF_SKT_PRPRC_CASH_PAY_AMT
+                      ,  NVL(SKT_PRPRC_PRXPAY_AMT, 0)             AS BF_SKT_PRPRC_PRXPAY_AMT
+                      ,  NVL(CASH_PAY_AMT, 0)                     AS CASH_PAY_AMT
+                      ,  CRDTCRD_CORP1
+                      ,  'N'                                      AS CRDTCRD_PAY_FIX_YN1
+                      ,  ''                                       AS CRDTCRD_PAY_FIX_DT1
+                      ,  NVL(CRDTCRD_PAY_AMT1, 0)                 AS CRDTCRD_PAY_AMT1
+                      ,  NVL(CRDTCRD_DPST_ACC_AMT1, 0)            AS CRDTCRD_DPST_ACC_AMT1
+                      ,  NVL(CRDTCRD_DPST_ACC_CMMS1, 0)           AS CRDTCRD_DPST_ACC_CMMS1
+                      ,  CRDTCRD_CORP2
+                      ,  'N'                                      AS CRDTCRD_PAY_FIX_YN2
+                      ,  ''                                       AS CRDTCRD_PAY_FIX_DT2
+                      ,  NVL(CRDTCRD_PAY_AMT2, 0)                 AS CRDTCRD_PAY_AMT2
+                      ,  NVL(CRDTCRD_DPST_ACC_AMT2, 0)            AS CRDTCRD_DPST_ACC_AMT2
+                      ,  NVL(CRDTCRD_DPST_ACC_CMMS2, 0)           AS CRDTCRD_DPST_ACC_CMMS2
+                      ,  NVL(SKT_PRPRC_CASH_PAY_AMT, 0)           AS SKT_PRPRC_CASH_PAY_AMT
+                      ,  NVL(SKT_PRPRC_PRXPAY_AMT, 0)             AS SKT_PRPRC_PRXPAY_AMT
+                      ,  DEL_YN
+                      ,  UPD_CNT
+                      ,  INS_USER_ID
+                      ,  INS_DTM
+                      ,  #USER_ID#                            AS MOD_USER_ID
+                      ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                   FROM  TSAL_PAYMENT
+                  WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                    AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addSaleCmms" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addSaleCmms_판매수수료 변경이력 생성 */
+           TSAL_SALE_CMMS( GNRL_SALE_NO
+                        ,  GNRL_SALE_CHG_SEQ
+                        ,  BF_SALE_CMMS
+                        ,  BF_SUPL_SVC_SALE_CMMS
+                        ,  BF_ADD_SALE_CMMS
+                        ,  BF_CMMS_ADJ
+                        ,  SALE_CMMS
+                        ,  SUPL_SVC_SALE_CMMS
+                        ,  ADD_SALE_CMMS
+                        ,  CMMS_ADJ
+                        ,  FIX_CNSG_CMMS
+                        ,  ASMPT_CLOSE_YN
+                        ,  ASMPT_CLOSE_DTM
+                        ,  RMKS
+                        ,  DEL_YN
+                        ,  UPD_CNT
+                        ,  INS_USER_ID
+                        ,  INS_DTM
+                        ,  MOD_USER_ID
+                        ,  MOD_DTM)
+                   SELECT  GNRL_SALE_NO
+                        ,  #NEW_CHG_SEQ#                      AS GNRL_SALE_CHG_SEQ
+                        ,  NVL(SALE_CMMS, 0)                  AS BF_SALE_CMMS
+                        ,  NVL(SUPL_SVC_SALE_CMMS, 0)         AS BF_SUPL_SVC_SALE_CMMS
+                        ,  NVL(ADD_SALE_CMMS, 0)              AS BF_ADD_SALE_CMMS
+                        ,  NVL(CMMS_ADJ, 0)                   AS BF_CMMS_ADJ
+                        ,  NVL(SALE_CMMS, 0)                  AS SALE_CMMS
+                        ,  NVL(SUPL_SVC_SALE_CMMS, 0)         AS SUPL_SVC_SALE_CMMS
+                        ,  NVL(ADD_SALE_CMMS, 0)              AS ADD_SALE_CMMS
+                        ,  NVL(CMMS_ADJ, 0)                   AS CMMS_ADJ
+                        ,  NVL(FIX_CNSG_CMMS, 0)              AS FIX_CNSG_CMMS
+                        ,  'N'                                AS ASMPT_CLOSE_YN
+                        ,  ''                                 AS ASMPT_CLOSE_DTM
+                        ,  RMKS
+                        ,  DEL_YN
+                        ,  UPD_CNT
+                        ,  INS_USER_ID
+                        ,  INS_DTM
+                        ,  #USER_ID#                            AS MOD_USER_ID
+                        ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                     FROM  TSAL_SALE_CMMS
+                    WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                      AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addPromotionMoney" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addPromotionMoney_장려금 변경이력 생성 */
+           TSAL_PROMOTION_MONEY( GNRL_SALE_NO
+                              ,  GNRL_SALE_CHG_SEQ
+                              ,  BF_GNRL_PR_MNY
+                              ,  BF_SUPL_SVC_PR_MNY
+                              ,  BF_SALE_SUPRT_AMT
+                              ,  BF_ADD_SALE_SUPRT_AMT
+                              ,  GNRL_PR_MNY
+                              ,  SUPL_SVC_PR_MNY
+                              ,  SALE_SUPRT_AMT
+                              ,  ADD_SALE_SUPRT_AMT
+                              ,  RMKS
+                              ,  DEL_YN
+                              ,  UPD_CNT
+                              ,  INS_USER_ID
+                              ,  INS_DTM
+                              ,  MOD_USER_ID
+                              ,  MOD_DTM)
+                         SELECT  GNRL_SALE_NO
+                              ,  #NEW_CHG_SEQ#                         AS GNRL_SALE_CHG_SEQ
+                              ,  NVL(GNRL_PR_MNY, 0)                   AS BF_GNRL_PR_MNY
+                              ,  NVL(SUPL_SVC_PR_MNY, 0)               AS BF_SUPL_SVC_PR_MNY
+                              ,  NVL(SALE_SUPRT_AMT, 0)                AS BF_SALE_SUPRT_AMT
+                              ,  NVL(ADD_SALE_SUPRT_AMT, 0)            AS BF_ADD_SALE_SUPRT_AMT
+                              ,  NVL(GNRL_PR_MNY, 0)                   AS GNRL_PR_MNY
+                              ,  NVL(SUPL_SVC_PR_MNY, 0)               AS SUPL_SVC_PR_MNY
+                              ,  NVL(SALE_SUPRT_AMT, 0)                AS SALE_SUPRT_AMT
+                              ,  NVL(ADD_SALE_SUPRT_AMT, 0)            AS ADD_SALE_SUPRT_AMT
+                              ,  RMKS
+                              ,  DEL_YN
+                              ,  UPD_CNT
+                              ,  INS_USER_ID
+                              ,  INS_DTM
+                              ,  #USER_ID#                            AS MOD_USER_ID
+                              ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                           FROM  TSAL_PROMOTION_MONEY
+                          WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                            AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addOcbmcard" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addOcbmcard_OCB/M_Card 변경이력 생성 */
+           TSAL_OCBMCARD( GNRL_SALE_NO
+                       ,  GNRL_SALE_CHG_SEQ
+                       ,  BF_OCB_MCARD_CD
+                       ,  BF_OCB_MCARD_PRC
+                       ,  OCB_MCARD_CD
+                       ,  OCB_MCARD_PRC
+                       ,  DEL_YN
+                       ,  UPD_CNT
+                       ,  INS_USER_ID
+                       ,  INS_DTM
+                       ,  MOD_USER_ID
+                       ,  MOD_DTM)
+                  SELECT  GNRL_SALE_NO
+                       ,  #NEW_CHG_SEQ#                         AS GNRL_SALE_CHG_SEQ
+                       ,  OCB_MCARD_CD
+                       ,  NVL(OCB_MCARD_PRC, 0)                 AS BF_OCB_MCARD_PRC
+                       ,  OCB_MCARD_CD
+                       ,  NVL(OCB_MCARD_PRC, 0)                 AS OCB_MCARD_PRC
+                       ,  DEL_YN
+                       ,  UPD_CNT
+                       ,  INS_USER_ID
+                       ,  INS_DTM
+                       ,  #USER_ID#                            AS MOD_USER_ID
+                       ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                    FROM  TSAL_OCBMCARD
+                   WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                     AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addOnlinePayment" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addOnlinePayment_온라인수납 변경이력 생성 */
+           TSAL_ONLINE_PAYMENT( GNRL_SALE_NO
+                             ,  GNRL_SALE_CHG_SEQ
+                             ,  BF_ALLOT_PAY_CL
+                             ,  BF_ACC_TRNSF_CL
+                             ,  BF_ACC_TRNSF_AMT
+                             ,  BF_VIRTL_ACC_CL
+                             ,  BF_VIRTL_ACC_AMT
+                             ,  BF_CRDTCRD_CORP1
+                             ,  BF_CRDTCRD_FOI_CL1
+                             ,  BF_CRDTCRD_PAY_AMT1
+                             ,  BF_CRDTCRD_CORP2
+                             ,  BF_CRDTCRD_FOI_CL2
+                             ,  BF_CRDTCRD_PAY_AMT2
+                             ,  ONLINE_STL_PLC                             
+                             ,  ALLOT_PAY_CL
+                             ,  ACC_TRNSF_CL
+                             ,  ACC_TRNSF_AMT
+                             ,  VIRTL_ACC_CL
+                             ,  VIRTL_ACC_AMT
+                             ,  CRDTCRD_CORP1
+                             ,  CRDTCRD_FOI_CL1
+                             ,  CRDTCRD_PAY_AMT1
+                             ,  CRDTCRD_CORP2
+                             ,  CRDTCRD_FOI_CL2
+                             ,  CRDTCRD_PAY_AMT2
+                             ,  DEL_YN
+                             ,  UPD_CNT
+                             ,  INS_USER_ID
+                             ,  INS_DTM
+                             ,  MOD_USER_ID
+                             ,  MOD_DTM)
+                        SELECT  GNRL_SALE_NO
+                             ,  #NEW_CHG_SEQ#                      AS GNRL_SALE_CHG_SEQ
+                             ,  ALLOT_PAY_CL
+                             ,  ACC_TRNSF_CL
+                             ,  NVL(ACC_TRNSF_AMT, 0)              AS BF_ACC_TRNSF_AMT
+                             ,  VIRTL_ACC_CL
+                             ,  NVL(VIRTL_ACC_AMT, 0)              AS BF_VIRTL_ACC_AMT
+                             ,  CRDTCRD_CORP1
+                             ,  CRDTCRD_FOI_CL1
+                             ,  NVL(CRDTCRD_PAY_AMT1, 0)           AS BF_CRDTCRD_PAY_AMT1
+                             ,  CRDTCRD_CORP2
+                             ,  CRDTCRD_FOI_CL2
+                             ,  NVL(CRDTCRD_PAY_AMT2, 0)           AS BF_CRDTCRD_PAY_AMT2
+                             ,  ONLINE_STL_PLC     
+                             ,  ALLOT_PAY_CL
+                             ,  ACC_TRNSF_CL
+                             ,  NVL(ACC_TRNSF_AMT, 0)              AS ACC_TRNSF_AMT
+                             ,  VIRTL_ACC_CL
+                             ,  NVL(VIRTL_ACC_AMT, 0)              AS VIRTL_ACC_AMT
+                             ,  CRDTCRD_CORP1
+                             ,  CRDTCRD_FOI_CL1
+                             ,  NVL(CRDTCRD_PAY_AMT1, 0)           AS CRDTCRD_PAY_AMT1
+                             ,  CRDTCRD_CORP2
+                             ,  CRDTCRD_FOI_CL2
+                             ,  NVL(CRDTCRD_PAY_AMT2, 0)           AS CRDTCRD_PAY_AMT2
+                             ,  DEL_YN
+                             ,  UPD_CNT
+                             ,  INS_USER_ID
+                             ,  INS_DTM
+                             ,  #USER_ID#                            AS MOD_USER_ID
+                             ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                          FROM  TSAL_ONLINE_PAYMENT
+                         WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                           AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addOnlineCmms" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addOnlineCmms_온라인수수료 변경이력 생성 */
+           TSAL_ONLINE_CMMS( GNRL_SALE_NO
+                          ,  GNRL_SALE_CHG_SEQ
+                          ,  BF_CASH_SALE_CMMS
+                          ,  BF_ALLOT_SALE_CMMS
+                          ,  BF_SETTL_CRDTCRD_CMMS
+                          ,  BF_CMMS_ADJ
+                          ,  BF_VIRTL_ACC_CMMS
+                          ,  BF_ACC_TRNSF_CMMS
+                          ,  ONLINE_PLC
+                          ,  ONLINE_STL_PLC
+                          ,  CASH_SALE_CMMS
+                          ,  ALLOT_SALE_CMMS
+                          ,  SETTL_CRDTCRD_CMMS
+                          ,  CMMS_ADJ
+                          ,  CMMS_RPAY
+                          ,  VIRTL_ACC_CMMS
+                          ,  ACC_TRNSF_CMMS
+                          ,  ASMPT_CLOSE_YN
+                          ,  ASMPT_CLOSE_DTM
+                          ,  ASMPT_SETTL_CLOSE_YN
+                          ,  ASMPT_SETTL_CLOSE_DTM
+                          ,  RMKS
+                          ,  DEL_YN
+                          ,  UPD_CNT
+                          ,  INS_USER_ID
+                          ,  INS_DTM
+                          ,  MOD_USER_ID
+                          ,  MOD_DTM)
+                     SELECT  GNRL_SALE_NO
+                          ,  #NEW_CHG_SEQ#                          AS GNRL_SALE_CHG_SEQ
+                          ,  NVL(CASH_SALE_CMMS, 0)                 AS BF_CASH_SALE_CMMS 
+                          ,  NVL(ALLOT_SALE_CMMS, 0)                AS BF_ALLOT_SALE_CMMS      
+                          ,  NVL(SETTL_CRDTCRD_CMMS, 0)             AS BF_SETTL_CRDTCRD_CMMS
+                          ,  NVL(CMMS_ADJ, 0)                       AS BF_CMMS_ADJ
+                          ,  NVL(VIRTL_ACC_CMMS, 0)                 AS BF_VIRTL_ACC_CMMS
+                          ,  NVL(ACC_TRNSF_CMMS, 0)                 AS BF_ACC_TRNSF_CMMS
+                          ,  ONLINE_PLC
+                          ,  ONLINE_STL_PLC
+                          ,  NVL(CASH_SALE_CMMS, 0)                 AS CASH_SALE_CMMS
+                          ,  NVL(ALLOT_SALE_CMMS, 0)                AS ALLOT_SALE_CMMS
+                          ,  NVL(SETTL_CRDTCRD_CMMS, 0)             AS SETTL_CRDTCRD_CMMS   
+                          ,  NVL(CMMS_ADJ, 0)                       AS CMMS_ADJ
+                          ,  NVL(CMMS_RPAY, 0)                      AS CMMS_RPAY
+                          ,  NVL(VIRTL_ACC_CMMS, 0)                 AS VIRTL_ACC_CMMS
+                          ,  NVL(ACC_TRNSF_CMMS, 0)                 AS ACC_TRNSF_CMMS
+                          ,  'N'                                    AS ASMPT_CLOSE_YN
+                          ,  ''                                     AS ASMPT_CLOSE_DTM
+                          ,  'N'                                    AS ASMPT_SETTL_CLOSE_YN
+                          ,  ''                                     AS ASMPT_SETTL_CLOSE_DTM
+                          ,  RMKS
+                          ,  DEL_YN
+                          ,  UPD_CNT
+                          ,  INS_USER_ID
+                          ,  INS_DTM
+                          ,  #USER_ID#                            AS MOD_USER_ID
+                          ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss') AS MOD_DTM
+                       FROM  TSAL_ONLINE_CMMS
+                      WHERE  GNRL_SALE_NO      = #GNRL_SALE_NO#
+                        AND  GNRL_SALE_CHG_SEQ = #OLD_CHG_SEQ#
+    ]]>
+	</insert>
+	<insert id="addSuplService" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08110_addSuplService_ºΰ¡»􇱃߰¡-±迬¼®-±迬¼® */
+           TSAL_SUPLSERVICE    ( GNRL_SALE_NO
+                               , SUPL_SVC_CD
+                               , GNRL_SALE_CHG_SEQ
+                               , IDM_LMT_CD
+                               , ENDS_PRD_CD
+                               , PR_MNY_YN
+                               , SVC_STA_DT
+                               , SVC_END_DT
+                               , DEL_YN
+                               , UPD_CNT
+                               , INS_USER_ID
+                               , INS_DTM
+                               , MOD_USER_ID
+                               , MOD_DTM
+            )  VALUES  ( 
+                                 #GNRL_SALE_NO#
+                               , #SUPL_SVC_CD#
+                               , #GNRL_SALE_CHG_SEQ#
+                               , #IDM_LMT_CD#
+                               , #ENDS_PRD_CD#
+                               , #PR_MNY_YN#
+                               , #SVC_STA_DT#
+                               , ''
+                               , 'N'
+                               , 1
+                               , #USER_ID#
+                               , TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+                               , ''
+                               , ''
+    )]]>
+	</insert>
+	<update id="saveSuplService" parameterClass="map">
+	<![CDATA[
+    UPDATE /*+ SALSUI08110_saveSuplService_ºΰ¡»􇰺¯°䭱迬¼®-±迬¼® */
+           TSAL_SUPLSERVICE
+       SET IDM_LMT_CD        = #IDM_LMT_CD# 
+         , ENDS_PRD_CD       = #ENDS_PRD_CD#
+         , PR_MNY_YN         = #PR_MNY_YN#
+         , SVC_STA_DT        = #SVC_STA_DT#
+         , SVC_END_DT        = ''
+         , GNRL_SALE_CHG_SEQ = #GNRL_SALE_CHG_SEQ#
+         , MOD_USER_ID       = #USER_ID#
+         , MOD_DTM           = TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+     WHERE GNRL_SALE_NO      = #GNRL_SALE_NO#
+       AND SUPL_SVC_CD       = #SUPL_SVC_CD#
+	]]>
+	</update>
+</sqlMap>

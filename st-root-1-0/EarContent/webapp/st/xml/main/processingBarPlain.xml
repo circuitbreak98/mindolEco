@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="120" Id="processingBarPlain" Left="8" OnLoadCompleted="processingBarPlain_OnLoadCompleted" OnTimer="processingBarPlain_OnTimer" PidAttrib="7" Title="처리중(플레인)" Top="8" Ver="1.0" Width="350" WorkArea="true">
+		<Button Height="16" Id="btn_closeWindow" ImageID="btm_btn_close" Left="328" OnClick="btn_closeWindow_OnClick" TabOrder="2" ToolTipText="창닫기" Top="3" Visible="FALSE" Width="19"></Button>
+		<Image Height="120" Id="Image0" ImageID="IMG::ing.gif" TabOrder="1" Width="350"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : processingBarPlain
+* 업무명      : 공통
+* 프로그램명  : 처리중 표시 바
+--------------------------------------------------------------------------------
+* 작성자      : 김중일
+* 작성일      : 2009.06.24
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+ * @description    :  폼변수
+*******************************************************************************/
+var FV_OBJ_TAR;  // 메소드를 실행 시킬 화면 객체
+
+/*******************************************************************************
+ * @description    :  화면 로딩시 전처리
+*******************************************************************************/
+function processingBarPlain_OnLoadCompleted(obj)
+{
+    FV_OBJ_TAR = AllWindows("DISDTR00300");
+    
+    SetTimer(1, 1000);
+    SetTimer(2, 1000);
+}
+
+/*******************************************************************************
+ * @description    :  타이머 이벤트
+*******************************************************************************/
+function processingBarPlain_OnTimer(obj,nEventID)
+{
+    // 처리중 화면을 종료 시킨다.
+    if(nEventID == 1)
+    {
+		if(parent.FV_BOOL_OPEN == false)
+		{
+		    parent.SetWaitCursor(false);
+		    parent.ReleaseCapture();
+			this.Close();
+		}
+    }
+    
+    // 첫 실행 시 한번만 메소드를 실행하고 타이머를 종료시킨다.
+    if(nEventID == 2)
+    {
+		if(FV_OBJ_TAR[0] != null)
+		{
+            FV_OBJ_TAR[0].f_conf();
+            KillTimer(2);
+        }
+    }
+}
+]]></Script>
+</Window>

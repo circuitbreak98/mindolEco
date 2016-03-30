@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSMG00300">
+<select id="getCurDisProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALSMG00300_getCurDisProdList-전희경 */
+	z.prod_cd
+      ,z.prod_nm
+      ,z.color_cd
+      ,FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', z.color_cd)		AS color_nm
+      ,z.agency_cd
+      ,FBAS_GET_AGENCY_NM(z.agency_cd,'')						AS agency_nm
+      ,z.hld_plc_id
+      ,FBAS_GET_DEAL_NM(z.hld_plc_id, '')						AS hld_plc_nm
+      ,z.mfact_id
+      ,(SELECT deal_co_nm
+      	FROM TBAS_DEAL_CO_MGMT
+        WHERE deal_co_cd = z.mfact_id
+            AND hseq_no   = (SELECT MAX(hseq_no)
+                           FROM TBAS_DEAL_CO_MGMT
+                          WHERE deal_co_cd = z.mfact_id
+                        ))										AS mfact_nm
+      ,z.prod_chrtic_1
+      ,FBAS_GET_COMMCDNM_VAL('ZBAS_C_00020', z.prod_chrtic_1)	AS prod_chrtic_1_nm
+      ,z.dis_st
+      ,z.ser_num
+      ,z.cur_dis_qty										AS cur_dis_qty
+      ,z.pre_dis_qty										AS pre_dis_qty
+FROM (SELECT tpd.prod_cd
+      ,tpm.prod_nm
+      ,tpd.color_cd
+      ,tdcm.pos_agency						AS agency_cd
+      ,tpd.hld_plc_id
+      ,tpm.mfact_id
+      ,tpm.prod_chrtic_1
+      ,tpd.ser_num
+      ,tpd.dis_st
+      , 1										AS cur_dis_qty
+      , 0										AS pre_dis_qty
+  FROM TDIS_PROD_DIS tpd
+      ,TBAS_DEAL_CO_MGMT tdcm
+      ,TBAS_PROD_MGMT tpm
+  WHERE tpd.hld_plc_id = tdcm.deal_co_cd
+      AND hseq_no   = (SELECT MAX(hseq_no)
+                           FROM TBAS_DEAL_CO_MGMT
+                          WHERE deal_co_cd = tdcm.deal_co_cd
+                        )
+      AND tdcm.pos_agency = #agency_cd#
+      AND tpd.prod_cd = tpm.prod_cd
+ ]]>
+      <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[  tpd.hld_plc_id = #hld_plc_id#		/* 보유처 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[  tpm.MFACT_ID = #mfact_id#			/* 제조사 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[  tpd.prod_cd = #prod_cd#				/* 모델 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="prod_chrtic_1">
+<![CDATA[  tpm.prod_chrtic_1 = #prod_chrtic_1#	/* 상품특성1 */
+]]>        </isNotEmpty>
+<![CDATA[
+      AND tpd.dis_st = '01'					/* 가용 */
+      AND tpd.del_yn = 'N'
+UNION all
+SELECT tpod.prod_cd
+      ,tpm.prod_nm
+      ,tpod.color_cd
+      ,tdcm.pos_agency										AS agency_cd
+      ,tpom.in_plc_id
+      ,tpm.mfact_id
+      ,tpm.prod_chrtic_1
+      ,tpod.ser_num
+      ,'02'													AS dis_st
+      , 0													AS cur_dis_qty
+      , DECODE(tpih.out_mgmt_no, tpom.out_mgmt_no,
+      				DECODE(tpih.inout_dtl_cl, '301', 1, '303', 1, 0)
+                    , 0)									AS pre_dis_qty
+  FROM TDIS_PROD_OUT_M tpom
+      ,tdis_prod_mov_out_dtl_d tpod
+      ,TDIS_PROD_INOUT_HST tpih
+      ,TBAS_DEAL_CO_MGMT tdcm
+      ,TBAS_PROD_MGMT tpm
+  WHERE tpom.in_plc_id = tdcm.deal_co_cd
+      AND hseq_no   = (SELECT MAX(hseq_no)
+                           FROM TBAS_DEAL_CO_MGMT
+                          WHERE deal_co_cd = tdcm.deal_co_cd
+                        )
+      AND tdcm.pos_agency = #agency_cd#
+      AND tpom.out_cl = '301'
+      AND tpom.out_mgmt_no = tpod.out_mgmt_no
+      AND tpod.prod_cd = tpih.prod_cd
+      AND tpod.color_cd = tpih.color_cd
+      AND tpod.ser_num = tpih.ser_num
+      AND tpih.inout_seq = (select MAX(inout_seq)
+                                              FROM TDIS_PROD_INOUT_HST b
+                                              WHERE b.prod_cd = tpod.prod_cd
+                                                  AND b.color_cd = tpod.color_cd
+                                                  AND b.ser_num = tpod.ser_num)
+      AND tpod.prod_cd = tpm.prod_cd
+ ]]>
+      <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[  tpom.in_plc_id = #hld_plc_id#		/* 보유처 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[  tpm.MFACT_ID = #mfact_id#			/* 제조사 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[  tpd.prod_cd = #prod_cd#				/* 모델 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="prod_chrtic_1">
+<![CDATA[  tpm.prod_chrtic_1 = #prod_chrtic_1#	/* 상품특성1 */
+]]>        </isNotEmpty>
+<![CDATA[
+      AND tpom.del_yn = 'N'
+      AND tpod.del_yn = 'N'
+      AND NVL(tpod.cncl_yn, 'N') = 'N' ) z
+WHERE z.cur_dis_qty+z.pre_dis_qty > 0
+ORDER BY z.hld_plc_id
+		,z.prod_cd
+        ,z.color_cd
+ ]]>
+</select>
+<select id="getCurDisProdListSum" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALSMG00300_getCurDisProdList-전희경 */
+	z.prod_cd
+      ,z.prod_nm
+      ,z.color_cd
+      ,FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', z.color_cd)		AS color_nm
+      ,z.agency_cd
+      ,FBAS_GET_AGENCY_NM(z.agency_cd,'')						AS agency_nm
+      ,z.hld_plc_id
+      ,FBAS_GET_DEAL_NM(z.hld_plc_id, '')						AS hld_plc_nm
+      ,z.mfact_id
+      ,(SELECT deal_co_nm
+      	FROM TBAS_DEAL_CO_MGMT
+        WHERE deal_co_cd = z.mfact_id
+            AND hseq_no   = (SELECT MAX(hseq_no)
+                           FROM TBAS_DEAL_CO_MGMT
+                          WHERE deal_co_cd = z.mfact_id
+                        ))										AS mfact_nm
+      ,z.prod_chrtic_1
+      ,FBAS_GET_COMMCDNM_VAL('ZBAS_C_00020', z.prod_chrtic_1)	AS prod_chrtic_1_nm
+      ,SUM(z.cur_dis_qty)										AS cur_dis_qty
+      ,SUM(z.pre_dis_qty)										AS pre_dis_qty
+      ,SUM(z.cur_dis_qty)+SUM(z.pre_dis_qty)					AS tot_dis_qty
+FROM (SELECT tpd.prod_cd
+      ,tpm.prod_nm
+      ,tpd.color_cd
+      ,tdcm.pos_agency						AS agency_cd
+      ,tpd.hld_plc_id
+      ,tpm.mfact_id
+      ,tpm.prod_chrtic_1
+      ,tpd.ser_num
+      , 1										AS cur_dis_qty
+      , 0										AS pre_dis_qty
+  FROM TDIS_PROD_DIS tpd
+      ,TBAS_DEAL_CO_MGMT tdcm
+      ,TBAS_PROD_MGMT tpm
+  WHERE tpd.hld_plc_id = tdcm.deal_co_cd
+      AND hseq_no   = (SELECT MAX(hseq_no)
+                           FROM TBAS_DEAL_CO_MGMT
+                          WHERE deal_co_cd = tdcm.deal_co_cd
+                        )
+      AND tdcm.pos_agency = #agency_cd#
+      AND tpd.prod_cd = tpm.prod_cd
+ ]]>
+      <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[  tpd.hld_plc_id = #hld_plc_id#		/* 보유처 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[  tpm.MFACT_ID = #mfact_id#			/* 제조사 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[  tpd.prod_cd = #prod_cd#				/* 모델 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="prod_chrtic_1">
+<![CDATA[  tpm.prod_chrtic_1 = #prod_chrtic_1#	/* 상품특성1 */
+]]>        </isNotEmpty>
+<![CDATA[
+      AND tpd.dis_st = '01'					/* 가용 */
+      AND tpd.del_yn = 'N'
+UNION all
+SELECT tpod.prod_cd
+      ,tpm.prod_nm
+      ,tpod.color_cd
+      ,tdcm.pos_agency										AS agency_cd
+      ,tpom.in_plc_id
+      ,tpm.mfact_id
+      ,tpm.prod_chrtic_1
+      ,tpod.ser_num
+      , 0													AS cur_dis_qty
+      , DECODE(tpih.out_mgmt_no, tpom.out_mgmt_no,
+      				DECODE(tpih.inout_dtl_cl, '301', 1, '303', 1, 0)
+                    , 0)									AS pre_dis_qty
+  FROM TDIS_PROD_OUT_M tpom
+      ,tdis_prod_mov_out_dtl_d tpod
+      ,TDIS_PROD_INOUT_HST tpih
+      ,TBAS_DEAL_CO_MGMT tdcm
+      ,TBAS_PROD_MGMT tpm
+  WHERE tpom.in_plc_id = tdcm.deal_co_cd
+      AND hseq_no   = (SELECT MAX(hseq_no)
+                           FROM TBAS_DEAL_CO_MGMT
+                          WHERE deal_co_cd = tdcm.deal_co_cd
+                        )
+      AND tdcm.pos_agency = #agency_cd#
+      AND tpom.out_cl = '301'
+      AND tpom.out_mgmt_no = tpod.out_mgmt_no
+      AND tpod.prod_cd = tpih.prod_cd
+      AND tpod.color_cd = tpih.color_cd
+      AND tpod.ser_num = tpih.ser_num
+      AND tpih.inout_seq = (select MAX(inout_seq)
+                                              FROM TDIS_PROD_INOUT_HST b
+                                              WHERE b.prod_cd = tpod.prod_cd
+                                                  AND b.color_cd = tpod.color_cd
+                                                  AND b.ser_num = tpod.ser_num)
+      AND tpod.prod_cd = tpm.prod_cd
+ ]]>
+      <isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[  tpom.in_plc_id = #hld_plc_id#		/* 보유처 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[  tpm.MFACT_ID = #mfact_id#			/* 제조사 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[  tpod.prod_cd = #prod_cd#				/* 모델 */
+]]>        </isNotEmpty>
+      <isNotEmpty prepend="AND" property="prod_chrtic_1">
+<![CDATA[  tpm.prod_chrtic_1 = #prod_chrtic_1#	/* 상품특성1 */
+]]>        </isNotEmpty>
+<![CDATA[
+      AND tpom.del_yn = 'N'
+      AND tpod.del_yn = 'N'
+      AND NVL(tpod.cncl_yn, 'N') = 'N' ) z
+WHERE z.cur_dis_qty+z.pre_dis_qty > 0
+GROUP BY z.prod_cd
+      ,z.prod_nm
+      ,z.color_cd
+      ,z.agency_cd
+      ,z.hld_plc_id
+      ,z.mfact_id
+      ,z.prod_chrtic_1
+ORDER BY z.hld_plc_id
+		,z.prod_cd
+        ,z.color_cd
+ ]]>
+</select>
+ <select id="getCurDisProdDtlList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALSMG00300_getCurDisProdDtlList-전희경 */
+	z.prod_cd
+      ,z.color_cd
+      ,z.dis_st
+      ,z.ser_num
+FROM (
+SELECT tpd.prod_cd
+      ,tpd.color_cd
+      ,tpd.hld_plc_id
+      ,tpd.ser_num
+      ,tpd.dis_st
+      ,'Y'													AS chk
+  FROM TDIS_PROD_DIS tpd
+  WHERE tpd.hld_plc_id = #hld_plc_id#
+ ]]>
+      <isNotEmpty prepend="AND" property="gubun">
+<![CDATA[    '1' = #gubun#					/* 구분 */
+]]>        </isNotEmpty>  
+<![CDATA[
+      AND tpd.prod_cd = #prod_cd#
+      AND tpd.color_cd = #color_cd#
+      AND tpd.dis_st = '01'					/* 가용 */
+      AND tpd.del_yn = 'N'
+UNION all
+SELECT tpod.prod_cd
+      ,tpod.color_cd
+      ,tpom.in_plc_id
+      ,tpod.ser_num
+      ,'02'													AS dis_st
+      , DECODE(tpih.out_mgmt_no, tpom.out_mgmt_no,
+      				DECODE(tpih.inout_dtl_cl, '301', 'Y', '303', 'Y', 'N')
+                    , 'N')									AS chk
+  FROM TDIS_PROD_OUT_M tpom
+      ,tdis_prod_mov_out_dtl_d tpod
+      ,TDIS_PROD_INOUT_HST tpih
+  WHERE tpom.in_plc_id = #hld_plc_id#
+ ]]>
+      <isNotEmpty prepend="AND" property="gubun">
+<![CDATA[    '2' = #gubun#					/* 구분 */
+]]>        </isNotEmpty>  
+<![CDATA[
+      AND tpom.out_cl = '301'
+      AND tpom.out_mgmt_no = tpod.out_mgmt_no
+      AND tpod.prod_cd = #prod_cd#
+      AND tpod.color_cd = #color_cd#
+      AND tpod.prod_cd = tpih.prod_cd
+      AND tpod.color_cd = tpih.color_cd
+      AND tpod.ser_num = tpih.ser_num
+      AND tpih.inout_seq = (select MAX(inout_seq)
+                                              FROM TDIS_PROD_INOUT_HST b
+                                              WHERE b.prod_cd = tpod.prod_cd
+                                                  AND b.color_cd = tpod.color_cd
+                                                  AND b.ser_num = tpod.ser_num)
+      AND tpom.del_yn = 'N'
+      AND tpod.del_yn = 'N'
+      AND NVL(tpod.cncl_yn, 'N') = 'N'
+ ) z
+WHERE z.chk = 'Y'
+ ]]>
+</select>
+</sqlMap>

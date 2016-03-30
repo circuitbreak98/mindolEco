@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALBOS00700">
+	<select id="getOnlineGnrlSale" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT SUBSTR(G.SALE_DTM, 0,4)||'-'||SUBSTR(G.SALE_DTM, 5,2)||'-'||SUBSTR(G.SALE_DTM, 7,2) AS SALE_DTM 
+     , G.GNRL_SALE_NO
+     , NVL(FBAS_GET_USER_NM(G.SALE_MOD_USER_ID), FBAS_GET_USER_NM(G.SALE_CHGRG_ID)) AS  SALE_CHGRG_NM
+     , FBAS_GET_AGENCY_NM(G.SALE_PLC, G.SALE_DTM) AS SALE_PLC_NM
+     , EQP_SER_NUM 
+     , FBAS_GET_PROD_NM(EQP_MDL_CD) AS EQP_MDL_NM
+     , EQP_MDL_CD 
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040',EQP_COLOR_CD) AS EQP_COLOR_NM
+     , DECODE(SALE_CNCL_YN,'Y','판매취소','판매') AS  SALE_CNCL_YN
+     , S.SALE_AMT
+     , S.DIS_AMT
+     , S.CMMS_AMT
+     , S.MAR_AMT
+     , S.VAT_AMT
+     , P.CASH_PAY_AMT
+     , P.CRDTCRD_CORP1
+     , P.CRDTCRD_PAY_AMT1
+     , P.CRDTCRD_CORP2
+     , P.CRDTCRD_PAY_AMT2
+     , G.INDEN_NUM
+     , G.RMKS
+  FROM TSAL_GNRL_SALE G, 
+       TSAL_EQUIPMENT_SALE E,
+       TSAL_SALE_AMT S, 
+       TSAL_PAYMENT P
+ WHERE G.GNRL_SALE_NO      = E.GNRL_SALE_NO 
+   AND G.GNRL_SALE_CHG_SEQ = E.GNRL_SALE_CHG_SEQ 
+   AND G.GNRL_SALE_NO      = S.GNRL_SALE_NO 
+   AND G.GNRL_SALE_CHG_SEQ = S.GNRL_SALE_CHG_SEQ 
+   AND G.GNRL_SALE_NO      = P.GNRL_SALE_NO 
+   AND G.GNRL_SALE_CHG_SEQ = P.GNRL_SALE_CHG_SEQ 
+   AND G.GNRL_SALE_CHG_SEQ = (SELECT MAX(GNRL_SALE_CHG_SEQ) 
+                                FROM TSAL_GNRL_SALE T 
+                               WHERE G.GNRL_SALE_NO = T.GNRL_SALE_NO)
+   AND G.SALE_DTM >= #sl_dt_from#
+   AND G.SALE_DTM <= #sl_dt_to#
+]]><isNotEmpty prepend="AND" property="sl_item">
+<![CDATA[   G.SALE_CNCL_YN = #sl_item#
+]]></isNotEmpty>
+<![CDATA[   AND G.SALE_TYP_CD = '03']]>
+	</select>
+</sqlMap>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTPRC00300">
+	<select id="getRmksInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT RMKS 
+  FROM TCST_PRCHS_OUT_M
+ WHERE OUT_MGMT_NO = #OUT_MGMT_NO#]]>
+	</select>
+	<select id="getPrchsOutList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT mgmt.OUT_MGMT_NO
+     , FBAS_GET_DEAL_NM((SELECT MFACT_ID 
+                           FROM TBAS_PROD_MGMT 
+                          WHERE PROD_CD = dtl.PROD_CD),'') MFACT_NM
+     , PROD_CD
+     , FBAS_GET_PROD_NM(PROD_CD) PROD_NM
+     , COLOR_CD
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', COLOR_CD) COLOR_NM  
+     , OUT_DT
+     , OUT_SEQ
+     , PRCHS_MGMT_NO
+     , CON_MGMT_NO
+     , SER_NUM
+     , 0 PRCHS_AMT 
+     , RMKS 
+     , '1' MOV_CNT
+     , '1' MOV_CHK
+     , ' ' PRC_GB                    
+  FROM TCST_PRCHS_OUT_M mgmt
+     , TCST_PRCHS_MOV_OUT_DTL dtl
+ WHERE mgmt.OUT_MGMT_NO = dtl.OUT_MGMT_NO
+   AND mgmt.OUT_MGMT_NO = #OUT_MGMT_NO#
+   AND mgmt.DEL_YN = 'N'
+   AND dtl.DEL_YN = 'N'
+ ORDER BY OUT_SEQ]]>
+	</select>
+	<insert id="addPrchsOutM" parameterClass="map" ><![CDATA[ INSERT INTO TCST_PRCHS_OUT_M (
+     OUT_MGMT_NO  
+    ,OUT_CL    
+    ,OUT_PLC_ID         
+    ,IN_PLC_ID          
+    ,OUT_DT    
+    ,RMKS       
+    ,DEL_YN          
+    ,UPD_CNT          
+    ,INS_DTM         
+    ,INS_USER_ID
+    ,MOD_DTM
+    ,MOD_USER_ID
+) VALUES (
+	 #OUT_MGMT_NO#
+    ,'301'        
+    ,#OUT_PLC_ID#
+    ,#IN_PLC_ID#
+    ,#OUT_DT#
+    ,#RMKS#      
+    ,'N'
+    ,1
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#  
+) ]]>
+	</insert>
+	<insert id="addPrchsMovOutDtl" parameterClass="map" ><![CDATA[ INSERT INTO TCST_PRCHS_MOV_OUT_DTL (
+     OUT_MGMT_NO 
+    ,OUT_SEQ
+    ,PRCHS_MGMT_NO
+    ,CON_MGMT_NO
+    ,PROD_CD
+    ,SER_NUM
+    ,COLOR_CD
+    ,OUT_QTY
+    ,UNIT_PRC
+    ,AMT
+    ,DEL_YN
+    ,UPD_CNT          
+    ,INS_DTM         
+    ,INS_USER_ID
+    ,MOD_DTM
+    ,MOD_USER_ID
+) VALUES (
+	 #OUT_MGMT_NO#
+    ,(SELECT NVL(MAX(OUT_SEQ)+1,1)
+  		FROM TCST_PRCHS_MOV_OUT_DTL
+	   WHERE OUT_MGMT_NO = #OUT_MGMT_NO#)
+    ,#PRCHS_MGMT_NO#
+    ,#CON_MGMT_NO#
+    ,#PROD_CD#
+    ,#SER_NUM#
+    ,#COLOR_CD#  
+    ,1
+    ,0
+    ,#PRCHS_AMT#
+    ,'N'
+    ,1
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#  
+) ]]>
+	</insert>
+	<select id="getOutMgmtNo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 'OUT'||LPAD(TO_CHAR(SCST_OUT_MGMT_NO.NEXTVAL),9,'0') OUT_MGMT_NO
+  FROM DUAL ]]>
+	</select>
+	<update id="updatePrchsMgmt" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET PRCHS_OUT_YN = #PRCHS_OUT_YN#
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO# ]]>
+	</update>
+	<update id="updatePrchsOutMDel" parameterClass="map" ><![CDATA[ UPDATE TCST_PRCHS_OUT_M
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE OUT_MGMT_NO = #OUT_MGMT_NO#]]>
+	</update>
+	<update id="updatePrchsMovOutDtlDel" parameterClass="map" ><![CDATA[ UPDATE TCST_PRCHS_MOV_OUT_DTL
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE OUT_MGMT_NO = #OUT_MGMT_NO#
+   AND OUT_SEQ = #OUT_SEQ#]]>
+	</update>
+	<select id="getOutSeq" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT MAX(OUT_SEQ)+1 OUT_SEQ FROM TCST_PRCHS_MOV_OUT_DTL
+WHERE OUT_MGMT_NO = #OUT_MGMT_NO#]]>
+	</select>
+	<update id="updatePrchsOutM" parameterClass="map" ><![CDATA[ UPDATE TCST_PRCHS_OUT_M
+   SET RMKS = #RMKS#
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE OUT_MGMT_NO = #OUT_MGMT_NO#]]>
+	</update>
+	<update id="updateConsultMgmt" parameterClass="map" ><![CDATA[ UPDATE TCST_CONSULT_MGMT
+   SET OUT_YN = #PRCHS_OUT_YN#
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+     , PRC_ST = #PRC_ST#
+ WHERE CON_MGMT_NO = #CON_MGMT_NO# ]]>
+	</update>
+</sqlMap>

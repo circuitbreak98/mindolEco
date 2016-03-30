@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="148" Id="DISDTR00320" Left="8" PidAttrib="7" Title="상품리스트" Top="8" Ver="1.0" Width="490" WorkArea="true">
+		<Grid AutoFit="TRUE" BindDataset="ds_DisProdList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="137" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="129" Id="grd_disProdList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_disProdList_OnCellDblClick" OnEnterDown="grd_disProdList_OnEnterDown" Right="480" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="8" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="470">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="52"/>
+						<col width="150"/>
+						<col width="150"/>
+						<col width="150"/>
+						<col width="120"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="상품구분"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="일련번호"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="currow+1"/>
+						<cell align="center" col="1" colid="prod_cl" combocol="code" combodataset="ds_prodCl" combotext="value" display="combo"/>
+						<cell align="center" col="2" colid="prod_nm" display="text"/>
+						<cell align="center" col="3" colid="color_cd" combocol="code" combodataset="ds_color" combotext="value" display="combo"/>
+						<cell align="center" col="4" colid="ser_num" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : DISDTR00320
+* 업무명      :  재고관리 - 재고이동
+* 프로그램명  :  상품리스트
+--------------------------------------------------------------------------------
+* 작성자      : 김중일
+* 작성일      : 2009.01.19
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+//==============================================================================
+// 그리드 더블클릭 이벤트
+//==============================================================================
+function f_setDs()
+{
+    var oDs = Object(grd_disProdList.BindDataset);
+    
+    ds_prod.SetColumn(ds_prod.currow, "prod_cl", oDs.GetColumn(oDs.currow, "prod_cl"));
+    ds_prod.SetColumn(ds_prod.currow, "prod_cl_nm", oDs.GetColumn(oDs.currow, "prod_cl_nm"));
+    ds_prod.SetColumn(ds_prod.currow, "mfact_id", oDs.GetColumn(oDs.currow, "mfact_id"));
+    ds_prod.SetColumn(ds_prod.currow, "mfact_nm", oDs.GetColumn(oDs.currow, "mfact_nm"));
+    ds_prod.SetColumn(ds_prod.currow, "prod_cd", oDs.GetColumn(oDs.currow, "prod_cd"));
+    ds_prod.SetColumn(ds_prod.currow, "prod_nm", oDs.GetColumn(oDs.currow, "prod_nm"));
+    ds_prod.SetColumn(ds_prod.currow, "color_cd", oDs.GetColumn(oDs.currow, "color_cd"));
+    ds_prod.SetColumn(ds_prod.currow, "ser_num", oDs.GetColumn(oDs.currow, "ser_num"));
+    ds_prod.SetColumn(ds_prod.currow, "bad_yn", oDs.GetColumn(oDs.currow, "bad_yn"));
+    ds_prod.SetColumn(ds_prod.currow, "dis_st", oDs.GetColumn(oDs.currow, "dis_st"));
+    ds_prod.SetColumn(ds_prod.currow, "rmks", oDs.GetColumn(oDs.currow, "rmks"));
+    ds_prod.SetColumn(ds_prod.currow, "upd_cnt", oDs.GetColumn(oDs.currow, "upd_cnt"));
+    ds_prod.SetColumn(ds_prod.currow, "in_qty", "1");
+
+	ds_prod.SetColumn(ds_prod.currow, "amt", oDs.GetColumn(oDs.currow, "fix_crdt_prchs_prc"));
+	ds_prod.SetColumn(ds_prod.currow, "unit_prc", oDs.GetColumn(oDs.currow, "fix_crdt_prchs_prc"));
+	ds_prod.SetColumn(ds_prod.currow, "out_qty", "1");
+	ds_prod.SetColumn(ds_prod.currow, "out_qty_org", "0");
+	ds_prod.SetColumn(ds_prod.currow, "prod_cd_color_cd", oDs.GetColumn(oDs.currow, "prod_cd")+oDs.GetColumn(oDs.currow, "color_cd"));	    
+    
+    this.Close();
+}
+
+//==============================================================================
+// 그리드 더블클릭 이벤트
+//==============================================================================
+function grd_disProdList_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	f_setDs();
+}
+
+//==============================================================================
+// 그리드 엔터 키다운 이벤트
+//==============================================================================
+function grd_disProdList_OnEnterDown(obj,nRow,nCell,strVal,nPivotIndex)
+{
+	f_setDs();
+}
+]]></Script>
+</Window>

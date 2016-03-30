@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO00100">
+	<select id="getOrgList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ BASBCO00100_getOrgList_조민지_심연정 */
+		a.org_id,
+        a.user_id,
+        a.org_nm,
+        a.org_cl,
+        FBAS_GET_COMMCDNM_VAL('ZBAS_C_00080', a.org_cl) as org_cl_nm,
+        a.sup_org,
+        a.u_key_cd,
+        a.eff_org_yn,
+        a.mbl_phon,
+        a.zip_cd1,
+        a.zip_cd2,
+        a.addr,
+        a.rmks,
+        a.del_yn,
+        a.upd_cnt,
+        a.ins_dtm,
+        a.ins_user_id,
+        a.mod_dtm,
+        a.mod_user_id
+FROM    tbas_org_mgmt a
+WHERE   a.eff_org_yn = 'Y'
+AND		a.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="ORG_NM">
+<![CDATA[       a.org_nm LIKE '$ORG_NM$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="org_cl">
+<![CDATA[       a.org_cl = #org_cl#
+]]></isNotEmpty>
+<![CDATA[ORDER BY a.org_cl, a.org_id]]>
+	</select>
+	<select id="getOrg" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ BASBCO00100_getOrgList_조민지_심연정 */
+		a.org_id,
+        a.user_id,
+        a.org_nm,
+        a.org_cl,
+        FBAS_GET_COMMCDNM_VAL('ZBAS_C_00080', a.org_cl) as org_cl_nm,
+        a.sup_org,
+        a.u_key_cd,
+        a.eff_org_yn,
+        a.mbl_phon,
+        a.zip_cd1,
+        a.zip_cd2,
+        a.addr,
+        a.rmks,
+        a.del_yn,
+        a.upd_cnt,
+        a.ins_dtm,
+        a.ins_user_id,
+        a.mod_dtm,
+        a.mod_user_id
+FROM    tbas_org_mgmt a
+WHERE   a.eff_org_yn = 'Y'
+AND		a.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="ORG_ID">
+<![CDATA[      (a.org_nm LIKE '$ORG_ID$%'
+    or a.ORG_ID LIKE '$ORG_ID$%' )  
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="org_cl">
+<![CDATA[       a.org_cl = #org_cl#
+]]></isNotEmpty>
+<![CDATA[ORDER BY a.org_cl, a.org_id]]>
+	</select>
+</sqlMap>

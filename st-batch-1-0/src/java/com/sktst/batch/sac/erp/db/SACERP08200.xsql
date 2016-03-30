@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08200">
+
+	<select id="getZift0001List" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT  /* SACERP08200_getZift0001List_거래처I/F조회_하창주 */
+				 zbudat			/* 귀속일자 */
+				,zgsber			/* 영업에서 관리하는 영업센터 U.Key Code 6자리 */
+				,zgubun			/* 전송구분코드 */
+				,zifdate		/* 전송일시 */
+		FROM	zift0001
+		WHERE	zconfirm in ('2', '3')
+		AND		zdele is null
+		ORDER BY zifdate
+	]]>
+	</select>
+	<update id="updateZift0001" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08200_updateZift0001_거래처I/F변경-하창주 */
+				zift0001
+		   SET	 zconfirm	= #ZCONFIRM#
+		   		,zconfdat	= #ZCONFDAT#	/* 확정일자(확정여부가 '4'인 경우의 일자) */
+		   		,zconfusr	= #ZCONFUSR#	/* 확정을 수행한 SAP ID */
+		 WHERE	zbudat	= #ZBUDAT#
+		   AND	zgsber	= #ZGSBER#
+		   AND	zgubun	= #ZGUBUN#
+		   AND	zifdate	= #ZIFDATE#
+	]]>
+	</update>
+	<update id="updateZift0002" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08200_updateZift0002_거래처I/F내역변경-하창주 */
+				zift0002
+		   SET	 zconfirm	= #ZCONFIRM#
+				,errlog		= #ERRLOG#
+		 WHERE	zbudat	= #ZBUDAT#
+		   AND	zgsber	= #ZGSBER#
+		   AND	zgubun	= #ZGUBUN#
+		   AND	zifdate	= #ZIFDATE#
+	]]>
+	</update>
+	<update id="updateSacCustMaster" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08200_updateSacCustMaster_거래처마스터변경-하창주 */
+				tsac_cust_master
+		   SET	zconfirm	= #ZCONFIRM#
+		 WHERE	zifdate		= #ZIFDATE#
+		   AND	zitem		= #ZITEM#
+	]]>
+	</update>
+
+	<select id="getZift0003List" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT  /* SACERP08200_getZift0003List_전표마스터Head조회_하창주 */
+				 mandt			/* 클라이언트(고정값 '500') */
+				,bukrs			/* 회사코드(고정값 '1000') */
+				,zbudat			/* 귀속일자 */
+				,zgsber			/* 영업에서 관리하는 영업센터 U.Key Code 6자리 */
+				,zgubun			/* 전송구분코드 */
+				,zifdate		/* 전송일시 */
+				,tax_cl         /* 부가세구분 */
+		FROM	zift0003
+		WHERE	zconfirm in ('2', '3')
+		AND		zdele	= 'N'
+		AND		zgubun	<> 'X01'	/* 부가세 전송 제외 */
+		ORDER BY zifdate
+	]]>
+	</select>
+
+	<select id="getZift0003X01List" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT  /* SACERP08200_getZift0003X01List_부가세전송Head조회_하창주 */
+				 mandt			/* 클라이언트(고정값 '500') */
+				,bukrs			/* 회사코드(고정값 '1000') */
+				,zbudat			/* 귀속일자 */
+				,zgsber			/* 영업에서 관리하는 영업센터 U.Key Code 6자리 */
+				,zgubun			/* 전송구분코드 */
+				,zifdate		/* 전송일시 */
+		FROM	zift0003
+		WHERE	zconfirm	in ('2', '3')
+		AND		zdele	= 'N'
+		AND		zgubun		= 'X01'	/* 부가세 전송 */
+		ORDER BY zifdate
+	]]>
+	</select>
+	
+	<update id="updateZift0003" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08200_updateZift0003_전표마스터Head변경-하창주 */
+				zift0003
+		   SET	 zconfirm	= #ZCONFIRM#
+		   		,zconfdat	= #ZCONFDAT#	/* 확정일자(확정여부가 '4'인 경우의 일자) */
+		   		,zconfusr	= #ZCONFUSR#	/* 확정을 수행한 SAP ID */
+		   		,errlog		= #ERRLOG#
+		 WHERE	zbudat	= #ZBUDAT#
+		   AND	zgsber	= #ZGSBER#
+		   AND	zgubun	= #ZGUBUN#
+		   AND	zifdate	= #ZIFDATE#
+	]]>
+	</update>
+
+	<select id="getZift0004List" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT  /* SACERP08200_getZift0004List_전표마스터Item조회_하창주 */
+				 mandt			/* 클라이언트(고정값 '500') */
+				,bukrs			/* 회사코드(고정값 '1000') */
+				,zbudat			/* 귀속일자 */
+				,zgsber			/* 영업에서 관리하는 영업센터 U.Key Code 6자리 */
+				,zgubun			/* 전송구분코드 */
+				,zifdate		/* 전송일시 */
+				,zitem			/* 전표생성단위 */
+		FROM	zift0004
+		WHERE	substr(zifdate, 0, 8) = #ZIFDATE#
+		AND		zconfirm in ('2', '3')
+		ORDER BY zifdate
+	]]>
+	</select>
+	
+	<update id="updateZift0004" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08200_updateZift0004_전표마스터Item변경-하창주 */
+				zift0004
+		   SET	 zconfirm	= #ZCONFIRM#
+		   		,acc_create_dt = #ZCONFDAT#
+		   		,fix_dt		= #ZCONFDAT#
+		   		,belnr		= #BELNR#		/* ERP 생성 전표번호 */
+				,errlog		= #ERRLOG#
+		 WHERE	zbudat	= #ZBUDAT#
+		   AND	zgsber	= #ZGSBER#
+		   AND	zgubun	= #ZGUBUN#
+		   AND	zifdate	= #ZIFDATE#
+	]]>
+	</update>
+
+	<update id="updateZift0006" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08200_updateZift0006_부가세전송Item변경-하창주 */
+				zift0006
+		   SET	 zconfirm	= #ZCONFIRM#
+				,errlog		= #ERRLOG#
+				,ztaxno		= #ZTAXNO#
+				,gjahr		= #GJAHR#
+		 WHERE	zbudat	= #ZBUDAT#
+		   AND	zgsber	= #ZGSBER#
+		   AND	zgubun	= #ZGUBUN#
+		   AND	zifdate	= #ZIFDATE#
+	]]>
+	</update>
+	
+	<update id="updateTsacDdErpTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08200_updateTsacDdErpTrms_일ERP전송정보변경-하창주 */
+				tsac_dd_erp_trms
+		   SET	 trms_yn		= #ZCONFIRM#
+		 WHERE	yymmdd			= #ZBUDAT#
+		 AND	trms_item		= #ZGUBUN#
+		 AND	ukey_agency_cd	= #ZGSBER#
+		 AND	trms_dt			= #ZIFDATE#
+	]]>
+	</update>
+
+	<update id="updateTsacMmErpTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08200_updateTsacMmErpTrms_월ERP전송정보변경-하창주 */
+				tsac_mm_erp_trms
+		   SET	 trms_yn		= #ZCONFIRM#
+		 WHERE	revert_dt		= #ZBUDAT#
+		 AND	trms_item		= #ZGUBUN#
+		 AND	ukey_agency_cd	= #ZGSBER#
+		 AND	trms_dt			= #ZIFDATE#
+	]]>
+	</update>
+
+	<update id="updateTsacMmTaxTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08200_updateTsacMmTaxTrms_월부가세전송정보변경-하창주 */
+				tsac_mm_tax_trms
+		   SET	 trms_yn		= #ZCONFIRM#
+		 WHERE	yymm			= substr(#ZBUDAT#, 0, 6)
+		 AND    trms_dt			= #ZIFDATE#
+		 AND	tax_cl   		= #TAX_CL#
+		 AND	ukey_agency_cd	= #ZGSBER#
+	]]>
+	</update>
+
+	<update id="updateTsacMmTaxErpTrms" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08200_updateTsacMmTaxErpTrms_월전자세금계산서전송정보변경-이강수 */
+				tsac_mm_tax_erp_trms
+		   SET	trms_yn		= #ZCONFIRM#
+		 WHERE	yymm			= substr(#ZBUDAT#, 0, 6)
+		 AND    trms_dt			= #ZIFDATE#
+		 AND	tax_cl   		= #TAX_CL#
+		 AND	ukey_agency_cd	= #ZGSBER#
+	]]>
+	</update>
+	
+</sqlMap>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="DISPSM00100">
+	<select id="getProdDisList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISPSM00100_getProdDisList_이문규 */
+	      '' as chk
+        , a.prod_cd
+        , b.prod_nm
+        , a.color_cd
+	    , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', a.color_cd) AS color_nm            
+        , a.ser_num as prod_ser_num
+        , a.old_ser_num as eqp_ser_num
+        , b.mfact_id
+        , fbas_get_deal_nm(b.mfact_id, a.last_inout_dt) AS mfact_nm           
+        , a.hld_plc_id
+        , fbas_get_deal_nm(a.hld_plc_id, a.last_inout_dt) AS hld_plc_nm           
+        , a.dis_st
+        , a.eqp_st
+        , a.dis_amt
+        , a.fix_sale_amt
+        , a.fix_sale_dt
+        , a.sale_yn
+        , a.fst_prchs_plc_id
+        , a.last_inout_dt
+        , a.last_inout_cl
+        , a.last_inout_dtl_cl
+        , a.upd_cnt
+FROM      tdis_prod_dis  a
+        , tbas_prod_mgmt b
+WHERE   a.del_yn   = 'N'
+AND     a.prod_cd  = b.prod_cd
+AND     b.del_yn   = 'N'
+]]><isNotEmpty prepend="AND" property="pos_agency_id">
+<![CDATA[        a.hld_plc_id in ( SELECT deal_co_cd
+                          FROM   tbas_deal_co_mgmt c,
+                                 (SELECT org_id   
+                                  FROM TBAS_ORG_MGMT   
+                                  WHERE DEL_YN = 'N'   
+                                  AND   ORG_CL = '3'   
+                                  START WITH ORG_ID = #pos_agency_id#
+                                  CONNECT BY PRIOR ORG_ID = SUP_ORG) d
+                          WHERE  c.org_id = d.org_id
+                          AND    c.eff_end_dtm = '99991231235959'
+                          GROUP BY deal_co_cd)
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[       a.hld_plc_id  = #hld_plc_id#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       a.prod_cd  = #prod_cd#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="mfact">
+<![CDATA[       b.mfact_id = #mfact#
+]]></isNotEmpty>  
+<![CDATA[]]><isNotEmpty prepend="AND" property="eqp_st">
+<![CDATA[       a.eqp_st = #eqp_st#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="sale_yn">
+<![CDATA[       nvl(a.sale_yn,'N') = #sale_yn#
+]]></isNotEmpty>  
+<![CDATA[]]><isNotEmpty prepend="AND" property="fix_sale_dt">
+<![CDATA[       a.fix_sale_dt = #fix_sale_dt#
+]]></isNotEmpty>            
+<![CDATA[]]><isNotEmpty prepend="AND" property="g_ser_num">
+<![CDATA[       a.ser_num = #g_ser_num#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="ser_num">
+<![CDATA[       a.old_ser_num = #ser_num#
+]]></isNotEmpty>
+	</select>
+</sqlMap>

@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="144" Id="SALSCP00300" Left="8" OnLoadCompleted="SALSCP00300_OnLoadCompleted" PidAttrib="7" Title="중고반납기기&#32;정보등록" Top="8" Ver="1.0" Width="330" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_oldRtnInfo">
+				<Contents>
+					<colinfo id="old_rtn_typ" size="256" summ="default" type="STRING"/>
+					<colinfo id="old_rtn_cust_rtn_typ" size="256" summ="default" type="STRING"/>
+					<colinfo id="old_rtn_schd_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="old_rtn_mdl" size="256" summ="default" type="STRING"/>
+					<colinfo id="old_rtn_mdl_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="old_rtn_ser_num" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_input">
+				<Contents>
+					<colinfo id="comm_cd_id" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="86" Id="div_oldRtnEqp" Left="10" Style="sty_div_input" TabOrder="1" Text="Div0" Top="10" Width="310">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static2" Left="31" Style="sty_lb_Basic" TabOrder="1" Text="중고반납&#32;유형" Top="7" VAlign="Middle" Width="84"></Static>
+				<Image Height="20" Id="Image7" ImageID="bul_mand" Left="19" TabOrder="2" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Edit BindDataset="ds_oldRtnInfo" Border="Flat" Column="old_rtn_mdl_nm" Height="20" Id="edt_oldRtnMdlNm" Left="180" LeftMargin="2" OnKeyDown="div_oldRtnEqp_edt_oldRtnMdl_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="30" Width="115"></Edit>
+				<Static Align="Right" Height="20" Id="Static3" Left="31" Style="sty_lb_Basic" TabOrder="4" Text="모델" Top="30" VAlign="Middle" Width="84"></Static>
+				<Combo BindDataset="ds_oldRtnInfo" Border="Flat" Column="old_rtn_typ" Height="20" Id="cmb_oldRtnTyp" Left="117" OnChanged="div_oldRtnEqp_cmb_oldRtnTyp_OnChanged" Style="sty_ipt_form" TabOrder="5" Top="6" Width="179"></Combo>
+				<Static Align="Right" Height="20" Id="Static4" Left="31" Style="sty_lb_Basic" TabOrder="7" Text="일련번호" Top="53" VAlign="Middle" Width="84"></Static>
+				<Edit BindDataset="ds_oldRtnInfo" Border="Flat" Column="old_rtn_ser_num" Height="20" Id="edt_oldRtnSerNum" Left="118" LeftMargin="2" MaxLength="30" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="53" Width="177"></Edit>
+				<Edit BindDataset="ds_oldRtnInfo" Border="Flat" Column="old_rtn_mdl" Height="20" Id="edt_oldRtnMdlCd" Left="118" LeftMargin="2" OnKeyDown="div_oldRtnEqp_edt_oldRtnMdl_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="30" Width="60"></Edit>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="168" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="106" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="100" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="2" Text="저장" Top="106" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALORA00500
+* 업무명      : 영업관리 - 판매 추가정보 입력
+* 프로그램명  : 팝업
+--------------------------------------------------------------------------------
+* 작성자      : 이문규
+* 작성일      : 2009.01.21
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_NAME; // 사용자 이름
+var excuteMethod;  //popup 종료시 실행할 parent 메소드
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SALSCP00300_OnLoadCompleted(obj)
+{
+	cf_setAuth(pFrmNum);	// 권한 공통
+    f_comboInit();
+    f_formInit();	
+}
+
+/*******************************************************************************
+ * @description    : 저장 - 이벤트 : 부모창에 중고단말기 정보 셋팅
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+    //if(!f_validationCheck())
+    //{
+    //    return false;
+    //}
+    //alert(parent.ds_param.GetRowCount());
+	if(parent.ds_param.GetRowCount() < 1)
+	{
+		parent.ds_param.AddRow();
+	}
+	
+	// 데이타셋 기반 전달 방식
+	parent.ds_param.SetColumn(0, "old_rtn_typ"            , div_oldRtnEqp.cmb_oldRtnTyp.Value);
+	parent.ds_param.SetColumn(0, "old_rtn_typ_nm"         , div_oldRtnEqp.cmb_oldRtnTyp.Text);
+	parent.ds_param.SetColumn(0, "old_rtn_cust_rtn_typ"   , "");
+	parent.ds_param.SetColumn(0, "old_rtn_cust_rtn_typ_nm", "");
+	parent.ds_param.SetColumn(0, "old_rtn_schd_dt"        , "");
+	parent.ds_param.SetColumn(0, "old_rtn_mdl"            , div_oldRtnEqp.edt_oldRtnMdlCd.Text);
+	parent.ds_param.SetColumn(0, "old_rtn_mdl_nm"         , div_oldRtnEqp.edt_oldRtnMdlNm.Text);
+	parent.ds_param.SetColumn(0, "old_rtn_ser_num"        , div_oldRtnEqp.edt_oldRtnSerNum.Text);
+
+
+	// 인수로 전달 받은 부모창의 함수를 실행하고 창을 종료한다
+/*******************************************************************************
+ * @description         : 인수로 넘겨 받은 명의 함수를 실행학소 창을 종료
+ * @param sMethodName   : 메소드 명 
+		  sParam   		: 메소드 인자
+*******************************************************************************/
+
+//CallScript("parent." + returnCallFunction + "");
+//close();
+
+	cf_callnClose(excuteMethod, "");
+}
+
+
+/*******************************************************************************
+ * @description    : 콤보박스 초기화
+*******************************************************************************/
+function f_comboInit(obj)
+{
+    http.Sync = true;
+	cf_checkCommonCode();
+	//중고반납유형
+	cf_setCommonCode("div_oldRtnEqp.cmb_oldRtnTyp"         , "ZSAL_C_00050" , "선택");
+	//고객반납유형
+	//cf_setCommonCode("div_oldRtnEqp.cmb_oldRtnCustRtnTyp"  , "ZSAL_C_00170");
+	
+	cf_checkCommonCode();
+    http.Sync = false;
+	return;
+}
+
+/*******************************************************************************
+ * @description    : form 초기화
+*******************************************************************************/
+function f_formInit(obj)
+{
+    cf_setParam(ds_oldRtnInfo, "old_rtn_typ"          , parent.ds_param.GetColumn(0,"old_rtn_typ") );      //
+    cf_setParam(ds_oldRtnInfo, "old_rtn_cust_rtn_typ" , parent.ds_param.GetColumn(0,"old_rtn_cust_rtn_typ") );  //
+    cf_setParam(ds_oldRtnInfo, "old_rtn_schd_dt"      , parent.ds_param.GetColumn(0,"old_rtn_schd_dt") );  //
+    cf_setParam(ds_oldRtnInfo, "old_rtn_mdl"          , parent.ds_param.GetColumn(0,"old_rtn_mdl") );  //
+    cf_setParam(ds_oldRtnInfo, "old_rtn_mdl_nm"       , parent.ds_param.GetColumn(0,"old_rtn_mdl_nm") );  //
+    cf_setParam(ds_oldRtnInfo, "old_rtn_ser_num"      , parent.ds_param.GetColumn(0,"old_rtn_ser_num") );  //
+    
+    if ( uf_IsNull(ds_oldRtnInfo.GetColumn(0,"old_rtn_typ")) )
+    {
+        //alert("aaa");
+       	div_oldRtnEqp.cmb_oldRtnTyp.Index = 1;
+    }
+    else
+    {
+        //alert("bbbb");
+        div_oldRtnEqp.cmb_oldRtnTyp.Value = ds_oldRtnInfo.GetColumn(0,"old_rtn_typ");
+    }
+    
+    div_oldRtnEqp.edt_oldRtnMdlCd.Enable = false;
+    div_oldRtnEqp.edt_oldRtnMdlNm.Enable = false;
+    div_oldRtnEqp.edt_oldRtnSerNum.Enable = false;
+
+    //모델명 조회
+    lf_getMdlNm();
+    
+    //function f_gridInit() 선택해야함.
+    //f_gridInit1();
+	return;
+}
+/*
+function f_gridInit()
+{
+    if(parent.ds_paramGrid.currow == -1 ){
+		alert("부모창에서 넘어온 추가지원유형이 없습니다.");
+		return;
+	}
+
+    var nParentTotCnt = parent.ds_paramGrid.GetCount();
+    var nAddSuptTotCnt = ds_addSupt.GetCount();
+    var sParentAddSuptCd = "";
+        	
+    //if ( nParentTotCount > 0 ) 
+    //{
+    //    nParentTotCnt = nParentTotCnt - 1;
+    //}
+    	
+    for(var nParentRow = nParentTotCnt; nParentRow >= 0 ; nParentRow--)
+    {
+        sParentAddSuptCd = parent.ds_paramGrid.GetColumn(nParentRow,"add_supt_cd");
+        
+        for(var nAddSuptRow = nAddSuptTotCnt; nAddSuptRow >= 0; nAddSuptRow--)
+        {
+            //부모창의 추가지원유형코드 = popup 창의 추가지원유형코드 같으면 check
+            if ( sParentAddSuptCd == ds_addSupt.GetColumn(nAddSuptRow, "add_supt_cd") )
+            {
+                ds_addSupt.SetColumn(nAddSuptRow, "chk","1");
+            }
+        
+        }// add_supt loop
+    } // parent loop
+
+}
+
+function f_gridInit1()
+{
+    if(parent.ds_paramGrid.currow == -1 ){
+		alert("부모창에서 넘어온 추가지원유형이 없습니다.");
+		return;
+	}
+
+    var nParentTotCnt = parent.ds_paramGrid.GetCount();
+    var nFindRow;
+            	
+    for(var nParentRow = nParentTotCnt; nParentRow >= 0 ; nParentRow--)
+    {
+        nFindRow = ds_addSupt.FindRow("add_supt_id", parent.ds_paramGrid.GetColumn(nParentRow,"add_supt_id"));
+        
+        if (nFindRow != -1)
+        {
+            ds_addSupt.SetColumn(nFindRow, "chk", "1");
+        }
+    } // parent loop
+}
+
+function f_getCommList(sCommCdId, sOutDsNm)
+{
+    ds_input.ClearData();
+    ds_input.AddRow(1);
+	
+    ds_input.SetColumn(0, "comm_cd_id", sCommCdId);
+    
+    var sSvcID = "getCommList";
+	var sInDs  = "nc_input_fieldDs=ds_input";
+	var sOutDs = sOutDsNm + "=Hello";
+	var sArg   = "sktst.sal.SCO#getCommCdList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+*/
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+    return;
+}
+
+function div_oldRtnEqp_cmb_oldRtnTyp_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+/*
+    if(strCode == "1")
+    {
+        div_oldRtnEqp.cmb_oldRtnCustRtnTyp.Enable = true;
+        div_oldRtnEqp.cmb_oldRtnCustRtnTyp.index = "0";
+        div_oldRtnEqp.cal_oldRtnSchdDt.value = today();
+        div_oldRtnEqp.cal_oldRtnSchdDt.Enable = true;
+    }
+    else
+    {
+        div_oldRtnEqp.cmb_oldRtnCustRtnTyp.value = "";
+        div_oldRtnEqp.cmb_oldRtnCustRtnTyp.Enable = false;
+        div_oldRtnEqp.cal_oldRtnSchdDt.value = "";
+        div_oldRtnEqp.cal_oldRtnSchdDt.Enable = false;
+        
+        div_oldRtnEqp.edt_oldRtnMdl.Text = "";
+        div_oldRtnEqp.edt_oldRtnSerNum.Text = "";
+    }
+*/    
+}
+
+
+
+function btn_close_OnClick(obj)
+{
+	close();
+}
+
+/*******************************************************************************
+ * @description    : 고객반납유형 선택
+*******************************************************************************/
+function div_oldRtnEqp_cmb_oldRtnCustRtnTyp_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+/*
+	if (strCode == "1")
+	{
+	    div_oldRtnEqp.cal_oldRtnSchdDt.Value = toDay();
+	}
+	else
+	{
+	    div_oldRtnEqp.cal_oldRtnSchdDt.Value = "";
+	}	
+*/	
+}
+
+function div_oldRtnEqp_edt_oldRtnMdl_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+    lf_getMdlNm();
+}
+
+function lf_getMdlNm()
+{
+	var sProdCd = "";
+    var sProdNm = "";
+
+	sProdCd = "div_oldRtnEqp.edt_oldRtnMdlCd";
+	sProdNm = "div_oldRtnEqp.edt_oldRtnMdl";
+
+    //cf_commPopProd(sProdCd, sProdNm, 13);  
+}
+]]></Script>
+</Window>

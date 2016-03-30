@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ACCSSS08110">
+	<insert id="addSktCmmsIF" parameterClass="hmap">
+	<![CDATA[
+		INSERT INTO /*+ ACCSSS08110_addSktCmmsIF_양동석_심연정 */
+		tacc_skt_cmms_if
+		(
+		     deal_co_cd   /*대리점코드*/ 
+		    ,deal_sub_cd  /*서브대리점코드*/ 
+		    ,acc_mth      /*정산년월*/
+		    ,cmms_itm_cd  /*수수료항목코드*/
+		    ,acc_amt      /*정산금액*/  
+		    ,vat_amt      /*부가세금액*/
+		    ,tot_amt      /*합계*/
+		    ,aply_yn
+		    ,del_yn
+		    ,upd_cnt
+		    ,ins_dtm
+		    ,ins_user_id
+		    ,mod_dtm
+		    ,mod_user_id             
+		)
+		VALUES
+		(
+		     TRIM(SUBSTRB(#REC_STR#,   3,  6))  /*대리점코드*/ 
+		    ,TRIM(SUBSTRB(#REC_STR#,   9,  4))  /*서브대리점코드*/ 
+		    ,TRIM(SUBSTRB(#REC_STR#,  13,  6))  /*정산년월*/ 
+		    ,TRIM(SUBSTRB(#REC_STR#,  19,  4))  /*수수료항목코드*/
+		    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  23, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  23, 15))),'-'))  /*정산금액*/
+		    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  38, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  38, 15))),'-'))  /*부가세금액*/
+		    ,SUBSTRB ( TRIM(SUBSTRB(#REC_STR#,  53, 15)) , INSTR((TRIM(SUBSTRB(#REC_STR#,  53, 15))),'-'))  /*합계*/
+		    ,'N'
+		    ,'N'
+		    ,1
+		    ,#OP_DT#
+		    ,#USER_ID#
+		    ,#OP_DT#
+		    ,#USER_ID#
+		)
+
+    ]]>
+    </insert>
+
+</sqlMap>   

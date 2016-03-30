@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISATR00300">
+	<select id="selectInProdOrgList" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR00300_selectInProdOrgList_이문규 */
+       a.out_mgmt_no,
+       a.out_cl,
+       c.prod_cl,
+       c.mfact_id,
+       b.prod_cd,
+       c.prod_nm,
+       b.color_cd,
+       b.ser_num,
+       NVL(b.out_seq, '0') mov_seq,
+       '' as bad_yn,  /* b.bad_yn, */
+       b.dis_st,
+       '1' cur_cnt,
+       '1' mov_cnt,
+       '1' mov_chk,
+       a.out_fix_yn,      /* b.out_fix_yn,*/
+       '' as in_fix_yn,   /* b.in_fix_yn, */
+       a.rmks,
+       d.upd_cnt
+FROM   tdis_prod_out_m a,
+       tdis_prod_mov_out_dtl_d b,
+       tbas_prod_mgmt c,
+       tdis_dis d
+WHERE  a.out_mgmt_no = #out_mgmt_no#
+AND    a.out_mgmt_no = b.out_mgmt_no
+AND    a.del_yn = 'N'
+AND    a.out_schd_dt = #out_schd_dt#
+/*AND    a.agency_mov_yn = 'Y' */
+/*AND    a.dis_stl_mov_yn <> 'Z' */
+]]><isNotEmpty prepend="AND" property="out_plc_id">
+<![CDATA[       a.out_plc_id = #out_plc_id#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="in_plc_id">
+<![CDATA[       a.in_plc_id = #in_plc_id#
+]]></isNotEmpty>
+<![CDATA[AND    b.prod_cd = c.prod_cd
+AND    b.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="out_fix_yn">
+<![CDATA[       NVL(b.out_fix_yn, 'N') = #out_fix_yn#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="in_fix_yn">
+<![CDATA[       NVL(b.in_fix_yn, 'N') = #in_fix_yn#
+]]></isNotEmpty>
+<![CDATA[AND    b.prod_cd = d.prod_cd
+AND    b.color_cd = d.color_cd
+AND    b.ser_num = d.ser_num
+AND    c.del_yn = 'N'
+UNION ALL
+SELECT 
+       a.out_mgmt_no,
+       a.out_cl,
+       c.prod_cl,
+       c.mfact_id,
+       b.prod_cd,
+       c.prod_nm,
+       b.color_cd,
+       b.ser_num,
+       NVL(b.out_seq, '0') mov_seq,
+       '' as bad_yn,
+       b.dis_st,
+       TO_CHAR(d.qty) cur_cnt,
+       TO_CHAR(b.out_qty) mov_cnt,
+       '1' mov_chk,
+       a.out_fix_yn,
+       '' as in_fix_yn,  /* b.in_fix_yn, */
+       a.rmks,
+       d.upd_cnt
+FROM   tdis_prod_out_m a,
+       tdis_prod_mov_out_dtl_d b,
+       tbas_prod_mgmt c,
+       tdis_etc_dis d
+WHERE  a.out_mgmt_no = #out_mgmt_no#
+AND    a.out_mgmt_no = b.out_mgmt_no
+AND    a.del_yn = 'N'
+AND    a.out_schd_dt = #out_schd_dt#
+/* AND    a.agency_mov_yn = 'Y' */
+/* AND    a.dis_stl_mov_yn <> 'Z' */
+]]><isNotEmpty prepend="AND" property="out_plc_id">
+<![CDATA[       a.out_plc_id = #out_plc_id#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="in_plc_id">
+<![CDATA[       a.in_plc_id = #in_plc_id#
+]]></isNotEmpty>
+<![CDATA[AND    b.prod_cd = c.prod_cd
+AND    b.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="out_fix_yn">
+<![CDATA[       NVL(b.out_fix_yn, 'N') = #out_fix_yn#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="in_fix_yn">
+<![CDATA[       NVL(b.in_fix_yn, 'N') = #in_fix_yn#
+]]></isNotEmpty>
+<![CDATA[AND    b.prod_cd = d.prod_cd
+AND    b.color_cd = d.color_cd
+AND    d.hld_plc_id = #out_plc_id#
+AND    c.del_yn = 'N']]>
+	</select>
+</sqlMap>

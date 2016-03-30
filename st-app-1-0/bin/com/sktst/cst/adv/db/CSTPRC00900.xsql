@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTPRC00900">
+	<select id="getConHldCntList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT UKEY_AGENCY_CD POS_AGENCY
+	 , MAX(AGENCY_NM) AGENCY_NM
+	 , MAX(ORG_NM) ORG_NM
+	 , UKEY_SUB_CD CON_PLC_CD
+	 , MAX(CON_PLC_NM) CON_PLC_NM
+	 , COUNT(*) HLD_CNT
+	 , MAX(ADDR) ADDR
+	 , MAX(TEL_NO) TEL_NO
+	 , MAX(ZIP_CD1) ZIP_CD1
+	 , MAX(ZIP_CD2) ZIP_CD2   	 
+  FROM (
+		SELECT deal.UKEY_AGENCY_CD
+		     , FBAS_GET_AGENCY_NM(deal.POS_AGENCY,con.CON_DT) AGENCY_NM
+		     , FBAS_GET_ORG_NM(deal.ORG_ID) ORG_NM
+	         , deal.UKEY_SUB_CD
+		     , FBAS_GET_DEAL_NM(con.CON_PLC_CD,con.CON_DT) CON_PLC_NM
+		     , deal.ADDR
+		     , deal.TEL_NO
+             , deal.ZIP_CD1
+		     , deal.ZIP_CD2		     
+		  FROM TCST_CONSULT_MGMT con
+		     , TBAS_DEAL_CO_MGMT deal
+		 WHERE con.CON_PLC_CD = deal.DEAL_CO_CD
+/*		   AND deal.EFF_END_DTM = '99991231235959'  */
+           AND deal.EFF_STA_DTM <= con.CON_DT||'235959'
+           AND deal.EFF_END_DTM >= con.CON_DT||'235959'
+		   AND con.CON_DT BETWEEN #CON_FROM_DT# AND #CON_TO_DT#
+]]>		<isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[			   deal.POS_AGENCY = #POS_AGENCY#
+]]>		</isNotEmpty>	   
+<![CDATA[]]>		<isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[		       con.CON_PLC_CD = #CONPLC_CD#
+]]>		</isNotEmpty>	
+<![CDATA[]]>		<isNotEmpty prepend="AND" property="SKT_CD">   
+<![CDATA[		       deal.UKEY_AGENCY_CD = #SKT_CD#
+]]>		</isNotEmpty>			   
+<![CDATA[		   AND IN_YN = 'C'
+		   AND con.DEL_YN = 'N'
+		   AND deal.DEL_YN = 'N')
+GROUP BY UKEY_AGENCY_CD, UKEY_SUB_CD]]>
+	</select>
+</sqlMap>

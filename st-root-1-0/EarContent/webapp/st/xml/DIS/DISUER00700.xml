@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="DISUER00700" Left="8" OnLoadCompleted="DISUER00700_OnLoadCompleted" PidAttrib="7" Title="중고반납이동출고확정&#32;" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_copyOrgList"></Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_copyOrgList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="558" CellMoving="TRUE" ColSizing="TRUE" DragMode="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="548" Id="grd_outFixOrgList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellClick="grd_outFixOrgList_OnCellClick" OnHeadClick="grd_outFixOrgList_OnHeadClick" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="10" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="177"/>
+						<col width="150"/>
+						<col width="118"/>
+						<col width="61"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="판매일"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="판매처"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="개통번호"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="고객명"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="일련번호"/>
+						<cell bkcolor="user34" col="7" color="user35" display="checkbox" edit="checkbox"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="currow+1"/>
+						<cell align="center" col="1" colid="sale_dt" display="date"/>
+						<cell align="center" col="2" colid="sale_plc_nm" display="text"/>
+						<cell align="center" col="3" colid="cust_nm" display="text" expr='sf_getMasking(cust_nm,&#32;&quot;CustNm&quot;)'/>
+						<cell align="center" col="4" colid="svc_num" display="text" expr='sf_getMasking(svc_num,&#32;&quot;SvcNum&quot;)'/>
+						<cell align="center" col="5" colid="prod_nm" display="text"/>
+						<cell align="center" col="6" colid="ser_num" display="text"/>
+						<cell align="center" bkcolor='expr:Iif(in_fix_yn==&quot;Y&quot;,&#32;&quot;user13&quot;,&#32;&quot;default&quot;)' col="7" colid="ch_yn" display="checkbox" edit='expr:Iif(in_fix_yn==&quot;Y&quot;,&#32;&quot;none&quot;,&#32;&quot;checkbox&quot;)'/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="696" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="2" Text="확인" Top="565" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cncl" ImageID="btn_d_2" Left="760" LeftMargin="5" OnClick="btn_cncl_OnClick" Style="sty_btn_d" TabOrder="3" Text="취소" Top="565" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : DISUER00700
+* 업무명     : 재고관리 - 재고이동
+* 프로그램명 : 중고반납이동출고확정
+--------------------------------------------------------------------------------
+* 작성자     : 김중일
+* 작성일     : 2009.03.16
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_SAL.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function DISUER00700_OnLoadCompleted(obj)
+{
+    cf_copyDataset(ds_copyOrgList, ds_outFixOrgList);
+    ds_copyOrgList.Filter("out_mgmt_no==\""+ds_outFixList.GetColumn(ds_outFixList.currow, "out_mgmt_no")+"\"");
+}
+
+/*******************************************************************************
+ * @description    : 취소 버튼 클릭 이벤트
+*******************************************************************************/
+function btn_cncl_OnClick(obj)
+{
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 확인 버튼 클릭 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	for(var i=0; i<ds_copyOrgList.rowcount; i++)
+	{
+	    var sMgmtNoC = ds_copyOrgList.GetColumn(i, "out_mgmt_no");
+	    var sSerNumC = ds_copyOrgList.GetColumn(i, "ser_num");
+	    var sFixYnC = ds_copyOrgList.GetColumn(i, "out_fix_yn");
+	    var sChYnC = ds_copyOrgList.GetColumn(i, "ch_yn");
+	    
+	    for(var j=0; j<ds_outFixOrgList.rowcount; j++)
+	    {
+	        var sMgmtNoO = ds_outFixOrgList.GetColumn(j, "out_mgmt_no");
+	        var sSerNumO = ds_outFixOrgList.GetColumn(j, "ser_num");
+	        var sFixYnO = ds_outFixOrgList.GetColumn(j, "out_fix_yn");
+	        var sChYnO = ds_outFixOrgList.GetColumn(j, "ch_yn");
+	        
+	        if(sMgmtNoC == sMgmtNoO && sSerNumC == sSerNumO
+	                && (sFixYnC != sFixYnO || sChYnC != sChYnO))
+	        {
+	            ds_outFixOrgList.SetColumn(j, "out_fix_yn", sFixYnC);
+	            ds_outFixOrgList.SetColumn(j, "ch_yn", sChYnC);
+	        }
+	    }
+	}
+
+    var nCurRow = ds_outFixList.currow;
+	parent.f_setDsGroup();
+	ds_outFixList.row = nCurRow;
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 셀 클릭 이벤트
+*******************************************************************************/
+function grd_outFixOrgList_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell == 7)
+	{ 
+		if(ds_copyOrgList.GetColumn(nRow, "in_fix_yn") == "N"){
+			ds_copyOrgList.SetColumn(nRow, "out_fix_yn", 
+					Iif(ds_copyOrgList.GetColumn(nRow, "ch_yn")=="1", "N", "Y"));
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : 셀 헤더 클릭 이벤트
+*******************************************************************************/
+function grd_outFixOrgList_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+    if(nCell == 7)
+    {
+		if(grd_outFixOrgList.GetCellProp("Head", 7, "text") != "1")
+		{
+			grd_outFixOrgList.SetCellProp("Head", 7, "text", "1");
+			
+			for(var i=0; i<ds_copyOrgList.rowcount; i++)
+			{
+				if(ds_copyOrgList.GetColumn(i, "in_fix_yn") != "Y")
+				{
+					ds_copyOrgList.SetColumn(i, "ch_yn", "1" );
+					ds_copyOrgList.SetColumn(i, "out_fix_yn", "Y");
+				}
+			}
+		}
+		else
+		{
+			grd_outFixOrgList.SetCellProp("Head", 7, "text", "0");
+			
+			for(var i=0; i<ds_copyOrgList.rowcount; i++)
+			{
+				if(ds_copyOrgList.GetColumn(i, "in_fix_yn") != "Y")
+				{
+					ds_copyOrgList.SetColumn(i, "ch_yn", "0" );
+					ds_copyOrgList.SetColumn(i, "out_fix_yn", "N");
+				}
+			}
+		}
+	}
+	else
+	{
+	    cf_markGridSort(obj,nCell,nX,nY,nPivotIndex);
+	}
+}
+]]></Script>
+</Window>

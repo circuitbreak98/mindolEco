@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSMG00400">
+<select id="getSaleList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALSMG00400_getSaleList-전희경 */
+ z.agency_cd
+ 		,FBAS_GET_AGENCY_NM(z.agency_cd,'')						AS agency_nm
+		,z.stl_plc
+		,FBAS_GET_DEAL_NM(z.stl_plc, '')						AS stl_plc_nm
+        ,z.sale_plc
+        ,FBAS_GET_DEAL_NM(z.sale_plc, '')						AS sale_plc_nm
+        ,SUM(s1_qty)							AS s1_qty
+        ,SUM(s2_qty)							AS s2_qty
+        ,SUM(s3_qty)							AS s3_qty
+        ,SUM(tot_qty)							AS tot_qty
+FROM (SELECT tgs.gnrl_sale_no
+            ,tgs.gnrl_sale_chg_seq
+            ,tdcm.pos_agency						AS agency_cd
+            ,tgs.stl_plc
+            ,tgs.sale_plc
+            ,tgs.sale_chgrg_id
+            ,DECODE(tgs.sale_typ_cd, '01', COUNT(tes.sale_seq), 0)	AS s1_qty	/* B2B */
+            ,DECODE(tgs.sale_typ_cd, '02', COUNT(tes.sale_seq), 0)	AS s2_qty	/* B2C(지점) */
+            ,DECODE(tgs.sale_typ_cd, '03', COUNT(tes.sale_seq), 0)	AS s3_qty	/* B2C(on-line) */
+            ,COUNT(tes.sale_seq)									AS tot_qty
+        FROM TSAL_GNRL_SALE tgs
+            ,TBAS_DEAL_CO_MGMT tdcm
+            ,TSAL_EQUIPMENT_SALE tes
+        WHERE tgs.sale_dtm BETWEEN #sale_dt_fr#||'000000' AND #sale_dt_to#||'999999'
+            AND tgs.gnrl_sale_chg_seq = (SELECT max(gnrl_sale_chg_seq)
+                                            FROM TSAL_GNRL_SALE
+                                            WHERE gnrl_sale_no = tgs.gnrl_sale_no)
+            AND tgs.sale_plc = tdcm.deal_co_cd
+              AND hseq_no   = (SELECT MAX(hseq_no)
+                                   FROM TBAS_DEAL_CO_MGMT
+                                  WHERE deal_co_cd = tdcm.deal_co_cd
+                                )
+              AND tdcm.pos_agency = #agency_cd#
+              AND tgs.gnrl_sale_no = tes.gnrl_sale_no
+              AND tgs.gnrl_sale_chg_seq = tes.gnrl_sale_chg_seq
+              AND NVL(tgs.sale_cncl_yn, 'N') = 'N'
+              AND tgs.del_yn = 'N'
+              AND tes.del_yn = 'N'
+ ]]>
+      <isNotEmpty prepend="AND" property="sale_plc">
+<![CDATA[
+              tgs.sale_plc = #sale_plc#
+]]>        </isNotEmpty>
+<isNotEmpty prepend="AND" property="stl_plc">
+<![CDATA[
+              tgs.stl_plc = #stl_plc#
+]]>        </isNotEmpty> 
+<isNotEmpty prepend="AND" property="sale_chgrg_id">
+<![CDATA[
+              tgs.sale_chgrg_id = #sale_chgrg_id#
+]]>        </isNotEmpty> 
+<isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[
+              tes.eqp_mdl_cd = #prod_cd#
+]]>        </isNotEmpty>
+<![CDATA[
+	GROUP BY tgs.gnrl_sale_no
+            ,tgs.gnrl_sale_chg_seq
+            ,tdcm.pos_agency
+            ,tgs.stl_plc
+            ,tgs.sale_plc
+            ,tgs.sale_chgrg_id
+            ,tgs.sale_typ_cd
+    ) z
+GROUP BY z.agency_cd
+		,z.stl_plc
+        ,z.sale_plc
+ORDER BY z.agency_cd
+		,z.stl_plc
+        ,z.sale_plc
+ ]]>
+</select>
+<select id="getSaleDtlList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALSMG00400_getSaleDtlList-전희경 */
+		tgs.gnrl_sale_no
+            ,tgs.gnrl_sale_chg_seq
+            ,tgs.stl_plc
+            ,FBAS_GET_AGENCY_NM(tgs.stl_plc, substr(tgs.sale_dtm, 0, 8))					AS stl_nm
+            ,tgs.sale_plc
+            ,FBAS_GET_AGENCY_NM(tgs.sale_plc, substr(tgs.sale_dtm, 0, 8))					AS sale_nm
+            ,tgs.sale_chgrg_id || '(' || FBAS_GET_USER_NM(tgs.sale_chgrg_id) || ')' 		AS sale_chgrg_id
+            ,tgs.sale_mod_user_id || '(' || FBAS_GET_USER_NM(tgs.sale_mod_user_id) || ')'	AS sale_mod_user_id
+            ,substr(tgs.sale_dtm, 0, 8)														AS sale_dt
+            ,tes.eqp_mdl_cd																	AS prod_cd
+            ,FBAS_GET_PROD_NM(tes.eqp_mdl_cd) 												AS prod_nm
+            ,tes.eqp_color_cd																AS color_cd
+            ,FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', tes.eqp_color_cd)						AS color_nm
+            ,tes.prod_ser_num																AS ser_num
+        FROM TSAL_GNRL_SALE tgs
+            ,TSAL_EQUIPMENT_SALE tes
+        WHERE tgs.sale_dtm BETWEEN #sale_dt_fr#||'000000' AND #sale_dt_to#||'999999'
+            AND tgs.gnrl_sale_chg_seq = (SELECT max(gnrl_sale_chg_seq)
+                                            FROM TSAL_GNRL_SALE
+                                            WHERE gnrl_sale_no = tgs.gnrl_sale_no)
+            
+              AND tgs.sale_plc = #sale_plc#
+              AND tgs.stl_plc = #stl_plc#
+              AND NVL(tgs.sale_cncl_yn, 'N') = 'N'
+              AND tgs.gnrl_sale_no = tes.gnrl_sale_no
+              AND tgs.gnrl_sale_chg_seq = tes.gnrl_sale_chg_seq
+              AND tes.del_yn = 'N'
+              AND tgs.del_yn = 'N'
+ ]]>         <isNotEmpty prepend="AND" property="sale_typ_cd">
+<![CDATA[
+              tgs.sale_typ_cd = #sale_typ_cd#
+]]>        </isNotEmpty> 
+       <isNotEmpty prepend="AND" property="sale_chgrg_id">
+<![CDATA[
+              tgs.sale_chgrg_id = #sale_chgrg_id#
+]]>        </isNotEmpty> 
+<isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[
+              tes.eqp_mdl_cd = #prod_cd#
+]]>        </isNotEmpty>
+<![CDATA[
+order by tgs.gnrl_sale_no
+            ,tgs.gnrl_sale_chg_seq
+            ,tes.eqp_mdl_cd
+            ,tes.eqp_color_cd
+            ,tes.prod_ser_num
+]]> 
+</select>
+</sqlMap>

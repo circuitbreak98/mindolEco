@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISATR01100">
+	<select id="getProdMovList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ "DISATR01100_getProdMovList_전미량" */
+       M.OUT_MGMT_NO, 
+       P.PROD_CL, 
+       P.MFACT_ID,
+       FBAS_GET_DEAL_NM(P.MFACT_ID,'') AS MFACT_ID_NM, 
+       P.PROD_CD, 
+       P.PROD_NM, 
+       D.COLOR_CD, 
+       D.SER_NUM, 
+       D.SALE_AMT, 
+       H.IN_MGMT_NO, 
+       H.IN_SEQ,
+       H.OUT_SEQ,
+       H.INOUT_SEQ,
+       H.IN_PLC_ID,
+       H.OUT_PLC_ID,
+       PD.EQP_ST,
+       'N' AS U_FLAG,
+       DECODE(TRMS_YN,'X','Y',TRMS_YN) AS TRMS_YN,
+       DECODE(TRMS_ST,'A','Y','N') AS TRMS_ST,
+       PD.SALE_YN
+  FROM TDIS_PROD_OUT_M M, 
+       TDIS_PROD_MOV_OUT_DTL_D D, 
+       TBAS_PROD_MGMT P, 
+       TDIS_PROD_INOUT_HST H ,
+       TDIS_PROD_DIS PD
+ WHERE M.OUT_MGMT_NO = D.OUT_MGMT_NO 
+   AND D.PROD_CD = P.PROD_CD 
+   AND M.OUT_MGMT_NO = H.OUT_MGMT_NO 
+   AND D.PROD_CD = H.PROD_CD 
+   AND D.SER_NUM = H.SER_NUM 
+   AND D.PROD_CD = PD.PROD_CD
+   AND D.SER_NUM = PD.SER_NUM
+   AND M.DEL_YN = 'N' 
+   AND D.DEL_YN = 'N' 
+   AND P.DEL_YN = 'N'
+   AND H.DEL_YN = 'N'
+   AND PD.DEL_YN = 'N'
+   AND NVL(D.CNCL_YN,'N') = 'N' 
+   AND INOUT_DTL_CL = '302'
+   AND INOUT_SEQ = (SELECT MAX(INOUT_SEQ) 
+         FROM TDIS_PROD_INOUT_HST 
+        WHERE PROD_CD = D.PROD_CD 
+        	  AND COLOR_CD = D.COLOR_CD
+              AND SER_NUM = D.SER_NUM
+              AND INOUT_DTL_CL != '205')
+   AND M.OUT_MGMT_NO = #out_mgmt_no#
+ order by PD.SALE_YN]]>
+	</select>
+	<select id="getProdMovMaster" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISATR01100_getProdMovMaster_전미량" */ 
+       M.RMKS, 
+       DOC_ID, 
+       #in_mgmt_no# AS IN_MGMT_NO,
+       OUT_MGMT_NO, 
+       OUT_SCHD_DT, 
+       C.POS_AGENCY, 
+       FBAS_GET_DEAL_NM(C.POS_AGENCY,'') AS OUT_POS_AGENCY_NM, 
+       OUT_PLC_ID, 
+       FBAS_GET_DEAL_NM(OUT_PLC_ID,'') AS OUT_PLC_NM, 
+       IN_PLC_ID, 
+       FBAS_GET_DEAL_NM(IN_PLC_ID,'') AS IN_PLC_NM,
+       C2.UKEY_AGENCY_CD,
+       'N' AS UPDATE_YN 
+  FROM TDIS_PROD_OUT_M M, 
+       TBAS_DEAL_CO_MGMT C,
+       TBAS_DEAL_CO_MGMT C2
+ WHERE M.DEL_YN = 'N' 
+   AND M.OUT_PLC_ID = C.DEAL_CO_CD 
+   AND C.DEL_YN = 'N' 
+   AND C.HSEQ_NO = (SELECT MAX(HSEQ_NO) 
+                      FROM TBAS_DEAL_CO_MGMT 
+                     WHERE DEAL_CO_CD = M.OUT_PLC_ID
+                   ) 
+   AND M.IN_PLC_ID = C2.DEAL_CO_CD 
+   AND C2.DEL_YN = 'N' 
+   AND C2.HSEQ_NO = (SELECT MAX(HSEQ_NO) 
+                      FROM TBAS_DEAL_CO_MGMT 
+                     WHERE DEAL_CO_CD = M.IN_PLC_ID
+                   ) 
+   AND OUT_MGMT_NO = #out_mgmt_no# ]]>
+	</select>
+	<select id="getProdSt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR01100_getProdSt_전미량 */ 
+       DECODE(DIS_ST,'01','N','Y') AS SALE_YN, 
+       DECODE(TRMS_YN,'X','Y',TRMS_YN) AS TRMS_YN, 
+       TRMS_ST, 
+       (SELECT MAX(INOUT_SEQ) 
+         FROM TDIS_PROD_INOUT_HST 
+        WHERE PROD_CD = P.PROD_CD 
+              AND SER_NUM = P.SER_NUM
+       ) AS INOUT_SEQ 
+  FROM TDIS_PROD_DIS P 
+ WHERE PROD_CD = #prod_cd#
+       AND SER_NUM = #ser_num#
+       AND DEL_YN = 'N'
+   ]]>
+	</select>
+	<insert id="addProdOutM" parameterClass="map" ><![CDATA[INSERT INTO /*+ DISATR01100_addProdOutM_전미량 */
+  TDIS_PROD_OUT_M (
+	OUT_MGMT_NO, 
+    OUT_CL, 
+    OUT_SCHD_DT, 
+    OUT_PLC_ID, 
+    IN_PLC_ID, 
+    OUT_FIX_DT, 
+    OUT_FIX_YN, 
+    RMKS, 
+    DEL_YN, 
+    UPD_CNT, 
+    INS_DTM, 
+    INS_USER_ID, 
+    MOD_DTM, 
+    MOD_USER_ID,
+    DOC_ID    
+) VALUES (
+  #out_mgmt_no#
+  ,#out_cl#
+  ,#out_schd_dt#
+  ,#out_plc_id#
+  ,#in_plc_id#
+  ,#out_schd_dt#
+  ,'Y'
+  ,#rmks#
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,#doc_id#
+)  ]]>
+	</insert>
+	<insert id="addProdMovOutD" parameterClass="map" ><![CDATA[INSERT INTO /*+ DISATR01100_addProdMovOutD_전미량 */
+ TDIS_PROD_MOV_OUT_DTL_D (
+	OUT_MGMT_NO, 
+    OUT_SEQ, 
+    PROD_CD, 
+    COLOR_CD, 
+    EQP_ST, 
+    DIS_ST, 
+    SER_NUM, 
+    OUT_QTY, 
+    SETTL_COND_CD, 
+    UNIT_PRC, 
+    AMT, 
+    CNCL_YN, 
+    SALE_AMT,
+    DEL_YN, 
+    UPD_CNT, 
+    INS_DTM, 
+    INS_USER_ID, 
+    MOD_DTM, 
+    MOD_USER_ID    
+) VALUES (
+  #out_mgmt_no#
+  ,#out_seq#
+  ,#prod_cd#
+  ,#color_cd#
+  ,#eqp_st#
+  ,#dis_st#
+  ,#ser_num#
+  ,1
+  ,''
+  ,#amt#
+  ,#amt#
+  ,''
+  ,#sale_amt#
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+)  ]]>
+	</insert>
+	<select id="getOutSeq" parameterClass="String" resultClass="java.lang.String" fetchSize="50" ><![CDATA[SELECT /*+ DISATR01100_getOutSeq_전미량 */
+       NVL(MAX(OUT_SEQ)+1,1)OUT_SEQ
+  FROM TDIS_PROD_MOV_OUT_DTL_D
+ WHERE OUT_MGMT_NO = #out_mgmt_no#]]>
+	</select>
+	<select id="getInoutSeq" parameterClass="map" resultClass="java.lang.String" fetchSize="50" ><![CDATA[SELECT /*+ DISATR01100_getInoutSeq_전미량 */
+       NVL(MAX(INOUT_SEQ)+1,1) AS INOUT_SEQ
+  FROM TDIS_PROD_INOUT_HST
+ WHERE PROD_CD = #prod_cd#
+   AND SER_NUM = #ser_num#]]>
+	</select>
+	<insert id="addProdInoutHst" parameterClass="map" ><![CDATA[INSERT INTO /*+ DISATR01100_addProdInoutHst_전미량 */ 
+TDIS_PROD_INOUT_HST (
+  PROD_CD, 
+  COLOR_CD, 
+  SER_NUM, 
+  INOUT_SEQ, 
+  IN_MGMT_NO,
+  IN_SEQ,
+  OUT_MGMT_NO, 
+  OUT_SEQ, 
+  INOUT_DT, 
+  INOUT_CL, 
+  INOUT_DTL_CL, 
+  OUT_PLC_ID, 
+  IN_PLC_ID, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_DTM, 
+  INS_USER_ID, 
+  MOD_DTM, 
+  MOD_USER_ID
+) 
+VALUES
+(
+  #prod_cd# 
+  ,#color_cd# 
+  ,#ser_num# 
+  ,#inout_seq#  
+  ,#in_mgmt_no# 
+  ,#in_seq#
+  ,#out_mgmt_no# 
+  ,#out_seq#
+  ,#inout_dt# 
+  ,#inout_cl# 
+  ,#inout_dtl_cl# 
+  ,#out_plc_id# 
+  ,#in_plc_id# 
+  ,'N'
+  ,1
+  ,TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+)]]>
+	</insert>
+	<update id="updateProdDis" parameterClass="map" ><![CDATA[UPDATE /*+ DISATR01100_updateProdDis_전미량 */
+       TDIS_PROD_DIS
+   SET DIS_ST = #dis_st#
+      ,FIX_SALE_AMT = #sale_amt#
+   	  ,HLD_PLC_ID = #hld_plc_id#
+   	  ,LAST_INOUT_DT = #inout_dt#
+   	  ,LAST_INOUT_CL = #inout_cl#
+   	  ,LAST_INOUT_DTL_CL = #inout_dtl_cl#
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#   
+      ,TRMS_ST = DECODE(TRMS_YN,'Y',#trms_st#,DECODE(TRMS_ST,'N',#trms_st#,'N'))
+      ,TRMS_YN = #trms_yn#
+      ,TRMS_DT = ''
+      ,CON_SALE_YN = #con_sale_yn#
+      ,CON_SALE_DT = #con_sale_dt#
+      ,CON_SALE_CNCL_DT = #con_sale_cncl_dt#
+      ,CON_SALE_PLC_ID = #con_sale_plc_id#
+ WHERE PROD_CD = #prod_cd#
+   AND SER_NUM = #ser_num#]]>
+	</update>
+	<insert id="addProdInM" ><![CDATA[INSERT INTO /*+ DISATR01100_addInProdM_전미량 */ 
+            TDIS_IN_PROD_M              
+		(IN_MGMT_NO			/* 입고관리번호*/
+		,IN_SCHD_DT			/* 입고예정일자*/
+		,PRCHS_PLC_ID		/* 매입처ID*/
+		,IN_PLC_ID    		/* 입고처ID*/
+		,IN_TS      		/* 입고차수*/
+		,IN_CL				/* 입고구분*/
+		,IN_FIX_DT			/* 입고확정일자*/
+		,IN_ST       		/* 입고상태*/
+		,RMKS       		/* 비고*/
+		,DEL_YN      		/* 삭제여부*/
+		,UPD_CNT      		/* UPDATE COUNT*/
+		,INS_DTM  			
+		,INS_USER_ID
+		,MOD_DTM      
+		,MOD_USER_ID  
+		)
+		VALUES
+		(
+		 #in_mgmt_no#        
+		,to_char(sysdate,'YYYYMMDD')     
+		,#in_plc_id#          
+		,#in_plc_id#    
+		,1      		/* 입고차수*/
+		,#in_cl#		/* 입고구분 : 이동입고(ZDIS_C_00050)*/
+		,#in_fix_dt#	/* 입고확정일*/
+		,#in_st#       	/* 입고상태 : (ZDIS_C_00060)*/
+		,#rmks#			/* rmks*/
+		,'N'			/* 삭제여부*/
+		,1				/* upd_cnt*/
+		,to_char(sysdate,'YYYYMMDDHH24MISS')
+		,#onlineContext.userInfo.loginId#
+		,to_char(sysdate,'YYYYMMDDHH24MISS')
+		,#onlineContext.userInfo.loginId#
+	)]]>
+	</insert>
+	<select id="getInSeq" parameterClass="String" resultClass="java.lang.String" fetchSize="50" ><![CDATA[SELECT /*+ DISATR01100_getInSeq_전미량 */
+       NVL(MAX(IN_SEQ)+1,1) AS IN_SEQ
+  FROM TDIS_IN_PROD_DTL_D
+ WHERE IN_MGMT_NO = #in_mgmt_no# ]]>
+	</select>
+	<select id="getProdUnitPrcInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR01100_getProdUnitPrcInfo_전미량 */
+       AMT||'' AS AMT
+     , MAX(PRC_SEQ) PRC_SEQ
+  FROM TDIS_PROD_UNIT_PRC
+ WHERE PROD_CD = #prod_cd#
+   AND SER_NUM = #ser_num#
+   AND DEL_YN = 'N'
+GROUP BY PROD_CD, COLOR_CD, SER_NUM, AMT]]>
+	</select>
+	<insert id="addProdMovInD" parameterClass="map" ><![CDATA[INSERT INTO TDIS_IN_PROD_DTL_D /*+ DISATR01100_addProdMovInD_전미량 */ 
+		(IN_MGMT_NO			/* 입고관리번호*/
+		,IN_SEQ				/* 입고순번*/
+		,PROD_CD			/* 상품코드*/
+		,COLOR_CD			/* 색상코드*/
+		,SER_NUM			/* 일련번호*/
+		,IN_QTY				/* 입고수량*/
+		,IN_AMT				/* 입고금액 */
+		,IN_FIX_DT			/* 입고확정일자*/
+		,IN_FIX_YN			/* 입고확정여부*/
+		,IN_FIX_QTY			/* 입고확정수량*/
+		,CNCL_YN			/* 취소여부*/
+		,DEL_YN      		/* 삭제여부*/
+		,UPD_CNT      		/* UPDATE COUNT*/
+		,INS_DTM  			
+		,INS_USER_ID
+		,MOD_DTM      
+		,MOD_USER_ID  
+		)
+		VALUES
+		(
+		 #in_mgmt_no#        
+		,#in_seq#      
+		,#prod_cd#          
+		,#color_cd#    
+		,#ser_num#
+		,'1'
+		,#amt#
+		,#in_fix_dt#
+		,#in_fix_yn#
+		,'1'
+		,'N'
+		,'N'				
+		,1					
+		,to_char(sysdate,'YYYYMMDDHH24MISS')
+		,#onlineContext.userInfo.loginId#
+		,to_char(sysdate,'YYYYMMDDHH24MISS')
+		,#onlineContext.userInfo.loginId#
+		)]]>
+	</insert>
+	<update id="updateProdMovOutDForDel" parameterClass="map" ><![CDATA[UPDATE /*+ DISATR01100_updateProdMovOutDForDel_전미량 */
+       TDIS_PROD_MOV_OUT_DTL_D
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE OUT_MGMT_NO = #out_mgmt_no#
+   AND OUT_SEQ = #out_seq#]]>
+	</update>
+	<update id="updateProdInoutHstForDel" parameterClass="map" ><![CDATA[UPDATE /*+ DISATR01100_updateProdInoutHstForDel_전미량 */
+       TDIS_PROD_INOUT_HST
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE OUT_MGMT_NO = #out_mgmt_no#
+   AND PROD_CD = #prod_cd#
+   AND SER_NUM = #ser_num#]]>
+	</update>
+	<update id="updateProdMovInDForDel" parameterClass="map" ><![CDATA[UPDATE /*+ DISATR01100_updateProdMovInDForDel_전미량 */
+       TDIS_IN_PROD_DTL_D
+   SET CNCL_YN = 'Y'
+     , DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE IN_MGMT_NO = #in_mgmt_no#
+   AND IN_SEQ = #in_seq#]]>
+	</update>
+	<update id="updateProdOutM" parameterClass="map" ><![CDATA[UPDATE TDIS_PROD_OUT_M
+   SET RMKS = #rmks#
+     , DOC_ID = #doc_id#
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE OUT_MGMT_NO = #out_mgmt_no# ]]>
+	</update>
+	<update id="updateProdInMForDel" parameterClass="map" ><![CDATA[UPDATE TDIS_IN_PROD_M
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE IN_MGMT_NO = #in_mgmt_no#]]>
+	</update>
+	<update id="updateProdOutMForDel" parameterClass="map" ><![CDATA[UPDATE TDIS_PROD_OUT_M
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE OUT_MGMT_NO = #out_mgmt_no#]]>
+	</update>
+	<update id="updateProdInoutHstForDelAll" parameterClass="map" ><![CDATA[UPDATE /*+ DISATR01100_updateProdInoutHstForDelAll_전미량 */
+       TDIS_PROD_INOUT_HST
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE OUT_MGMT_NO = #out_mgmt_no#]]>
+	</update>
+	<update id="updateProdMovInDForDelAll" parameterClass="map" ><![CDATA[UPDATE /*+ DISATR01100_updateProdMovInDForDelAll_전미량 */
+       TDIS_IN_PROD_DTL_D
+   SET CNCL_YN = 'Y'
+     , DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE IN_MGMT_NO = #in_mgmt_no#]]>
+	</update>
+	<update id="updateProdMovOutDForDelAll" parameterClass="map" ><![CDATA[UPDATE /*+ DISATR01100_updateProdMovOutDForDel_전미량 */
+       TDIS_PROD_MOV_OUT_DTL_D
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE OUT_MGMT_NO = #out_mgmt_no#]]>
+	</update>
+	<insert id="addProdOutD" parameterClass="map" ><![CDATA[INSERT INTO /*+ DISATR01100_addProdOutD_전미량 */
+ TDIS_PROD_OUT_DTL_D (
+	OUT_MGMT_NO, 
+    OUT_SEQ, 
+    PROD_CD, 
+    COLOR_CD, 
+    EQP_ST, 
+    DIS_ST, 
+    SER_NUM, 
+    OUT_QTY, 
+    SETTL_COND_CD, 
+    UNIT_PRC, 
+    AMT, 
+    CNCL_YN, 
+    DEL_YN, 
+    UPD_CNT, 
+    INS_DTM, 
+    INS_USER_ID, 
+    MOD_DTM, 
+    MOD_USER_ID    
+) VALUES (
+  #out_mgmt_no#
+  ,#out_seq#
+  ,#prod_cd#
+  ,#color_cd#
+  ,#eqp_st#
+  ,#dis_st#
+  ,#ser_num#
+  ,1
+  ,''
+  ,#amt#
+  ,#amt#
+  ,''
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+)  ]]>
+	</insert>
+	<select id="getProdMovListForRD" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ "DISATR01100_getProdMovListForRD_전미량" */
+	   MFACT_ID,
+       FBAS_GET_DEAL_NM(MFACT_ID,'') AS MFACT_NM,
+       P.PROD_CD,
+       P.PROD_NM,
+       COUNT(*) AS CNT,
+       SUM(D.SALE_AMT/1.1) AS SALE_PRC,
+       SUM((D.SALE_AMT/1.1)*0.1) AS SALE_VAT_PRC    
+  FROM TDIS_PROD_OUT_M M, 
+       TDIS_PROD_MOV_OUT_DTL_D D, 
+       TBAS_PROD_MGMT P, 
+       TDIS_PROD_INOUT_HST H ,
+       TDIS_PROD_DIS PD
+ WHERE M.OUT_MGMT_NO = D.OUT_MGMT_NO 
+   AND D.PROD_CD = P.PROD_CD 
+   AND M.OUT_MGMT_NO = H.OUT_MGMT_NO 
+   AND D.PROD_CD = H.PROD_CD 
+   AND D.COLOR_CD = H.COLOR_CD 
+   AND D.SER_NUM = H.SER_NUM 
+   AND D.PROD_CD = PD.PROD_CD
+   AND D.COLOR_CD = PD.COLOR_CD
+   AND D.SER_NUM = PD.SER_NUM
+   AND M.DEL_YN = 'N' 
+   AND D.DEL_YN = 'N' 
+   AND P.DEL_YN = 'N'
+   AND H.DEL_YN = 'N'
+   AND PD.DEL_YN = 'N'
+   AND NVL(D.CNCL_YN,'N') = 'N' 
+   AND INOUT_DTL_CL = '302'
+   AND INOUT_SEQ = (SELECT MAX(INOUT_SEQ) 
+         FROM TDIS_PROD_INOUT_HST 
+        WHERE PROD_CD = D.PROD_CD 
+              AND SER_NUM = D.SER_NUM
+              AND INOUT_DTL_CL != '205')
+   AND M.OUT_MGMT_NO = #out_mgmt_no#
+GROUP BY P.MFACT_ID, P.PROD_CD, P.PROD_NM
+ORDER BY P.MFACT_ID, P.PROD_NM]]>
+	</select>
+</sqlMap>

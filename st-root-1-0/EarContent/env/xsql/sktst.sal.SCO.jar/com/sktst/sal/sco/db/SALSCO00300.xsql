@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="SALSCO00300">
+	<procedure id="selectDisMgmtNo" parameterClass="map" ><![CDATA[{ call SP_DIS_DCO_MGMT_NO ( 
+	#errcode,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#errmsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#mgmt_no_cd,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#user_id,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#mgmt_no,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+	) }]]>
+	</procedure>
+	<update id="updateProdDis" parameterClass="map" ><![CDATA[UPDATE TDIS_PROD_DIS
+   SET DIS_ST = #dis_st#
+   	  ,LAST_INOUT_DT = to_char(sysdate,'YYYYMMDD')
+   	  ,LAST_INOUT_CL = #inout_cl#
+   	  ,LAST_INOUT_DTL_CL = #inout_dtl_cl#
+   	  ,FIX_SALE_AMT = #sale_amt#
+   	  ,FIX_SALE_DT = #sale_dt#
+   	  ,SALE_YN = #sale_yn#
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#   
+ WHERE PROD_CD = #prod_cd#
+ 	AND COLOR_CD = #color_cd#
+ 	AND SER_NUM = #ser_num#]]>
+	</update>
+	<insert id="addProdOut" parameterClass="map" ><![CDATA[INSERT INTO TDIS_PROD_OUT_M (
+	OUT_MGMT_NO, 
+	GNRL_SALE_NO,
+	GNRL_SALE_CHG_SEQ,
+  OUT_CL, 
+  OUT_SCHD_DT, 
+  OUT_PLC_ID, 
+  IN_PLC_ID, 
+  OUT_FIX_DT, 
+  OUT_FIX_YN, 
+  RMKS, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_DTM, 
+  INS_USER_ID, 
+  MOD_DTM, 
+  MOD_USER_ID    
+) VALUES (
+  #out_mgmt_no#
+  ,#gnrl_sale_no#
+  ,#gnrl_sale_chg_seq#
+  ,#out_cl#
+  ,#sale_dt#
+  ,#sale_plc#
+  ,''
+  ,to_char(sysdate,'YYYYMMDD')
+  ,'Y'
+  ,#rmks#
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+)  ]]>
+	</insert>
+	<insert id="addProdOutDtl" parameterClass="map" ><![CDATA[INSERT INTO TDIS_PROD_OUT_DTL_D (
+	OUT_MGMT_NO, 
+  OUT_SEQ, 
+  PROD_CD, 
+  COLOR_CD, 
+  EQP_ST, 
+  DIS_ST, 
+  SER_NUM, 
+  OUT_QTY, 
+  SETTL_COND_CD, 
+  UNIT_PRC, 
+  AMT, 
+  CNCL_YN, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_DTM, 
+  INS_USER_ID, 
+  MOD_DTM, 
+  MOD_USER_ID    
+) (SELECT
+  #out_mgmt_no#
+  ,nvl((SELECT max(out_seq) out_seq
+      	FROM TDIS_PROD_OUT_DTL_D
+          WHERE out_mgmt_no = #out_mgmt_no#), 0)+1 out_seq 
+  ,#prod_cd#
+  ,#color_cd#
+  ,#eqp_st#
+  ,#dis_st#
+  ,#ser_num#
+  ,#sale_qty#
+  ,#settl_cond_cd#
+  ,#sale_unit_prc#
+  ,#sale_unit_prc#
+  ,''
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+FROM dual)  ]]>
+	</insert> 
+	<insert id="addProdOutHst" parameterClass="map" ><![CDATA[INSERT INTO TDIS_PROD_INOUT_HST (
+  PROD_CD, 
+  COLOR_CD, 
+  SER_NUM, 
+  INOUT_SEQ, 
+  OUT_MGMT_NO, 
+  OUT_SEQ, 
+  INOUT_DT, 
+  INOUT_CL, 
+  INOUT_DTL_CL, 
+  OUT_PLC_ID, 
+  IN_PLC_ID, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_DTM, 
+  INS_USER_ID, 
+  MOD_DTM, 
+  MOD_USER_ID
+) (SELECT
+  #prod_cd# prod_cd
+  ,#color_cd# color_cd
+  ,#ser_num# ser_num
+  ,NVL((SELECT max(inout_seq)
+      	FROM TDIS_PROD_INOUT_HST
+          WHERE prod_cd = #prod_cd#
+              AND color_cd = #color_cd#
+              AND ser_num = #ser_num#), 0)+1 inout_seq 
+  ,#out_mgmt_no# out_mgmt_no
+  ,(SELECT max(out_seq) out_seq
+      	FROM TDIS_PROD_OUT_DTL_D
+          WHERE out_mgmt_no = #out_mgmt_no#) out_seq
+  ,to_char(sysdate,'YYYYMMDD') inout_dt
+  ,#inout_cl# inout_cl
+  ,#inout_dtl_cl# inout_dtl_cl
+  ,#sale_plc# out_plc_id
+  ,'' in_plc_id
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+from dual
+)  ]]>
+	</insert>
+	<insert id="addProdIn" parameterClass="map" ><![CDATA[INSERT INTO TDIS_IN_PROD_M (
+	IN_MGMT_NO,
+  IN_CL, 
+  IN_TS,
+  IN_SCHD_DT, 
+  IN_PLC_ID, 
+  IN_FIX_DT,
+  IN_ST,
+  RMKS, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_DTM, 
+  INS_USER_ID, 
+  MOD_DTM, 
+  MOD_USER_ID    
+) VALUES (
+  #in_mgmt_no#
+  ,#in_cl#
+  ,1
+  ,#sale_dt#
+  ,#sale_plc#
+  ,to_char(sysdate,'YYYYMMDD')
+  ,#in_st#
+  ,#rmks#
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+)  ]]>
+	</insert>
+	<insert id="addProdInDtl" parameterClass="map" ><![CDATA[INSERT INTO TDIS_IN_PROD_DTL_D (
+	IN_MGMT_NO, 
+  IN_SEQ, 
+  PROD_CD, 
+  COLOR_CD, 
+  SER_NUM, 
+  IN_QTY, 
+  IN_AMT,
+  IN_FIX_DT,
+  IN_FIX_YN,
+  IN_FIX_QTY,
+  CNCL_YN, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_DTM, 
+  INS_USER_ID, 
+  MOD_DTM, 
+  MOD_USER_ID    
+) (SELECT
+  #in_mgmt_no#
+  ,nvl((SELECT max(in_seq) out_seq
+      	FROM TDIS_IN_PROD_DTL_D
+          WHERE in_mgmt_no = #in_mgmt_no#), 0)+1 in_seq 
+  ,#prod_cd#
+  ,#color_cd#
+  ,#ser_num#
+  ,#sale_qty#
+  ,#sale_amt#
+  ,to_char(sysdate,'YYYYMMDD')
+  ,'Y'
+  ,#sale_qty#
+  ,''
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+FROM dual)  ]]>
+	</insert> 
+	<insert id="addProdInHst" parameterClass="map" ><![CDATA[INSERT INTO TDIS_PROD_INOUT_HST (
+  PROD_CD, 
+  COLOR_CD, 
+  SER_NUM, 
+  INOUT_SEQ, 
+  IN_MGMT_NO, 
+  IN_SEQ,
+  OUT_MGMT_NO,
+  OUT_SEQ, 
+  INOUT_DT, 
+  INOUT_CL, 
+  INOUT_DTL_CL, 
+  OUT_PLC_ID, 
+  IN_PLC_ID, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_DTM, 
+  INS_USER_ID, 
+  MOD_DTM, 
+  MOD_USER_ID
+) (SELECT
+  #prod_cd# 									as prod_cd
+  ,#color_cd# 									as color_cd
+  ,#ser_num# 									as ser_num
+  ,NVL((SELECT max(inout_seq)
+      	FROM TDIS_PROD_INOUT_HST
+          WHERE prod_cd = #prod_cd#
+              AND color_cd = #color_cd#
+              AND ser_num = #ser_num#), 0)+1 	as inout_seq 
+  ,#in_mgmt_no# 								as in_mgmt_no
+  ,(SELECT max(in_seq) in_seq
+      	FROM TDIS_IN_PROD_DTL_D
+          WHERE in_mgmt_no = #in_mgmt_no#) 		as in_seq
+  ,#out_mgmt_no# 								as out_mgmt_no
+  ,(select out_seq
+  	from TDIS_PROD_OUT_DTL_D
+  	where out_mgmt_no = #out_mgmt_no#
+  		and prod_cd = #prod_cd#
+  		and color_cd = #color_cd#
+  		and ser_num = #ser_num#
+  		and nvl(cncl_yn, 'N') = 'N'
+  		and del_yn = 'N') 						as out_seq
+  ,to_char(sysdate,'YYYYMMDD') 					as inout_dt
+  ,#inout_cl# 									as inout_cl
+  ,#inout_dtl_cl# 								as inout_dtl_cl
+  ,'' 											as out_plc_id
+  ,#sale_plc# 									as in_plc_id
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+from dual
+)  ]]>
+	</insert>
+	<update id="updateProdOut" parameterClass="map" ><![CDATA[UPDATE TDIS_PROD_OUT_M
+   SET GNRL_SALE_CHG_SEQ = #gnrl_sale_chg_seq#
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#   
+ WHERE OUT_MGMT_NO = #out_mgmt_no#
+ 		and GNRL_SALE_NO = #gnrl_sale_no#]]>
+	</update>
+	<select id="selectProdDisSt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "SALSCO00300_selectProdDisSt_전희경" */
+		       prod_cd
+		       ,color_cd
+		       ,ser_num
+		       ,dis_st
+		FROM   tdis_prod_dis
+		WHERE  prod_cd = #prod_cd#
+			AND color_cd = #color_cd#
+			AND ser_num = #ser_num#
+			AND del_yn = 'N']]>
+	</select>
+</sqlMap>

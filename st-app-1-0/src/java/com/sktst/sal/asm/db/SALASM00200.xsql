@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALASM00200">
+<insert id="insertProdAssign" parameterClass="map" ><![CDATA[INSERT /* "SALASM00200_insertProdAssign_전희경" */
+  INTO TSAL_PROD_ASSIGN
+     ( REQ_DTM
+     , REQ_PLC
+     , REQ_SEQ
+     , PROD_CD
+     , COLOR_CD
+     , REQ_CHRGR_ID
+     , REQ_QTY
+     , CHK_YN
+     , DEL_YN
+     , UPD_CNT
+     , INS_USER_ID
+     , INS_DTM
+     , MOD_USER_ID
+     , MOD_DTM
+     )
+     (select  #REQ_DTM#
+	     , #REQ_PLC#
+	     , nvl((SELECT max(REQ_SEQ) req_seq
+		      	FROM TSAL_PROD_ASSIGN
+		          WHERE REQ_DTM = #REQ_DTM#
+		          	AND REQ_PLC = #REQ_PLC#), 0)+1 as req_seq
+	     , #PROD_CD#
+	     , #COLOR_CD#
+	     , #onlineContext.userInfo.loginId#
+	     , #REQ_QTY#
+	     , 'N'
+	     , 'N'
+	     , 1
+	     , #onlineContext.userInfo.loginId#
+	     , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+	     , #onlineContext.userInfo.loginId#
+	     , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+     from dual  )]]>
+  </insert>
+  <select id="getProdColorList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "SALASM00200_getProdColorList_전희경" */
+       prod_cd,
+       color_cd,
+       (SELECT comm_cd_val_nm 
+          FROM tbas_comm_cd_dtl 
+         WHERE comm_cd_id = 'ZBAS_C_00040'
+           AND comm_cd_val = a.color_cd) as color_nm,         
+       del_yn
+  FROM tbas_prod_color a
+ WHERE a.prod_cd = #prod_cd#
+   AND a.del_yn = 'N']]>
+  </select>
+  <select id="getProdCl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "SALASM00200_getProdCl_전희경" */
+       prod_cl,
+       prod_cd,    
+       del_yn
+  FROM tbas_prod_mgmt a
+ WHERE a.prod_cd = #prod_cd#
+   AND a.del_yn = 'N']]>
+  </select>
+  <select id="getProdAssign" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "SALASM00200_getProdAssign_전희경" */
+       tpa.REQ_DTM
+	 , tdcm.pos_agency                        AS agency_cd
+     , FBAS_GET_AGENCY_NM(tdcm.pos_agency,'') AS agency_nm
+     , tdcm.UKEY_AGENCY_CD					  AS REQ_UKEY_CD
+     , tpa.REQ_PLC
+     , FBAS_GET_DEAL_NM(tpa.req_plc, '')     AS req_plc_nm
+     , tpa.REQ_SEQ     
+     , tpa.PROD_CD
+     , FBAS_GET_PROD_NM(tpa.prod_cd)         AS prod_nm
+     , tpa.COLOR_CD
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', tpa.color_cd) AS color_nm
+     , tpa.REQ_CHRGR_ID
+     , tpa.REQ_QTY
+     , tpa.CHK_YN
+     , tpa.UPD_CNT
+     , 'MOD'									AS FLAG
+  FROM TSAL_PROD_ASSIGN tpa
+      ,TBAS_DEAL_CO_MGMT tdcm
+ WHERE tpa.req_dtm = #req_dtm#
+   AND tpa.req_plc = #req_plc#
+   AND tpa.req_seq = #req_seq#
+   AND tpa.req_plc   = tdcm.deal_co_cd
+   AND tdcm.hseq_no   = (SELECT MAX(hseq_no) 
+                         FROM TBAS_DEAL_CO_MGMT  
+                        WHERE deal_co_cd = tdcm.deal_co_cd
+                      )
+   AND tpa.del_yn = 'N']]>
+  </select>
+  <update id="updateProdAssign" parameterClass="map" ><![CDATA[UPDATE TSAL_PROD_ASSIGN
+   SET PROD_CD  = #prod_cd#
+   	  ,COLOR_CD = #color_cd#
+   	  ,REQ_QTY  = #req_qty#
+   	  ,REQ_CHRGR_ID = #onlineContext.userInfo.loginId#
+   	  ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#	     
+ WHERE REQ_DTM = #req_dtm#
+ 	AND REQ_PLC = #req_plc#
+ 	AND REQ_SEQ = #req_seq#]]>
+	</update>
+</sqlMap>

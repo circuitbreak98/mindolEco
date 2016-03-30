@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISOUT08100">
+	
+	<update id="updateTrmsYn" parameterClass="map">
+	<![CDATA[
+	UPDATE /*+ DISOUT08100_updateTrmsYn_판매 전송여부 변경 */
+           TDIS_PROD_DIS
+       SET TRMS_YN   = 'Y'
+     WHERE LAST_INOUT_DT = TO_CHAR(SYSDATE,'YYYYMMDD')
+	    AND TRMS_DT IS NULL
+    ]]>
+	</update>
+
+	<select id="getDisProd" resultClass="hmap" fetchSize="50" parameterClass="hmap">
+	<![CDATA[
+	SELECT /* DISOUT08100_getDisProd_재고조회_전미량_전미량 */
+   		   RPAD(NVL(TRIM(UKEY_AGENCY_CD),'  '),10)|| 
+		   RPAD(NVL(TRIM(UKEY_SUB_CD),'  '),10)||
+		   RPAD(NVL(TRIM(PROD_CD),'  '),10) || 
+		   RPAD(NVL(TRIM(COLOR_CD),'  '),2) || 
+		   RPAD(NVL(TRIM(OLD_SER_NUM),'  '),30)|| 
+		   RPAD(NVL(TRIM(EQP_ST),'  '),2) ||
+		   RPAD(NVL(TRIM(SALE_AMT),'  '),15) || 
+		   RPAD(NVL(TRIM(CON_MGMT_NO),'  '),12) ||
+		   RPAD(NVL(TRIM(LAST_INOUT_DT),'  '),8) 
+		   AS MSG, SER_NUM    
+  	  FROM TDIS_PROD_DIS A, TBAS_DEAL_CO_MGMT B, TSAL_EQUIPMENT_SALE C, TSAL_GNRL_SALE D
+ 	 WHERE A.TRMS_YN = 'Y' 
+   	   AND A.TRMS_ST = 'A' 
+       AND A.TRMS_DT IS NULL
+       AND A.DIS_ST = '02'
+       AND A.LAST_INOUT_CL = '200'
+   	   AND A.LAST_INOUT_DTL_CL = '205'
+   	   AND A.DEL_YN = 'N'
+   	   AND D.SALE_PRC_PLC = B.DEAL_CO_CD
+   	   AND B.HSEQ_NO = (SELECT MAX(HSEQ_NO)
+       		              FROM TBAS_DEAL_CO_MGMT
+                         WHERE DEAL_CO_CD = B.DEAL_CO_CD)
+   	   AND C.GNRL_SALE_NO = D.GNRL_SALE_NO
+   	   AND C.GNRL_SALE_CHG_SEQ = D.GNRL_SALE_CHG_SEQ
+   	   AND C.GNRL_SALE_CHG_SEQ = (SELECT MAX(GNRL_SALE_CHG_SEQ)
+      			                    FROM TSAL_GNRL_SALE
+		           			       WHERE GNRL_SALE_NO = C.GNRL_SALE_NO) 
+       AND C.PROD_SER_NUM = A.SER_NUM 
+       AND SALE_PRC_PLC NOT IN ('56840','60525')
+	]]>    
+   	<isNotEmpty property="TRMS_GB"> 
+    	<isEqual prepend="AND" property="TRMS_GB" compareValue="T">
+			<![CDATA[ ORG_ID LIKE 'E%' ]]>			
+		</isEqual>	   
+		<isEqual prepend="AND" property="TRMS_GB" compareValue="P">   
+			<![CDATA[ ORG_ID LIKE 'P%' ]]>		  
+    	</isEqual>
+    	<isEqual property="TRMS_GB" compareValue="U">   
+			<![CDATA[ 
+				AND (ORG_ID LIKE 'E%' OR ORG_ID LIKE 'P%')
+				AND SALE_PRC_PLC NOT IN ('56840','60525')
+			 ]]>		  
+    	</isEqual>
+	</isNotEmpty>
+	<isEmpty property="TRMS_GB"> 
+		<![CDATA[ 
+			AND (ORG_ID LIKE 'E%' OR ORG_ID LIKE 'P%')
+			AND SALE_PRC_PLC NOT IN ('56840','60525')
+		 ]]>		
+	</isEmpty>
+	<![CDATA[
+		GROUP BY UKEY_AGENCY_CD, UKEY_SUB_CD, PROD_CD, COLOR_CD, OLD_SER_NUM, 
+         EQP_ST, SALE_AMT, CON_MGMT_NO, LAST_INOUT_DT,SER_NUM
+	UNION ALL
+	SELECT RPAD(NVL(TRIM(UKEY_AGENCY_CD),'  '),10)|| 
+    	   RPAD(NVL(TRIM(UKEY_SUB_CD),'  '),10)||
+   		   RPAD(NVL(TRIM(PROD_CD),'  '),10) || 
+   		   RPAD(NVL(TRIM(COLOR_CD),'  '),2) ||
+   		   RPAD(NVL(TRIM(OLD_SER_NUM),'  '),30)|| 
+	       RPAD(NVL(TRIM(EQP_ST),'  '),2) ||
+	       RPAD(NVL(TRIM(FIX_SALE_AMT),'  '),15) || 
+	       RPAD(NVL(TRIM(CON_MGMT_NO),'  '),12) ||
+	       RPAD(NVL(TRIM(LAST_INOUT_DT),'  '),8) 
+	       AS MSG, SER_NUM    
+  	  FROM TDIS_PROD_DIS A, TBAS_DEAL_CO_MGMT B
+ 	 WHERE A.TRMS_ST = 'T' 
+   	   AND A.TRMS_YN = 'Y' 
+   	   AND A.DIS_ST != '02'
+       AND A.DEL_YN = 'N'
+   	   AND A.TRMS_DT IS NULL
+   	   AND A.HLD_PLC_ID = B.DEAL_CO_CD
+   	   AND B.HSEQ_NO = (SELECT MAX(HSEQ_NO)
+                          FROM TBAS_DEAL_CO_MGMT
+		                 WHERE DEAL_CO_CD = B.DEAL_CO_CD)
+	]]>  
+	<isNotEmpty property="TRMS_GB"> 
+    	<isEqual prepend="AND" property="TRMS_GB" compareValue="T">
+			<![CDATA[		  ORG_ID LIKE 'E%' ]]>		
+		</isEqual>	   
+		<isEqual prepend="AND" property="TRMS_GB" compareValue="P">   
+			<![CDATA[			ORG_ID LIKE 'P%' ]]>		
+		</isEqual>
+		<isEqual prepend="AND" property="TRMS_GB" compareValue="U">   
+			<![CDATA[ 
+								(ORG_ID LIKE 'E%' OR ORG_ID LIKE 'P%')
+			 ]]>		  
+    	</isEqual>
+	</isNotEmpty>
+	<isEmpty property="TRMS_GB"> 
+		<![CDATA[ 
+			AND (ORG_ID LIKE 'E%' OR ORG_ID LIKE 'P%')
+		 ]]>
+	</isEmpty>
+	</select>
+		
+	<update id="updateSaleTrmsDt" parameterClass="map">
+	<![CDATA[
+	UPDATE /*+ DISOUT08100_updateTrmsYn_판매 전송여부 변경 */ 
+	       TDIS_PROD_DIS 
+	   SET TRMS_DT   = TO_CHAR(SYSDATE, 'yyyymmddhh24miss')
+	 WHERE SER_NUM IN 
+	       (SELECT SER_NUM 
+	         FROM TDIS_PROD_DIS A, 
+	              TBAS_DEAL_CO_MGMT B, 
+	              TSAL_EQUIPMENT_SALE C, 
+	              TSAL_GNRL_SALE D 
+	        WHERE A.TRMS_YN = 'Y' 
+	          AND A.TRMS_ST = 'A' 
+	          AND A.TRMS_DT IS NULL 
+	          AND A.DIS_ST = '02' 
+	          AND A.LAST_INOUT_CL = '200' 
+	          AND A.LAST_INOUT_DTL_CL = '205' 
+	          AND A.DEL_YN = 'N' 
+	          AND D.SALE_PRC_PLC = B.DEAL_CO_CD 
+	          AND B.HSEQ_NO = 
+	          (SELECT MAX(HSEQ_NO) 
+	            FROM TBAS_DEAL_CO_MGMT 
+	           WHERE DEAL_CO_CD = B.DEAL_CO_CD) 
+	          AND C.GNRL_SALE_NO = D.GNRL_SALE_NO 
+	          AND C.GNRL_SALE_CHG_SEQ = D.GNRL_SALE_CHG_SEQ 
+	          AND C.GNRL_SALE_CHG_SEQ = 
+	          (SELECT MAX(GNRL_SALE_CHG_SEQ) 
+	            FROM TSAL_GNRL_SALE 
+	           WHERE GNRL_SALE_NO = C.GNRL_SALE_NO) 
+	          AND C.PROD_SER_NUM = A.SER_NUM 
+	          AND (ORG_ID LIKE 'E%' OR ORG_ID LIKE 'P%') 
+	          AND SALE_PRC_PLC NOT IN ('56840','60525') 
+	       UNION ALL 
+	       SELECT SER_NUM 
+	         FROM TDIS_PROD_DIS A, 
+	              TBAS_DEAL_CO_MGMT B 
+	        WHERE A.TRMS_ST = 'T' 
+	          AND A.TRMS_YN = 'Y' 
+	          AND A.DEL_YN = 'N' 
+	          AND A.TRMS_DT IS NULL 
+	          AND A.HLD_PLC_ID = B.DEAL_CO_CD 
+	          AND B.HSEQ_NO = 
+	          (SELECT MAX(HSEQ_NO) 
+	            FROM TBAS_DEAL_CO_MGMT 
+	           WHERE DEAL_CO_CD = B.DEAL_CO_CD) 
+	       )
+ 	]]>
+	</update>																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																															
+	
+	<select id="getDisProdCncl" resultClass="hmap" fetchSize="50" parameterClass="hmap">
+	<![CDATA[
+		SELECT /* DISOUT08100_getDisProd_재고조회_전미량_전미량 */
+	  		   RPAD(NVL(TRIM(UKEY_AGENCY_CD),'  '),10)|| 
+		       RPAD(NVL(TRIM(UKEY_SUB_CD),'  '),10)||
+			   RPAD(NVL(TRIM(PROD_CD),'  '),10) || 
+		       RPAD(NVL(TRIM(COLOR_CD),'  '),2) || 
+		       RPAD(NVL(TRIM(OLD_SER_NUM),'  '),30)|| 
+		       RPAD(NVL(TRIM(EQP_ST),'  '),2) ||
+		       RPAD(NVL(TRIM(SALE_AMT),'  '),15) || 
+		       RPAD(NVL(TRIM(CON_MGMT_NO),'  '),12) ||
+		       RPAD(NVL(TRIM(LAST_INOUT_DT),'  '),8) 
+		       AS MSG, SER_NUM    
+	      FROM TDIS_PROD_DIS A, TBAS_DEAL_CO_MGMT B, TSAL_EQUIPMENT_SALE C, TSAL_GNRL_SALE D
+	     WHERE A.TRMS_YN = 'Y' 
+	       AND A.TRMS_ST = 'C' 
+	       AND A.TRMS_DT IS NULL
+	       AND A.DIS_ST = '01'
+	       AND A.LAST_INOUT_CL = '100'
+	       AND A.LAST_INOUT_DTL_CL = '105' 
+	       AND A.DEL_YN = 'N'
+	       AND D.SALE_PRC_PLC = B.DEAL_CO_CD
+	       AND B.HSEQ_NO = (SELECT MAX(HSEQ_NO)
+	                          FROM TBAS_DEAL_CO_MGMT
+	                         WHERE DEAL_CO_CD = B.DEAL_CO_CD)
+	       AND C.GNRL_SALE_NO = D.GNRL_SALE_NO
+	       AND C.GNRL_SALE_CHG_SEQ = D.GNRL_SALE_CHG_SEQ
+		   AND C.GNRL_SALE_CHG_SEQ = (SELECT MAX(GNRL_SALE_CHG_SEQ)
+	       			                    FROM TSAL_GNRL_SALE
+	                 			       WHERE GNRL_SALE_NO = C.GNRL_SALE_NO) 
+	       AND C.PROD_SER_NUM = A.SER_NUM
+	       
+		]]><isNotEmpty property="TRMS_GB"> 
+		 	<isEqual prepend="AND" property="TRMS_GB" compareValue="T">
+		<![CDATA[  		ORG_ID LIKE 'E%'
+		]]>	</isEqual>	   
+			<isEqual prepend="AND" property="TRMS_GB" compareValue="P">   
+		<![CDATA[  		ORG_ID LIKE 'P%'
+		]]>	</isEqual>
+			<isEqual property="TRMS_GB" compareValue="U">   
+			<![CDATA[ 
+				AND (ORG_ID LIKE 'E%' OR ORG_ID LIKE 'P%')
+				AND SALE_PRC_PLC NOT IN ('56840','60525')
+			 ]]>		  
+    		</isEqual>
+		</isNotEmpty>
+		<isEmpty property="TRMS_GB"> 
+		<![CDATA[ 
+				AND (ORG_ID LIKE 'E%' OR ORG_ID LIKE 'P%')
+				AND SALE_PRC_PLC NOT IN ('56840','60525')
+			 ]]>
+		</isEmpty>
+		<![CDATA[
+		 GROUP BY UKEY_AGENCY_CD, UKEY_SUB_CD, PROD_CD, COLOR_CD, OLD_SER_NUM, 
+	              EQP_ST, SALE_AMT, CON_MGMT_NO, LAST_INOUT_DT,SER_NUM
+	     UNION ALL
+	     SELECT RPAD(NVL(TRIM(UKEY_AGENCY_CD),'  '),10)|| 
+		        RPAD(NVL(TRIM(UKEY_SUB_CD),'  '),10)||
+				RPAD(NVL(TRIM(A.PROD_CD),'  '),10) || 
+		        RPAD(NVL(TRIM(A.COLOR_CD),'  '),2) || 
+		        RPAD(NVL(TRIM(OLD_SER_NUM),'  '),30)|| 
+		        RPAD(NVL(TRIM(EQP_ST),'  '),2) ||
+		        RPAD(NVL(TRIM(FIX_SALE_AMT),'  '),15) || 
+		        RPAD(NVL(TRIM(CON_MGMT_NO),'  '),12) ||
+		        RPAD(NVL(TRIM(LAST_INOUT_DT),'  '),8) 
+		        AS MSG, A.SER_NUM    
+  	   	   FROM TDIS_PROD_DIS A, TBAS_DEAL_CO_MGMT B, TDIS_PROD_INOUT_HST C
+		  WHERE LAST_INOUT_DT = TO_CHAR(SYSDATE,'YYYYMMDD')
+			AND TRMS_ST = 'R'
+			AND TRMS_YN = 'Y'
+			AND A.DIS_ST = '01'
+			AND A.LAST_INOUT_CL = '300'
+			AND A.LAST_INOUT_DTL_CL = '304'
+			AND A.DEL_YN = 'N'
+			AND C.OUT_PLC_ID = B.DEAL_CO_CD
+			AND B.HSEQ_NO = (SELECT MAX(HSEQ_NO)
+			                   FROM TBAS_DEAL_CO_MGMT
+			                  WHERE DEAL_CO_CD = B.DEAL_CO_CD)
+            AND A.PROD_CD = C.PROD_CD
+            AND A.SER_NUM = C.SER_NUM
+            AND C.INOUT_SEQ = (SELECT MAX(INOUT_SEQ)
+                                 FROM TDIS_PROD_INOUT_HST
+                                WHERE C.PROD_CD = PROD_CD
+                                  AND C.SER_NUM = SER_NUM)
+            AND C.INOUT_CL = '300'
+            AND C.INOUT_DTL_CL = '304'
+		]]>  
+		<isNotEmpty property="TRMS_GB"> 
+		    <isEqual prepend="AND" property="TRMS_GB" compareValue="T">
+		<![CDATA[		  ORG_ID LIKE 'E%' ]]>		
+			</isEqual>	   
+			<isEqual prepend="AND" property="TRMS_GB" compareValue="P">   
+				<![CDATA[			ORG_ID LIKE 'P%' ]]>		
+			</isEqual>
+			<isEqual prepend="AND" property="TRMS_GB" compareValue="U">   
+				<![CDATA[ 
+							(ORG_ID LIKE 'E%' OR ORG_ID LIKE 'P%') ]]>
+			</isEqual>
+		</isNotEmpty>
+		<isEmpty property="TRMS_GB"> 
+			<![CDATA[ 
+				AND (ORG_ID LIKE 'E%' OR ORG_ID LIKE 'P%')
+			 ]]>
+		</isEmpty>
+	</select>
+	
+	
+	<update id="updateSaleCnclTrmsDt" parameterClass="map">
+	<![CDATA[
+	UPDATE /*+ DISOUT08100_updateTrmsYn_판매 전송여부 변경 */ 
+	       TDIS_PROD_DIS 
+	   SET TRMS_DT   = TO_CHAR(SYSDATE, 'yyyymmddhh24miss')
+	 WHERE SER_NUM IN 
+	       (SELECT SER_NUM 
+	         FROM TDIS_PROD_DIS A, 
+	              TBAS_DEAL_CO_MGMT B, 
+	              TSAL_EQUIPMENT_SALE C, 
+	              TSAL_GNRL_SALE D 
+	        WHERE A.TRMS_YN = 'Y' 
+		      AND A.TRMS_ST = 'C' 
+		      AND A.TRMS_DT IS NULL
+		      AND A.DIS_ST = '01'
+		      AND A.LAST_INOUT_CL = '100'
+		      AND A.LAST_INOUT_DTL_CL = '105' 
+	          AND A.DEL_YN = 'N' 
+	          AND D.SALE_PRC_PLC = B.DEAL_CO_CD 
+	          AND B.HSEQ_NO = 
+	          (SELECT MAX(HSEQ_NO) 
+	            FROM TBAS_DEAL_CO_MGMT 
+	           WHERE DEAL_CO_CD = B.DEAL_CO_CD) 
+	          AND C.GNRL_SALE_NO = D.GNRL_SALE_NO 
+	          AND C.GNRL_SALE_CHG_SEQ = D.GNRL_SALE_CHG_SEQ 
+	          AND C.GNRL_SALE_CHG_SEQ = 
+	          (SELECT MAX(GNRL_SALE_CHG_SEQ) 
+	            FROM TSAL_GNRL_SALE 
+	           WHERE GNRL_SALE_NO = C.GNRL_SALE_NO) 
+	          AND C.PROD_SER_NUM = A.SER_NUM 
+	          AND (ORG_ID LIKE 'E%' OR ORG_ID LIKE 'P%') 
+	          AND SALE_PRC_PLC NOT IN ('56840','60525') 
+	       UNION ALL 
+	       SELECT A.SER_NUM 
+	         FROM TDIS_PROD_DIS A, TBAS_DEAL_CO_MGMT B, TDIS_PROD_INOUT_HST C
+		  WHERE LAST_INOUT_DT = TO_CHAR(SYSDATE,'YYYYMMDD')
+			AND TRMS_ST = 'R'
+			AND TRMS_YN = 'Y'
+			AND A.DIS_ST = '01'
+			AND A.LAST_INOUT_CL = '300'
+			AND A.LAST_INOUT_DTL_CL = '304'
+			AND A.DEL_YN = 'N'
+			AND C.OUT_PLC_ID = B.DEAL_CO_CD
+			AND B.HSEQ_NO = (SELECT MAX(HSEQ_NO)
+			                   FROM TBAS_DEAL_CO_MGMT
+			                  WHERE DEAL_CO_CD = B.DEAL_CO_CD)
+            AND A.PROD_CD = C.PROD_CD
+            AND A.SER_NUM = C.SER_NUM
+            AND C.INOUT_SEQ = (SELECT MAX(INOUT_SEQ)
+                                 FROM TDIS_PROD_INOUT_HST
+                                WHERE C.PROD_CD = PROD_CD
+                                  AND C.SER_NUM = SER_NUM)
+            AND C.INOUT_CL = '300'
+            AND C.INOUT_DTL_CL = '304')
+ 	]]>
+	</update>
+	
+	
+	<select id="getDisProdCpnt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[SELECT /* DISOUT08100_getDisProdCpnt_재고구성품조회_전미량_전미량 */
+           FBAS_GET_COMMCDNM_VAL('ZBAS_C_00010', PROD_CL) AS PROD_CL_NM 
+      FROM TDIS_PROD_CPNT A, TBAS_PROD_MGMT B 
+     WHERE A.CPNT_PROD_CD = B.PROD_CD 
+       AND SER_NUM = #SER_NUM# 
+       AND IN_QTY > 0
+    GROUP BY PROD_CL
+    ORDER BY PROD_CL
+	]]>
+	</select>
+	
+	<update id="updateXTrmsYn" parameterClass="map">
+	<![CDATA[UPDATE /*+ DISOUT08100_updateTrmsDt_전송일자 변경 */
+           TDIS_PROD_DIS
+       SET TRMS_DT   = TO_CHAR(SYSDATE, 'yyyymmddhh24miss'),
+       		TRMS_YN   = 'X'
+     WHERE TRMS_YN   = 'Y'
+       AND TRMS_DT IS NULL
+ 	]]>
+	</update>
+	
+	<insert id="addProdDisIfHist" parameterClass="map" >
+	<![CDATA[
+	INSERT 
+	  INTO TDIS_PROD_DIS_IF_HIST 
+	       ( 
+	           PROD_CD, 
+	           COLOR_CD, 
+	           SER_NUM, 
+	           SEQ, 
+	           OLD_SER_NUM, 
+	           CON_MGMT_NO, 
+	           EQP_ST, 
+	           DIS_AMT, 
+	           LAST_INOUT_DT, 
+	           RMKS, 
+	           TRMS_ST, 
+	           TRMS_DT 
+	       ) 
+	SELECT PROD_CD, 
+	       COLOR_CD, 
+	       SER_NUM, 
+	       (SELECT NVL(MAX(SEQ),0)+1 
+	         FROM TDIS_PROD_DIS_IF_HIST 
+	        WHERE PROD_CD = A.PROD_CD 
+	              AND SER_NUM = A.SER_NUM 
+	       ), 
+	       OLD_SER_NUM, 
+	       CON_MGMT_NO, 
+	       EQP_ST, 
+	       FIX_SALE_AMT, 
+	       LAST_INOUT_DT, 
+	       #RMKS#, 
+	       TRMS_ST, 
+	       TRMS_DT 
+	  FROM TDIS_PROD_DIS A
+	 WHERE A.SER_NUM = #SER_NUM# 
+	]]>
+	</insert>
+</sqlMap>

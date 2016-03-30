@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISATR00100">
+	<select id="selectMovOut" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR00100_selectMovOut_이문규 */
+       #pos_outPosAgency_id#							as pos_outPosAgency_id,
+       FBAS_GET_AGENCY_NM(a.out_plc_id, a.out_schd_dt) as pos_outPosAgency_nm,
+       (SELECT pos_agency
+          FROM TBAS_DEAL_CO_MGMT 
+          WHERE deal_co_cd = a.in_plc_id
+              AND hseq_no   = (SELECT MAX(hseq_no)
+                                     FROM TBAS_DEAL_CO_MGMT
+                                    WHERE deal_co_cd = a.in_plc_id)) 	as pos_inPosAgency_id,
+       FBAS_GET_AGENCY_NM(a.in_plc_id, a.out_schd_dt) as pos_inPosAgency_nm,
+       a.out_mgmt_no,
+       a.out_plc_id,
+       fbas_get_deal_nm(a.out_plc_id, a.out_schd_dt) out_plc_nm,
+       a.in_plc_id,
+       fbas_get_deal_nm(a.in_plc_id, a.out_schd_dt) in_plc_nm,
+       a.out_schd_dt,
+       a.out_cl,
+       a.ins_user_id || '(' || FBAS_GET_USER_NM(a.ins_user_id) || ')' mov_out_id,
+       a.mov_out_qty,
+       (
+        SELECT MAX(out_fix_dt) 
+        FROM tdis_prod_out_m
+        WHERE a.out_mgmt_no = out_mgmt_no
+        AND out_fix_yn ='Y' AND del_yn = 'N'
+       ) out_fix_dt,
+       b.in_mgmt_no,
+       b.in_fix_dt,
+       CASE WHEN b.in_fix_dt IS NULL THEN ''
+       		ELSE b.ins_user_id || '(' || FBAS_GET_USER_NM(b.ins_user_id) || ')' 
+        	END mov_in_id
+FROM   (
+        SELECT 
+               aa.out_mgmt_no,
+               aa.out_plc_id,
+               aa.in_plc_id,
+               aa.out_schd_dt,
+               aa.out_cl,
+               aa.ins_user_id,
+               SUM(ab.out_qty) mov_out_qty,
+               (SELECT in_mgmt_no
+                  FROM TDIS_PROD_MOV_OUT_DTL_D x
+                      ,TDIS_PROD_INOUT_HST y
+                  WHERE x.out_mgmt_no = aa.out_mgmt_no
+                      AND x.prod_cd = y.prod_cd
+                      AND x.color_cd = y.color_cd
+                      AND x.ser_num = y.ser_num
+                      AND x.out_mgmt_no = y.out_mgmt_no
+                      AND y.inout_seq = (SELECT MAX(inout_seq)
+                                          FROM TDIS_PROD_INOUT_HST
+                                          WHERE prod_cd = x.prod_cd
+                                              AND color_cd = x.color_cd
+                                              AND ser_num = x.ser_num)
+                      AND NVL(x.cncl_yn, 'N') = 'N'
+                      AND y.in_mgmt_no IS NOT null
+                      AND x.del_yn = 'N'
+                      AND y.del_yn = 'N'
+                      AND ROWNUM = 1) in_mgmt_no
+        FROM   tdis_prod_out_m aa,
+               tdis_prod_mov_out_dtl_d ab
+        WHERE  aa.out_mgmt_no = ab.out_mgmt_no
+        AND    aa.out_schd_dt >= #from_out_schd_dt#
+        AND    aa.out_schd_dt <= #to_out_schd_dt#
+]]>        <isNotEmpty prepend="AND" property="out_plc_id">
+<![CDATA[               aa.out_plc_id = #out_plc_id#
+]]>        </isNotEmpty>
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="in_plc_id">
+<![CDATA[               aa.in_plc_id = #in_plc_id#
+]]>        </isNotEmpty>
+<![CDATA[]]>        <isNotEmpty prepend="AND" property="out_fix_yn">
+<![CDATA[               aa.out_fix_yn = #out_fix_yn#
+]]>        </isNotEmpty>
+<![CDATA[        AND    aa.out_cl = '301'
+        AND    aa.del_yn = 'N'
+]]>        
+<![CDATA[        AND	NVL(ab.cncl_yn, 'N') ='N'
+				 AND    ab.del_yn ='N'
+        GROUP BY aa.out_mgmt_no,
+               aa.out_plc_id,
+               aa.in_plc_id,
+               aa.out_schd_dt,
+               aa.out_cl,
+               aa.ins_user_id
+       ) a
+       ,TDIS_IN_PROD_M b
+WHERE a.out_plc_id IN (SELECT deal_co_cd 
+                       FROM   tbas_deal_co_mgmt
+                       WHERE  del_yn = 'N'
+                       AND    deal_end_yn != 'Y'
+                       AND    deal_co_cl1 in ('A1','A2','Z1')
+                       --AND    out_stop_yn = 'N'
+                       AND    pos_agency = #pos_outPosAgency_id#
+                       AND    eff_end_dtm = '99991231235959')
+     AND a.in_mgmt_no = b.in_mgmt_no(+)
+     --AND b.in_cl(+) = '302'
+]]><isNotEmpty prepend="AND" property="in_fix_yn">
+<![CDATA[  #in_fix_yn# = (CASE WHEN b.in_fix_dt IS null THEN 'N'
+     					ELSE 'Y'
+                        END)
+]]>        </isNotEmpty>
+<isNotEmpty prepend="AND" property="pos_inPosAgency_id">                       
+<![CDATA[    a.in_plc_id IN (SELECT deal_co_cd 
+                       FROM   tbas_deal_co_mgmt
+                       WHERE  del_yn = 'N'
+                       AND    deal_end_yn != 'Y'
+                       AND    deal_co_cl1 in ('A1','A2','Z1')
+                       --AND    out_stop_yn = 'N'
+                       AND    pos_agency = #pos_inPosAgency_id#
+                       AND    eff_end_dtm = '99991231235959')
+]]></isNotEmpty>                       
+	</select>
+</sqlMap>

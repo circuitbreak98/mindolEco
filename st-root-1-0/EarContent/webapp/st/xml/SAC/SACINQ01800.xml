@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="604" Id="SACINQ01800" Left="8" OnLoadCompleted="SACINQ01800_OnLoadCompleted" PidAttrib="7" Title="SKT예수금전송내역" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="deal_dt" size="100" summ="default" type="STRING"/>
+					<record>
+						<deal_dt></deal_dt>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_DealDtlOutput" OnColumnChanged="ds_dpst_list_OnColumnChanged">
+				<Contents>
+					<colinfo id="ORG_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="CRNCY_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="CRNCY_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="PDAY_BAL_BAMT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="HQ_RMT_AMT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="TDAY_BAL_AMT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="ERP_RMT_AMT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="ERP_TRMS" size="255" summ="default" type="STRING"/>
+					<colinfo id="ERP_TRMS_DTM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_DealDtlOutput" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="590" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="509" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" Right="1012" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="81" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="27"/>
+						<col fix="left" width="150"/>
+						<col fix="left" width="63"/>
+						<col fix="left" width="83"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="176"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="date" font="돋움,10,Bold" text="No"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,10,Bold" text="대리점"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,10,Bold" text="통화유형"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,10,Bold" text="예수금구분"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,10,Bold" text="전일잔액"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,10,Bold" text="본사송금액"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,10,Bold" text="당일잔액"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,10,Bold" text="ERP전송금액"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,10,Bold" text="ERP전송구분"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" font="돋움,10,Bold" text="ERP전송일시"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="normal" expr="row+1"/>
+						<cell align="left" col="1" colid="DEAL_CO_NM" display="text"/>
+						<cell align="center" col="2" colid="CRNCY_NM" display="text"/>
+						<cell align="center" col="3" colid="CASH_DPST" display="text"/>
+						<cell align="right" col="4" colid="PDAY_BAL_BAMT" display="number" Mask="#,##0"/>
+						<cell align="right" col="5" colid="HQ_RMT_AMT" display="number" Mask="#,##0"/>
+						<cell align="right" col="6" colid="TDAY_BAL_AMT" display="number" Mask="#,##0"/>
+						<cell align="right" col="7" colid="ERP_RMT_AMT" display="number" Mask="#,##0"/>
+						<cell align="center" col="8" colid="ERP_TRMS" display="text"/>
+						<cell align="center" col="9" colid="ERP_TRMS_DTM" display="text" Mask="####-##-##&#32;##:##:##"/>
+					</body>
+					<summary>
+						<cell align="center" bkcolor="user37" col="0" color="user38" colspan="4" display="text" font="돋움,9,Bold" text="합&#32;&#32;&#32;&#32;계"/>
+						<cell align="right" bkcolor="user37" col="4" color="user38" display="number" expr='sum(&quot;PDAY_BAL_BAMT&quot;)' font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="5" color="user38" display="number" expr='sum(&quot;HQ_RMT_AMT&quot;)' font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="6" color="user38" display="number" expr='sum(&quot;TDAY_BAL_AMT&quot;)' font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="7" color="user38" display="number" expr='sum(&quot;ERP_RMT_AMT&quot;)' font="돋움,9,Bold"/>
+						<cell align="center" bkcolor="user37" col="8" color="user38" display="text" font="돋움,9,Bold"/>
+						<cell align="center" bkcolor="user37" col="9" color="user38" display="text" font="돋움,9,Bold"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image3" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="SKT예수금&#32;ERP&#32;전송내역" Top="56" Width="192"></Image>
+		<Div Border="Raised" Height="43" Id="div_search" Left="8" Style="sty_div_search" TabOrder="1" Text="Div0" Top="8" Width="1004">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="206" LeftMargin="5" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="8" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static6" Left="30" Style="sty_lb_Search" TabOrder="2" Text="전송일자" Top="8" VAlign="Middle" Width="58"></Static>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="22" TabOrder="3" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_DealDT" Left="93" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="4" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="104"></Calendar>
+			</Contents>
+		</Div>
+		<Button Cursor="HAND" Height="21" Id="Button56" ImageID="btn_i_exceldown_w" Left="991" OnClick="btn_excel_OnClick" TabOrder="4" Text="Button1" ToolTipText="Excel&#32;Download" Top="58" Width="19"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : SACINQ01800
+* 업무명      : 판매회계 - SKT예수금 전송내역 조회
+* 프로그램명  : SKT예수금 전송내역 조회
+--------------------------------------------------------------------------------
+* 작성자      : 김연석
+* 작성일      : 2010.04.10
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 전역변수선언
+//==============================================================================
+var FV_ORG_ID = gds_session.GetColumn(0, "orgId");          //조직코드
+var FV_ORG_NM = gds_session.GetColumn(0, "orgNm");          //조직코드
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SACINQ01800_OnLoadCompleted(obj)
+{
+    div_search.cal_DealDT.Value = Today();
+
+    // 권한 설정
+    cf_setAuth(pFrmNum);
+    // 그리드 체크박스 설정 및 정렬
+    cf_setGrdChecknSortEvent(grd_list);
+}
+
+
+
+/*******************************************************************************
+ * @description : 조회 
+ ******************************************************************************/
+function btn_search_OnClick(obj)
+{
+    if( uf_isNull(div_search.cal_DealDT.Value) == true ) {
+        alert(cf_getMessage(MSG_00135, "ERP 전송일자"));
+        div_search.cal_DealDT.SetFocus();
+        return false;
+    }
+    f_search();
+}
+
+function f_search() {
+
+	ds_condition.SetColumn(0,"deal_dt", div_search.cal_DealDT.Value);
+
+    var sSvcID = "getDealDtlOutput";
+    var sInDs = "nc_input_fieldDs=ds_condition";
+    var sOutDs = "ds_DealDtlOutput=ds_DealDtlOutput";
+    var sArg = "sktst.sac.INQ#getDealDtlOutput";
+    
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+function f_callBack(sSvcID){
+    if (sSvcID == "getDealDtlOutput")  {
+
+//      trace(ds_DealDtlOutput.SaveXML());
+    }
+    
+    return; 
+}
+
+/*******************************************************************************
+ * @description    : excel export
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+    cf_exportExcel(grd_list);
+}
+]]></Script>
+</Window>

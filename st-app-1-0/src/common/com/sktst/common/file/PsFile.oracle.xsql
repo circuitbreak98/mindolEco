@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="biz.file">
+
+	<insert id="insertFileInfo" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO TADM_APPEND_FILE (
+		SCREEN_ID
+		,DOC_ID
+		,FILE_PASS
+		,FILE_NM
+		,FILE_TYPE
+		,FILE_SIZE
+		,DEL_YN
+		,UPD_CNT
+		,INS_DTM
+		,INS_USER_ID
+		,MOD_DTM
+		,MOD_USER_ID		
+	) VALUES (
+		#SCREEN_ID#
+		,#DOC_ID#
+		,#FILE_PASS#
+		,#FILE_NM#
+		,#FILE_TYPE#
+		,#FILE_SIZE#
+		,'N'
+		,0
+		,TO_CHAR(SYSDATE, 'yyyymmddhh24miss')
+		,#onlineContext.userInfo.loginId#
+		,TO_CHAR(SYSDATE, 'yyyymmddhh24miss')
+		,#onlineContext.userInfo.loginId#
+	)]]>
+	</insert>
+
+	<delete id="deleteFileInfo" parameterClass="map" >
+	<![CDATA[
+	DELETE FROM TADM_APPEND_FILE
+	WHERE SCREEN_ID = #SCREEN_ID#
+		AND DOC_ID = #DOC_ID#
+		AND FILE_PASS = #FILE_PASS#
+		AND FILE_NM = #FILE_NM#
+	]]>
+	</delete>
+	
+	<select id="selectFileInfoList" parameterClass="map" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT SCREEN_ID
+		,DOC_ID
+		,FILE_PASS
+		,FILE_NM
+		,FILE_TYPE
+		,FILE_SIZE
+		,DEL_YN
+		,UPD_CNT
+		,INS_DTM
+		,INS_USER_ID
+		,MOD_DTM
+		,MOD_USER_ID
+	FROM TADM_APPEND_FILE 
+	WHERE SCREEN_ID = #SCREEN_ID#
+		AND DOC_ID = #DOC_ID#	
+	ORDER BY FILE_NM, FILE_TYPE
+	]]>
+	</select>
+
+	<select id="selectFileInfo" parameterClass="map" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT SCREEN_ID
+		,DOC_ID
+		,FILE_PASS
+		,FILE_NM
+		,FILE_TYPE
+		,FILE_SIZE
+		,DEL_YN
+		,UPD_CNT
+		,INS_DTM
+		,INS_USER_ID
+		,MOD_DTM
+		,MOD_USER_ID
+	FROM TADM_APPEND_FILE 
+	WHERE SCREEN_ID = #SCREEN_ID#
+		AND DOC_ID = #DOC_ID#	
+		AND FILE_PASS = #FILE_PASS#
+		AND FILE_NM = #FILE_NM#		
+	]]>
+	</select>
+
+ </sqlMap>

@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="DISINN00100">
+	<select id="getOrdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT C.ORD_MGMT_NO,
+       C.PRCHS_PLC_ID,
+       C.PRCHS_PLC_NM,
+       C.ORD_PLC_ID,
+       C.ORD_PLC_NM,
+       C.ORD_TS,
+       C.ORD_DT,
+       C.ORD_QTY,
+       C.IN_PLC_ID,
+       C.IN_PLC_NM,
+       D.IN_SCHD_DT, 
+       SUM(NVL(E.IN_QTY,0)) AS IN_QTY,
+       NVL(D.IN_FIX_DT,(SELECT MAX(IN_FIX_DT)
+                          FROM TDIS_IN_DTL_D F
+                         WHERE D.IN_MGMT_NO = F.IN_MGMT_NO
+                           AND F.DEL_YN = 'N' )) AS IN_FIX_DT,
+       SUM(NVL(E.IN_FIX_QTY,0)) AS IN_FIX_QTY,
+       D.IN_CL,
+       D.IN_MGMT_NO      
+  FROM (SELECT A.ORD_MGMT_NO,
+               A.PRCHS_PLC_ID,
+               FBAS_GET_DEAL_NM(A.PRCHS_PLC_ID,A.ORD_DT) AS PRCHS_PLC_NM,
+               A.ORD_PLC_ID,
+               FBAS_GET_DEAL_NM(A.ORD_PLC_ID,A.ORD_DT) AS ORD_PLC_NM,
+               A.ORD_TS,
+               A.ORD_DT,
+               SUM(NVL(ORD_QTY,0)) AS ORD_QTY,
+               B.IN_PLC_ID,
+               FBAS_GET_DEAL_NM(B.IN_PLC_ID,A.ORD_DT) AS IN_PLC_NM
+          FROM TDIS_ORD_M A,
+               TDIS_ORD_DTL_D B              
+         WHERE A.ORD_MGMT_NO = B.ORD_MGMT_NO
+           AND A.DEL_YN = 'N'
+           AND B.DEL_YN = 'N'   
+           AND TRIM(B.ORD_MGMT_NO) IS NOT NULL  
+]]>            <isNotEmpty prepend="AND" property="staOrdDt">
+<![CDATA[               A.ORD_DT >= #staOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="endOrdDt">
+<![CDATA[               A.ORD_DT <= #endOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="prchsPlcId">
+<![CDATA[               A.PRCHS_PLC_ID = #prchsPlcId#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="ordPlcId">
+<![CDATA[               A.ORD_PLC_ID   = #ordPlcId#
+]]>            </isNotEmpty>                 
+<![CDATA[         GROUP BY A.ORD_MGMT_NO, A.PRCHS_PLC_ID, A.ORD_PLC_ID, A.ORD_TS, A.ORD_DT, B.IN_PLC_ID) C,
+       TDIS_IN_M D,
+       TDIS_IN_DTL_D E
+ WHERE C.ORD_MGMT_NO = D.ORD_MGMT_NO(+)
+   AND C.IN_PLC_ID   = D.IN_PLC_ID(+)
+   AND D.DEL_YN(+)   = 'N'
+   AND D.IN_MGMT_NO  = E.IN_MGMT_NO(+)
+   AND E.DEL_YN(+)   = 'N'
+ GROUP BY C.ORD_MGMT_NO,C.PRCHS_PLC_ID,C.PRCHS_PLC_NM,C.ORD_PLC_ID,C.ORD_PLC_NM,C.ORD_TS
+         ,C.ORD_DT,C.ORD_QTY,C.IN_PLC_ID,C.IN_PLC_NM,D.IN_SCHD_DT,D.IN_FIX_DT, D.IN_CL, D.IN_MGMT_NO
+ ORDER BY C.ORD_MGMT_NO DESC, C.IN_PLC_NM   ]]>
+	</select>
+	<select id="getOrdMgmtListByInPlcId" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00100_getOrdMgmtListByInPlcId_이문규" */
+       c.ord_mgmt_no,
+       c.prchs_plc_id,
+       c.prchs_plc_nm,
+       c.ord_plc_id,
+       c.ord_plc_nm,
+       c.in_plc_id,
+       c.in_plc_nm,
+       c.ord_dt,
+       c.ord_qty
+  FROM (SELECT a.ord_mgmt_no,
+               a.prchs_plc_id,
+               FBAS_GET_DEAL_NM(a.prchs_plc_id,a.ord_dt) as prchs_plc_nm,
+               a.ord_plc_id,
+               FBAS_GET_DEAL_NM(a.ord_plc_id,a.ord_dt) as ord_plc_nm,
+               b.in_plc_id,   
+               FBAS_GET_DEAL_NM(b.in_plc_id,a.ord_dt) as in_plc_nm,                                    
+               a.ord_dt,
+               sum(b.ord_qty) as ord_qty
+          FROM tdis_ord_m a,
+               tdis_ord_dtl_d b
+         WHERE a.ord_mgmt_no = b.ord_mgmt_no
+           AND a.del_yn = 'N'
+           AND b.del_yn = 'N'  
+           AND b.ord_mgmt_no > ' '
+]]>            <isNotEmpty prepend="AND" property="staOrdDt">
+<![CDATA[               a.ord_dt >= #staOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="endOrdDt">
+<![CDATA[               a.ord_dt <= #endOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="prchsPlcId">
+<![CDATA[               a.prchs_plc_id = #prchsPlcId#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="inPlcId">
+<![CDATA[               b.in_plc_id   = #inPlcId#
+]]>            </isNotEmpty>                      
+<![CDATA[         GROUP BY a.ord_mgmt_no, a.prchs_plc_id, a.ord_plc_id, b.in_plc_id, a.ord_dt) c   
+ WHERE not exists (SELECT 'x' 
+                     FROM tdis_in_m
+                    WHERE ord_mgmt_no = c.ord_mgmt_no
+                      AND in_plc_id = c.in_plc_id
+                      AND del_yn = 'N')
+ ORDER BY c.ord_mgmt_no desc, c.ord_plc_nm]]>
+	</select>
+	<select id="getOrdMgmtListByOrgId" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00100_getOrdMgmtListByPosAgencyId_이문규" */
+       c.ord_mgmt_no,
+       c.prchs_plc_id,
+       c.prchs_plc_nm,
+       c.ord_plc_id,
+       c.ord_plc_nm,
+       c.in_plc_id,
+       c.in_plc_nm,
+       c.ord_dt,
+       c.ord_qty
+  FROM (SELECT a.ord_mgmt_no,
+               a.prchs_plc_id,
+               FBAS_GET_DEAL_NM(a.prchs_plc_id,a.ord_dt) as prchs_plc_nm,
+               a.ord_plc_id,
+               FBAS_GET_DEAL_NM(a.ord_plc_id,a.ord_dt) as ord_plc_nm,
+               b.in_plc_id,   
+               FBAS_GET_DEAL_NM(b.in_plc_id,a.ord_dt) as in_plc_nm,                                    
+               a.ord_dt,
+               sum(b.ord_qty) as ord_qty
+          FROM tdis_ord_m a,
+               tdis_ord_dtl_d b
+         WHERE a.ord_mgmt_no = b.ord_mgmt_no
+           AND a.del_yn = 'N'
+           AND b.del_yn = 'N'  
+           AND b.ord_mgmt_no > ' '
+]]>            <isNotEmpty prepend="AND" property="staOrdDt">
+<![CDATA[               a.ord_dt >= #staOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="endOrdDt">
+<![CDATA[               a.ord_dt <= #endOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="prchsPlcId">
+<![CDATA[               a.prchs_plc_id = #prchsPlcId#
+]]>            </isNotEmpty>
+<![CDATA[           AND b.in_plc_id in ( SELECT deal_co_cd
+                                  FROM tbas_deal_co_mgmt a,
+                                       (SELECT org_id   
+                                          FROM TBAS_ORG_MGMT   
+                                         WHERE DEL_YN = 'N'   
+                                           AND ORG_CL = '3'   
+                                         START WITH ORG_ID = #orgId#
+                                        CONNECT BY PRIOR ORG_ID = SUP_ORG) b
+                                 WHERE a.org_id = b.org_id
+                                   AND a.eff_end_dtm = '99991231235959'
+                                 GROUP BY deal_co_cd)                    
+         GROUP BY a.ord_mgmt_no, a.prchs_plc_id, a.ord_plc_id, b.in_plc_id, a.ord_dt) c   
+ WHERE not exists (SELECT 'x' 
+                     FROM tdis_in_m
+                    WHERE ord_mgmt_no = c.ord_mgmt_no
+                      AND in_plc_id = c.in_plc_id
+                      AND del_yn = 'N')
+ ORDER BY c.ord_mgmt_no desc, c.ord_plc_nm]]>
+	</select>
+	<select id="getOrdMgmtListByPosAgencyId" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00100_getOrdMgmtListByPosAgencyId_이문규" */
+       c.ord_mgmt_no,
+       c.prchs_plc_id,
+       c.prchs_plc_nm,
+       c.ord_plc_id,
+       c.ord_plc_nm,
+       c.in_plc_id,
+       c.in_plc_nm,
+       c.ord_dt,
+       c.ord_qty
+  FROM (SELECT a.ord_mgmt_no,
+               a.prchs_plc_id,
+               FBAS_GET_DEAL_NM(a.prchs_plc_id,a.ord_dt) as prchs_plc_nm,
+               a.ord_plc_id,
+               FBAS_GET_DEAL_NM(a.ord_plc_id,a.ord_dt) as ord_plc_nm,
+               b.in_plc_id,   
+               FBAS_GET_DEAL_NM(b.in_plc_id,a.ord_dt) as in_plc_nm,                                    
+               a.ord_dt,
+               sum(b.ord_qty) as ord_qty
+          FROM tdis_ord_m a,
+               tdis_ord_dtl_d b
+         WHERE a.ord_mgmt_no = b.ord_mgmt_no
+           AND a.del_yn = 'N'
+           AND b.del_yn = 'N'  
+           AND b.ord_mgmt_no > ' '
+]]>            <isNotEmpty prepend="AND" property="staOrdDt">
+<![CDATA[               a.ord_dt >= #staOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="endOrdDt">
+<![CDATA[               a.ord_dt <= #endOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="prchsPlcId">
+<![CDATA[               a.prchs_plc_id = #prchsPlcId#
+]]>            </isNotEmpty>
+<![CDATA[           AND b.in_plc_id   in ( SELECT deal_co_cd
+                                    FROM tbas_deal_co_mgmt
+                                   WHERE pos_agency = #posAgencyId#
+                                     AND eff_end_dtm = '99991231235959'
+                                   GROUP BY deal_co_cd)                          
+         GROUP BY a.ord_mgmt_no, a.prchs_plc_id, a.ord_plc_id, b.in_plc_id, a.ord_dt) c   
+ WHERE not exists (SELECT 'x' 
+                     FROM tdis_in_m
+                    WHERE ord_mgmt_no = c.ord_mgmt_no
+                      AND in_plc_id = c.in_plc_id
+                      AND del_yn = 'N')
+ ORDER BY c.ord_mgmt_no desc, c.ord_plc_nm]]>
+	</select>
+	<select id="getPrchsOutMgmtListByOrgId" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00100_getPrchsOutMgmtListByOrgId_이문규" */
+       c.ord_mgmt_no,
+       c.prchs_plc_id,
+       c.prchs_plc_nm,
+       c.ord_plc_id,
+       c.ord_plc_nm,
+       c.in_plc_id,
+       c.in_plc_nm,
+       c.ord_dt,
+       c.ord_qty
+  FROM (SELECT  a.out_mgmt_no AS ord_mgmt_no
+               ,a.out_plc_id AS prchs_plc_id
+               ,FBAS_GET_DEAL_NM(a.out_plc_id,a.out_dt) as prchs_plc_nm
+               ,a.in_plc_id  AS ord_plc_id
+               ,FBAS_GET_DEAL_NM(a.in_plc_id,a.out_dt) as ord_plc_nm
+               ,a.in_plc_id
+               ,FBAS_GET_DEAL_NM(a.in_plc_id,a.out_dt) as in_plc_nm                                    
+               ,a.out_dt as ord_dt
+               ,sum(b.out_qty) as ord_qty
+          FROM  tcst_prchs_out_m a
+               ,tcst_prchs_mov_out_dtl b
+               ,tcst_prchs_mgmt c
+         WHERE a.out_mgmt_no   = b.out_mgmt_no
+           AND b.prchs_mgmt_no = c.prchs_mgmt_no
+           AND c.prchs_out_yn    = 'Y'
+           AND a.del_yn = 'N'
+           AND b.del_yn = 'N'  
+]]>            <isNotEmpty prepend="AND" property="staOrdDt">
+<![CDATA[               a.out_dt >= #staOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="endOrdDt">
+<![CDATA[               a.out_dt <= #endOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="outPlcId">
+<![CDATA[               a.out_plc_id = #outPlcId#
+]]>            </isNotEmpty>
+<![CDATA[           AND a.in_plc_id in ( SELECT deal_co_cd
+                                  FROM tbas_deal_co_mgmt a,
+                                       (SELECT org_id   
+                                          FROM TBAS_ORG_MGMT   
+                                         WHERE DEL_YN = 'N'   
+                                           AND ORG_CL = '3'   
+                                         START WITH ORG_ID = #orgId#
+                                        CONNECT BY PRIOR ORG_ID = SUP_ORG) b
+                                 WHERE a.org_id = b.org_id
+                                   AND a.eff_end_dtm = '99991231235959'
+                                 GROUP BY deal_co_cd)              
+          GROUP BY a.out_mgmt_no, a.out_plc_id, a.in_plc_id, a.out_dt) c   
+ WHERE not exists (SELECT 'x' 
+                     FROM tdis_in_m
+                    WHERE out_mgmt_no = c.ord_mgmt_no
+                      AND in_plc_id   = c.in_plc_id
+                      AND del_yn = 'N')
+ ORDER BY c.ord_mgmt_no desc, c.ord_plc_nm]]>
+	</select>
+	<select id="getPrchsOutMgmtListByPosAgencyId" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00100_getPrchsOutMgmtListByPosAgencyId_이문규" */
+       c.ord_mgmt_no,
+       c.prchs_plc_id,
+       c.prchs_plc_nm,
+       c.ord_plc_id,
+       c.ord_plc_nm,
+       c.in_plc_id,
+       c.in_plc_nm,
+       c.ord_dt,
+       c.ord_qty
+  FROM (SELECT  a.out_mgmt_no AS ord_mgmt_no
+               ,a.out_plc_id AS prchs_plc_id
+               ,FBAS_GET_DEAL_NM(a.out_plc_id,a.out_dt) as prchs_plc_nm
+               ,a.in_plc_id  AS ord_plc_id
+               ,FBAS_GET_DEAL_NM(a.in_plc_id,a.out_dt) as ord_plc_nm
+               ,a.in_plc_id
+               ,FBAS_GET_DEAL_NM(a.in_plc_id,a.out_dt) as in_plc_nm                                    
+               ,a.out_dt as ord_dt
+               ,sum(b.out_qty) as ord_qty
+          FROM  tcst_prchs_out_m a
+               ,tcst_prchs_mov_out_dtl b
+               ,tcst_prchs_mgmt c
+         WHERE a.out_mgmt_no   = b.out_mgmt_no
+           AND b.prchs_mgmt_no = c.prchs_mgmt_no
+           AND c.prchs_out_yn    = 'Y'
+           AND a.del_yn = 'N'
+           AND b.del_yn = 'N'  
+]]>            <isNotEmpty prepend="AND" property="staOrdDt">
+<![CDATA[               a.out_dt >= #staOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="endOrdDt">
+<![CDATA[               a.out_dt <= #endOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="outPlcId">
+<![CDATA[               a.out_plc_id = #outPlcId#
+]]>            </isNotEmpty>
+<![CDATA[           AND a.in_plc_id   in ( SELECT deal_co_cd
+                                    FROM tbas_deal_co_mgmt
+                                   WHERE pos_agency = #posAgencyId#
+                                     AND eff_end_dtm = '99991231235959'
+                                   GROUP BY deal_co_cd)                
+          GROUP BY a.out_mgmt_no, a.out_plc_id, a.in_plc_id, a.out_dt) c   
+ WHERE not exists (SELECT 'x' 
+                     FROM tdis_in_m
+                    WHERE out_mgmt_no = c.ord_mgmt_no
+                      AND in_plc_id   = c.in_plc_id
+                      AND del_yn = 'N')
+ ORDER BY c.ord_mgmt_no desc, c.ord_plc_nm]]>
+	</select>
+	<select id="getPrchsOutMgmtListByInPlcId" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00100_getPrchsOutMgmtListByInPlcId_이문규" */
+       c.ord_mgmt_no,
+       c.prchs_plc_id,
+       c.prchs_plc_nm,
+       c.ord_plc_id,
+       c.ord_plc_nm,
+       c.in_plc_id,
+       c.in_plc_nm,
+       c.ord_dt,
+       c.ord_qty
+  FROM (SELECT  a.out_mgmt_no AS ord_mgmt_no
+               ,a.out_plc_id AS prchs_plc_id
+               ,FBAS_GET_DEAL_NM(a.out_plc_id,a.out_dt) as prchs_plc_nm
+               ,a.in_plc_id  AS ord_plc_id
+               ,FBAS_GET_DEAL_NM(a.in_plc_id,a.out_dt) as ord_plc_nm
+               ,a.in_plc_id
+               ,FBAS_GET_DEAL_NM(a.in_plc_id,a.out_dt) as in_plc_nm                                    
+               ,a.out_dt as ord_dt
+               ,sum(b.out_qty) as ord_qty
+          FROM  tcst_prchs_out_m a
+               ,tcst_prchs_mov_out_dtl b
+               ,tcst_prchs_mgmt c
+         WHERE a.out_mgmt_no   = b.out_mgmt_no
+           AND b.prchs_mgmt_no = c.prchs_mgmt_no
+           AND c.prchs_out_yn    = 'Y'
+           AND a.del_yn = 'N'
+           AND b.del_yn = 'N'  
+]]>            <isNotEmpty prepend="AND" property="staOrdDt">
+<![CDATA[               a.out_dt >= #staOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="endOrdDt">
+<![CDATA[               a.out_dt <= #endOrdDt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="outPlcId">
+<![CDATA[               a.out_plc_id = #outPlcId#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="inPlcId">
+<![CDATA[               a.in_plc_id   = #inPlcId#
+]]>            </isNotEmpty>                 
+<![CDATA[          GROUP BY a.out_mgmt_no, a.out_plc_id, a.in_plc_id, a.out_dt) c   
+ WHERE not exists (SELECT 'x' 
+                     FROM tdis_in_m
+                    WHERE out_mgmt_no = c.ord_mgmt_no
+                      AND in_plc_id   = c.in_plc_id
+                      AND del_yn = 'N')
+ ORDER BY c.ord_mgmt_no desc, c.ord_plc_nm]]>
+	</select>
+</sqlMap>

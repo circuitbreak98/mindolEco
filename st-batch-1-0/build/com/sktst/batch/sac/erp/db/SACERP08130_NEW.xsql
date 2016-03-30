@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08130_NEW">
+	<select id="getAgencyList" resultClass="hmap" fetchSize="50" >
+	    <![CDATA[
+	        SELECT  /* SACERP08130_NEW_getAgencyList_대리점목록조회_하창주 */
+	                a.deal_co_cd as agency        /*  대리점           */
+	             ,  a.deal_co_nm                  /*  대리점명         */
+	             ,  a.ukey_agency_cd              /*  Ukey 대리점코드  */
+	                /* 스타블루골드대리점(10010) 정산담당자 : 장한나(140034) */
+	             ,  ( SELECT  CASE WHEN min(user_cd) is null AND a.deal_co_cd = '10010' THEN '140034' ELSE min(user_cd) END
+	                    FROM  tbas_user_mgmt
+	                   WHERE  pos_agency     = a.deal_co_cd
+	                     AND  user_grp       = 'D17'
+	                     AND  del_yn         = 'N'
+	                     AND  eff_user_yn    = 'Y'
+	                     AND  attc_cat      in ('1', '2')) AS user_cd
+	          FROM  tbas_deal_co_mgmt a
+	         WHERE  a.hseq_no   = ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+	                                        hseq_no
+	                                  FROM  tbas_deal_co_mgmt
+	                                 WHERE  deal_co_cd = a.deal_co_cd 
+	                                   AND  rownum = 1
+	                               )
+	           AND  a.deal_co_cl1   = 'A1'
+	           AND  a.del_yn        = 'N'
+	           AND  a.deal_end_yn   = 'N'
+	    ]]>
+	        <isNotEmpty prepend="AND" property="AGENCY">
+	            <![CDATA[ a.deal_co_cd   = #AGENCY# ]]>
+	        </isNotEmpty>
+	</select>
+
+	<select id="getCmmsAccList" resultClass="hmap" fetchSize="50" >
+        <![CDATA[
+            SELECT  /* SACERP08130_NEW_getCmmsAccList_수수료월정산조회_하창주 */
+                    a.deal_co_cd              /*  대리점코드  */
+                 ,  a.acc_plc                 /*  정산처      */
+                 ,  a.acc_mth                 /*  정산월      */
+                 ,  a.fix_dt                  /*  확정일      */
+                 ,  nvl(a.fix_cnsg_cmms, 0)   /*  확정위탁수수료: 부가세관련 월배치 항목*/
+                    as cmms_amt
+                 ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                 ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                 ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+              FROM  tacc_cmms_acc_m a, tbas_deal_co_mgmt b
+             WHERE  a.acc_plc        =  b.deal_co_cd
+               AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                  hseq_no
+                                            FROM  tbas_deal_co_mgmt
+                                           WHERE  deal_co_cd = b.deal_co_cd
+                                             AND  rownum = 1
+                                        )
+               AND  a.deal_co_cd    = #AGENCY#
+               AND  a.acc_mth       = #ACC_MTH#
+               AND  a.fix_yn        = 'Y'
+               AND  a.del_yn        = 'N'    /* 삭제여부 */
+               AND  nvl(a.fix_cnsg_cmms, 0) <> 0
+        ]]>
+                <isNotEmpty prepend="AND" property="ACC_PLC">
+        <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                </isNotEmpty>
+        <![CDATA[
+            UNION ALL
+            SELECT  /* SACERP08130_NEW_getCmmsAccList_도매수수료월정산조회_하창주 */
+                    a.deal_co_cd              /*  대리점코드  */
+                 ,  a.acc_plc                 /*  정산처      */
+                 ,  a.acc_mth                 /*  정산월      */
+                 ,  a.fix_dt                  /*  확정일      */
+                 ,  nvl(a.fix_cnsg_cmms, 0)   /*  확정위탁수수료: 부가세관련 월배치 항목*/
+                    as cmms_amt
+                 ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                 ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                 ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+              FROM  tacc_oa_cmms_acc_m a, tbas_deal_co_mgmt b
+             WHERE  a.acc_plc        =  b.deal_co_cd
+               AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                  hseq_no
+                                            FROM  tbas_deal_co_mgmt
+                                           WHERE  deal_co_cd = b.deal_co_cd
+                                             AND  rownum = 1
+                                        )
+               AND  a.deal_co_cd    = #AGENCY#
+               AND  a.acc_mth       = #ACC_MTH#
+               AND  a.fix_yn        = 'Y'
+               AND  a.del_yn        = 'N'    /* 삭제여부 */
+               AND  nvl(a.fix_cnsg_cmms, 0) <> 0
+        ]]>
+                <isNotEmpty prepend="AND" property="ACC_PLC">
+        <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                </isNotEmpty>
+        <![CDATA[
+            UNION ALL
+            SELECT  /* SACERP08130_NEW_getCmmsAccList_소매수수료월정산조회_하창주 */
+                    a.deal_co_cd              /*  대리점코드  */
+                 ,  a.acc_plc                 /*  정산처      */
+                 ,  a.acc_mth                 /*  정산월      */
+                 ,  a.fix_dt                  /*  확정일      */
+                 ,  nvl(a.fix_cnsg_cmms, 0)   /*  확정위탁수수료: 부가세관련 월배치 항목*/
+                    as cmms_amt
+                 ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                 ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                 ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+              FROM  tacc_os_cmms_acc_m a, tbas_deal_co_mgmt b
+             WHERE  a.acc_plc        =  b.deal_co_cd
+               AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                  hseq_no
+                                            FROM  tbas_deal_co_mgmt
+                                           WHERE  deal_co_cd = b.deal_co_cd
+                                             AND  rownum = 1
+                                        )
+               AND  a.deal_co_cd    = #AGENCY#
+               AND  a.acc_mth       = #ACC_MTH#
+               AND  a.fix_yn        = 'Y'
+               AND  a.del_yn        = 'N'    /* 삭제여부 */
+               AND  nvl(a.fix_cnsg_cmms, 0) <> 0
+        ]]>
+                <isNotEmpty prepend="AND" property="ACC_PLC">
+        <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                </isNotEmpty>
+	</select>
+	
+	<select id="getAccMtchAmtAddList" resultClass="hmap" fetchSize="50" >
+        <![CDATA[
+            SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_수수료월정산조회_하창주 */
+                    deal_co_cd              /*  대리점코드  */
+                 ,  acc_plc                 /*  정산처      */
+                 ,  acc_mth                 /*  정산월      */
+                 ,  fix_dt                  /*  확정일      */
+                 ,  sum(acc_mtch_amt) as acc_mtch_amt        /*정산상계금액*/
+                 ,  ukey_agency_cd          /*  Ukey  대리점코드  */
+                 ,  ukey_sub_cd             /*  Ukey  Sub코드     */
+              FROM (
+         ]]>                               
+                <![CDATA[
+                    SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_수수료월정산조회_하창주 */
+                            a.deal_co_cd              /*  대리점코드  */
+                         ,  a.acc_plc                 /*  정산처      */
+                         ,  a.acc_mth                 /*  정산월      */
+                         ,  a.fix_dt                  /*  확정일      */
+                         ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                         ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                         ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+                      FROM  tacc_cmms_acc_m a, tbas_deal_co_mgmt b
+                     WHERE  a.acc_plc        =  b.deal_co_cd
+                       AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                          hseq_no
+                                                    FROM  tbas_deal_co_mgmt
+                                                   WHERE  deal_co_cd = b.deal_co_cd
+                                                     AND  rownum = 1
+                                                )
+                       AND  a.deal_co_cd    = #AGENCY#
+                       AND  a.acc_mth       = #ACC_MTH#
+                       AND  a.fix_yn        = 'Y'
+                       AND  a.del_yn        = 'N'    /* 삭제여부 */
+                       AND  nvl(a.acc_mtch_amt, 0) > 0
+                ]]>
+                        <isNotEmpty prepend="AND" property="ACC_PLC">
+                <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                        </isNotEmpty>
+                <![CDATA[
+                    UNION ALL
+                    SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_M채널 수수료월정산조회_하창주 */
+                            a.deal_co_cd              /*  대리점코드  */
+                         ,  a.acc_plc                 /*  정산처      */
+                         ,  a.acc_mth                 /*  정산월      */
+                         ,  a.fix_dt                  /*  확정일      */
+                         ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                         ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                         ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+                      FROM  tacc_mc_cmms_acc_m a, tbas_deal_co_mgmt b
+                     WHERE  a.acc_plc        =  b.deal_co_cd
+                       AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                          hseq_no
+                                                    FROM  tbas_deal_co_mgmt
+                                                   WHERE  deal_co_cd = b.deal_co_cd
+                                                     AND  rownum = 1
+                                                )
+                       AND  a.deal_co_cd    = #AGENCY#
+                       AND  a.acc_mth       = #ACC_MTH#
+                       AND  a.fix_yn        = 'Y'
+                       AND  a.del_yn        = 'N'    /* 삭제여부 */
+                       AND  nvl(a.acc_mtch_amt, 0) > 0
+                ]]>
+                        <isNotEmpty prepend="AND" property="ACC_PLC">
+                <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                        </isNotEmpty>
+                <![CDATA[
+                    UNION ALL
+                    SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_온라인도매 수수료월정산조회_하창주 */
+                            a.deal_co_cd              /*  대리점코드  */
+                         ,  a.acc_plc                 /*  정산처      */
+                         ,  a.acc_mth                 /*  정산월      */
+                         ,  a.fix_dt                  /*  확정일      */
+                         ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                         ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                         ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+                      FROM  tacc_Oa_cmms_acc_m a, tbas_deal_co_mgmt b
+                     WHERE  a.acc_plc        =  b.deal_co_cd
+                       AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                          hseq_no
+                                                    FROM  tbas_deal_co_mgmt
+                                                   WHERE  deal_co_cd = b.deal_co_cd
+                                                     AND  rownum = 1
+                                                )
+                       AND  a.deal_co_cd    = #AGENCY#
+                       AND  a.acc_mth       = #ACC_MTH#
+                       AND  a.fix_yn        = 'Y'
+                       AND  a.del_yn        = 'N'    /* 삭제여부 */
+                       AND  nvl(a.acc_mtch_amt, 0) > 0
+                ]]>
+                        <isNotEmpty prepend="AND" property="ACC_PLC">
+                <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                        </isNotEmpty>
+                <![CDATA[
+                    UNION ALL
+                    SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_온라인 소매 수수료월정산조회_하창주 */
+                            a.deal_co_cd              /*  대리점코드  */
+                         ,  a.acc_plc                 /*  정산처      */
+                         ,  a.acc_mth                 /*  정산월      */
+                         ,  a.fix_dt                  /*  확정일      */
+                         ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                         ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                         ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+                      FROM  tacc_Os_cmms_acc_m a, tbas_deal_co_mgmt b
+                     WHERE  a.acc_plc        =  b.deal_co_cd
+                       AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                          hseq_no
+                                                    FROM  tbas_deal_co_mgmt
+                                                   WHERE  deal_co_cd = b.deal_co_cd
+                                                     AND  rownum = 1
+                                                )
+                       AND  a.deal_co_cd    = #AGENCY#
+                       AND  a.acc_mth       = #ACC_MTH#
+                       AND  a.fix_yn        = 'Y'
+                       AND  a.del_yn        = 'N'    /* 삭제여부 */
+                       AND  nvl(a.acc_mtch_amt, 0) > 0
+                ]]>
+                        <isNotEmpty prepend="AND" property="ACC_PLC">
+                <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                        </isNotEmpty>
+                <![CDATA[
+                    UNION ALL
+                    SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_온라인 결제 수수료월정산조회_하창주 */
+                            a.deal_co_cd              /*  대리점코드  */
+                         ,  a.acc_plc                 /*  정산처      */
+                         ,  a.acc_mth                 /*  정산월      */
+                         ,  a.fix_dt                  /*  확정일      */
+                         ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                         ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                         ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+                      FROM  tacc_Otl_cmms_acc_m a, tbas_deal_co_mgmt b
+                     WHERE  a.acc_plc        =  b.deal_co_cd
+                       AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                          hseq_no
+                                                    FROM  tbas_deal_co_mgmt
+                                                   WHERE  deal_co_cd = b.deal_co_cd
+                                                    AND  rownum = 1
+                                                )
+                       AND  a.deal_co_cd    = #AGENCY#
+                       AND  a.acc_mth       = #ACC_MTH#
+                       AND  a.fix_yn        = 'Y'
+                       AND  a.del_yn        = 'N'    /* 삭제여부 */
+                       AND  nvl(a.acc_mtch_amt, 0) > 0
+                ]]>
+                        <isNotEmpty prepend="AND" property="ACC_PLC">
+                <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                        </isNotEmpty>
+        <![CDATA[
+                )
+            GROUP BY deal_co_cd,  acc_plc,  acc_mth,  fix_dt,  ukey_agency_cd,  ukey_sub_cd
+         ]]> 
+	</select>
+	
+	<select id="getAccMtchAmtSubList" resultClass="hmap" fetchSize="50" >
+        <![CDATA[
+            SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_수수료월정산조회_하창주 */
+                    deal_co_cd              /*  대리점코드  */
+                 ,  acc_plc                 /*  정산처      */
+                 ,  acc_mth                 /*  정산월      */
+                 ,  fix_dt                  /*  확정일      */
+                 ,  sum(a.acc_mtch_amt) as acc_mtch_amt        /*정산상계금액*/
+                 ,  ukey_agency_cd          /*  Ukey  대리점코드  */
+                 ,  ukey_sub_cd             /*  Ukey  Sub코드     */
+              FROM (
+         ]]>
+                <![CDATA[
+                    SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_수수료월정산조회_하창주 */
+                            a.deal_co_cd              /*  대리점코드  */
+                         ,  a.acc_plc                 /*  정산처      */
+                         ,  a.acc_mth                 /*  정산월      */
+                         ,  a.fix_dt                  /*  확정일      */
+                         ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                         ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                         ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+                      FROM  tacc_cmms_acc_m a, tbas_deal_co_mgmt b
+                     WHERE  a.acc_plc        =  b.deal_co_cd
+                       AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                          hseq_no
+                                                    FROM  tbas_deal_co_mgmt
+                                                   WHERE  deal_co_cd = b.deal_co_cd
+                                                     AND  rownum = 1
+                                                )
+                       AND  a.deal_co_cd    = #AGENCY#
+                       AND  a.acc_mth       = #ACC_MTH#
+                       AND  a.fix_yn        = 'Y'
+                       AND  a.del_yn        = 'N'    /* 삭제여부 */
+                       AND  nvl(a.acc_mtch_amt, 0) < 0
+                ]]>
+                        <isNotEmpty prepend="AND" property="ACC_PLC">
+                <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                        </isNotEmpty>
+                <![CDATA[
+                    UNION ALL
+                    SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_M채널 수수료월정산조회_하창주 */
+                            a.deal_co_cd              /*  대리점코드  */
+                         ,  a.acc_plc                 /*  정산처      */
+                         ,  a.acc_mth                 /*  정산월      */
+                         ,  a.fix_dt                  /*  확정일      */
+                         ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                         ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                         ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+                      FROM  tacc_mc_cmms_acc_m a, tbas_deal_co_mgmt b
+                     WHERE  a.acc_plc        =  b.deal_co_cd
+                       AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                          hseq_no
+                                                    FROM  tbas_deal_co_mgmt
+                                                   WHERE  deal_co_cd = b.deal_co_cd
+                                                     AND  rownum = 1
+                                                )
+                       AND  a.deal_co_cd    = #AGENCY#
+                       AND  a.acc_mth       = #ACC_MTH#
+                       AND  a.fix_yn        = 'Y'
+                       AND  a.del_yn        = 'N'    /* 삭제여부 */
+                       AND  nvl(a.acc_mtch_amt, 0) < 0
+                ]]>
+                        <isNotEmpty prepend="AND" property="ACC_PLC">
+                <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                        </isNotEmpty>
+                <![CDATA[
+                    UNION ALL
+                    SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_온라인도매 수수료월정산조회_하창주 */
+                            a.deal_co_cd              /*  대리점코드  */
+                         ,  a.acc_plc                 /*  정산처      */
+                         ,  a.acc_mth                 /*  정산월      */
+                         ,  a.fix_dt                  /*  확정일      */
+                         ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                         ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                         ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+                      FROM  tacc_oa_cmms_acc_m a, tbas_deal_co_mgmt b
+                     WHERE  a.acc_plc        =  b.deal_co_cd
+                       AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                          hseq_no
+                                                    FROM  tbas_deal_co_mgmt
+                                                   WHERE  deal_co_cd = b.deal_co_cd
+                                                     AND  rownum = 1
+                                                )
+                       AND  a.deal_co_cd    = #AGENCY#
+                       AND  a.acc_mth       = #ACC_MTH#
+                       AND  a.fix_yn        = 'Y'
+                       AND  a.del_yn        = 'N'    /* 삭제여부 */
+                       AND  nvl(a.acc_mtch_amt, 0) < 0
+                ]]>
+                        <isNotEmpty prepend="AND" property="ACC_PLC">
+                <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                        </isNotEmpty>
+                <![CDATA[
+                    UNION ALL
+                    SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_온라인 소매 수수료월정산조회_하창주 */
+                            a.deal_co_cd              /*  대리점코드  */
+                         ,  a.acc_plc                 /*  정산처      */
+                         ,  a.acc_mth                 /*  정산월      */
+                         ,  a.fix_dt                  /*  확정일      */
+                         ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                         ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                         ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+                      FROM  tacc_os_cmms_acc_m a, tbas_deal_co_mgmt b
+                     WHERE  a.acc_plc        =  b.deal_co_cd
+                       AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                          hseq_no
+                                                    FROM  tbas_deal_co_mgmt
+                                                   WHERE  deal_co_cd = b.deal_co_cd
+                                                     AND  rownum = 1
+                                                )
+                       AND  a.deal_co_cd    = #AGENCY#
+                       AND  a.acc_mth       = #ACC_MTH#
+                       AND  a.fix_yn        = 'Y'
+                       AND  a.del_yn        = 'N'    /* 삭제여부 */
+                       AND  nvl(a.acc_mtch_amt, 0) < 0
+                ]]>
+                        <isNotEmpty prepend="AND" property="ACC_PLC">
+                <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                        </isNotEmpty>
+                <![CDATA[
+                    UNION ALL
+                    SELECT  /* SACERP08130_NEW_getAccMtchAmtAddList_온라인 결제 수수료월정산조회_하창주 */
+                            a.deal_co_cd              /*  대리점코드  */
+                         ,  a.acc_plc                 /*  정산처      */
+                         ,  a.acc_mth                 /*  정산월      */
+                         ,  a.fix_dt                  /*  확정일      */
+                         ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                         ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                         ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+                      FROM  tacc_otl_cmms_acc_m a, tbas_deal_co_mgmt b
+                     WHERE  a.acc_plc        =  b.deal_co_cd
+                       AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                          hseq_no
+                                                    FROM  tbas_deal_co_mgmt
+                                                   WHERE  deal_co_cd = b.deal_co_cd
+                                                    AND  rownum = 1
+                                                )
+                       AND  a.deal_co_cd    = #AGENCY#
+                       AND  a.acc_mth       = #ACC_MTH#
+                       AND  a.fix_yn        = 'Y'
+                       AND  a.del_yn        = 'N'    /* 삭제여부 */
+                       AND  nvl(a.acc_mtch_amt, 0) < 0
+                ]]>
+                        <isNotEmpty prepend="AND" property="ACC_PLC">
+                <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                        </isNotEmpty>
+        <![CDATA[
+                )
+            GROUP BY deal_co_cd,  acc_plc,  acc_mth,  fix_dt,  ukey_agency_cd,  ukey_sub_cd
+         ]]>
+ 	</select>
+
+
+	<select id="getFixVirtlAccCmmsList" resultClass="hmap" fetchSize="50" >
+        <![CDATA[
+            SELECT  /* SACERP08130_NEW_getFixVirtlAccCmmsList_결재수수료월정산조회_하창주 */
+                    a.deal_co_cd              /*  대리점코드  */
+                 ,  a.acc_plc                 /*  정산처      */
+                 ,  a.acc_mth                 /*  정산월      */
+                 ,  a.fix_dt                  /*  확정일      */
+                 ,  nvl(a.fix_virtl_acc_cmms, 0) as fix_virtl_acc_cmms  /* 확정가상계좌수수료 */
+                 ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                 ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+              FROM  tacc_otl_cmms_acc_m a, tbas_deal_co_mgmt b
+             WHERE  a.acc_plc        =  b.deal_co_cd
+               AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                  hseq_no
+                                            FROM  tbas_deal_co_mgmt
+                                           WHERE  deal_co_cd = b.deal_co_cd
+                                             AND  rownum = 1
+                                        )
+               AND  a.deal_co_cd    = #AGENCY#
+               AND  a.acc_mth       = #ACC_MTH#
+               AND  a.fix_yn        = 'Y'
+               AND  a.del_yn        = 'N'    /* 삭제여부 */
+        ]]>
+                <isNotEmpty prepend="AND" property="ACC_PLC">
+        <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                </isNotEmpty>
+	</select>
+
+	<select id="getFixAccTrnsfCmmsList" resultClass="hmap" fetchSize="50" >
+        <![CDATA[
+            SELECT  /* SACERP08130_NEW_getFixAccTrnsfCmmsList_결재수수료월정산조회_하창주 */
+                    a.deal_co_cd              /*  대리점코드  */
+                 ,  a.acc_plc                 /*  정산처      */
+                 ,  a.acc_mth                 /*  정산월      */
+                 ,  a.fix_dt                  /*  확정일      */
+                 ,  nvl(a.fix_card_settle_cmms, 0) as fix_card_settle_cmms  /* 확정카드결제수수료 */
+                 ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                 ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+              FROM  tacc_otl_cmms_acc_m a, tbas_deal_co_mgmt b
+             WHERE  a.acc_plc        =  b.deal_co_cd
+               AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                  hseq_no
+                                            FROM  tbas_deal_co_mgmt
+                                           WHERE  deal_co_cd = b.deal_co_cd
+                                             AND  rownum = 1
+                                        )
+               AND  a.deal_co_cd    = #AGENCY#
+               AND  a.acc_mth       = #ACC_MTH#
+               AND  a.fix_yn        = 'Y'
+               AND  a.del_yn        = 'N'    /* 삭제여부 */
+        ]]>
+                <isNotEmpty prepend="AND" property="ACC_PLC">
+        <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                </isNotEmpty>
+	</select>
+
+	<select id="getMcCmmsAccList" resultClass="hmap" fetchSize="50" >
+        <![CDATA[
+            SELECT  /* SACERP08130_NEW_getMcCmmsAccList_M채널수수료월정산조회_하창주 */
+                    a.deal_co_cd              /*  대리점코드  */
+                 ,  a.acc_plc                 /*  정산처      */
+                 ,  a.acc_mth                 /*  정산월      */
+                 ,  a.fix_dt                  /*  확정일      */
+                 ,  nvl(a.fix_cnsg_cmms, 0) + nvl(a.plc_2nd_cmms, 0)  /*  확정위탁수수료: 부가세관련 월배치 항목*/
+                    as cmms_amt
+                 ,  nvl(a.acc_mtch_amt, 0) as acc_mtch_amt        /*정산상계금액*/
+                 ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                 ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+              FROM  tacc_mc_cmms_acc_m a, tbas_deal_co_mgmt b
+             WHERE  a.acc_plc        =  b.deal_co_cd
+               AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                  hseq_no
+                                            FROM  tbas_deal_co_mgmt
+                                           WHERE  deal_co_cd = b.deal_co_cd
+                                             AND  rownum = 1
+                                        )
+               AND  a.deal_co_cd    = #AGENCY#
+               AND  a.acc_mth       = #ACC_MTH#
+               AND  a.fix_yn        = 'Y'
+               AND  a.del_yn        = 'N'    /* 삭제여부 */
+               AND  nvl(a.fix_cnsg_cmms, 0) + nvl(a.plc_2nd_cmms, 0) <> 0
+        ]]>
+                <isNotEmpty prepend="AND" property="ACC_PLC">
+        <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                </isNotEmpty>
+	</select>
+
+	<select id="getFixAgrmtAstAmtList" resultClass="hmap" fetchSize="50" >
+        <![CDATA[
+            SELECT  /* SACERP08130_NEW_getFixAgrmtAstAmtList_도매수수료월정산조회_하창주 */
+                    a.deal_co_cd              /*  대리점코드  */
+                 ,  a.acc_plc                 /*  정산처      */
+                 ,  a.acc_mth                 /*  정산월      */
+                 ,  a.fix_dt                  /*  확정일      */
+                 ,  nvl(a.fix_agrmt_astamt, 0) as fix_agrmt_astamt        /*확정_약정보조금*/
+                 ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                 ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+              FROM  tacc_oa_cmms_acc_m a, tbas_deal_co_mgmt b
+             WHERE  a.acc_plc        =  b.deal_co_cd
+               AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                  hseq_no
+                                            FROM  tbas_deal_co_mgmt
+                                           WHERE  deal_co_cd = b.deal_co_cd
+                                             AND  rownum = 1
+                                        )
+               AND  a.deal_co_cd    = #AGENCY#
+               AND  a.acc_mth       = #ACC_MTH#
+               AND  a.fix_yn        = 'Y'
+               AND  a.del_yn        = 'N'    /* 삭제여부 */
+               AND  nvl(a.fix_cnsg_cmms, 0) + nvl(a.plc_2nd_cmms, 0) <> 0
+        ]]>
+                <isNotEmpty prepend="AND" property="ACC_PLC">
+        <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                </isNotEmpty>
+	</select>
+
+	<select id="getFixAllotSaleAmtList" resultClass="hmap" fetchSize="50" >
+        <![CDATA[
+            SELECT  /* SACERP08130_NEW_getFixAllotSaleAmtList_도매수수료월정산조회_하창주 */
+                    a.deal_co_cd              /*  대리점코드  */
+                 ,  a.acc_plc                 /*  정산처      */
+                 ,  a.acc_mth                 /*  정산월      */
+                 ,  a.fix_dt                  /*  확정일      */
+                 ,  nvl(a.fix_allot_sale_amt, 0) as fix_allot_sale_amt        /*확정_할부매출*/
+                 ,  b.ukey_agency_cd          /*  Ukey  대리점코드  */
+                 ,  b.ukey_sub_cd             /*  Ukey  Sub코드     */
+              FROM  tacc_oa_cmms_acc_m a, tbas_deal_co_mgmt b
+             WHERE  a.acc_plc        =  b.deal_co_cd
+               AND  b.hseq_no        =  ( SELECT  /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                  hseq_no
+                                            FROM  tbas_deal_co_mgmt
+                                           WHERE  deal_co_cd = b.deal_co_cd
+                                             AND  rownum = 1
+                                        )
+               AND  a.deal_co_cd    = #AGENCY#
+               AND  a.acc_mth       = #ACC_MTH#
+               AND  a.fix_yn        = 'Y'
+               AND  a.del_yn        = 'N'    /* 삭제여부 */
+               AND  nvl(a.fix_cnsg_cmms, 0) + nvl(a.plc_2nd_cmms, 0) <> 0
+        ]]>
+                <isNotEmpty prepend="AND" property="ACC_PLC">
+        <![CDATA[    a.acc_plc      = #ACC_PLC#        ]]>
+                </isNotEmpty>
+	</select>
+			
+	<update id="updateCmmsAccSendInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08130_NEW_updateCmmsAccSendInfo_수수료월정산전송정보변경-하창주 */
+				tacc_cmms_acc_m
+		   SET  erp_trms_dtm	= #ZIFDATE#
+			 ,  erp_fix_yn		= #ZCONFIRM#
+		 WHERE	deal_co_cd	= #DEAL_CO_CD#
+		   AND	acc_mth		= #ACC_MTH#
+		   AND	del_yn		= 'N'	/* 삭제여부 */
+	]]>
+	</update>
+
+	<update id="updateMcCmmsAccSendInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE  /* SACERP08130_NEW_updateMcCmmsAccSendInfo_M채널수수료월정산전송정보변경-이강수 */
+				tacc_mc_cmms_acc_m
+		   SET	erp_trms_dtm  = #ZIFDATE#
+			 ,  erp_fix_yn    = #ZCONFIRM#
+		 WHERE	deal_co_cd    = #DEAL_CO_CD#
+		   AND	acc_mth       = #ACC_MTH#
+		   AND	del_yn        = 'N'	/* 삭제여부 */
+	]]>
+	</update>
+
+	<update id="updateOaCmmsAccSendInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE  /* SACERP08130_NEW_updateOaCmmsAccSendInfo_도매수수료월정산전송정보변경-이강수 */
+				tacc_oa_cmms_acc_m
+		   SET	erp_trms_dtm  = #ZIFDATE#
+			 ,  erp_fix_yn    = #ZCONFIRM#
+		 WHERE	deal_co_cd    = #DEAL_CO_CD#
+		   AND	acc_mth       = #ACC_MTH#
+		   AND	del_yn        = 'N'	/* 삭제여부 */
+	]]>
+	</update>
+
+	<update id="updateOsCmmsAccSendInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE  /* SACERP08130_NEW_updateOsCmmsAccSendInfo_소매수수료월정산전송정보변경-이강수 */
+				tacc_os_cmms_acc_m
+		   SET	erp_trms_dtm  = #ZIFDATE#
+			 ,  erp_fix_yn    = #ZCONFIRM#
+		 WHERE	deal_co_cd    = #DEAL_CO_CD#
+		   AND	acc_mth       = #ACC_MTH#
+		   AND	del_yn        = 'N'	/* 삭제여부 */
+	]]>
+	</update>
+
+	<update id="updateOtlCmmsAccSendInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE  /* SACERP08130_NEW_updateOtlCmmsAccSendInfo_결제수수료월정산전송정보변경-이강수 */
+				tacc_otl_cmms_acc_m
+		   SET	erp_trms_dtm  = #ZIFDATE#
+			 ,  erp_fix_yn    = #ZCONFIRM#
+		 WHERE	deal_co_cd    = #DEAL_CO_CD#
+		   AND	acc_mth       = #ACC_MTH#
+		   AND	del_yn        = 'N'	/* 삭제여부 */
+	]]>
+	</update>
+	
+</sqlMap>

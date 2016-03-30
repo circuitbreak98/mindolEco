@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ADMAUM00100" Left="8" OnLoadCompleted="ADMAUM00100_OnLoadCompleted" PidAttrib="7" Title="권한조회" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_Auth" OnColumnChanged="ds_Auth_OnColumnChanged">
+				<Contents>
+					<colinfo id="menu_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="user_grp" size="256" summ="default" type="STRING"/>
+					<colinfo id="screen_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="menu_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="menu_group" size="256" summ="default" type="STRING"/>
+					<colinfo id="search_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="save_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="del_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="req_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="aprv_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="can_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="close_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="print_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="init_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="etc1_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="etc2_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="etc3_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="del_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="mod_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="mod_dtm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="USER_GRP" size="256" summ="default" type="STRING"/>
+					<colinfo id="MENU_GROUP" size="256" summ="default" type="STRING"/>
+					<record>
+						<MENU_GROUP></MENU_GROUP>
+						<USER_GRP></USER_GRP>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="9" Style="sty_div_search" TabOrder="1" Text="질의내용" Top="10" Width="811">
+			<Contents>
+				<Combo BindDataset="ds_condition" Border="Flat" Column="user_grp" Height="20" Id="cbo_usrGrp" Left="101" OnChanged="div_S_cbo_usrGrp_OnChanged" Style="sty_ipt_form" TabOrder="1" Top="6" Width="146"></Combo>
+				<Static Align="Right" Height="20" Id="Static6" Left="22" Style="sty_lb_Search" TabOrder="4" Text="사용자그룹" Top="7" VAlign="Middle" Width="76"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="501" LeftMargin="5" OnClick="div_S_btn_search_OnClick" Style="sty_btn_a" TabOrder="3" Text="조회" Top="7" Visible="FALSE" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static0" Left="254" Style="sty_lb_Search" TabOrder="5" Text="메뉴그룹" Top="7" VAlign="Middle" Width="76"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" Column="menu_group" Height="20" Id="cbo_mnuGrp" Left="333" OnChanged="div_S_cbo_mnuGrp_OnChanged" Style="sty_ipt_form" TabOrder="2" Top="6" Width="146"></Combo>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" AutoScrollBar="FixedVert" BindDataset="ds_Auth" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="563" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="506" Id="grd_list" InputPanel="FALSE" Left="9" LineColor="user33" MinWidth="100" OnHeadClick="f_allChecknSort" Right="819" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="57" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="0"/>
+						<col width="274"/>
+						<col width="201"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="55"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="메뉴그룹"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="화&#32;면&#32;위&#32;치"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="화&#32;면&#32;명"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="조회"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="저장"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="삭제"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="승인"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="마감"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="전송"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="menu_group" display="combo"/>
+						<cell align="left" col="1" colid="MENU_DIR" display="text"/>
+						<cell align="left" col="2" colid="menu_nm" display="text"/>
+						<cell col="3" colid="search_auth_yn" display="checkbox" edit="checkbox"/>
+						<cell col="4" colid="save_auth_yn" display="checkbox" edit="checkbox"/>
+						<cell col="5" colid="del_auth_yn" display="checkbox" edit="checkbox"/>
+						<cell col="6" colid="aprv_auth_yn" display="checkbox" edit="checkbox"/>
+						<cell col="7" colid="close_auth_yn" display="checkbox" edit="checkbox"/>
+						<cell col="8" colid="etc1_auth_yn" display="checkbox" edit="checkbox"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="759" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="3" Text="저장" Top="569" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_copy" ImageID="btn_c_6" Left="10" LeftMargin="5" OnClick="btn_copy_OnClick" Style="sty_btn_c" TabOrder="7" Text="권한&#32;동기화" Top="569" Width="108"></Button>
+	</Form>
+	<Script><![CDATA[
+/*******************************************************************************
+* 프로그램ID  :  ADMAUM00100
+* 업무명      :  ADMIN-권한관리
+* 프로그램명  :  권한관리
+--------------------------------------------------------------------------------
+* 작성자      : shimyunjung
+* 작성일      : 2009.01.20 
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_DIS.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var checkYn = Array(9);   
+var checkCol = Array(9);
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ADMAUM00100_OnLoadCompleted(obj)
+{
+
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+			
+	f_init();
+			
+	// 설정된 코드를 기반으로 공통 코드를 추가 및 데이타 바인딩
+	//cf_checkCommonCode();
+	f_commonCode();
+    http.Sync = true;
+//	div_S_btn_search_OnClick();
+	http.Sync = false;
+}
+
+function f_commonCode()
+{
+//	http.Sync = true;
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	alert("권한관리");
+	// 사용자그룹 : ZBAS_C_00250
+	cf_setCommonCode("div_search.cbo_usrGrp", 	"ZBAS_C_00250");
+	alert("권한관리");
+	// 메뉴그룹 : ZADM_C_00010
+	cf_setCommonCode("div_search.cbo_mnuGrp", 	"ZADM_C_00010", ",전체");
+	alert("권한관리");
+	
+	cf_setCommonCode("grd_list", "ZADM_C_00010", null, 0, false);
+	
+	// 설정된 코드를 기반으로 공통 코드를 추가 및 데이타 바인딩	
+	cf_checkCommonCode();
+//	http.Sync = false;
+}
+
+
+/*******************************************************************************
+ * @description    : 조회 
+*******************************************************************************/
+function div_S_btn_search_OnClick(obj)
+{
+	var sSvcID 	= "getAuthList";
+	var sInDs  	= "nc_input_fieldDs=ds_condition";
+	var sOutDs 	= "ds_Auth=ds_Auth";
+	var sArg	= "sktst.adm.AUM#getAuthList";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+/*******************************************************************************
+ * @description    : 저장 
+*******************************************************************************/ 
+function btn_save_OnClick(obj)
+{
+	if(ds_Auth.GetUpdate()) {
+		
+		// for (var i=0; i<ds_Auth.rowcount; i++) {
+			
+			// if (ds_Auth.GetRowType(i) == "update") { 
+				// trace(ds_Auth.GetRowType(i));
+				// ds_Auth.AddColumn("chk");
+				// if (ds_Auth.GetColumn(0, "SEARCH_AUTH_YN") == "0") {
+					
+					// ds_Auth.SetColumn(i, "chk", "D");
+				// } else {
+					// ds_Auth.SetColumn(i, "chk", "D");
+				// }
+			// }
+		// }
+		
+		//alert(ds_Auth.SaveXML());
+		var sSvcID 	= "saveAuth";
+		var sInDs  	= "nc_input_fieldDs=ds_condition ds_Auth=ds_Auth:u";
+		var sOutDs 	= "ds_Auth=ds_Auth";
+		var sArg	= "sktst.adm.AUM#saveAuth";
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 초기화 
+*******************************************************************************/
+function df_init()
+{
+	ds_Auth.ClearData();
+	f_init();
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	//ds_Auth.AddColumn("chk");
+	cf_setOrgDs(ds_Auth);
+	
+	if (sSvcID == "getAuthList") {
+		if (div_search.cbo_mnuGrp.index < 0) {
+			div_search.cbo_mnuGrp.index  = 0;
+		}
+		
+		
+	}
+} 
+
+//==============================================================================
+//  기타 업무 메소드들
+//============================================================================== 
+/*******************************************************************************
+ * Desc   : 화면 초기화 
+ *******************************************************************************/
+ function f_init()
+ {
+	ds_condition.SetColumn(0, "menu_group", "");
+	
+	checkCol[0] = "SEARCH_AUTH_YN";	// 조회
+	checkCol[1] = "SAVE_AUTH_YN";	// 저장 
+	checkCol[2] = "DEL_AUTH_YN";	// 삭제
+	checkCol[3] = "REQ_AUTH_YN";	// 요청
+	checkCol[4] = "APRV_AUTH_YN";	// 승인
+	checkCol[5] = "CAN_AUTH_YN";	// 취소
+	checkCol[6] = "CLOSE_AUTH_YN";	// 마감
+	checkCol[7] = "PRINT_AUTH_YN";	// 출력
+	checkCol[8] = "ETC1_AUTH_YN";	// etc
+	
+	for (var k = 0; k < 9; k++) {
+		checkYn[k] = "N";
+	}
+	
+ }
+ 
+
+/*******************************************************************************
+ * Desc   : 권한 부여가 가능한 colum 에 Check Box 일괄 체크 
+ *******************************************************************************/
+function f_setCheck(obj,nCell,nX,nY,nPivotIndex)
+{
+	
+	if(nCell != 0 && nCell != 1 && nCell != 2 ){		
+		
+		var i = ""; 
+		var col = nCell - 3;	
+			
+			//trace("col ="+col );
+		if(checkYn[col] = "N"){		
+			for(i = 0; i < ds_Auth.rowcount; i++) {
+				ds_Auth.SetColumn(i,checkCol[col],"1");
+				
+			}
+			//trace('n');
+			checkYn[col] = "Y";
+		} else {
+			for(i = 0; i < ds_Auth.rowcount; i++){
+				ds_Auth.SetColumn(i,checkCol[col],"0");
+				
+			}
+			checkYn[col] = "N";
+			//trace('y');
+		}
+	}
+}
+
+/*******************************************************************************
+ * Desc   : 그리드 정렬 
+ *******************************************************************************/
+function f_allChecknSort(obj, nCell, nX, nY, nPivotIndex)
+{ 
+	cf_markGridSort(obj, nCell, nX, nY, nPivotIndex);
+	 
+	//var sType = obj.GetCellProp("body", nCell, "display");
+	
+	// if(sType != "checkbox")	{
+		// cf_markGridSort(obj, nCell, nX, nY, nPivotIndex);
+	// } else {
+		// f_setCheck(obj, nCell, nX, nY, nPivotIndex);
+	// }
+	
+	// if (nCell==3) {
+		// f_setCheck(obj, nCell, nX, nY, nPivotIndex);
+	// } else {
+		// cf_markGridSort(obj, nCell, nX, nY, nPivotIndex);
+	// }
+}
+ 
+/*******************************************************************************
+ * Desc   : 조회조건 변경시 자동 조회
+ *******************************************************************************/
+function div_S_cbo_usrGrp_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	div_S_btn_search_OnClick();
+}
+
+function div_S_cbo_mnuGrp_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	div_S_btn_search_OnClick();
+}
+
+
+ 
+/*******************************************************************************
+ * Desc   : 권한 동기화 버튼 
+ *******************************************************************************/
+function btn_copy_OnClick(obj)
+{
+	if (ds_Auth.rowcount == 0) {
+		alert(MSG_00067, ""); //조회된 데이타가 없습니다.
+	} else if (ds_Auth.GetUpdate()) {
+		if(Confirm("변경된 내용이 있습니다. 계속하시겠습니까?")) {
+			var sArg  = "userGroup="+quote(div_search.cbo_usrGrp.Value);
+			cf_openAuthPop("100000511", sArg);
+		}
+	}  else {
+		var sArg  = "userGroup="+quote(div_search.cbo_usrGrp.Value);
+		cf_openAuthPop("100000508", sArg);
+	}
+}
+
+ 
+
+function ds_Auth_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if(strColumnID == "SEARCH_AUTH_YN"){
+
+		if(varNewValue == 0){
+			ds_auth.SetColumn(nRow,"save_auth_yn","0");
+			ds_auth.SetColumn(nRow,"del_auth_yn","0");
+			ds_auth.SetColumn(nRow,"aprv_auth_yn","0");
+			ds_auth.SetColumn(nRow,"close_auth_yn","0");
+			ds_auth.SetColumn(nRow,"etc1_auth_yn","0");
+			
+			// if(confirm(cf_getMessage(MSG_00102,"")) == true)
+			// {
+				// ds_auth.DeleteRow(ds_auth.currow);
+			// }			
+		}
+	} else if (varNewValue=="1"){
+		
+		ds_auth.SetColumn(nRow,"SEARCH_AUTH_YN","1");
+	}
+}
+
+ ]]></Script>
+</Window>

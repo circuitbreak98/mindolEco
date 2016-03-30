@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASPDM00800">
+	<select id="getPriceRateListByGrade" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT	/* BASPDM00800-getPriceRateListByGrade-이강수-전현주 */ 
+         SEQ         
+		,TYPE_CL      
+		,GRADE       
+		,FROM_DT      
+		,TO_DT       
+		,RATE   
+		,MIN_PRICE 
+		,GRADE_GB
+FROM TBAS_RATE_MGMT
+WHERE TO_CHAR(SYSDATE, 'YYYYMMDD') BETWEEN FROM_DT AND TO_DT
+AND DEL_YN = 'N'
+AND TYPE_CL = '1'
+ORDER BY RATE DESC ]]>
+	</select>
+	<select id="getPriceRateListByPrefer" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT	/* BASPDM00800-getPriceRateListByGrade-이강수-전현주 */ 
+         SEQ         
+		,TYPE_CL      
+		,GRADE       
+		,FROM_DT      
+		,TO_DT       
+		,RATE    
+		,MIN_PRICE 
+		,GRADE_GB
+FROM TBAS_RATE_MGMT
+WHERE TO_CHAR(SYSDATE, 'YYYYMMDD') BETWEEN FROM_DT AND TO_DT
+AND DEL_YN = 'N'
+AND TYPE_CL = '2'
+ORDER BY RATE DESC]]>
+	</select>
+	<delete id="deletePriceRateByGrade" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00800-deletePriceRateByGrade-이강수-전현주 */  tbas_rate_mgmt
+SET del_yn = 'Y'
+WHERE seq     = #SEQ#
+AND   type_cl = '1']]>
+	</delete>
+	<update id="updatePriceRateByGrade" parameterClass="map" ><![CDATA[UPDATE /*+ "BASPDM00800_updatePriceRateByGrade_이강수_전현주" */
+       tbas_rate_mgmt
+       SET rate = #RATE#
+            ,grade_gb = #GRADE_GB#
+       		,from_dt = #FROM_DT#
+       		,to_dt = #TO_DT#
+       		,min_price = #MIN_PRICE#
+            ,del_yn = 'N'
+            ,upd_cnt = upd_cnt + 1
+            ,mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            ,mod_user_id = #onlineContext.userInfo.loginId#
+WHERE seq = #SEQ#
+           AND type_cl = #TYPE_CL#
+           AND grade = #GRADE#]]>
+	</update>
+	<update id="updatePriceRateByPrefer" parameterClass="map" ><![CDATA[UPDATE /*+ "BASPDM00800_updatePriceRateByPrefer_이강수_전현주" */
+       tbas_rate_mgmt
+       SET rate = #RATE#
+      		 ,grade_gb = #GRADE_GB#
+            ,min_price = #MIN_PRICE#
+       		,from_dt = #FROM_DT#
+       		,to_dt = #TO_DT#
+            ,del_yn = 'N'
+            ,upd_cnt = upd_cnt + 1
+            ,mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            ,mod_user_id = #onlineContext.userInfo.loginId#
+WHERE seq = #SEQ#
+      AND type_cl = #TYPE_CL#
+      AND grade = #GRADE#
+       ]]>
+	</update>
+	<delete id="deletePriceRateByPrefer" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00800-deletePriceRateByPrefer-이강수-전현주 */  tbas_rate_mgmt
+SET del_yn = 'Y'
+WHERE seq     = #SEQ#
+AND   type_cl = '2']]>
+	</delete>
+	<insert id="insertPriceRateByGrade" parameterClass="map" ><![CDATA[INSERT INTO /*+ "BASPDM00800_insertPriceRateByGrade_이강수_전현주" */
+       tbas_rate_mgmt
+       (
+                     seq
+                	,type_cl
+                	,grade_gb
+                	,grade
+                	,rate
+                	,min_price
+                	,from_dt
+                	,to_dt
+                	,del_yn
+                	,upd_cnt
+                	,ins_dtm
+                	,ins_user_id
+                	,mod_dtm
+                	,mod_user_id
+       ) VALUES (
+                     (SELECT  NVL(MAX(seq)+1,1) 
+                	  FROM    tbas_rate_mgmt
+                	 )
+                	,'1'
+                	,#GRADE_GB#
+                	,#GRADE#
+                	,#RATE#
+                	,#MIN_PRICE#
+                	,#FROM_DT#
+                	,'99991231'
+                	,'N'
+                	,1
+                	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+                	,#onlineContext.userInfo.loginId#
+                	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+                	,#onlineContext.userInfo.loginId#
+       )]]>
+	</insert>
+	<update id="updatePrePriceRateByGrade" parameterClass="map" ><![CDATA[UPDATE /*+ "BASPDM00800_updatePriceRateByGrade_이강수_전현주" */
+       tbas_rate_mgmt
+       SET   to_dt = TO_CHAR(TO_DATE(#FROM_DT#,'YYYYMMDD')-1,'YYYYMMDD')
+       		,upd_cnt = upd_cnt + 1
+            ,mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            ,mod_user_id = #onlineContext.userInfo.loginId#
+WHERE seq = (SELECT max(seq) 
+           FROM tbas_rate_mgmt
+           WHERE type_cl = '1'
+           AND grade = #GRADE#
+           AND    grade_gb = #GRADE_GB#
+           AND SUBSTR(INS_DTM,0,8) < TO_CHAR(SYSDATE, 'YYYYMMDD')
+           )
+AND    grade = #GRADE#
+AND    type_cl = '1'
+AND    del_yn = 'N'
+AND    grade_gb = #GRADE_GB#]]>
+	</update>
+	<insert id="insertPriceRateByPrefer" parameterClass="map" ><![CDATA[INSERT INTO /*+ "BASPDM00800_insertPriceRateByPrefer_이강수_전현주" */
+       tbas_rate_mgmt(
+                     seq
+                	,type_cl
+                	,grade_gb
+                	,grade
+                	,rate
+                	,min_price
+                	,from_dt
+                	,to_dt
+                	,del_yn
+                	,upd_cnt
+                	,ins_dtm
+                	,ins_user_id
+                	,mod_dtm
+                	,mod_user_id
+       ) VALUES (
+                    (SELECT  NVL(MAX(seq)+1,1) 
+                	  FROM    tbas_rate_mgmt
+                	 )
+                	,'2'
+                	,#GRADE_GB#
+                	,#GRADE#
+                	,#RATE#
+                	,#MIN_PRICE#
+                	,#FROM_DT#
+                	,'99991231'
+                	,'N'
+                	,1
+                	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+                	,#onlineContext.userInfo.loginId#
+                	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+                	,#onlineContext.userInfo.loginId#
+       )]]>
+	</insert>
+	<update id="updatePrePriceRateByPrefer" parameterClass="map" ><![CDATA[UPDATE /*+ "BASPDM00800_updatePrePriceRateByPrefer_이강수_전현주" */
+       tbas_rate_mgmt
+       SET   to_dt = TO_CHAR(TO_DATE(#FROM_DT#,'YYYYMMDD')-1,'YYYYMMDD')
+       		,upd_cnt = upd_cnt + 1
+            ,mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            ,mod_user_id = #onlineContext.userInfo.loginId#
+WHERE seq = (SELECT max(seq) 
+           FROM tbas_rate_mgmt
+           WHERE type_cl = '2'
+           AND grade = #GRADE#
+           AND SUBSTR(INS_DTM,0,8) < TO_CHAR(SYSDATE, 'YYYYMMDD')
+           )
+AND    grade = #GRADE#
+AND    type_cl = '2'
+AND    del_yn = 'N']]>
+	</update>
+	<select id="getPriceRateListByAmt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  AMT_FROM
+	   ,AMT_TO
+	   ,AMT_CL
+	   ,AMT_RATE
+	   ,AMT_LIMIT
+	   ,AMT_SALE_CL
+	   ,SEQ
+FROM TBAS_ADD_AMT_RATE_MGMT
+WHERE DEL_YN = 'N'
+ORDER BY AMT_FROM]]>
+	</select>
+	<delete id="deleteAddAmtRate" parameterClass="map" ><![CDATA[DELETE TBAS_ADD_AMT_RATE_MGMT
+WHERE SEQ = #SEQ#]]>
+	</delete>
+	<update id="saveAddAmtRate" parameterClass="map" ><![CDATA[MERGE INTO TBAS_ADD_AMT_RATE_MGMT TT USING DUAL ON (TT.SEQ = #SEQ#)
+WHEN MATCHED THEN
+	UPDATE
+		SET TT.AMT_FROM = #AMT_FROM#
+		   ,TT.AMT_TO 	= #AMT_TO#
+		   ,TT.AMT_CL 	= #AMT_CL#
+		   ,TT.AMT_RATE = #AMT_RATE#
+		   ,TT.AMT_LIMIT = #AMT_LIMIT#
+		   ,TT.MOD_DTM  = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+		   ,TT.MOD_USER_ID = #onlineContext.userInfo.loginId#
+WHEN NOT MATCHED THEN
+	INSERT
+    	( SEQ
+         ,AMT_FROM
+         ,AMT_TO
+         ,AMT_CL
+         ,AMT_RATE
+         ,AMT_LIMIT
+         ,AMT_SALE_CL
+         ,DEL_YN
+         ,INS_DTM
+         ,INS_USER_ID
+         ,MOD_DTM
+         ,MOD_USER_ID)
+    VALUES
+        ( (SELECT NVL(MAX(SEQ),0)+1 FROM TBAS_ADD_AMT_RATE_MGMT)
+         ,#AMT_FROM#
+         ,#AMT_TO#
+         ,#AMT_CL#
+         ,#AMT_RATE#
+         ,#AMT_LIMIT#
+         ,'1'
+         ,'N'
+         ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+         ,#onlineContext.userInfo.loginId#
+         ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+         ,#onlineContext.userInfo.loginId#
+        )
+		   ]]>
+	</update>
+</sqlMap>

@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMMNU00100">
+	<select id="getMenuList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMMNU00100_getMenuList_조민지_심연정 */ 
+     menu_num
+    ,TOP_PREFIX_CD
+    ,menu_nm
+    ,menu_shot_nm
+    ,top_menu_num
+    ,menu_group
+    ,menu_lvl_cd
+    ,menu_url
+    ,sort_seq
+    ,screen_id
+    ,sup_menu_num
+    ,screen_size
+    ,use_yn
+    ,remark      
+FROM 
+	tadm_menu
+WHERE 
+	DEL_YN = 'N'	
+START WITH 
+	MENU_LVL_CD = '1'
+CONNECT BY PRIOR 
+	MENU_NUM = SUP_MENU_NUM
+ORDER SIBLINGS BY 
+	sort_seq]]>
+	</select>
+	<select id="getMenuNum" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 	/*+ ADMMNU00100_getMenuNum_조민지_심연정 */ 
+		NVL(MAX(MENU_NUM),'100000000')+1 AS MENU_NUM
+FROM 	TADM_MENU]]>
+	</select>
+	<insert id="addMenu" parameterClass="map" ><![CDATA[INSERT INTO /*+ ADMMNU00100_addMenu_조민지_심연정 */ tadm_menu
+	(
+     menu_num
+    ,menu_nm
+    ,menu_shot_nm
+    ,top_menu_num
+    ,menu_group
+    ,menu_lvl_cd
+    ,menu_url
+    ,sort_seq
+    ,screen_id
+    ,sup_menu_num
+    ,screen_size
+    ,use_yn
+    ,remark
+    ,del_yn
+    ,upd_cnt
+    ,ins_dtm
+    ,ins_user_id
+    ,mod_dtm
+    ,mod_user_id 
+    ,TOP_PREFIX_CD
+	)
+VALUES 
+    (
+     #menu_num#
+    ,#menu_nm#
+    ,#menu_shot_nm#
+    ,#top_menu_num#
+    ,#menu_group#
+    ,#menu_lvl_cd#
+    ,#menu_url#
+    ,#sort_seq#
+    ,UPPER(#screen_id#)
+    ,#sup_menu_num#
+    ,#screen_size#
+    ,#use_yn#
+    ,#remark#
+    ,'N'
+    ,0
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,#TOP_PREFIX_CD#
+    )]]>
+	</insert>
+	<update id="deleteMenu" parameterClass="map" ><![CDATA[DELETE FROM					/*+ ADMMNU00100_deleteMenu_조민지_심연정 */
+	tadm_menu
+WHERE
+	menu_num = #menu_num#]]>
+	</update>
+	<update id="updateMenu" parameterClass="map" ><![CDATA[UPDATE /*+ ADMMNU00100_updateMenu_조민지_심연정 */
+	tadm_menu
+SET	
+	menu_nm = #menu_nm#,
+	menu_shot_nm = #menu_shot_nm#,
+	top_menu_num = #top_menu_num#,
+	menu_lvl_cd = #menu_lvl_cd#,
+	menu_url = #menu_url#,
+	sort_seq = #sort_seq#,
+	screen_id = #screen_id#,
+	sup_menu_num = #sup_menu_num#,
+    screen_size = #screen_size#,
+    use_yn = #use_yn#,
+    remark = #remark#,
+    upd_cnt = upd_cnt+1,
+    mod_dtm = to_char(sysdate,'YYYYMMDDHH24MISS'),
+    mod_user_id = #onlineContext.userInfo.loginId#,
+    TOP_PREFIX_CD = #TOP_PREFIX_CD#
+WHERE
+    menu_num = #menu_num#]]>
+	</update>
+	<select id="getSupMenuNum" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 	/*+ ADMMNU00100_getSupMenuNum_조민지_심연정 */
+	DISTINCT(sup_menu_num)
+FROM
+	tadm_menu
+WHERE
+	menu_num IN
+	(
+		$menu_nums$ 
+	)]]>
+	</select>
+	<select id="checkChild" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT						/*+ ADMMNU00100_checkChild_조민지_최승호 */ 
+	COUNT(menu_num) AS check_count
+FROM 
+	tadm_menu
+WHERE
+	sup_menu_num = #menu_num#]]>
+	</select>
+	<insert id="addAuth" parameterClass="map" ><![CDATA[INSERT INTO 															/*+ ADMMNU00100_addAuth_조민지_최승호 */
+	tadm_menu_auth
+	(
+	menu_num,				/* 메뉴 번호  */															
+	user_grp,				/* 사용자 그룹  */
+	search_auth_yn,			/* 조회 권한 */
+	save_auth_yn,			/* 저장 권한 */
+	del_auth_yn,			/* 삭제 권한 */
+	aprv_auth_yn,			/* 승인 권한 */	
+	close_auth_yn,			/* 마감 권한 */
+	etc1_auth_yn,			/* 전송 권한 */
+	del_yn,					/* 삭제 유무 */
+	upd_cnt,				/* 업데이트 카운트 */
+	ins_dtm,				/* 입력 일시 */
+	ins_user_id,			/* 입력자 아이디*/
+	mod_dtm,				/* 수정 일시 */
+	mod_user_id				/* 수정자 아이디*/
+	)
+VALUES	
+	(
+	#menu_num#,
+	#user_grp#,
+	DECODE(#search_auth_yn#,'1', 'Y', 'N'),
+	DECODE(#save_auth_yn#,  '1', 'Y', 'N'),
+	DECODE(#del_auth_yn#,   '1', 'Y', 'N'),
+	DECODE(#aprv_auth_yn#,  '1', 'Y', 'N'),
+	DECODE(#close_auth_yn#, '1', 'Y', 'N'),
+	DECODE(#etc1_auth_yn#,  '1', 'Y', 'N'),
+	'N',
+	0,
+	to_char(sysdate,'YYYYMMDDHH24MISS'),
+	#onlineContext.userInfo.loginId#,
+	to_char(sysdate,'YYYYMMDDHH24MISS'),
+	#onlineContext.userInfo.loginId#
+	) ]]>
+	</insert>
+	<update id="updateAuth" parameterClass="map" ><![CDATA[UPDATE 															/*+ ADMMNU00100_updatAuth_조민지_최승호 */
+	tadm_menu_auth
+SET	
+	user_grp = #user_grp#,										/* 사용자 그룹 */
+    search_auth_yn  = DECODE(#search_auth_yn#,'1', 'Y', 'N'),	/* 조회 권한 */
+	save_auth_yn 	= DECODE(#save_auth_yn#,  '1', 'Y', 'N'),	/* 저장 권한 */
+	del_auth_yn 	= DECODE(#del_auth_yn#,   '1', 'Y', 'N'),	/* 삭제 권한 */
+	aprv_auth_yn 	= DECODE(#aprv_auth_yn#,  '1', 'Y', 'N'),	/* 승인 권한 */	
+	close_auth_yn 	= DECODE(#close_auth_yn#, '1', 'Y', 'N'),	/* 마감 권한 */
+	etc1_auth_yn 	= DECODE(#etc1_auth_yn#,  '1', 'Y', 'N'),	/* 전송 권한 */
+	mod_dtm = to_char(sysdate,'YYYYMMDDHH24MISS'),				/* 수정 일시 */
+	mod_user_id = #onlineContext.userInfo.loginId#				/* 수성자 아이디 */
+WHERE
+    menu_num = #menu_num#
+AND    
+    user_grp = #user_grp#]]>
+	</update>
+	<delete id="deleteAuth" parameterClass="map" ><![CDATA[DELETE FROM					/*+ ADMMNU00100_deleteAuth_조민지_최승호 */
+	tadm_menu_auth
+WHERE
+	menu_num = #menu_num#
+	
+/* 사용자 그룹 */
+]]><isNotEmpty prepend="AND" property="user_grp">
+<![CDATA[	user_grp = #user_grp#
+]]></isNotEmpty>	
+<![CDATA[]]>
+	</delete>
+	<insert id="addMyMenu" parameterClass="map" ><![CDATA[INSERT INTO 
+	tadm_my_menu
+(
+	 user_cd	
+    ,menu_num
+
+    ,del_yn
+    ,upd_cnt
+    ,ins_dtm
+    ,ins_user_id
+    ,mod_dtm
+    ,mod_user_id 
+)
+VALUES 
+(
+	 #onlineContext.userInfo.loginId#  
+    ,#menu_num#
+
+
+    ,'N'
+    ,0
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+)]]>
+	</insert>
+	<delete id="deleteMyMenu" parameterClass="map" ><![CDATA[DELETE FROM					/*+ ADMMNU00100_deleteMyMenu_조민지_심연정 */
+	tadm_my_menu
+WHERE
+	menu_num = #menu_num#
+AND
+	user_cd = #user_cd#]]>
+	</delete>
+	<select id="getMyMenu" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 						/*+ ADMMNU00100_getMyMenu_조민지_최승호 */ 
+     a.menu_num
+    ,a.user_cd
+    ,b.menu_shot_nm AS menu_nm    
+FROM 
+	tadm_my_menu a, tadm_menu b
+WHERE
+	b.del_yn = 'N'
+AND
+	a.menu_num = b.menu_num
+AND
+	a.user_cd = #onlineContext.userInfo.loginId#]]>
+	</select>
+	<insert id="addFirstMenu" parameterClass="map" ><![CDATA[INSERT INTO 										/*+ ADMMNU00100_addFirstMenu_조민지_최승호 */ 
+	tadm_menu
+	(
+     menu_num										
+    ,menu_nm
+    ,menu_shot_nm
+    ,menu_group
+    ,menu_lvl_cd
+    ,sort_seq
+    ,use_yn
+
+    ,del_yn
+    ,upd_cnt
+    ,ins_dtm
+    ,ins_user_id
+    ,mod_dtm
+    ,mod_user_id 
+	)
+VALUES 
+    (
+     ( SELECT NVL(MAX(MENU_NUM),'100000000')+1 FROM TADM_MENU )
+    ,#menu_nm#
+    ,#menu_shot_nm#
+    ,#menu_group#
+    ,#menu_lvl_cd#
+    ,#sort_seq#
+    ,#use_yn#
+
+    ,'N'
+    ,0
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    )]]>
+	</insert>
+	<select id="getAuthMenuList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 
+	DISTINCT(SUP_MENU_NUM)
+FROM
+	 TADM_MENU
+WHERE
+	MENU_NUM IN
+	(
+		SELECT
+			DISTINCT(A.SUP_MENU_NUM)
+		FROM
+			TADM_MENU A, TADM_MENU_AUTH B	 	
+		WHERE
+			B.USER_GRP = 'S3'
+		AND	
+			a.menu_num = b.menu_num
+		AND 
+			a.use_yn = 'Y'
+		AND 
+			a.sup_menu_num IS NOT NULL
+	)
+AND 
+	SUP_MENU_NUM IS NOT NULL
+AND 
+	USE_YN = 'Y']]>
+	</select>
+	<select id="getLoginMenuTree" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 	/*+ ADMMNU00100_getLoginMenuTree_조민지_튜닝 */ 
+        TO_CHAR(MENU_NUM) AS menuNum
+       ,MENU_NM AS menuNm              
+       ,MENU_SHOT_NM AS menuShotNm             
+       ,TOP_MENU_NUM AS topMenuNum             
+       ,MENU_GROUP AS menuGroup               
+       ,MENU_LVL_CD AS menuLvlCd               
+       ,MENU_URL AS menuUrl         
+       ,SORT_SEQ AS sortSeq               
+       ,SCREEN_ID AS screenId          
+       ,SUP_MENU_NUM AS supMenuNum        
+       ,TOP_PREFIX_CD AS topPrefixCd           
+       ,SCREEN_SIZE AS screenSize            
+       ,USE_YN AS useYn  
+       ,REMARK AS remark 
+FROM (
+    SELECT DISTINCT *
+    FROM (
+        SELECT B.USER_GRP, A.*
+        FROM TADM_MENU A, TADM_MENU_AUTH B
+        WHERE a.menu_num = b.menu_num(+)
+        AND (A.MENU_LVL_CD <> '4' OR A.USE_YN = 'Y')
+        AND A.DEL_YN = 'N'
+        ) X
+    START WITH USER_GRP = (SELECT USER_GRP 
+                             FROM TBAS_USER_MGMT WHERE USER_ID = #onlineContext.userInfo.loginId#)
+    CONNECT BY PRIOR SUP_MENU_NUM = MENU_NUM
+    )
+START WITH MENU_LVL_CD = '1'
+CONNECT BY PRIOR MENU_NUM = SUP_MENU_NUM
+ORDER SIBLINGS BY sort_seq]]>
+	</select>
+	<select id="getLoginMenuAuthList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[	SELECT
+		TO_CHAR(A.MENU_NUM) AS menuNum
+		,A.MENU_NM AS menuNm
+		,A.MENU_SHOT_NM AS menuShotNm
+		,A.TOP_MENU_NUM AS topMenuNum
+		,A.MENU_GROUP AS menuGroup
+		,A.MENU_LVL_CD AS menuLvlCd
+		,A.MENU_URL AS menuUrl
+		,A.SORT_SEQ AS sortSeq
+		,A.SCREEN_ID AS screenId
+		,A.SUP_MENU_NUM AS supMenuNum
+		,A.TOP_PREFIX_CD AS topPrefixCd
+		,A.SCREEN_SIZE AS screenSize
+		,A.USE_YN AS useYn
+		,A.REMARK AS remark		
+		,B.SEARCH_AUTH_YN AS searchAuthYn
+		,B.SAVE_AUTH_YN AS saveAuthYn
+		,B.DEL_AUTH_YN AS delAuthYn
+		,B.REQ_AUTH_YN AS reqAuthYn
+		,B.APRV_AUTH_YN AS aprvAuthYn
+		,B.CAN_AUTH_YN AS canAuthYn
+		,B.CLOSE_AUTH_YN AS closeAuthYn
+		,B.PRINT_AUTH_YN AS printAuthYn
+		,B.INIT_AUTH_YN AS initAuthYn
+		,B.ETC1_AUTH_YN AS etc1AuthYn
+		,B.ETC2_AUTH_YN AS etc2AuthYn
+		,B.ETC3_AUTH_YN AS etc3AuthYn
+	FROM
+	 	TADM_MENU A
+	 	,TADM_MENU_AUTH B	 	
+	WHERE
+		B.USER_GRP = #USER_GRP#
+		and B.DEL_YN <> 'Y'
+		and B.SEARCH_AUTH_YN ='Y'
+		and B.MENU_NUM = A.MENU_NUM
+		and	A.DEL_YN <> 'Y']]>
+	</select>
+	<select id="getLoginMenuTreeBySuperAdm" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT     /*+ ADMMNU00100_getLoginMenuTreeBySuperAdm_원윤성_한병곤 */ 
+        TO_CHAR(MENU_NUM) AS menuNum
+       ,MENU_NM AS menuNm              
+       ,MENU_SHOT_NM AS menuShotNm             
+       ,TOP_MENU_NUM AS topMenuNum             
+       ,MENU_GROUP AS menuGroup               
+       ,MENU_LVL_CD AS menuLvlCd               
+       ,MENU_URL AS menuUrl         
+       ,SORT_SEQ AS sortSeq               
+       ,SCREEN_ID AS screenId          
+       ,SUP_MENU_NUM AS supMenuNum        
+       ,TOP_PREFIX_CD AS topPrefixCd           
+       ,SCREEN_SIZE AS screenSize            
+       ,USE_YN AS useYn  
+       ,REMARK AS remark 
+FROM (
+    SELECT DISTINCT *
+    FROM (
+        SELECT A.*
+        FROM TADM_MENU A
+        WHERE (A.MENU_LVL_CD <> '4' OR A.USE_YN = 'Y')
+        AND A.DEL_YN = 'N'
+        ) X
+    START WITH DEL_YN = 'N'
+    CONNECT BY PRIOR SUP_MENU_NUM = MENU_NUM
+    )
+START WITH MENU_LVL_CD = '1'
+CONNECT BY PRIOR MENU_NUM = SUP_MENU_NUM
+ORDER SIBLINGS BY sort_seq]]>
+	</select>
+	<select id="getLoginMenuAuthListBySuperAdm" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMMNU00100_getLoginMenuAuthListBySuperAdm_원윤성_한병곤 */ 
+       TO_CHAR(A.MENU_NUM) AS menuNum
+       ,A.MENU_NM AS menuNm
+       ,A.MENU_SHOT_NM AS menuShotNm
+       ,A.TOP_MENU_NUM AS topMenuNum
+       ,A.MENU_GROUP AS menuGroup
+       ,A.MENU_LVL_CD AS menuLvlCd
+       ,A.MENU_URL AS menuUrl
+       ,A.SORT_SEQ AS sortSeq
+       ,A.SCREEN_ID AS screenId
+       ,A.SUP_MENU_NUM AS supMenuNum
+       ,A.TOP_PREFIX_CD AS topPrefixCd
+       ,A.SCREEN_SIZE AS screenSize
+       ,A.USE_YN AS useYn
+       ,A.REMARK AS remark		
+       ,'Y' AS searchAuthYn
+       ,'Y' AS saveAuthYn
+       ,'Y' AS delAuthYn
+       ,'Y' AS reqAuthYn
+       ,'Y' AS aprvAuthYn
+       ,'Y' AS canAuthYn
+       ,'Y' AS closeAuthYn
+       ,'Y' AS printAuthYn
+       ,'Y' AS initAuthYn
+       ,'Y' AS etc1AuthYn
+       ,'Y' AS etc2AuthYn
+       ,'Y' AS etc3AuthYn
+  FROM TADM_MENU A	
+ WHERE A.DEL_YN <> 'Y']]>
+	</select>
+	<select id="getUserGrp" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT USER_GRP FROM TBAS_USER_MGMT 
+ WHERE USER_ID = #onlineContext.userInfo.loginId#
+   AND EFF_USER_YN = 'Y' 
+   AND DEL_YN = 'N']]>
+	</select>
+</sqlMap>

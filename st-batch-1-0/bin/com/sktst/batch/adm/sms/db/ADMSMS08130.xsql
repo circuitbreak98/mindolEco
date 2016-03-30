@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMSMS08130">
+	<select id="getExpiredDeal" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select  /* ADMSMS08130_getExpiredDeal_전송대상 거래처및 사용자 추출_김연석_김연석 */
+	       b.deal_co_nm
+	     , b.insp_exp_dt
+	     , a.mbl_phon
+	     , b.tel_no
+	     , b.pos_agency
+	     , a.user_nm recv_user
+	     , c.user_id send_user
+	     , c.user_nm send_name
+      from tbas_user_mgmt    a
+         , tbas_deal_co_mgmt b
+         , tbas_user_mgmt    c
+     where a.pos_agency  = b.pos_agency
+       and b.pos_agency  = c.pos_agency
+       and a.mbl_phon     is not null
+       and a.user_grp     in ('D16', 'D19')
+       and b.insp_exp_dt  in ( #INSP_EXP_DT1#, #INSP_EXP_DT2# )
+       and b.deal_co_cl1  in ('A3', 'B2', 'C1')
+       and b.del_yn        =  'N'
+       and c.user_grp      =  'D22'
+       and c.user_id    like  'TP%'
+       and a.eff_user_yn   =  'Y'
+       and to_char(sysdate, 'yyyymmddhh24Miss')
+           between b.eff_sta_dtm and b.eff_end_dtm
+    union all
+    select 
+	       b.deal_co_nm
+	     , b.insp_exp_dt
+	     , a.mbl_phon
+	     , b.tel_no
+	     , b.pos_agency
+	     , a.user_nm recv_user
+	     , c.user_id send_user
+	     , c.user_nm send_name
+      from tbas_user_mgmt    a
+         , tbas_deal_co_mgmt b
+         , tbas_user_mgmt    c
+     where a.user_id       = b.chrgr_user_id
+       and b.pos_agency    = c.pos_agency
+       and a.mbl_phon     is not null
+       and b.insp_exp_dt  in ( #INSP_EXP_DT1#, #INSP_EXP_DT2# )
+       and b.deal_co_cl1  in ('A3', 'B2', 'C1')
+       and b.del_yn        =  'N'
+       and c.user_grp      =  'D22'
+       and c.user_id    like  'TP%'
+       and a.eff_user_yn   =  'Y'
+       and to_char(sysdate, 'yyyymmddhh24Miss')
+           between eff_sta_dtm and eff_end_dtm 
+	]]>
+	</select>
+	<select id="getAdmSmsCmpMsgSeq" resultClass="hmap" fetchSize="50" >
+	<![CDATA[SELECT SADM_SMS_CMP_MSG_SEQ.nextval as sms_seq  FROM DUAL]]>
+	</select>
+	<select id="getAdmSmsTranCnt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[SELECT SADM_SMS_TRAN_SEQ.nextval    as tran_cnt FROM DUAL]]>
+	</select>
+	<insert id="addSmsTran" parameterClass="hmap">
+	<![CDATA[
+	INSERT INTO /*+ ADMSMS08130_addSmsTran_김연석_김연석 */
+	       TADM_SMS_TRAN
+                  ( tran_dt
+                  , tran_cnt
+                  , title
+                  , tran_user_id
+                  , rtn_tel_no
+                  , context
+                  , msg_ser_num
+                  , sms_job_cl
+                  , del_yn,  upd_cnt
+                  , ins_dtm, ins_user_id
+                  , mod_dtm, mod_user_id)
+           VALUES
+                  ( TO_CHAR(SYSDATE, 'YYYYMMDD')
+                  , #TRAN_SEQ#
+                  , substrb(#SMS_MSG#, 1, 40)
+                  , #SMS_USER#
+                  , #SMS_RECV_TEL#
+                  , #SMS_MSG#
+                  , 0
+                  , '04'
+                  , 'N', 1
+                  , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), 'psadm'
+                  , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), 'psadm')
+	]]>
+	</insert>
+	<insert id="addSmsTranDtl" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ ADMSMS08130_addSmsTranDtl_김연석_김연석 */
+	       TADM_SMS_TRAN_DTL
+                  ( tran_dt
+                  , tran_cnt
+                  , seq
+                  , name
+                  , tel_no
+                  , addr_cat
+                  , skt_yn
+                  , cmp_msg_id
+                  , del_yn, upd_cnt
+                  , ins_dtm, ins_user_id
+                  , mod_dtm, mod_user_id)
+           VALUES
+                  ( TO_CHAR(SYSDATE, 'YYYYMMDD')
+                  , #TRAN_SEQ#
+                  , 1
+                  , #USER_NAME#
+                  , #PHONE_NUM#
+                  , 'N'
+                  , 'N'
+                  , #SMS_SEQ#
+                  , 'N', 1
+                  , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), 'psadm'
+                  , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), 'psadm')
+	]]>
+	</insert>
+	<insert id="addTelinkSMS" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ ADMSMS08130_addTelinkSMS_김연석_김연석 */
+	       telink_sms
+                  ( cmp_msg_id
+                  , cmp_usr_id
+                  , odr_fg
+                  , sms_gb
+                  , used_cd
+                  , msg_gb
+                  , snd_dttm
+                  , snd_phn_id
+                  , rcv_phn_id
+                  , callback
+                  , snd_msg
+                  , expire_val
+                  , sms_st
+                  , rslt_val)
+           VALUES
+                  ( #SMS_SEQ#
+                  , '00000'
+                  , '2'
+                  , '1'
+                  , '00'
+                  , 'A'
+                  , TO_CHAR(SYSDATE, 'YYYYMMDD') || '100000'
+                  , #SEND_USER#
+                  , #PHONE_NUM#
+                  , #SMS_RECV_TEL#
+                  , substrb(#SMS_MSG#, 1, 80)
+                  , 0
+                  , '0'
+                  , 99)
+	]]>
+	</insert>
+</sqlMap>

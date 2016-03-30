@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSTA08180">
+	<select id="getDealAgencyInfo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select deal_co_cd
+	  from tbas_deal_co_mgmt a
+	 where ukey_agency_cd = #UKEY_AGENCY_CD#
+	   and deal_co_cl1    = 'A1'
+	   and deal_end_yn    = 'N'
+	   and hseq_no        = (select max(hseq_no)
+	                           from tbas_deal_co_mgmt
+	                          where deal_co_cd = a.deal_co_cd
+	                            and #EFF_DT# || '120000' between eff_sta_dtm and eff_end_dtm)
+	]]>
+	</select>
+	<select id="getDealPlcInfo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select deal_co_cd
+	  from tbas_deal_co_mgmt a
+	 where ukey_agency_cd = #UKEY_AGENCY_CD#
+	   and ukey_sub_cd    = #UKEY_SUB_CD#
+	   and deal_end_yn    = 'N'
+	   and hseq_no        = (select max(hseq_no)
+	                           from tbas_deal_co_mgmt
+	                          where deal_co_cd = a.deal_co_cd
+	                            and #EFF_DT# || '120000' between eff_sta_dtm and eff_end_dtm)
+	]]>
+	</select>
+	<delete id="deleteUkeySuplProd" parameterClass="map" >
+	<![CDATA[
+	delete  /* SALSTA08180_deleteUkeySuplProd_U.KeyT기본&T할부가입통계삭제_김연석_김연석 */
+      from   TSAL_UKEY_TBASTALLNEW_SCRB
+     where   STRD_DT  = #STRD_DT#
+	]]>
+	</delete>
+	<delete id="deleteUkeySuplProd2" parameterClass="map" >
+	<![CDATA[
+	delete  /* SALSTA08180_deleteUkeySuplProd2_U.KeyT기본&T할부가입통계삭제_김연석_김연석 */
+      from   TSAL_UKEY_TBASTALLRTN_SCRB
+     where   STRD_DT  = #STRD_DT#
+	]]>
+	</delete>
+	<insert id="addUkeySuplProd" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSTA08180_addUkeySuplProd_UKEYT기본&T할부가입통계 생성 */
+           TSAL_UKEY_TBASTALLNEW_SCRB(
+                                 STRD_DT
+                               	, UKEY_SEQ
+                               	, UKEY_AGENCY_CD
+                               	, UKEY_SUB_CD
+                               	, AGENCY_CD
+                               	, PROC_PLC
+                               	, SCRB_TYP_CD
+                               	, TOT_CNT1
+								, NEW_SCRB_CNT1
+								, KTFSKT_NP_SCRB_CNT1
+								, LGTSKT_NP_SCRB_CNT1
+								, SUM_CNT1
+								, AGRMT_DC_ADD_CNT1
+								, NEW_SCRB_CNT2
+								, KTFSKT_NP_SCRB_CNT2
+								, LGTSKT_NP_SCRB_CNT2
+								, SUM_CNT2
+								, AGRMT_DC_ADD_CNT2
+								, NEW_SCRB_CNT9
+								, KTFSKT_NP_SCRB_CNT9
+								, LGTSKT_NP_SCRB_CNT9
+								, SUM_CNT3
+                               	, DEL_YN
+                               	, UPD_CNT
+                               	, INS_USER_ID
+                               	, INS_DTM
+                               	, MOD_USER_ID
+                               	, MOD_DTM
+            )  VALUES  (
+                                 #STRD_DT#
+                               	, (select nvl(max(UKEY_SEQ), 0) + 1
+                                    from TSAL_UKEY_TBASTALLNEW_SCRB
+                                   where STRD_DT  = #STRD_DT#)
+	            	           	, #UKEY_AGENCY_CD#
+	            	           	, #UKEY_SUB_CD#
+	            	           	, #AGENCY_CD#
+	            	           	, #PROC_PLC#
+	            	           	, #SCRB_TYP_CD#
+                               	, #TOT_CNT1#
+								, #NEW_SCRB_CNT1#
+								, #KTFSKT_NP_SCRB_CNT1#
+								, #LGTSKT_NP_SCRB_CNT1#
+								, #SUM_CNT1#
+								, #AGRMT_DC_ADD_CNT1#
+								, #NEW_SCRB_CNT2#
+								, #KTFSKT_NP_SCRB_CNT2#
+								, #LGTSKT_NP_SCRB_CNT2#
+								, #SUM_CNT2#
+								, #AGRMT_DC_ADD_CNT2#
+								, #NEW_SCRB_CNT9#
+								, #KTFSKT_NP_SCRB_CNT9#
+								, #LGTSKT_NP_SCRB_CNT9#
+								, #SUM_CNT3#
+                               	, 'N'
+                               	, 1
+                               	, #USER_ID#
+                               	, TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+                               	, #USER_ID#
+                               	, TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+    )]]>
+	</insert>
+	<insert id="addUkeySuplProd2" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSTA08180_addUkeySuplProd2_UKEYT기본&T할부가입통계 생성 */
+           TSAL_UKEY_TBASTALLRTN_SCRB(
+                                 STRD_DT
+                               	, UKEY_SEQ
+                               	, UKEY_AGENCY_CD
+                               	, UKEY_SUB_CD
+                               	, AGENCY_CD
+                               	, PROC_PLC
+                               	, SCRB_TYP_CD
+                               	, TOT_CNT2
+								, EQP_RTN_CNT1
+								, EXCL_EQP_RTN_CNT1
+								, EQP_UNRTN_CNT1
+								, CUM_CNT4
+								, EQP_DC_ADD_UNRTN_CNT1
+								, EQP_RTN_CNT2
+								, EXCL_EQP_RTN_CNT2
+								, EQP_UNRTN_CNT2
+								, CUM_CNT5
+								, EQP_DC_ADD_UNRTN_CNT2
+                               	, DEL_YN
+                               	, UPD_CNT
+                               	, INS_USER_ID
+                               	, INS_DTM
+                               	, MOD_USER_ID
+                               	, MOD_DTM
+            )  VALUES  (
+                                 #STRD_DT#
+                               	, (select nvl(max(UKEY_SEQ), 0) + 1
+                                    from TSAL_UKEY_TBASTALLRTN_SCRB
+                                   where STRD_DT  = #STRD_DT#)
+	            	           	, #UKEY_AGENCY_CD#
+	            	           	, #UKEY_SUB_CD#
+	            	           	, #AGENCY_CD#
+	            	           	, #PROC_PLC#
+	            	           	, #SCRB_TYP_CD#
+                               	, #TOT_CNT2#
+								, #EQP_RTN_CNT1#
+								, #EXCL_EQP_RTN_CNT1#
+								, #EQP_UNRTN_CNT1#
+								, #CUM_CNT4#
+								, #EQP_DC_ADD_UNRTN_CNT1#
+								, #EQP_RTN_CNT2#
+								, #EXCL_EQP_RTN_CNT2#
+								, #EQP_UNRTN_CNT2#
+								, #CUM_CNT5#
+								, #EQP_DC_ADD_UNRTN_CNT2#
+                               	, 'N'
+                               	, 1
+                               	, #USER_ID#
+                               	, TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+                               	, #USER_ID#
+                               	, TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+    )]]>
+	</insert>
+</sqlMap>

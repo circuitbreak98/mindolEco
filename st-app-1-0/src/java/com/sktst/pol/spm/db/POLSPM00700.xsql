@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="POLSPM00700">
+	<select id="getGroupList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00700_getGroupList_전미량" */ 
+	   PROD_GROUP_ID,
+	   PROD_GROUP_CD, 
+       FBAS_GET_COMMCDNM_VAL('ZPOL_C_00560',PROD_GROUP_CD) AS PROD_GROUP_NM,
+       EFF_STA_DT, 
+       EFF_END_DT
+  FROM TPOL_PROD_GROUP_MGMT 
+ WHERE DEL_YN = 'N'
+]]> <isNotEmpty prepend="AND" property="PROD_GROUP_CD">
+<![CDATA[ 	PROD_GROUP_CD = #PROD_GROUP_CD#
+]]> </isNotEmpty>
+<![CDATA[]]> <isNotEmpty prepend="AND" property="APLY_YM">
+<![CDATA[ SUBSTR(EFF_STA_DT,0,6) = #APLY_YM#
+]]> </isNotEmpty>
+<![CDATA[GROUP BY PROD_GROUP_ID, PROD_GROUP_CD, EFF_STA_DT, EFF_END_DT
+ORDER BY PROD_GROUP_CD]]>
+	</select>
+</sqlMap>

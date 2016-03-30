@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnLoadCompleted="ACCIFM00300_OnLoadCompleted" PidAttrib="7" Title="월정산&#32;인터페이스&#32;관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="APLY_YM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROG_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="OP_USER" size="256" summ="default" type="STRING"/>
+					<colinfo id="OP_OBJ_DT" size="256" summ="default" type="STRING"/>
+					<record>
+						<APLY_YM></APLY_YM>
+						<OP_OBJ_DT></OP_OBJ_DT>
+						<OP_USER></OP_USER>
+						<PROG_ID></PROG_ID>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_accIFList">
+				<Contents>
+					<colinfo id="PROG_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROG_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="REQ_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="REQ_USER_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="TRMS_RESULT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TRMS_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="TRMS_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ERP_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEL_APLY" size="256" summ="default" type="STRING"/>
+					<colinfo id="SELECTED" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_accIFList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="553" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="486" Id="grd_accIFList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_accIFList_OnCellDblClick" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="67" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="40"/>
+						<col width="200"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" rowspan="2" text="선택"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" rowspan="2" text="구분"/>
+						<cell bkcolor="user34" col="2" color="user35" colspan="2" display="text" text="전송요청"/>
+						<cell bkcolor="user34" col="4" color="user35" colspan="2" display="text" text="전송현황"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" row="1" text="요청자"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" row="1" text="요청일시"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" row="1" text="전송결과"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" row="1" text="전송일시"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="SELECTED" display="checkbox" edit="checkbox"/>
+						<cell align="center" col="1" colid="PROG_NM" display="text"/>
+						<cell align="center" col="2" colid="REQ_USER_NM" display="text"/>
+						<cell align="center" col="3" colid="REQ_DT" display="text" Mask="@@@@-@@-@@&#32;@@:@@"/>
+						<cell align="center" col="4" colid="TRMS_RESULT" display="text"/>
+						<cell align="center" col="5" colid="TRMS_DTM" display="text" Mask="@@@@-@@-@@&#32;@@:@@"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="2" Text="질의내용" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="-10" Style="sty_lb_Search" TabOrder="1" Text="조회년월" Top="7" VAlign="Middle" Width="76"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="256" LeftMargin="5" OnClick="df_search" Style="sty_btn_a" TabOrder="2" Text="조회" Top="7" Width="60"></Button>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="APLY_YM" Height="20" Id="cal_accYm" Left="72" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Type="STRING" Width="77"></MaskEdit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="149" OnClick="btn_monthCalendar_OnClick" TabOrder="4" TabStop="FALSE" Text="Button3" Top="7" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_HstSearch" ImageID="btn_e_4" Left="732" LeftMargin="17" OnClick="btn_HstSearch_OnClick" Style="sty_btn_e" TabOrder="3" Text="전송요청" Top="559" Width="85"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCIFM00300
+* 업무명      : 정산관리
+* 프로그램명  : 월장산 인터페이스 관리
+--------------------------------------------------------------------------------
+* 작성자      : 장화수
+* 작성일      : 2009.03.05
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_MENU_NO       = "100000200"; //메뉴번호 (1100000200: 판매목표 달성현황)
+var FV_ORG_ID;	//조직코드
+var FV_ORG_CL;  //조직구분
+
+/*******************************************************************************
+* 함수명 : ACCIFM00300_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function ACCIFM00300_OnLoadCompleted(obj) {
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	df_search();
+}
+
+/*******************************************************************************
+* 함수명 : df_reSet
+* 기능명 : 화면 초기화
+*******************************************************************************/
+function df_reSet(sArg)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	df_search(sArg);
+}
+
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_accYm);
+}
+
+
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	
+	//trace(ds_saleTrgtAchvLst.SaveXML());
+	if(sSvcID == "svcSearch")
+	{
+
+
+	}
+	if(sSvcID == "svcSave")
+	{
+		var sArg  = ""; 
+		gf_OpenWindow( "100000661", sArg); 
+	}
+
+}
+
+
+/*******************************************************************************
+* 함수명 : df_search
+* 기능명 : 공통 조회 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function df_search(sArg)
+{
+
+	if (uf_isNull(div_search.cal_accYm.Value)== true) {
+
+		if(ds_condition.GetRowCount() < 1)
+		{
+			ds_condition.AddRow();
+		}
+		ds_condition.SetColumn(0,"APLY_YM",substr(TODAY(),0,6));
+	}
+
+	if (sArg.id == "btn_search") {
+		ds_condition.SetColumn(0,"APLY_YM",div_search.cal_accYm.Value);
+	}
+
+
+	if (uf_isNull(div_search.cal_accYm.Value)== true) {
+	    //적용년월을 선택하세요.
+		alert(cf_getMessage(MSG_00047, "조회년월을"));
+		div_search.cal_accYm.SetFocus();
+		return false;
+	}
+
+	var sSvcID = "svcSearch";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_accIFList=ds_accIFList";
+	var sArg = "sktst.acc.IFM#getAccIFList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	
+}
+
+
+
+
+/*******************************************************************************
+* 함수명 : grd_accIFList_OnCellDblClick
+* 기능명 : OnCellDBClick 이벤트
+*******************************************************************************/
+function grd_accIFList_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	var sArg  = " APLY_YM="+quote(ds_condition.getColumn(0,"APLY_YM"));
+		sArg += " PROG_ID=" + quote(ds_accIFList.getColumn(nRow,"PROG_ID")); 
+		sArg += " PROG_NM=" + quote(ds_accIFList.getColumn(nRow,"PROG_NM")); 
+		sArg += " TRMS_RESULT=" + quote(ds_accIFList.getColumn(nRow,"TRMS_RESULT")); 
+		sArg += " TRMS_DTM=" + quote(ds_accIFList.getColumn(nRow,"TRMS_DTM")); 
+
+	var sHeight = 580;
+	var sWidth  = 1220;
+
+	dialog("acc::ACCIFM00310.xml", sArg, sWidth, sHeight,,30 ,60 );
+	
+}
+
+/*******************************************************************************
+* 함수명 : btn_HstSearch_OnClick
+* 기능명 : OnCellDBClick 이벤트
+*******************************************************************************/
+function btn_HstSearch_OnClick(obj)
+{
+	    
+		var iCnt=0;
+		for( var nRow=0; nRow<ds_accIFList.rowcount; nRow++ ){
+			if(ds_accIFList.GetColumn(nRow,"SELECTED") > 0){
+				iCnt++;
+				
+				if(ds_accIFList.GetColumn(nRow,"ERP_CNT") > 0){
+					alert(ds_accIFList.GetColumn(nRow,"PROG_NM") + "은(는) ERP전송이 완료되었습니다.");
+					ds_accIFList.SetColumn(nRow,"SELECTED",0);
+					iCnt--;
+				}
+				
+			}
+		}
+
+        var sAlt = "은(는)\n\n";
+            sAlt += "전송 요청이 이미 수행 되었습니다. 재전송 요청을 할 경우 기존 전송 내역이 삭제됩니다.\n\n";
+            sAlt += "재전송 요청을 하시겠습니까?";
+        
+		for( var nRow=0; nRow<ds_accIFList.rowcount; nRow++ ){
+			if(ds_accIFList.GetColumn(nRow,"SELECTED") > 0){
+				if(ds_accIFList.GetColumn(nRow,"TRMS_CNT") > 0){
+				    sAlt = ds_accIFList.GetColumn(nRow,"PROG_NM") + sAlt;
+					if(confirm(sAlt) == 1){
+					    ds_accIFList.SetColumn(nRow,"DEL_APLY","Y");
+					} else {
+						ds_accIFList.SetColumn(nRow,"SELECTED",0);
+						iCnt--;
+					}
+				}
+			}
+		}
+
+	    
+        if ( iCnt > 0 ) {
+			//저장하시겠습니까?
+			if(confirm("("+iCnt+")건에 대하여 전송요청 하시겠습니까?") == 1){
+				sSvcID = "svcSave";
+	
+				sInDs  = " ds_accIFList=ds_accIFList ";    //월장산 인터페이스 현황
+				sInDs += " ds_condition=ds_condition ";    //조회 조건
+	
+				sOutDs = "";
+	
+				sArg = "sktst.acc.IFM#addAccIFHst";
+				cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+			}
+        } else {
+                alert("전송 요청할 항목을 체크하십시요.");
+        }
+	
+}
+
+
+
+
+
+
+
+]]></Script>
+</Window>

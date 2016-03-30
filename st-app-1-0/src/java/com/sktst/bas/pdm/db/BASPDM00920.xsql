@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASPDM00920">
+	<select id="getPriceCheck" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT DECODE(CNT,0,'Y','N') AS IN_YN
+FROM (
+      SELECT COUNT(*) AS CNT     
+        FROM TBAS_PROD_FIX_PRICE
+       WHERE PROD_CD = #PROD_CD#
+         AND TO_CHAR(TO_DATE(#ST_DT#,'YYYYMMDD')-1 ,'YYYYMMDD') BETWEEN ST_DT AND ED_DT
+         AND ED_DT != '99991231'
+         AND DEL_YN = 'N'
+     )]]>
+	</select>
+	<insert id="saveProdFixPriceMaster" parameterClass="map" ><![CDATA[INSERT 
+  INTO TBAS_PROD_FIX_PRICE_MASTER 
+       ( 
+           PRICE_MASTER_NO,
+           ST_DT,
+           PRICE_CNT,
+           RMKS,
+           DEL_YN,
+           UPD_CNT,
+           INS_DTM,
+           INS_USER_ID,
+           MOD_DTM,
+           MOD_USER_ID 
+       ) 
+       VALUES 
+       ( 
+           #PRICE_MASTER_NO#
+           , #ST_DT# 
+           , #PRICE_CNT# 
+           , #RMKS#
+           , 'N' 
+	       , 0 
+	       , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') 
+	       , #onlineContext.userInfo.loginId# 
+	       , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	       , #onlineContext.userInfo.loginId#
+       ) ]]>
+	</insert>
+	<select id="getPriceMasterNo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 'P'||LPAD(NVL(MAX(TO_NUMBER(SUBSTR(PRICE_MASTER_NO,2,9))),0)+1,9,'0') AS PRICE_MASTER_NO
+  FROM TBAS_PROD_FIX_PRICE_MASTER]]>
+	</select>
+	<insert id="saveProdFixPrice" parameterClass="map" ><![CDATA[INSERT 
+  INTO TBAS_PROD_FIX_PRICE 
+       ( 
+           PROD_CD,
+           SEQ,
+           GRADE,
+           PRICE,
+           RMKS,
+           DEL_YN,
+           UPD_CNT,
+           INS_DTM,
+           INS_USER_ID,
+           MOD_DTM,
+           MOD_USER_ID,
+           ST_DT,
+           ED_DT,
+           PRICE_MASTER_NO
+       ) 
+       VALUES 
+       ( 
+           #PROD_CD# 
+           , (SELECT NVL(MAX(SEQ),0)+1
+                FROM TBAS_PROD_FIX_PRICE
+                WHERE PROD_CD = #PROD_CD#)
+           , #GRADE#
+           , #PRICE#
+           , ''
+           , 'N' 
+	       , 0 
+	       , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') 
+	       , #onlineContext.userInfo.loginId# 
+	       , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	       , #onlineContext.userInfo.loginId#
+           , #ST_DT#
+           , '99991231'
+           , #PRICE_MASTER_NO#
+       ) ]]>
+	</insert>
+	<update id="updateProdFixPrice" parameterClass="map" ><![CDATA[UPDATE TBAS_PROD_FIX_PRICE
+   SET ED_DT = TO_CHAR(TO_DATE(#ST_DT#,'YYYYMMDD')-1,'YYYYMMDD')
+ WHERE ED_DT = '99991231'
+   AND PROD_CD = #PROD_CD#
+   AND DEL_YN = 'N']]>
+	</update>
+</sqlMap>

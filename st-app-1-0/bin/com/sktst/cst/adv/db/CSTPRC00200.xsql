@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTPRC00200">
+	<select id="getPrchsOutM" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT prchs.OUT_MGMT_NO
+     , prchs.OUT_CL
+     , outplc.POS_AGENCY OUT_POS_AGENCY_ID
+     , FBAS_GET_DEAL_NM(outplc.POS_AGENCY,prchs.OUT_DT) OUT_POS_AGENCY_NM
+     , prchs.OUT_PLC_ID
+     , FBAS_GET_DEAL_NM(prchs.OUT_PLC_ID,prchs.OUT_DT) OUT_PLC_NM
+     , inplc.POS_AGENCY IN_POS_AGENCY_ID
+     , FBAS_GET_DEAL_NM(inplc.POS_AGENCY,prchs.OUT_DT) IN_POS_AGENCY_NM
+     , prchs.IN_PLC_ID
+     , FBAS_GET_DEAL_NM(prchs.IN_PLC_ID,prchs.OUT_DT) IN_PLC_NM
+     , prchs.OUT_DT
+     , prchs.RMKS
+     , prchs.UPD_CNT
+     , FBAS_GET_USER_NM(prchs.INS_USER_ID) INS_USER_NM
+     , prchs.INS_USER_ID
+     , FBAS_GET_USER_NM(prchs.MOD_USER_ID) MOD_USER_NM
+     , prchs.MOD_USER_ID
+     ,(SELECT COUNT(*) 
+         FROM TCST_PRCHS_MOV_OUT_DTL
+     	WHERE OUT_MGMT_NO = prchs.OUT_MGMT_NO) OUT_COUNT
+  FROM TCST_PRCHS_OUT_M prchs
+     , TBAS_DEAL_CO_MGMT outplc
+     , TBAS_DEAL_CO_MGMT inplc
+ WHERE prchs.OUT_PLC_ID = outplc.DEAL_CO_CD
+   AND prchs.IN_PLC_ID = inplc.DEAL_CO_CD
+   AND outplc.EFF_END_DTM = '99991231235959'     
+   AND inplc.EFF_END_DTM = '99991231235959'
+   AND prchs.OUT_DT BETWEEN #FROM_OUT_DT# AND #TO_OUT_DT#
+   AND prchs.DEL_YN = 'N'
+   AND outplc.DEL_YN = 'N'
+   AND inplc.DEL_YN = 'N'
+]]><isNotEmpty prepend="AND" property="POS_OUTAGENCY_ID">
+<![CDATA[	   outplc.POS_AGENCY = #POS_OUTAGENCY_ID#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="OUT_PLC_ID">   
+<![CDATA[       prchs.OUT_PLC_ID = #OUT_PLC_ID#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="POS_INAGENCY_ID">   
+<![CDATA[	   inplc.POS_AGENCY = #POS_INAGENCY_ID#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="IN_PLC_ID">   
+<![CDATA[       prchs.IN_PLC_ID = #IN_PLC_ID#
+]]></isNotEmpty> 
+	</select>
+</sqlMap>

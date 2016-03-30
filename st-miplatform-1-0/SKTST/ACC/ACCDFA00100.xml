@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCDFA00100" Left="8" OnLoadCompleted="ACCDFA00100_OnLoadCompleted" PidAttrib="7" Title="배송비&#32;정산&#32;관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_feedList">
+				<Contents>
+					<colinfo id="ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SPLY_PRC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="VAT" size="256" summ="default" type="STRING"/>
+					<colinfo id="FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHK" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<colinfo id="DLV_CO_ID" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_mfixyn">
+				<Contents></Contents>
+			</Dataset>
+		</Datasets>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="배송비&#32;확정" Top="60" Width="192"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_feedList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="549" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="464" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_list_OnCellDblClick" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="85" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="0"/>
+						<col width="155"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="155"/>
+						<col width="27"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="비고"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="거래처"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="정산일"/>
+						<cell align="center" bkcolor="user34" col="3" color="user35" display="text" text="공급가액"/>
+						<cell align="center" bkcolor="user34" col="4" color="user35" display="text" text="부가세"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="확정금액"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="비고"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="확정"/>
+					</head>
+					<body>
+						<cell col="0" colid="RMKS" display="text"/>
+						<cell col="1" colid="DEAL_CO_NM" display="text"/>
+						<cell align="center" col="2" colid="ACC_DT" display="text"/>
+						<cell align="right" col="3" colid="SPLY_PRC_AMT" display="text"/>
+						<cell align="right" col="4" colid="VAT" display="text"/>
+						<cell align="right" col="5" colid="FIX_AMT" display="text"/>
+						<cell col="6" colid="RMKS" display="text"/>
+						<cell align="center" col="7" colid="chk" display="checkbox" edit="checkbox"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="760" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="4" Text="저장" Top="565" Width="60"></Button>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static2" Left="410" Style="sty_lb_dataview" TabOrder="6" Text="영업월" Top="7" VAlign="Middle" Width="68"></Static>
+				<Combo Border="Flat" Height="20" Id="cmb_CenterList" Left="105" Style="sty_ipt_form" TabOrder="1" Top="6" UserData="영업센터" Width="124"></Combo>
+				<Static Align="Right" Height="20" Id="Static4" Left="42" Style="sty_lb_dataview" TabOrder="7" Text="영업센터" Top="7" VAlign="Middle" Width="60"></Static>
+				<Static Align="Right" Height="20" Id="Static0" Left="218" Style="sty_lb_dataview" TabOrder="2" Text="정산월" Top="7" VAlign="Middle" Width="76"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="596" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="5" Text="조회" Top="7" Width="60"></Button>
+				<MaskEdit Border="Flat" Face3dColor="user10" Height="20" Hilight3dColor="user10" Id="cal_acc_mth" Left="298" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" OnChar="div_search_cal_acc_mth_OnChar" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Type="STRING" UserData="정산월" Width="106"></MaskEdit>
+				<Button Cursor="HAND" Height="18" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="386" OnClick="btn_monthCalendar_OnClick" TabOrder="4" Text="Button3" Top="8" Width="17"></Button>
+				<MaskEdit Border="Flat" Enable="FALSE" Face3dColor="user10" Height="20" Hilight3dColor="user10" Id="edt_accMth" Left="482" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="7" Type="STRING" UserData="영업월" Width="101"></MaskEdit>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCDFA00100	
+* 업무명      : 정산 - 배송비 정산
+* 프로그램명  : 배송비정산
+--------------------------------------------------------------------------------
+* 작성자      : 이종혁
+* 작성일      : 2009.02.20
+*******************************************************************************/
+
+//==============================================================================
+// 전 처리기
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+//#include "lib::lib_commMsg_ex.js"
+#include "lib::lib_util.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_MENU_NO = ""; //메뉴번호 ()
+var FV_ORG_CD;//로그인상대의 조직코드
+var FV_ORG_CL;//로그인상대의 조직구분
+var FV_STR_FLAG = "";
+/*******************************************************************************
+* 함수명 : ACCDFA00200_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function ACCDFA00100_OnLoadCompleted(obj)
+{	
+	FV_ORG_CD = gds_session.GetColumn(0,"orgId");
+	FV_ORG_CL = gds_session.GetColumn(0,"orgCl");
+	//
+	cf_setGrdChecknSortEvent(grd_list,0);
+	
+	//권한설정
+	if(FV_ORG_CL == 2)
+	{
+		gds_org.InsertRow(0);
+		gds_org.SetColumn(0,"ORGNM","전체");
+		gds_org.SetColumn(0,"ORGID","");
+		div_search.cmb_CenterList.Index = 0;
+	}
+	cf_setOrgInfo(div_search.cmb_CenterList);
+	//월달력설정
+	cf_setGrdCalendarEvent(grd_list,2);
+	//정산월 초기 화면 설정
+	f_init();
+	//영업월(정산월 -1) 초기화면 설정
+	f_salmonth();
+	
+	if(FV_ORG_CL == 3)
+	{	
+		//최종정산월 트랜젝션
+		// cf_setParam(ds_condition, "ORG_ID", FV_ORG_CD);
+		
+		// var sSvcID = "getLastMonth";
+		// var sInDs  = "nc_input_fieldDs=ds_condition";
+		// var sOutDs = "ds_condition=lastMonth";
+		// var sArg   = "sktst.acc.DFA#getLastMonth";
+		// cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+	
+	
+}
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	
+	if(sSvcID == "getFeedAccList")//확정할 배송비정산 거래처 조회
+	{	
+		//해당영업센터의 배송비 정산 확정 리스트가 없을경우.
+		if(ds_feedList.rowcount == 0)
+		{
+			alert(cf_getMessage(MSG_00067,""));//조회된 데이타가 없습니다.
+		}
+	}
+	else if(sSvcID == "updateFeed")//확정 저장
+	{
+		//영업센터 배송비 정산확정여부
+		var sId = trim(div_search.cmb_CenterList.Value);
+		var sMth = trim(div_search.cal_acc_mth.Value);
+		cf_setParam(ds_condition, "ORG_CD",sId);
+		cf_setParam(ds_condition, "ACC_MTH",sMth.SubStr(0,6));
+		
+		// sync 처리
+		http.Sync = true;			
+		
+		var sSvcID = "getDlvyFeedState";
+		var sInDs  = "nc_input_fieldDs=ds_condition";
+		var sOutDs = "ds_mfixyn=DlvyFeedState";
+		var sArg   = "sktst.acc.DFA#getDlvyFeedState";
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+		
+		var sCdYn = ds_mfixyn.GetColumn(0,"ORG_CD_YN");//확정여부가 모두 Y인가
+		var sMcdYn = ds_mfixyn.GetColumn(0,"M_ORG_CD_YN");//배송비정산에 해당영업센터가 등록되있는가
+		
+		if(sCdYn == "Y" && sMcdYn =="N")
+		{	
+			//정산내역테이블의 확정여부가 모두 Y 이고 배송비정산에 확정이 안되있기때문에 확정  트랜젝션 타기
+			var sSvcID = "addDlvyFeed";
+			var sInDs  = "nc_input_fieldDs=ds_condition";
+			var sOutDs = "";
+			var sArg   = "sktst.acc.DFA#addDlvyFeed";
+			cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+			
+		}else{
+			//이미 확정되었거나 확정여부가 모두 Y가 아닐때
+		}
+		
+		// sync 처리
+		http.Sync = false;		
+	
+	}
+	
+}
+//==============================================================================
+// Event
+//==============================================================================
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_acc_mth);
+	//만약 달력에서 월을 선택하지 않을때
+	if(div_search.cal_acc_mth.Value == "" || div_search.cal_acc_mth.Value == null)
+	{
+		div_search.edt_accMth.Text = "";
+	}else
+	{
+		div_search.edt_accMth.Value = AddMonth(ParseDateTime(div_search.cal_acc_mth.Value+"01"),-1);	
+	}
+	
+}
+/*******************************************************************************
+ * @description    : search click - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	//조회값체크
+	if(!cf_checkObjValues(div_search)){
+		return;
+	}
+	
+	var sOrgCd =div_search.cmb_CenterList.Value;
+	var sAcc = div_search.cal_acc_mth.Value;
+	var sPacc = div_search.edt_accMth.Value;
+	
+	cf_setParam(ds_condition, "ORG_CD", sOrgCd );
+	cf_setParam(ds_condition, "ACC_MTH", sAcc.SubStr(0,6) );
+	cf_setParam(ds_condition, "P_ACC_MTH", sPacc.SubStr(0,6) );
+	// 조직코드와 정산월로 조회 트랜잭션 설정
+	var sSvcID = "getFeedAccList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_feedList=FeedAccList";
+	var sArg   = "sktst.acc.DFA#getFeedAccList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	
+}
+/*******************************************************************************
+ * @description    : 저장버튼 클릭 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	//저장 전 VALIDATION
+	if(ds_feedList.GetUpdate() == 0){
+		alert(cf_getMessage(MSG_00071,"")); // 처리할 대상이 없습니다
+		return;
+	}
+	
+	// 트랜잭션 설정
+	var sSvcID = "updateFeed";
+	var sInDs  = "fixYn=ds_feedList:U";
+	var sOutDs = "";
+	var sArg   = "sktst.acc.DFA#updateFeed";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	
+}
+/*******************************************************************************
+ * @description    : 배송비 정산 등록 클릭 이벤트
+*******************************************************************************/
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{	
+	var sArg = "";
+	if(nCell == 1)
+	{	
+		//영업센터 코드와 정산월은 div_search 에서 가져오고  배송사코드(거래처코드)는 조회후 데이터셋에서 가져옴 
+		var sOrgCd =div_search.cmb_CenterList.Value;
+		var sAcc = div_search.cal_acc_mth.Value;
+		var sPacc = div_search.edt_accMth.Value;
+		var sNm = ds_feedList.GetColumn(nRow,"DEAL_CO_NM");
+		
+		sArg = "sDlvid="+quote(ds_feedList.GetColumn(nRow,"DLV_CO_ID"));//배송사코드
+		sArg += " sDealnm="+quote(sNm);//배송사명
+		sArg += " sMth="+quote(sAcc.SubStr(0,6));//정산월
+	    sArg += " sOrgcd="+quote(sOrgCd);//영업센터코드
+	    sArg += " sPmth="+quote(sPacc.SubStr(0,6));//영업월
+	    Open("ACC::ACCDFA00200.xml",sArg);
+	}
+}
+//==============================================================================
+// 함수
+//==============================================================================
+/*******************************************************************************
+ * @description    : 정산월 초기화면 셋팅
+*******************************************************************************/
+function f_init()
+{
+	div_search.cal_acc_mth.Value = Today();
+}
+/*******************************************************************************
+ * @description    : 영업월 초기화면 셋팅
+*******************************************************************************/
+function f_salmonth()
+{
+	div_search.edt_accMth.Value = AddMonth(Today() , -1);
+}
+]]></Script>
+</Window>

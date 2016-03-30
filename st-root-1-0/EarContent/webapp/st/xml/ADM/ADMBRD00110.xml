@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="320" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="자유게시판&#32;상세보기" Top="8" Ver="1.0" Width="500" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_list"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_file"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_endDt">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="text" size="256" summ="default" type="STRING"/>
+					<record>
+						<code>1</code>
+						<text>유효</text>
+					</record>
+					<record>
+						<code>0</code>
+						<text>전체</text>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="SunkenEdge" Height="267" Id="Div1" Left="8" Style="sty_div_dataview" TabOrder="1" Text="Div0" Top="8" Width="483">
+			<Contents>
+				<TextArea BindDataset="ds_list" Border="Flat" Column="ctt" Height="135" Id="TextArea1" Left="7" Readonly="TRUE" Style="sty_ipt_readonly" TabOrder="1" Top="7" VScroll="TRUE" Width="465"></TextArea>
+				<Grid AutoFit="TRUE" BindDataset="ds_file" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="256" Enable="true" EndLineColor="default" HeadBorder="Flat" HeadHeight="22" Height="85" Id="grd_file" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellClick="Div1_grd_file_OnCellClick" Right="472" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="171" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="464">
+					<contents>
+						<format id="Default">
+							<columns>
+								<col width="55"/>
+								<col width="347"/>
+								<col width="71"/>
+							</columns>
+							<head>
+								<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+								<cell bkcolor="user34" col="1" color="user35" display="text" text="파일명"/>
+								<cell bkcolor="user34" col="2" color="user35" display="text" text="크기"/>
+							</head>
+							<body>
+								<cell align="center" col="0" display="text" expr="row+1"/>
+								<cell col="1" colid="FILE_NM" cursor="expr:decode(FILE_PASS,null,&apos;arrow&apos;,&apos;hand&apos;)" display="text"/>
+								<cell align="center" col="2" colid="FILE_SIZE" display="text"/>
+							</body>
+						</format>
+					</contents>
+				</Grid>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_allDown" ImageID="btn_a_6" Left="373" LeftMargin="5" OnClick="btn_allDown_OnClick" Style="sty_btn_b" TabOrder="2" Text="전체다운로드" Top="157" Width="110"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="218" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="284" Width="61"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ADMBRD00110
+* 업무명      : admin - 자유게시판 상세조회 
+* 프로그램명  : 자유게시판 조회
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.03.12
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_ATTATCH_SCREEN_ID = "ADMBRD00100"; //첨부대상 화면 아이디
+var FV_BOARD_NUM = "";
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	FV_BOARD_NUM = board_num;
+	http.Sync = true;
+	
+	// 권한 설정
+	cf_setAuth(pFrmNum);	
+
+	f_search();
+	
+	http.Sync = false;	
+}
+
+/*******************************************************************************
+ * @description    : 조회 버튼 클릭- 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	f_search();
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcList")
+	{
+		f_getDetail();
+	}
+	
+	if(sSvcID == "svcAttatchList")
+	{
+		//trace(ds_file.SaveXML());
+	}
+	
+	if(sSvcID == "svcUpdateCount")
+	{
+		//trace(ds_list.SaveXML());
+		//cf_trDebug(sSvcID, 1);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 조회 함수 - 이벤트
+*******************************************************************************/
+function f_search()
+{
+	ds_file.Clear();
+	
+	// 조회 조건 설정
+	cf_setParam(ds_condition, "board_num", FV_BOARD_NUM);
+	
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=ds_result";
+	var sArg = "sktst.adm.BRD#getBoard";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    		: 첨부파일 정보 취득
+ * @param sDocId        : 문서번호
+*******************************************************************************/
+function f_getAttatchList(sDocId)
+{
+	// 조회를 위한 필수 인자 SCREEN_ID ,  DOC_ID
+	//var sScreenId = substr(pFrmUrl, pFrmUrl.indexOf("::")+2);
+	cf_setParam(ds_condition, "SCREEN_ID", FV_STR_ATTATCH_SCREEN_ID); 
+	cf_setParam(ds_condition, "DOC_ID", sDocId); 
+
+	// 트랜잭션 설정
+	var sSvcID = "svcAttatchList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_file=nc_fileDs";
+	var sArg = "sktst.adm.NTC#getAttatchList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 내용 및 첨부파일 보기- 이벤트
+*******************************************************************************/
+function f_getDetail()
+{
+	// 첨부파일 정보 취득
+	var sDocId = ds_list.GetColumn(0, "doc_id");
+	ds_file.ClearData();
+	if(trim(sDocId).length  > 0)
+	{
+		f_getAttatchList(sDocId);
+	}
+	
+	ds_list.setColumn(0, "UPDATE_COUNT", ds_list.GetColumn(0, "UPDATE_COUNT")+1);
+
+}
+
+
+/*******************************************************************************
+ * @description    : 첨부 파일 내려 받기- 이벤트
+*******************************************************************************/
+function Div1_grd_file_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell == 1)
+	{
+		var oGrdDs = object(obj.BindDataset);
+		var sScreenId = oGrdDs.getColumn(nRow, "SCREEN_ID");
+		var sDocId = oGrdDs.getColumn(nRow, "DOC_ID");
+		var sFileName = oGrdDs.getColumn(nRow, "FILE_NM");
+		var sFileType = oGrdDs.getColumn(nRow, "FILE_TYPE");
+		
+		cf_downLoad(sScreenId, sDocId, sFileName, sFileType);	
+	}
+}
+
+/*******************************************************************************
+ * @description    : 엔터키 이벤트 - 이벤트
+*******************************************************************************/
+function f_commonEnterDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		f_search();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 전체 다운로드 - 이벤트
+*******************************************************************************/
+function btn_allDown_OnClick(obj)
+{
+	cf_allDownLoad(ds_file);
+}
+
+function df_reSet(sArg){
+
+	cf_setArg("ds_ref", sArg);				
+	
+	FV_IN_MGMT_NO     = ds_ref.GetColumn(0,"sNoticeType");
+	
+	div_search.cmb_noticeType.Value = ds_ref.GetColumn(0,"sNoticeType");
+	
+	f_search();
+}
+
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+]]></Script>
+</Window>

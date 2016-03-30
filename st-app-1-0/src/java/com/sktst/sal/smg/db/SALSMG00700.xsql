@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSMG00700">
+	<select id="getProdSaleList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALSMG00700_getProdSaleList_안희수 */
+			  FBAS_GET_DEAL_NM(y.sale_plc, y.sale_dtm) sale_plc_nm
+		 	, y.sale_dtm
+		 	, SUM( y.b01_sale_qty) b01_sale_qty
+		    , SUM( y.b02_sale_qty) b02_sale_qty
+		    , SUM( y.b03_sale_qty) b03_sale_qty
+		    , SUM(y.b01_sale_qty + y.b02_sale_qty + y.b03_sale_qty) tot_sale_qty
+		    , FBAS_GET_DEAL_NM(y.mfact_id, SUBSTR(y.sale_dtm,0,8)) mfact_nm
+		FROM( 
+			SELECT
+			 	 x.sale_plc
+			 	, x.sale_dtm
+			 	, SUM(DECODE(x.sale_typ_cd, '01', x.b01_sale_qty, 0)) as b01_sale_qty	/* b2b			*/
+			 	, SUM(DECODE(x.sale_typ_cd, '02', x.b02_sale_qty, 0)) as b02_sale_qty	/* b2c (지점)	*/
+			    , SUM(DECODE(x.sale_typ_cd, '03', x.b03_sale_qty, 0)) as b03_sale_qty	/* b2c (online)	*/
+			    , x.mfact_id
+			FROM (
+				SELECT
+			          a.sale_plc
+			        , SUBSTR(a.sale_dtm,0,8) sale_dtm
+			        , sale_typ_cd
+			        , COUNT(b.gnrl_sale_no) AS b01_sale_qty
+			        , 0 b02_sale_qty
+			        , 0 b03_sale_qty
+			        , c.mfact_id
+			    FROM tsal_gnrl_sale a, tsal_equipment_sale b, tbas_prod_mgmt c
+			    WHERE 1=1
+			    AND b.eqp_mdl_cd = #prod_cd#
+]]>  <isNotEmpty prepend="AND" property="agency_cd">    			    
+<![CDATA[ 		    a.sale_plc IN ( SELECT deal_co_cd
+		                       FROM tbas_deal_co_mgmt
+		                      WHERE del_yn = 'N'
+		                        AND deal_end_yn != 'Y'
+		                        AND pos_agency = #agency_cd#
+		                        AND eff_end_dtm = '99991231235959')		    
+			    AND a.sale_dtm >= #str_dt_fr# || '000000'
+			    AND a.sale_dtm <= #str_dt_to# || '240000'
+]]>  </isNotEmpty>          
+<![CDATA[ ]]>  
+<isNotEmpty prepend="AND" property="sale_plc">     
+<![CDATA[       a.sale_plc = #sale_plc#          
+]]>  </isNotEmpty>
+<![CDATA[ 
+			    AND a.sale_cncl_yn <> 'y'
+			    AND a.sale_typ_cd = '01'		/* B2B */
+			    AND a.gnrl_sale_no = b.gnrl_sale_no
+			    AND a.gnrl_sale_chg_seq = b.gnrl_sale_chg_seq
+			    AND b.eqp_mdl_cd IS NOT NULL
+			    AND b.eqp_mdl_cd = c.prod_cd(+)
+                AND c.del_yn(+) = 'N'
+			    GROUP BY  a.sale_plc ,SUBSTR(a.sale_dtm,0,8), a.sale_typ_cd, c.mfact_id
+			    UNION ALL
+			    SELECT
+			          a.sale_plc
+			        , SUBSTR(a.sale_dtm,0,8) sale_dtm
+			        , sale_typ_cd
+			        , 0 b01_sale_qty
+			        , COUNT(b.gnrl_sale_no) AS  b02_sale_qty
+			        , 0 b03_sale_qty
+			        , c.mfact_id
+			    FROM tsal_gnrl_sale a, tsal_equipment_sale b, tbas_prod_mgmt c
+			    WHERE 1=1
+			    AND b.eqp_mdl_cd = #prod_cd#
+]]>  <isNotEmpty prepend="AND" property="agency_cd">    			    
+<![CDATA[ 		    a.sale_plc IN ( SELECT deal_co_cd
+		                       FROM tbas_deal_co_mgmt
+		                      WHERE del_yn = 'N'
+		                        AND deal_end_yn != 'Y'
+		                        AND pos_agency = #agency_cd#
+		                        AND eff_end_dtm = '99991231235959')		    
+			    AND a.sale_dtm >= #str_dt_fr# || '000000'
+			    AND a.sale_dtm <= #str_dt_to# || '240000'
+]]>  </isNotEmpty> 
+<![CDATA[ ]]>  
+<isNotEmpty prepend="AND" property="sale_plc">     
+<![CDATA[       a.sale_plc = #sale_plc#          
+]]>  </isNotEmpty>
+<![CDATA[ 
+			    AND a.sale_cncl_yn <> 'y'
+			    AND a.sale_typ_cd = '02'		/* B2C(지점) */
+			    AND a.gnrl_sale_no = b.gnrl_sale_no
+			    AND a.gnrl_sale_chg_seq = b.gnrl_sale_chg_seq
+			    AND b.eqp_mdl_cd IS NOT NULL
+			    AND b.eqp_mdl_cd = c.prod_cd(+)
+                AND c.del_yn(+) = 'N'
+			    GROUP BY  a.sale_plc ,SUBSTR(a.sale_dtm,0,8), a.sale_typ_cd, c.mfact_id
+			    UNION ALL
+			    SELECT
+			          a.sale_plc
+			        , SUBSTR(a.sale_dtm,0,8) sale_dtm
+			        , sale_typ_cd
+			        , 0 b01_sale_qty
+			        , 0 b02_sale_qty
+			        , COUNT(b.gnrl_sale_no) AS b03_sale_qty
+			        , c.mfact_id
+			    FROM tsal_gnrl_sale a, tsal_equipment_sale b, tbas_prod_mgmt c
+			    WHERE 1=1
+			    AND b.eqp_mdl_cd = #prod_cd#
+]]>  <isNotEmpty prepend="AND" property="agency_cd">    			    
+<![CDATA[ 		    a.sale_plc IN ( SELECT deal_co_cd
+		                       FROM tbas_deal_co_mgmt
+		                      WHERE del_yn = 'N'
+		                        AND deal_end_yn != 'Y'
+		                        AND pos_agency = #agency_cd#
+		                        AND eff_end_dtm = '99991231235959')		    
+			    AND a.sale_dtm >= #str_dt_fr# || '000000'
+			    AND a.sale_dtm <= #str_dt_to# || '240000'
+]]>  </isNotEmpty> 
+<![CDATA[ ]]>  
+<isNotEmpty prepend="AND" property="sale_plc">     
+<![CDATA[       a.sale_plc = #sale_plc#          
+]]>  </isNotEmpty>
+<![CDATA[ 
+			    AND a.sale_cncl_yn <> 'y'
+			    AND a.sale_typ_cd = '03'		/* B2C(온라인) */
+			    AND a.gnrl_sale_no = b.gnrl_sale_no
+			    AND a.gnrl_sale_chg_seq = b.gnrl_sale_chg_seq
+			    AND b.eqp_mdl_cd IS NOT NULL
+			    AND b.eqp_mdl_cd = c.prod_cd(+)
+                AND c.del_yn(+) = 'N'
+			    GROUP BY  a.sale_plc ,SUBSTR(a.sale_dtm,0,8), a.sale_typ_cd, c.mfact_id
+			) x
+			    WHERE 1=1
+			    GROUP BY x.sale_plc, x.sale_dtm , x.sale_typ_cd, x.mfact_id
+    	)y
+	    GROUP BY FBAS_GET_DEAL_NM(y.sale_plc, y.sale_dtm), y.sale_dtm, fbas_get_deal_nm(y.mfact_id, SUBSTR(y.sale_dtm,0,8))
+	    ORDER BY y.sale_dtm
+		]]>
+	</select>
+</sqlMap>

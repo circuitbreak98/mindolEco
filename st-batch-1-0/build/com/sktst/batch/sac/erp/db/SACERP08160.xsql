@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08160">
+	<select id="getAgencyList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        select  /* SACERP08160_getAgencyList_대리점목록조회_하창주 */
+				 b.org_id
+				,a.agency				/*대리점*/
+				,b.ukey_agency_cd
+                /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+                ,(select case when min(user_cd) is null and b.org_id = 'C10011' then '140034' else min(user_cd) end
+                    from tbas_user_mgmt
+                   where pos_agency = a.agency
+                     and user_grp = 'D17'
+                     and del_yn = 'N'
+                     and eff_user_yn = 'Y'
+                     and attc_cat in ('1', '2')) as user_cd
+		  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+		 where  a.agency	= b.deal_co_cd
+           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+										hseq_no 
+								FROM	tbas_deal_co_mgmt
+								WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+							  )
+		   and	a.yymm		= #YYMM#
+	]]>
+			<isNotEmpty prepend="AND" property="AGENCY">
+	<![CDATA[	a.agency 	= #AGENCY#		]]>
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="DPST_PLC">
+	<![CDATA[	a.dpst_plc 	= #DPST_PLC#	]]>
+			</isNotEmpty>
+	<![CDATA[
+		group by b.org_id, a.agency, b.ukey_agency_cd
+		order by agency
+	]]>
+	</select>
+
+	<select id="getChagDpstAccAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+		        select  /* SACERP08160_getChagDpstAccAmtList_요금입금정산액조회_하창주 */
+		                 a.yymm					/*입금년월*/
+		                ,a.agency				/*대리점*/
+		                ,a.dpst_plc				/*입금처*/
+		                ,sum(nvl(a.chag_dpst_acc_amt, 0)) as chag_dpst_acc_amt	/*요금입금정산액*/
+		                ,b.ukey_agency_cd
+		                ,b.ukey_sub_cd
+				  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+				 where  a.dpst_plc	= b.deal_co_cd
+		           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+												hseq_no 
+										FROM	tbas_deal_co_mgmt
+										WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+									  )
+				   and	a.yymm		= #YYMM#
+				   and	a.agency	= #AGENCY#
+			]]>
+					<isNotEmpty prepend="AND" property="DPST_PLC">
+			<![CDATA[	a.dpst_plc	= #DPST_PLC#		]]>
+					</isNotEmpty>
+			<![CDATA[
+			   group by a.yymm, a.agency, a.dpst_plc, b.ukey_agency_cd, b.ukey_sub_cd
+			 )
+		where chag_dpst_acc_amt <> 0
+	]]>
+	</select>
+
+	<select id="getPrprcDpstAccAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+		        select  /* SACERP08160_getPrprcDpstAccAmtList_예수금입금정산액조회_하창주 */
+		                 a.yymm					/*입금년월*/
+		                ,a.agency				/*대리점*/
+		                ,a.dpst_plc				/*입금처*/
+		                ,sum(nvl(a.prprc_dpst_acc_amt, 0)) as prprc_dpst_acc_amt	/*기타계좌입금액중 예수금입금정산액*/
+		                ,b.ukey_agency_cd
+		                ,b.ukey_sub_cd
+				  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+				 where  a.dpst_plc	= b.deal_co_cd
+		           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+												hseq_no 
+										FROM	tbas_deal_co_mgmt
+										WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+									  )
+				   and	a.yymm		= #YYMM#
+				   and	a.agency	= #AGENCY#
+			]]>
+					<isNotEmpty prepend="AND" property="DPST_PLC">
+			<![CDATA[	a.dpst_plc	= #DPST_PLC#		]]>
+					</isNotEmpty>
+			<![CDATA[
+			   group by a.yymm, a.agency, a.dpst_plc, b.ukey_agency_cd, b.ukey_sub_cd
+			 )
+		where prprc_dpst_acc_amt <> 0
+	]]>
+	</select>
+
+	<select id="getCashDpstAccAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+		        select  /* SACERP08160_getCashDpstAccAmtList_현금매출입금정산액조회_하창주 */
+		                 a.yymm					/*입금년월*/
+		                ,a.agency				/*대리점*/
+		                ,a.dpst_plc				/*입금처*/
+		                ,sum(nvl(a.cash_dpst_acc_amt, 0)) as cash_dpst_acc_amt	/*기타계좌입금액중 현금매출입금정산액*/
+		                ,b.ukey_agency_cd
+		                ,b.ukey_sub_cd
+				  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+				 where  a.dpst_plc	= b.deal_co_cd
+		           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+												hseq_no 
+										FROM	tbas_deal_co_mgmt
+										WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+									  )
+				   and	a.yymm		= #YYMM#
+				   and	a.agency	= #AGENCY#
+			]]>
+					<isNotEmpty prepend="AND" property="DPST_PLC">
+			<![CDATA[	a.dpst_plc	= #DPST_PLC#		]]>
+					</isNotEmpty>
+			<![CDATA[
+			   group by a.yymm, a.agency, a.dpst_plc, b.ukey_agency_cd, b.ukey_sub_cd
+			 )
+		where cash_dpst_acc_amt <> 0
+	]]>
+	</select>
+
+	<select id="getChagDpstBamtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+		        select  /* SACERP08160_getChagDpstBamtList_요금계좌입금잔액조회_하창주 */
+		                 a.yymm					/*입금년월*/
+		                ,a.agency				/*대리점*/
+		                ,a.dpst_plc				/*입금처*/
+		                ,sum(nvl(a.chag_dpst_bamt, 0)) as chag_dpst_bamt	/*요금계좌입금잔액(과납금)*/
+		                ,b.ukey_agency_cd
+		                ,b.ukey_sub_cd
+				  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+				 where  a.dpst_plc	= b.deal_co_cd
+		           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+												hseq_no 
+										FROM	tbas_deal_co_mgmt
+										WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+									  )
+				   and	a.yymm		= #YYMM#
+				   and	a.agency	= #AGENCY#
+			]]>
+					<isNotEmpty prepend="AND" property="DPST_PLC">
+			<![CDATA[	a.dpst_plc	= #DPST_PLC#		]]>
+					</isNotEmpty>
+			<![CDATA[
+			   group by a.yymm, a.agency, a.dpst_plc, b.ukey_agency_cd, b.ukey_sub_cd
+			 )
+		where chag_dpst_bamt <> 0
+	]]>
+	</select>
+
+	<select id="getEtcDpstBamtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+		        select  /* SACERP08160_getEtcDpstBamtList_기타계좌입금잔액조회_하창주 */
+		                 a.yymm					/*입금년월*/
+		                ,a.agency				/*대리점*/
+		                ,a.dpst_plc				/*입금처*/
+		                ,sum(nvl(a.etc_dpst_bamt, 0)) as etc_dpst_bamt	/*기타계좌입금잔액(과납금)*/
+		                ,b.ukey_agency_cd
+		                ,b.ukey_sub_cd
+				  from	tsac_cash_dpst_info a, tbas_deal_co_mgmt b
+				 where  a.dpst_plc	= b.deal_co_cd
+		           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+												hseq_no 
+										FROM	tbas_deal_co_mgmt
+										WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+									  )
+				   and	a.yymm		= #YYMM#
+				   and	a.agency	= #AGENCY#
+			]]>
+					<isNotEmpty prepend="AND" property="DPST_PLC">
+			<![CDATA[	a.dpst_plc	= #DPST_PLC#		]]>
+					</isNotEmpty>
+			<![CDATA[
+			   group by a.yymm, a.agency, a.dpst_plc, b.ukey_agency_cd, b.ukey_sub_cd
+			 )
+		where etc_dpst_bamt <> 0
+	]]>
+	</select>
+
+	
+	<update id="updateCashDpstInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08160_updateCashDpstInfo_현금입금정보변경-하창주 */
+				tsac_cash_dpst_info
+		   SET	 trms_dt	= #ZIFDATE#
+				,fix_yn		= #ZCONFIRM#
+		 WHERE	yymm		= #YYMM#
+		 AND	agency		= #AGENCY#
+	]]>
+	</update>
+
+	<select id="getCardAgencyList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        select  /* SACERP08160_getCardAgencyList_카드입금정산대리점목록조회_하창주 */
+				 b.org_id
+				,a.agency				/*대리점*/
+				,b.ukey_agency_cd
+                /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+                ,(select case when min(user_cd) is null and b.org_id = 'C10011' then '140034' else min(user_cd) end
+                    from tbas_user_mgmt
+                   where pos_agency = a.agency
+                     and user_grp = 'D17'
+                     and del_yn = 'N'
+                     and eff_user_yn = 'Y'
+                     and attc_cat in ('1', '2')) as user_cd
+		  from	tsac_card_dpst_info a, tbas_deal_co_mgmt b
+		 where  a.agency	= b.deal_co_cd
+           and  b.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+										hseq_no 
+								FROM	tbas_deal_co_mgmt
+								WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+							  )
+		   and	a.yymm		= #YYMM#
+	]]>
+			<isNotEmpty prepend="AND" property="AGENCY">
+	<![CDATA[	a.agency 	= #AGENCY#		]]>
+			</isNotEmpty>
+	<![CDATA[
+		group by b.org_id, a.agency, b.ukey_agency_cd
+		order by agency
+	]]>
+	</select>
+	
+	<select id="getCardDpstAccAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+		        select  /* SACERP08160_getCardDpstAccAmtList_카드입금정산금액조회_하창주 */
+		                 a.yymm		/*입금년월*/
+		                ,a.agency			/*대리점*/
+		                ,a.card_co_cd			/*카드사*/
+		                ,sum(nvl(a.card_dpst_acc_amt, 0)) as card_dpst_acc_amt		/*카드입금정산액*/
+		                ,sum(nvl(a.cmms_dpst_acc_amt, 0)) as cmms_dpst_acc_amt		/*카드수수료입금정산액*/
+		                ,b.ukey_agency_cd
+		                ,b.ukey_sub_cd
+				  from	tsac_card_dpst_info a, tbas_deal_co_mgmt b
+				 where  a.card_co_cd	= b.deal_co_cd
+		           and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+													hseq_no 
+											FROM	tbas_deal_co_mgmt
+											WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+										  )
+				   and	a.yymm			= #YYMM#
+				   and	a.agency		= #AGENCY#
+				group by a.yymm, a.agency, a.card_co_cd, b.ukey_agency_cd, b.ukey_sub_cd
+			)
+		where card_dpst_acc_amt <> 0
+	]]>
+	</select>
+	
+	<select id="getCardDpstBamtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+		        select  /* SACERP08160_getCardDpstBamtList_카드입금잔액조회_하창주 */
+		                 a.yymm				/*입금년월*/
+		                ,a.agency			/*대리점*/
+		                ,a.card_co_cd		/*카드사*/
+		                ,sum(nvl(a.card_dpst_bamt, 0)) as card_dpst_bamt	/*카드입금잔액(과납금)*/
+		                ,b.ukey_agency_cd
+		                ,b.ukey_sub_cd
+				  from	tsac_card_dpst_info a, tbas_deal_co_mgmt b
+				 where  a.card_co_cd	= b.deal_co_cd
+		           and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+													hseq_no 
+											FROM	tbas_deal_co_mgmt
+											WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+										  )
+				   and	a.yymm			= #YYMM#
+				   and	a.agency		= #AGENCY#
+				group by a.yymm, a.agency, a.card_co_cd, b.ukey_agency_cd, b.ukey_sub_cd
+			)
+		where card_dpst_bamt <> 0
+	]]>
+	</select>
+	
+	<update id="updateCardDpstInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08160_updateCardDpstInfo_카드입금정보변경-하창주 */
+			   tsac_card_dpst_info
+		   SET	 trms_dt	= #ZIFDATE#
+				,fix_yn		= #ZCONFIRM#
+		 WHERE	yymm		= #YYMM#
+		   and	agency		= #AGENCY#
+		 
+	]]>
+	</update>
+
+</sqlMap>

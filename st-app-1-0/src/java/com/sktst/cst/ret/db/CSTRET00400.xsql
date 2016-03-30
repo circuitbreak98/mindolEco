@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTRET00400">
+	<update id="updatePrchsMgmtRtn" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET RTN_DT = #RTN_DT#
+     , RTN_RMKS = #RTN_RMKS#
+     , RTN_YN = 'Y'
+ WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#
+   ]]>
+	</update>
+	<update id="updateConsultRtn" parameterClass="map" ><![CDATA[UPDATE TCST_CONSULT_MGMT
+   SET RTN_DT = #RTN_DT#
+     , RTN_RMKS = #RTN_RMKS#
+     , RTN_YN = 'Y'
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#
+   ]]>
+	</update>
+	<select id="getBoxLst" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT '' AS CHK  
+     , FBAS_GET_PROD_NM(PROD_CD) AS PROD_NM  
+     , A.SER_NUM 
+     , DEAL.UKEY_AGENCY_CD 
+     , FBAS_GET_DEAL_NM(A.CON_PLC_CD,A.CON_DT) CON_PLC_NM
+     , FBAS_GET_AGENCY_NM(DEAL.POS_AGENCY,A.CON_DT) AGENCY_NM  
+     , DEAL.UKEY_SUB_CD   
+     , DEAL.ZIP_CD1 ||'-'|| DEAL.ZIP_CD2 AS ZIP_CD 
+     , DEAL.ADDR
+     , DEAL.TEL_NO
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490',PRC_ST) AS PRC_NM
+     , A.CUST_NM
+     , A.PRCHS_MGMT_NO
+     , A.CON_MGMT_NO
+     , A.DATA_GB
+     , A.RTN_RMKS
+  FROM (
+        SELECT PROD_CD
+             , SER_NUM 
+             , CON_PLC_CD
+             , CON_DT
+             , PRCHS_MGMT_NO
+             , '' AS CON_MGMT_NO 
+             , PRC_ST
+             , CUST_NM
+             , 'P' AS DATA_GB
+             , '' AS RTN_RMKS
+          FROM TCST_PRCHS_MGMT
+         WHERE BOX_NO = #BOX_NO#
+           AND DEL_YN = 'N'
+           AND SKN_YN = 'N'
+        UNION ALL 
+        SELECT PROD_CD
+             , SER_NUM 
+             , CON_PLC_CD
+             , CON_DT
+             , '' AS PRCHS_MGMT_NO 
+             , CON_MGMT_NO
+             , PRC_ST
+             , CUST_NM
+             , 'C' AS DATA_GB
+             , IN_RMKS AS RTN_RMKS
+          FROM TCST_CONSULT_MGMT
+         WHERE BOX_NO = #BOX_NO#
+           AND DEL_YN = 'N'
+           AND SKN_YN = 'N'
+          ) A, TBAS_DEAL_CO_MGMT DEAL
+  WHERE A.CON_PLC_CD = DEAL.DEAL_CO_CD
+   AND DEAL.EFF_STA_DTM <= A.CON_DT||'235959'
+   AND DEAL.EFF_END_DTM >= A.CON_DT||'235959']]>
+	</select>
+</sqlMap>

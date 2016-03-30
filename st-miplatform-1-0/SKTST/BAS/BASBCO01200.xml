@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="370" Id="BASBCO01200" Left="8" OnLoadCompleted="BASBCO01200_OnLoadCompleted" PidAttrib="7" Title="판매유형" Top="8" Ver="1.0" Width="255" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_saleTree"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_filterSale">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_checkTree">
+				<Contents></Contents>
+			</Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="185" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="2" Text="닫기" Top="335" Width="60"></Button>
+		<TreeView Border="Flat" Color="#262626" Font="돋움,9" Height="315" Id="tre_sale" ImageID="left_menu_tree" InnerImageCount="3" Left="10" LevelColumn="COMM_CD_LEVEL" OnDblClick="tre_sale_OnDblClick" Style="sty_ipt_form" TabOrder="1" TEXTColumn="COMM_CD_VAL_NM" Top="10" Width="235"></TreeView>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_ok" ImageID="btn_c_2" Left="121" LeftMargin="5" OnClick="btn_ok_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="335" Width="60"></Button>
+		<Checkbox Height="20" Id="chk_all" Left="10" LeftMargin="5" Style="sty_opt_input" TabOrder="4" Text="전체" Top="335" Value="FALSE" Width="56"></Checkbox>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BASBCO01200
+* 업무명      : 기준정보 - 공통
+* 프로그램명  : 판매유형
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.02.24
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_MODE = ""; 		// 조직 선택 가능 범위 구분 코드
+var FV_STR_COMM_CD_ID = "ZPOL_C_00020"; // 조직 선택 가능 범위 구분 코드
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function BASBCO01200_OnLoadCompleted(obj)
+{
+	// 제목 설정
+	//img_title.Text = this.title;
+	
+	// 파라메터
+	if(IsExistVar("mode", true))
+	{
+		FV_STR_MODE = mode;
+	}
+	
+	// 파라메터
+	if(IsExistVar("cmmCdId", true))
+	{
+		FV_STR_COMM_CD_ID = cmmCdId;
+	}
+	
+	// 조회 조건 설정
+	cf_setParam(ds_condition, "comm_cd_id", FV_STR_COMM_CD_ID);
+
+	// 트랜잭션 설정
+	var sSvcID = "svcCodeTree";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_saleTree=output";
+	var sArg = "sktst.bas.BCO#getSaleTree";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcCodeTree")
+	{
+		ds_saleTree.AddColumn("COMM_CD_LEVEL");
+		var nRowCount = ds_saleTree.GetRowCount();
+		var nLevel = 0;
+		
+		var sCommCdId;
+		var sChildCd;
+		var nCheckRow = 0;
+		for(var i=0; i<nRowCount; i++)
+		{
+			sCommCdId = ds_saleTree.GetColumn(i, "comm_cd_id");
+			nCheckRow = ds_checkTree.GetColIndex(sCommCdId);
+			if(nCheckRow == -1)
+			{
+				ds_checkTree.AddColumn(sCommCdId);
+				if(ds_checkTree.GetRowCount() < 1)
+				{
+					ds_checkTree.AddRow();
+					ds_checkTree.SetColumn(0, sCommCdId, nLevel);
+				}
+			}
+			
+			if(sChildCd == sCommCdId)
+			{
+				nLevel++;
+				ds_checkTree.SetColumn(0, sCommCdId, nLevel);
+			}
+
+			sChildCd = ds_saleTree.GetColumn(i, "sub_comm_cd_id");
+	
+			if(nCheckRow != -1)
+			{
+				nLevel =  ds_checkTree.GetColumn(0, sCommCdId);
+			}
+			ds_saleTree.SetColumn(i, "COMM_CD_LEVEL", nLevel);
+		}
+		
+		tre_sale.BindDataset = "ds_saleTree";
+	}	
+}	
+
+
+
+/*******************************************************************************
+ * @description    : 하위 유형 포함 선택- 이벤트
+*******************************************************************************/
+function btn_ok_OnClick(obj)
+{
+	var oTreDs = object(tre_sale.BindDataset);
+	f_makeTreeDs(oTreDs);
+	this.Close(1);	
+}
+
+/*******************************************************************************
+ * @description    :  선택한 하위 영역까지 parent에 데이타셋 전달
+ * @param oTreDs   :  필터링 대상 데이타셋
+*******************************************************************************/
+function f_makeTreeDs(oTreDs)
+{
+	var oTargetDs = cf_isValid("ds_selectedSale", parent);
+	if(oTargetDs == null)
+	{
+		parent.create("dataset", "ds_selectedSale");
+		oTargetDs = parent.ds_selectedSale;
+	}
+
+	if(chk_all.Value == false)
+	{
+		var nRow = oTreDs.currow;
+		var nStartLevel = oTreDs.getColumn(nRow, "COMM_CD_LEVEL");
+		var nEndRow;
+		for(var i=nRow, n=oTreDs.getRowCount(); i<n; i++)
+		{
+			//trace(oTreDs.getColumn(i, "COMM_CD_LEVEL") + " / " + nStartLevel);
+			if(i > nRow && oTreDs.getColumn(i, "COMM_CD_LEVEL") <=  nStartLevel)
+			{
+				
+				nEndRow = i-1;
+				break;
+			}
+			
+			nEndRow = n-1;
+		}
+		//trace(nRow + " / " + nEndRow);
+		ds_filterSale.Copy(ds_saleTree);
+		ds_filterSale.Filter("row >= "+nRow+" && row <= "+nEndRow);
+		
+		oTargetDs.copyF(ds_filterSale);
+	}
+	else
+	{
+		oTargetDs.copy(ds_saleTree);
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 닫기- 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+]]></Script>
+</Window>

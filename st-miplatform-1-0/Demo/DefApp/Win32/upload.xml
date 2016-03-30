@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="711" Id="form" Left="8" PidAttrib="7" Title="New&#32;Form" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_file">
+				<Contents>
+					<colinfo id="SCREEN_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="DOC_ID" size="256" summ="default" type="STRING"/>
+					<colinfo encrypt="base64" id="FILE_CONTENTS" size="16960" summ="default" type="BLOB"/>
+					<colinfo id="FILE_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="FILE_TYPE" size="256" summ="default" type="STRING"/>
+					<colinfo id="FILE_SIZE" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_down"></Dataset>
+		</Datasets>
+		<Static Border="None" Color="user8" Font="굴림,10,Bold" Height="22" Id="Static9" Left="24" TabOrder="0" Text="DS&#32;방식&#32;파일&#32;업로드" Top="8" VAlign="Middle" Width="136"></Static>
+		<FileDialog Bottom="28" Height="24" Id="FileDialog0" Left="167" Right="191" TabOrder="2" Top="4" Width="24"></FileDialog>
+		<File Bottom="28" Height="24" Id="File0" Left="193" Right="217" TabOrder="2" Top="4" Width="24"></File>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_dsUpload" Left="296" OnClick="btn_dsUpload_OnClick" Style="sty_btn_search" TabOrder="2" Text="파일업로드" Top="8" Width="112"></Button>
+		<Edit Height="24" Id="edt_path" Left="16" TabOrder="3" Top="40" Width="808"></Edit>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_selectFile" Left="232" OnClick="btn_selectFile_OnClick" Style="sty_btn_search" TabOrder="4" Text="선택" Top="7" Width="54"></Button>
+		<Grid AutoFit="TRUE" BindDataset="ds_file" BkColor2="default" BoldHead="true" Border="Flat" BorderColor="white" Bottom="152" Editable="TRUE" Enable="true" EndLineColor="default" Height="80" Id="Grid0" InputPanel="FALSE" Left="16" LineColor="default" MinWidth="100" Right="669" Style="STY_GRD" TabOrder="5" TabStop="true" Top="72" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="default" WheelScrollRow="1" Width="653">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="35"/>
+						<col width="472"/>
+						<col width="42"/>
+						<col width="42"/>
+						<col width="42"/>
+					</columns>
+					<body>
+						<cell col="0" colid="chk" display="checkbox" edit="checkbox"/>
+						<cell col="1" colid="file_nm" display="text"/>
+						<cell col="2" colid="file_size" cursor="hand" display="text"/>
+						<cell col="3" colid="file_type" cursor="hand" display="text"/>
+						<cell col="4" cursor="hand" display="text" text="삭제"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="Button0" Left="12" OnClick="btn_dsDownLoad_OnClick" Style="sty_btn_search" TabOrder="6" Text="다운로드" Top="200" Width="112"></Button>
+		<WebBrowser Height="23" Id="web_download" Left="18" TabOrder="7" Top="249" Visible="FALSE" Width="854"></WebBrowser>
+	</Form>
+	<Script><![CDATA[function btn_dsUpload_OnClick(obj)
+{
+	var strParam = "nc_trId=" + Quote("framework.demo.Hello#testFileManager");
+	Transaction("svcFileUpload", 
+				"svc::standard.xmi", 
+				"nc_fileDs=ds_file:U", 
+				"", 
+				strParam, 
+				"fnCallback");
+}
+
+function fnCallback(svcid, errcd, errmsg)
+{
+	trace(http.SendHttpStr);
+	trace(http.RecvHttpStr);
+	if(svcid == "svcFileUpload")
+	{
+		//
+	}
+	
+	if(svcid == "svcFileDownload")
+	{
+		//
+	}
+	
+}
+
+function btn_selectFile_OnClick(obj)
+{
+	if(FileDialog0.Open())
+	{
+		var nRow = ds_file.AddRow();
+		ds_file.SetColumn(nRow, "SCREEN_ID", "screenId1");
+		ds_file.SetColumn(nRow, "DOC_ID", "");
+		
+		var sFullPath = FileDialog0.FilePath + "\\" + FileDialog0.FileName;
+		edt_path.Text = sFullPath;
+		File0.FileName = sFullPath;
+		
+		
+		var sFileName = FileDialog0.FileName;
+		ds_file.SetColumn(nRow, "FILE_NM", substr(sFileName, 0, sFileName.length-4));
+		ds_file.SetColumn(nRow, "FILE_TYPE", substr(sFileName, sFileName.length-3));
+		
+		File0.Open("rb");
+		ds_file.SetColumn(nRow, "FILE_CONTENTS", File0.ReadBinary());
+		File0.Close();
+		
+		ds_file.SetColumn(nRow, "FILE_SIZE", File0.GetLength(sFullPath));
+	}
+}
+
+
+function btn_dsDownLoad_OnClick(obj)
+{
+	cf_downLoad("screenId1", "1233913745250", "address", "xls");
+}
+
+function cf_downLoad(sScreenId, sDocId, sFileName, sFileType)
+{
+	var sServer = gv_url+"download.xmi";
+	var sParam  = ";JSESSIONID="+JSESSIONID;
+		sParam += "?SCREEN_ID="+sScreenId;
+		sParam += "&DOC_ID="+sDocId;
+		sParam += "&FILE_NM="+sFileName;
+		sParam += "&FILE_TYPE="+sFileType;
+	
+	web_download.PageUrl = sServer+sParam;
+	web_download.Run();
+}
+]]></Script>
+</Window>

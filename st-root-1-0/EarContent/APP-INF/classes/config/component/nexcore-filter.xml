@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 프레임워크 코어 컴포넌트를 정의한다. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+    
+    <!-- =================================================================== -->
+    <!-- [서비스 필터 선언 영역]                                                  -->
+    <!-- =================================================================== -->    
+    <!-- 본 영역은 단순히 서비스 필터들을 선언할 뿐이다.                                -->
+    <!-- 트랜잭션 요청에 필터를 적용할 것인지는 아래 서비스 필터 적용 영역에서                              -->
+    <!-- 서비스 필터 매니저(컴포넌트)에 관련 내용을 설정해야 한다.                       -->     
+    <!-- =================================================================== -->
+    
+    <bean   id="nc.filter.log" 
+            class="nexcore.framework.core.service.filter.sample.LogFilter" 
+            init-method="init" 
+            destroy-method="destroy">
+        <property name="description" value="로그 필터"/>
+    </bean>    
+    
+    <bean   id="nc.filter.hello" 
+            class="nexcore.framework.core.service.filter.sample.HelloFilter" 
+            init-method="init" 
+            destroy-method="destroy">
+        <property name="description" value="헬로우 필터"/>                      
+    </bean>
+    
+    <bean   id="nc.filter.print" 
+            class="nexcore.framework.core.service.filter.sample.PrintFilter" 
+            init-method="init" 
+            destroy-method="destroy">
+        <property name="description" value="프린트 필터"/>
+    </bean>    
+           
+    <!-- =================================================================== -->
+    <!-- [서비스 필터 적용 영역] : 서비스Facade에서  필터링 수행(컴포넌트)         -->     
+    <!-- =================================================================== -->
+    <!-- [property] 설명                                                                                                            -->
+    <!-- serviceFilters : 위 서비스 필터 선언 영역 내 필터들 중 업무 요청에 적용할 필터를       -->
+    <!--                  선언한다. 본 property를 선언하지 않으면 업무 요청에 대해            -->
+    <!--                  필터 매커니즘이 적용되지 않는다.                          -->
+    <!-- txMapping      : 트랜잭션 아이디 매핑 문자열을 기술하고 해당 문자열과  일치하는       -->
+    <!--                  업무 요청에 적용할 필터들을 기술한다. 필터들은 기술한 순서로       -->
+    <!--                  수행된다. 만일 <list></list> 와 같이 필터 목록을 빈 공백으로  -->
+    <!--                  남겨둔다면  serviceFilters 프로퍼티에 기술된 모든 필터들이     -->
+    <!--                  순차적으로 수행한다.                                   -->
+    <!-- =================================================================== -->
+                    
+    <bean id="nc.service.IServiceFilterManager"
+          class="nexcore.framework.core.service.filter.internal.DefaultServiceFilterManager"
+          init-method="init"
+          destroy-method="destroy">
+          
+        <property name="serviceFilters"> 
+            <list></list>       <!--  List element 안의 내용이 비어있으면 필터 적용 안함 -->
+        </property>  
+
+<!--  
+        <property name="serviceFilters"> 
+            <list>
+                <ref bean="nc.filter.log"/>
+                <ref bean="nc.filter.hello"/>
+                <ref bean="nc.filter.print"/>    
+            </list>
+        
+-->
+
+        <property name="txMapping">
+            <map>
+                <entry key="wjpark.test.echo#test12*">        
+                    <list>
+                    </list>
+                </entry>
+                <entry key="wjpark.test.echo#testA*">        
+                    <list>
+                        <ref bean="nc.filter.hello"/>
+                    </list>
+                </entry>
+            </map>
+        </property> 
+
+    </bean>     
+</beans>

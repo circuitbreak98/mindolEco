@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="ADMNTC00400">
+	<select id="getMainQnaList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "ADMNTC00400_getMainQnaList_원윤성_한병곤" */
+       qna_num,
+       title,
+       que_ctt,
+       ans_ctt,
+       ans_yn,
+       doc_id,
+       write_user_id,
+       write_dt,
+       answer_user_id,
+       answer_dt,
+       write_user_nm
+  FROM (SELECT /*+ INDEX_DESC (a XADM_QNA_PK) */
+               qna_num,
+               title,
+               que_ctt,
+               ans_ctt,
+               ans_yn,
+               doc_id,
+               write_user_id,
+               write_dt,
+               answer_user_id,
+               answer_dt,
+               rownum as row_num,
+               user_nm as write_user_nm
+          FROM tadm_qna a,
+               tbas_user_mgmt b
+         WHERE a.del_yn = 'N'
+           AND a.write_user_id = b.user_id
+           AND rownum <= 5) a,
+       (SELECT rownum as row_num
+          FROM tbas_comm_cd_lst
+         WHERE rownum <= 5) b
+ WHERE b.row_num = a.row_num(+)]]>
+	</select>
+	<select id="getMainNoticsList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "ADMNTC00400_getMainNoticsList_원윤성_한병곤" */
+       flag,
+       notice_num, 
+       drawer, 
+       notice_type, 
+       title, 
+       sta_dt, 
+       end_dt, 
+       popup_yn, 
+       contents, 
+       doc_id
+  FROM (
+  SELECT       ntc.flag,
+               ntc.notice_num, 
+               ntc.drawer, 
+               ntc.notice_type, 
+               ntc.title, 
+               to_char(to_date(ntc.sta_dt),'YYYY-MM-DD') as sta_dt, 
+               ntc.end_dt, 
+               ntc.popup_yn, 
+               ntc.contents, 
+               ntc.doc_id,
+               rownum as row_num
+  FROM 
+  (SELECT /*+ INDEX_DESC (a XADM_NOTICS_PK) */
+  			   'A' as flag,
+               a.notice_num, 
+               a.drawer, 
+               a.notice_type, 
+               '[공지] ' || a.title as title, 
+               to_char(to_date(a.sta_dt),'YYYY-MM-DD') as sta_dt, 
+               a.end_dt, 
+               a.popup_yn, 
+               a.contents, 
+               a.doc_id
+            FROM tadm_notics a 	 
+            ,tbas_user_mgmt b
+	        WHERE a.drawer = b.user_id
+	        and  b.del_yn = 'N'
+	        AND  substr(b.org_id,0,1) = 'P'
+	        AND  a.del_yn = 'N'
+           AND   a.notice_type = #notice_type#
+           AND   (a.notice_chk = 'Y' AND TO_CHAR(sysdate, 'yyyyMMdd') BETWEEN a.notice_sta_dt and a.notice_end_dt )
+ ]]>           <isNotEqual prepend="AND" property="allRead" compareValue="Y">
+<![CDATA[               (exists (select 1 
+                          from tadm_notics_target b
+                         where a.notice_num = b.notice_num
+                           and b.user_id = #onlineContext.userInfo.loginId# ) OR drawer = #onlineContext.userInfo.loginId# )    
+]]>           </isNotEqual>           
+<![CDATA[  AND sta_dt <= to_char(sysdate,'YYYYMMDD')
+           AND end_dt >= to_char(sysdate,'YYYYMMDD')  
+  UNION ALL 
+  SELECT 
+  			   'B' as flag,
+               a.notice_num, 
+               a.drawer, 
+               a.notice_type, 
+               '[공지] ' || a.title as title, 
+               to_char(to_date(a.sta_dt),'YYYY-MM-DD') as sta_dt, 
+               a.end_dt, 
+               a.popup_yn, 
+               a.contents, 
+               a.doc_id
+          FROM tadm_notics a	
+           ,tbas_user_mgmt b
+          WHERE a.drawer = b.user_id
+          and  b.del_yn = 'N'
+          AND  substr(b.org_id,0,1) != 'P'
+          AND  a.del_yn = 'N'
+           AND a.notice_type = #notice_type#
+           AND   (a.notice_chk = 'Y' AND TO_CHAR(sysdate, 'yyyyMMdd') BETWEEN a.notice_sta_dt and a.notice_end_dt )
+ ]]>           <isNotEqual prepend="AND" property="allRead" compareValue="Y">
+<![CDATA[               (exists (select 1 
+                          from tadm_notics_target b
+                         where a.notice_num = b.notice_num
+                           and b.user_id = #onlineContext.userInfo.loginId# ) OR drawer = #onlineContext.userInfo.loginId# )    
+]]>           </isNotEqual>           
+<![CDATA[  AND sta_dt <= to_char(sysdate,'YYYYMMDD')
+           AND end_dt >= to_char(sysdate,'YYYYMMDD')  
+  UNION ALL 
+  SELECT   'C' as flag,
+               a.notice_num, 
+               a.drawer, 
+               a.notice_type, 
+               a.title, 
+               to_char(to_date(a.sta_dt),'YYYY-MM-DD') as sta_dt, 
+               a.end_dt, 
+               a.popup_yn, 
+               a.contents, 
+               a.doc_id
+          FROM tadm_notics a
+         WHERE del_yn = 'N'
+           AND notice_type = #notice_type#
+           AND   (a.notice_chk is null OR a.notice_chk = 'N' OR (a.notice_chk = 'Y' AND a.notice_end_dt < TO_CHAR(sysdate, 'yyyyMMdd')))
+ ]]>           <isNotEqual prepend="AND" property="allRead" compareValue="Y">
+<![CDATA[               (exists (select 1 
+                          from tadm_notics_target b
+                         where a.notice_num = b.notice_num
+                           and b.user_id = #onlineContext.userInfo.loginId# ) OR drawer = #onlineContext.userInfo.loginId# )    
+]]>           </isNotEqual>           
+<![CDATA[  AND sta_dt <= to_char(sysdate,'YYYYMMDD')
+           AND end_dt >= to_char(sysdate,'YYYYMMDD')    
+           ORDER BY flag asc, notice_num desc       
+        ) ntc
+       WHERE rownum <=5    
+       ) a,
+       (SELECT rownum as row_num
+          FROM tbas_comm_cd_lst
+         WHERE rownum <= 5) b
+ WHERE b.row_num = a.row_num(+)]]>
+	</select>
+	<select id="getMainBoardList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00400_getMainBoardList_원윤성_한병곤 */ 
+       f.board_num,
+       f.title,
+       f.ctt,
+       f.board_lvl,
+       f.org_board_num,
+       f.sup_board_num,
+       f.doc_id,
+       k.user_nm,
+       decode(board_lvl,'1', (SELECT (case when count(*) > 1 then '+' else '' end) 
+                                FROM tadm_board x 
+                               WHERE x.org_board_num = f.org_board_num ),'') as display
+      FROM (SELECT x.org_board_num, 
+                   x.lvl_sort_seq, 
+                   x.board_num, 
+                   x.title,
+                   x.user_nm, 
+                   ROWNUM AS row_num
+              FROM ( SELECT   a.org_board_num, a.lvl_sort_seq, a.board_num, a.title,
+                             b.user_nm
+                        FROM tadm_board a, tbas_user_mgmt b
+                       WHERE 1 = 1
+                         AND a.ins_user_id = b.user_id
+                         AND a.del_yn = 'N'
+                         AND a.board_lvl = '1'
+ ]]>   	  <isEqual property="user_grp" compareValue="D14">
+<![CDATA[   AND (b.user_grp = #user_grp# and b.org_area = #org_area#)
+]]>      </isEqual>
+<![CDATA[]]>      <isNotEqual property="user_grp" compareValue="D14">
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="org_id">
+<![CDATA[       (b.org_id = #org_id#
+            OR #user_grp# IN ('P12','P17')
+            OR #user_grp# = 'ADM')
+]]>    </isNotEmpty>
+<![CDATA[]]>         </isNotEqual>                
+<![CDATA[                    ORDER BY a.org_board_num DESC,
+                             lvl_sort_seq,
+                             sup_board_num,
+                             a.board_lvl) x ) e,
+       tadm_board f,
+       tbas_user_mgmt k
+ WHERE e.org_board_num = f.org_board_num
+   AND f.ins_user_id = k.user_id
+   AND e.row_num <= 5
+   CONNECT BY PRIOR f.board_num = f.sup_board_num 
+   START WITH f.board_lvl = '1'   
+   ORDER SIBLINGS BY f.org_board_num desc, f.sup_board_num , f.board_lvl, f.lvl_sort_seq]]>
+	</select>
+</sqlMap>

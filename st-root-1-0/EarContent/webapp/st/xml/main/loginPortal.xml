@@ -1,0 +1,785 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="678" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" OnUnloadCompleted="btn_close_OnClick" PidAttrib="7" Title="로그인" Top="8" Ver="1.1" Width="1000" WorkArea="TRUE">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_resetPwd"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_pwd"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_jm"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_findJm">
+				<Contents>
+					<colinfo id="realBizYn" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_userIdList">
+				<Contents>
+					<colinfo id="USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="USER_GRP_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_AREA_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_uKey">
+				<Contents>
+					<colinfo id="U_KEY_ID" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Image Height="664" Id="Image0" ImageID="loginPortal_back" TabOrder="1" Width="1000"></Image>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="14" Id="btn_close" ImageID="login_close" Left="976" OnClick="btn_close_OnClick" Style="sty_btn_form" TabOrder="2" ToolTipText="닫기" Top="3" Width="16"></Button>
+		<Edit BKColor="white" Border="None" Height="5" Id="Edit0" Left="448" OnClick="Edit0_OnClick" OnKeyDown="Edit0_OnKeyDown" TabOrder="3" Top="380" Width="3"></Edit>
+		<Edit Border="Flat" Height="24" Id="edt_test" TabOrder="4" Visible="FALSE" Width="216"></Edit>
+		<Static BKColor="white" Height="24" Id="Static0" Left="137" TabOrder="5" Top="352" Width="39"></Static>
+		<Div BKColor="darkblue" DragMode="TRUE" Height="146" Id="Div2" Left="1020" TabOrder="6" Text="Div0" Top="432" Visible="FALSE" Width="371">
+			<Contents>
+				<Div BKColor="white" Border="Flat" BorderColor="#073265" DragMode="TRUE" Height="140" Id="div_process" Left="3" TabOrder="1" Text="Div0" Top="3" Width="365">
+					<Contents>
+						<Button ButtonStyle="TRUE" Cursor="HAND" Height="14" Id="btn_close" ImageID="login_close" Left="345" OnClick="div2_findjm_close_OnClick" Style="sty_btn_form" TabOrder="1" ToolTipText="닫기" Top="2" Width="16"></Button>
+						<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_save" ImageID="btn_c_2" Left="117" LeftMargin="5" OnClick="div2_findjm_btn_save_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="103" Width="60"></Button>
+						<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="Button0" ImageID="btn_d_2" Left="183" LeftMargin="5" OnClick="div2_findjm_close_OnClick" Style="sty_btn_d" TabOrder="2" Text="취소" Top="103" Width="60"></Button>
+						<Div Border="Raised" Height="70" Id="div_process" Left="8" Style="sty_div_input" TabOrder="4" Text="Div1" Top="24" Width="347">
+							<Contents>
+								<Static Align="Right" Border="None" Height="20" Id="Static1" Left="33" Style="sty_lb_Basic" TabOrder="2" Text="새&#32;비밀번호&#32;확인" Top="136" VAlign="Middle" Width="105"></Static>
+								<Image Height="21" Id="Image2" ImageID="bul_mand" Left="24" TabOrder="3" Top="134" Transparent="TRUE" Width="20"></Image>
+								<Static Align="Right" Border="None" Height="20" Id="Static14" Left="14" Style="sty_lb_Basic" TabOrder="4" Text="성명" Top="6" VAlign="Middle" Width="84"></Static>
+								<Static Align="Right" Border="None" Height="20" Id="Static0" Left="15" Style="sty_lb_Basic" TabOrder="5" Text="주민등록번호" Top="32" VAlign="Middle" Width="84"></Static>
+								<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_jm1" ImeMode="english" Left="103" LeftMargin="2" MaxLength="6" Number="TRUE" OnCharChanged="Div2_div_process_div_process_edt_jm1_OnCharChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="32" UseIME="FALSE" Width="70"></Edit>
+								<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_jm2" ImeMode="english" Left="183" LeftMargin="2" MaxLength="7" Number="TRUE" OnKeyDown="Div2_div_process_div_process_edt_jm2_OnKeyDown" Password="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="32" UseIME="FALSE" Width="70"></Edit>
+								<Static Align="Center" Border="None" Height="20" Id="Static2" Left="170" Style="sty_lb_Basic" TabOrder="6" Text="-" Top="33" VAlign="Middle" Width="15"></Static>
+								<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_userName" ImeMode="keep,native" Left="103" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="7" Width="150"></Edit>
+							</Contents>
+						</Div>
+						<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="7" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="실명인증" Top="4" Width="110"></Image>
+					</Contents>
+				</Div>
+			</Contents>
+		</Div>
+		<Div BKColor="darkblue" DragMode="TRUE" Height="224" Id="Div1" Left="1020" TabOrder="7" Text="Div0" Top="200" Visible="FALSE" Width="371">
+			<Contents>
+				<Div BKColor="white" Border="Flat" BorderColor="#073265" DragMode="TRUE" Height="218" Id="div_process" Left="3" TabOrder="1" Text="Div0" Top="3" Width="365">
+					<Contents>
+						<Button ButtonStyle="TRUE" Cursor="HAND" Height="14" Id="btn_close" ImageID="login_close" Left="345" OnClick="div1_findpwd_close_OnClick" Style="sty_btn_form" TabOrder="1" ToolTipText="닫기" Top="2" Width="16"></Button>
+						<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_save" ImageID="btn_c_2" Left="109" LeftMargin="5" OnClick="div1_findPwd_btn_save_OnClick" Style="sty_btn_c" TabOrder="3" Text="저장" Top="183" Width="60"></Button>
+						<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="Button0" ImageID="btn_d_2" Left="175" LeftMargin="5" OnClick="div1_findpwd_close_OnClick" Style="sty_btn_d" TabOrder="2" Text="취소" Top="183" Width="60"></Button>
+						<Image Align="Left" Height="27" Id="Image4" ImageID="bul_caution" Left="7" LeftMargin="20" Style="sty_lb_info" TabOrder="4" Text="아이디와&#32;동일한&#32;비밀번호를&#32;사용하는&#32;경우,&#32;비밀번호&#32;노출의&#32;위&#13;&#10;험이&#32;있습니다." Top="31" Width="345"></Image>
+						<Image Align="Left" Color="user27" Height="20" Id="Image0" ImageID="bul_caution" Left="8" LeftMargin="20" Style="sty_lb_info" TabOrder="5" Text="반드시&#32;현재&#32;비밀번호와&#32;다르게&#32;입력하셔야&#32;합니다." Top="161" Width="276"></Image>
+						<Div Border="Raised" Height="92" Id="div_process" Left="8" Style="sty_div_input" TabOrder="6" Text="Div1" Top="64" Width="347">
+							<Contents>
+								<Static Align="Right" Border="None" Height="20" Id="Static1" Left="33" Style="sty_lb_Basic" TabOrder="2" Text="새&#32;비밀번호&#32;확인" Top="136" VAlign="Middle" Width="105"></Static>
+								<Image Height="21" Id="Image2" ImageID="bul_mand" Left="24" TabOrder="3" Top="134" Transparent="TRUE" Width="20"></Image>
+								<Static Align="Right" Border="None" Height="20" Id="Static14" Left="30" Style="sty_lb_Basic" TabOrder="5" Text="현재&#32;비밀번호" Top="6" VAlign="Middle" Width="84"></Static>
+								<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_passWord" ImeMode="english" Left="120" LeftMargin="2" MaxLength="20" Password="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="6" UseIME="FALSE" UserData="현재&#32;비밀번호" Width="140"></Edit>
+								<Static Align="Right" Border="None" Height="20" Id="Static0" Left="31" Style="sty_lb_Basic" TabOrder="7" Text="새&#32;비밀번호" Top="32" VAlign="Middle" Width="84"></Static>
+								<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_newPassWord" ImeMode="english" Left="119" LeftMargin="2" MaxLength="20" Password="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="32" UseIME="FALSE" UserData="새&#32;비밀번호" Width="140"></Edit>
+								<Static Align="Right" Border="None" Height="20" Id="Static2" Left="10" Style="sty_lb_Basic" TabOrder="9" Text="새&#32;비밀번호&#32;확인" Top="59" VAlign="Middle" Width="105"></Static>
+								<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_confirmNewPassWord" ImeMode="english" Left="119" LeftMargin="2" MaxLength="20" Password="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="59" UseIME="FALSE" UserData="새&#32;비밀번호&#32;확인" Width="140"></Edit>
+							</Contents>
+						</Div>
+						<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="7" LeftMargin="15" Style="sty_img_tit" TabOrder="7" Text="비밀번호&#32;변경" Top="4" Width="110"></Image>
+					</Contents>
+				</Div>
+			</Contents>
+		</Div>
+		<Div BKColor="darkblue" DragMode="TRUE" Height="195" Id="div" Left="1020" TabOrder="8" Text="Div0" Visible="FALSE" Width="371">
+			<Contents>
+				<Div BKColor="white" Border="Flat" BorderColor="#073265" DragMode="TRUE" Height="189" Id="div_process" Left="3" TabOrder="1" Text="Div0" Top="3" Width="365">
+					<Contents>
+						<Div Border="Sunken" Height="64" Id="div_input" Left="8" Style="sty_div_input" TabOrder="2" Text="Div0" Top="54" Width="241">
+							<Contents>
+								<Static Align="Right" Border="None" Height="20" Id="Static0" Left="14" Style="sty_lb_Basic" TabOrder="4" Text="사용자&#32;ID" Top="7" VAlign="Middle" Width="56"></Static>
+								<Edit Border="Flat" Height="20" Id="edt_userId" Left="76" LeftMargin="2" OnClick="div_div_process_div_input_edt_userId_OnClick" Style="sty_ipt_form" TabOrder="1" Top="7" UserData="사용자&#32;ID" Width="155"></Edit>
+								<Static Align="Right" Border="None" Height="20" Id="Static1" Style="sty_lb_Basic" TabOrder="5" Text="Email&#32;주소" Top="31" VAlign="Middle" Width="70"></Static>
+								<Static Align="Center" Border="None" Height="20" Id="Static3" Left="149" Style="sty_lb_info" TabOrder="6" Text="@" Top="31" VAlign="Middle" Width="16"></Static>
+								<Edit Border="Flat" Height="20" Id="edt_email1" ImeMode="english" Left="76" LeftMargin="2" MaxLength="20" OnClick="div_div_process_div_input_edt_email1_OnClick" Style="sty_ipt_form" TabOrder="2" Top="31" UseIME="FALSE" UserData="Email&#32;주소" Width="75"></Edit>
+								<Edit Border="Flat" Height="20" Id="edt_email2" ImeMode="english" Left="163" LeftMargin="2" MaxLength="20" OnClick="div_div_process_div_input_edt_email2_OnClick" Style="sty_ipt_form" TabOrder="3" Top="31" UseIME="FALSE" UserData="Email&#32;주소" Width="68"></Edit>
+							</Contents>
+						</Div>
+						<Image Height="153" Id="Image0" ImageID="img_findpw" Left="230" TabOrder="1" Top="40" Width="137"></Image>
+						<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_reset" ImageID="btn_c_2" Left="70" LeftMargin="5" OnClick="div_div_process_btn_reset_OnClick" Style="sty_btn_c" TabOrder="3" Text="초기화" Top="126" Width="60"></Button>
+						<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="134" LeftMargin="5" OnClick="div_div_process_btn_cancel_OnClick" Style="sty_btn_d" TabOrder="4" Text="취소" Top="126" Width="60"></Button>
+						<Image Align="Left" Height="17" Id="Image4" ImageID="bul_caution" Left="6" LeftMargin="20" Style="sty_lb_info" TabOrder="5" Text="사용자&#32;ID와&#32;Email주소가&#32;일치&#32;할&#32;경우&#32;비밀번호가&#32;초기화&#32;됩니다." Top="30" Width="350"></Image>
+						<Image Align="Left" Height="21" Id="img_success" ImageID="bul_caution" Left="6" LeftMargin="20" Style="sty_lb_info" TabOrder="6" Text="비밀번호가&#32;초기화&#32;되었습니다.&#10;로그인&#32;후&#32;비밀번호를&#32;변경하시고&#32;사용하시기&#32;바랍니다." Top="161" Visible="FALSE" Width="350"></Image>
+						<Image Align="Left" Color="user27" Height="17" Id="img_fail" ImageID="bul_caution" Left="6" LeftMargin="20" Style="sty_lb_info" TabOrder="7" Text="입력하신&#32;정보가&#32;일치하지&#32;않습니다." Top="160" Visible="FALSE" Width="350"></Image>
+						<Button ButtonStyle="TRUE" Cursor="HAND" Height="14" Id="btn_close" ImageID="login_close" Left="345" OnClick="div_div_process_btn_close_OnClick" Style="sty_btn_form" TabOrder="8" ToolTipText="닫기" Top="2" Width="16"></Button>
+						<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="7" LeftMargin="15" Style="sty_img_tit" TabOrder="9" Text="비밀번호&#32;찾기" Top="4" Width="110"></Image>
+					</Contents>
+				</Div>
+			</Contents>
+		</Div>
+		<Edit Border="Flat" Color="black" Height="20" Id="edit_pid" ImeMode="english" Left="470" LeftMargin="2" MaxLength="30" OnCharChanged="edit_pid_OnCharChanged" OnKeyDown="portal_id_search_OnKeyDown" Style="top_edit" TabOrder="9" Top="208" UpperOnly="TRUE" UseIME="FALSE" Width="97"></Edit>
+		<Combo Border="Flat" CodeColumn="USER_ID" DataColumn="USER_ID" Height="20" Id="cmb_id" ImeMode="none" InnerDataset="ds_userIdList" Left="469" OnChanged="cmb_id_OnChanged" ResetIndex="FIRST" Style="sty_ipt_form" TabOrder="10" Top="237" UserData="소속구분" Width="99"></Combo>
+		<Edit Border="Flat" Color="black" Enable="FALSE" Height="20" Id="edt_grp" ImeMode="english" Left="470" LeftMargin="2" MaxLength="30" OnKeyDown="login_OnKeyDown" Readonly="TRUE" Style="top_edit" TabOrder="11" Top="265" UseIME="FALSE" Width="97"></Edit>
+		<Edit Border="Flat" Color="black" Enable="FALSE" Height="20" Id="edt_area" ImeMode="english" Left="470" LeftMargin="2" MaxLength="30" OnKeyDown="login_OnKeyDown" Readonly="TRUE" Style="top_edit" TabOrder="12" Top="294" UseIME="FALSE" Width="98"></Edit>
+		<Edit Border="Flat" Color="black" Height="20" Id="edt_password" ImeMode="english" Left="470" LeftMargin="2" MaxLength="30" OnKeyDown="login_OnKeyDown" Password="TRUE" Style="top_edit" TabOrder="13" Top="322" UseIME="FALSE" Width="98"></Edit>
+		<Button Height="49" Id="btn_login" ImageID="btn_loginSave1" Left="576" OnClick="btn_Login_OnClick" TabOrder="15" Text="Button0" Top="291" Width="58"></Button>
+		<Button Align="Left" Height="19" Id="btn_save" ImageID="btn_approval3" Left="576" OnClick="btn_Save_OnClick" TabOrder="15" Top="207" Width="58"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : login
+* 업무명      : 공통
+* 프로그램명  : 로그인
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+//==============================================================================
+// 폼 전역 변수 정의
+//==============================================================================
+var msg_messageId; // 서버 메세지 전역 변수
+var nc_serverDateTime; // 서버 시간 전역 변수
+//var strCookieId;
+
+var FV_PWD_RESET_CHK = "N";
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	gv_useDebug = 0;
+	gv_closeFlag = true;
+	edit_pid.setFocus();
+	//btn_Login_OnClick();
+	//Button0_OnClick();
+
+	var sImageId = "";
+
+	if( Pos(gv_url,"150.2.236.145") > -1 ) {
+		// 테스트서버(사용자)
+		//sImageId = "login_bg_user";
+		sImageId = "loginPortal_back";
+	} else if ( Pos(gv_url,"10.40.10.29") > -1 || Pos(gv_url,"sales.jungboboho.com") > -1 ) {
+		// 테스트서버(팀개발)
+		//sImageId = "login_bg_team";
+		sImageId = "loginPortal_back";
+	} else if( Pos(gv_url,"localhost") > -1 ){
+		// 로컬
+		//sImageId = "login_bg_local";
+		sImageId = "loginPortal_back";
+	} else if( Pos(gv_url,"10.40.10.82") > -1 ){
+		// 운영서버
+		//sImageId = "login_bg";
+		sImageId = "loginPortal_back";
+	} else if( Pos(gv_url,"10.40.10.83") > -1 ){
+		// 운영서버
+		//sImageId = "login_bg";
+		sImageId = "loginPortal_back";
+	} else if( Pos(gv_url,"10.40.10.84") > -1 ){
+		// 운영서버
+		//sImageId = "login_bg";
+		sImageId = "loginPortal_back";
+	} else if( Pos(gv_url,"sales_plus.sktelecom.com") > -1 ){
+		// 운영서버
+		//sImageId = "login_bg";
+		sImageId = "loginPortal_back";
+	} else if( Pos(gv_url,"sales_plus.jungboboho.com") > -1 ){
+		// 운영서버
+		//sImageId = "login_bg";
+		sImageId = "loginPortal_back";
+	}else{
+		//sImageId = "login_bg";
+		sImageId = "loginPortal_back";
+	}
+
+    //alert(gv_url);
+    //alert(getReg("GlobalVal"));
+    //alert(length(getReg("GlobalVal")));
+    //SSO 인증을 위한 http header 세팅
+    if (length(getReg("GlobalVal")) == 0) {
+		SetReg("GlobalVal","‡");
+    }
+
+	//alert("MIP로 ID전달 직후\n\n"+http.SendHttpStr);
+
+    var sCookie = Split(getReg("GlobalVal"), "‡");
+	SetReg("GlobalVal","");
+
+    if (length(sCookie[0]) != 0) {
+        strCookieId = sCookie[0];
+        //SMSESSION = "SMSESSION="+sCookie[1];
+        //http.SetHeader("Cookie", strCookie);
+        //http.Sync = true;
+        //alert(strCookieId);
+		//alert("SSO 매핑 ID: "+strCookieId);
+
+		edt_test.value = gv_url;
+
+		cmb_id.Visible = false;
+		edt_password.Visible = false;
+		//chk_idSave.Visible = false;
+		Static0.Visible = false;
+		btn_findPw.Visible = false;
+		btn_login.Visible = false;
+
+		Image0.ImageID = "login_bg_sso";
+
+		sso_Login(sCookie[1]);
+
+    } else {  //일반 로그인
+
+		edt_test.value = gv_url;
+
+		Image0.ImageID = sImageId;
+
+		// 레지스트리에 id저장여부를 조회하여 있을 경우 셋팅.
+		
+		/*
+		if(getReg("chk_idSave") == "1"){
+			chk_idSave.Value = "1";
+			cmb_id.value = getReg("psUserId");
+		}else{
+			chk_idSave.Value = "0";
+			cmb_id.value = "";
+		}
+		*/
+    }
+
+
+	
+
+}
+
+
+/*******************************************************************************
+ * @description    : SSO 로그인 실행
+*******************************************************************************/
+function sso_Login(obj)
+{
+	var sId = strCookieId;
+	var sPw = "sso";
+
+	cf_setParam(ds_condition, "id", sId);
+	cf_setParam(ds_condition, "password", sPw);
+
+	//alert(sId+"==="+sPw);
+	//SMSESSION = "SMSESSION="+obj;
+	//http.AutoCookie = false;
+	SMSESSION = obj;
+	//alert(SMSESSION);
+	//alert("REQUEST 바로 전\n\n"+http.SendHttpStr);
+	//alert("REQUEST 바로 전\n\n"+http.SendContents );
+
+	// 트랜잭션 설정
+	var sSvcID = "svcLogIn";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "gds_session=nc_output_fieldDs gds_org=GBL_ORG_DS";//gds_myMenu=GBL_MY_MENU_DS";
+	//var sOutDs = "gds_session=nc_output_fieldDs gds_leftMenu=GBL_MENU_DS gds_menu=GBL_NOUSE_MENU_DS gds_org=GBL_ORG_DS";//gds_myMenu=GBL_MY_MENU_DS";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, "", "svUrl::login.xmi");
+}
+
+
+/*******************************************************************************
+ * @description    : 일반 로그인 실행
+*******************************************************************************/
+function btn_Login_OnClick(obj)
+{
+	var sId = cmb_id.Text;
+	var sPw = edt_password.Text;
+
+	if(sId.length < 1)
+	{
+		alert("아이디는 필수 항목입니다.");
+		cmb_id.SetFocus();
+		return;
+	}
+
+	if(sPw.length < 1)
+	{
+		alert("비밀번호는 필수 항목입니다.");
+		edt_password.SetFocus();
+		return;
+	}
+
+	cf_setParam(ds_condition, "id", sId);
+	cf_setParam(ds_condition, "password", sPw);
+
+	// 레지스트리에 id를 저장한다.
+	/*
+	if(chk_idSave.Value	== "1"){
+		setReg("psUserId", sId);
+	}else{
+		setReg("psUserId", "");
+	}
+	
+
+	// 레지스트리에 id 저장여부를 저장한다.
+	setReg("chk_idSave", chk_idSave.Value);
+	*/
+	
+	//alert(sId+"==="+sPw);
+
+
+	// 트랜잭션 설정
+	var sSvcID = "svcLogIn";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "gds_session=nc_output_fieldDs gds_org=GBL_ORG_DS";//gds_myMenu=GBL_MY_MENU_DS";
+	//var sOutDs = "gds_session=nc_output_fieldDs gds_leftMenu=GBL_MENU_DS gds_menu=GBL_NOUSE_MENU_DS gds_org=GBL_ORG_DS";//gds_myMenu=GBL_MY_MENU_DS";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, "", "svUrl::login.xmi");
+}
+
+/*******************************************************************************
+ * @description    : U.Key ID 정보취득
+*******************************************************************************/
+function f_getUkeyInfo()
+{
+	// 트랜잭션 설정
+	var sSvcID 	= "svcGetUkeyInfo";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_uKey=ds_uKey";
+	var sArg   = "sktst.bas.USM#getUkeyInfo";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 메뉴 및 권한 취득
+*******************************************************************************/
+function f_getMenuAuthInfo()
+{
+	cf_setParam(ds_condition, "USER_GRP", gds_session.GetColumn(0, "userGrp"));
+	// 트랜잭션 설정
+	var sSvcID 	= "svcMenuAuth";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs 	= "gds_leftMenu=leftMenu gds_menu=authMenu";
+	var sArg	= "sktst.adm.MNU#getLoginMenuAuthInfo";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "svcLogIn")
+	{
+
+
+		var sArrayUserGrp = "P12,ADM";
+
+		if(gds_session.GetRowCount() > 0 && trim(gds_session.GetColumn(0, "userGrp")).length != 0 )
+		{
+			//본사(ADMIN)권한이 아닌 비밀번호 "0000"
+			//(방금 초기화 버튼을 클릭하여 비밀번호를 0000으로 만든 사용자 제외) 사용자들은 비밀번호 변경 팝업
+
+			if(FV_PWD_RESET_CHK != "Y" && sArrayUserGrp.IndexOf(trim(gds_session.GetColumn(0, "userGrp"))) == -1 && trim(gds_session.GetColumn(0, "loginPassword")) == "nMJVpOmTAs9up/s+qr/Knw=="){
+				alert("비밀번호를 변경해주십시오.");
+				div1.Top = 136;
+				div1.Left = 68;
+				div1.Visible = true;
+				div1.div_process.div_process.edt_passWord.SetFocus();
+				return;
+			}else{
+				f_getMenuAuthInfo();
+			}
+		}
+		f_getUkeyInfo();
+
+	}else if(sSvcID== "savePassWord"){ // 20100219 추가
+		alert("비밀번호가 변경되었습니다.");
+		div1.Visible = false;
+
+	}else if(sSvcID == "svcMenuAuth")
+	{
+		// 서버 시간 동기화
+		ext_SetTime(nc_serverDateTime);
+		cf_setDate(nc_serverDateTime);
+
+		// 만료 3일전부터 출력
+		if(msg_messageId == "PSMI1002")
+		{
+			alert(msg_message);
+		}
+
+		//setSampleMenu(); // 샘플 메뉴 추가
+
+		gds_menu.AppendDataset(gds_leftMenu);
+		InitSession(true);
+		gv_closeFlag = false;
+
+		var nX = GetDeviceInfo("CXScreen");
+		var nY = GetDeviceInfo("CYScreen");
+		var nLeft = 0;
+		var nTop = 0;
+
+		if(nX == 1024)
+		{
+			nX = 1031;
+			nLeft = -4;
+			nTop = -3;
+		}
+		global.Window.width = nX;
+		global.Window.height = nY;
+		global.Window.left = nLeft;
+		global.Window.top = nTop;
+
+
+		gds_leftMenu.AddColumn("treeStep", "INT");
+		var sSupMenuNum;
+		var sSupMenuLvl;
+
+		for(var i=0, n=gds_leftMenu.GetRowCount(); i<n; i++)
+		{
+			sSupMenuNum = gds_leftMenu.GetColumn(i, "supMenuNum").toString();
+
+			if(sSupMenuNum.length  > 0)
+			{
+				sSupMenuLvl = gds_leftMenu.LookUp("menuNum", sSupMenuNum, "menuLvlCd");
+				gds_leftMenu.SetColumn(i, "treeStep", parseInt(sSupMenuLvl)+1);
+			}
+			else
+			{
+				gds_leftMenu.SetColumn(i, "treeStep", 1);
+			}
+
+		}
+		gds_leftMenu.ApplyChange();
+
+		close();
+	}else if(sSvcID == "resetPassWord"){
+		var sResult = ds_resetPwd.GetColumn(0,"success_yn");
+
+		if(SResult == "Y"){
+			div.div_process.img_success.Visible = true;
+			div.div_process.img_fail.Visible = false;
+
+			FV_PWD_RESET_CHK = "Y";
+		}else{
+			div.div_process.img_success.Visible = false;
+			div.div_process.img_fail.Visible = true;
+		}
+	}else if(sSvcID == "getP"){
+		cmb_id.value = ds_condition.GetColumn(0,"Dpwd");
+	} else if (sSvcID == "findJm") {
+		//alert(http.RecvHttpStr);
+	    if ( ds_findJm.GetColumn(0,"realBizYn") == "Y" ) {
+	        alert("실명인증에 성공하였습니다.");
+			close();
+	    } else {
+	        alert("주민등록번호를 확인하십시요.");
+	    }
+	} else if (sSvcID == "svcGetUkeyInfo") {
+	    //UKEY ID를 세션에 세팅
+	    //alert(ds_uKey.GetColumn(0,"U_KEY_ID"));
+	    gds_session.SetColumn(0,"uKeyId",ds_uKey.GetColumn(0,"U_KEY_ID"));
+	    //trace(gds_session.SaveXML());
+	}
+
+	if (sSvcID == "svcPLogIn") {
+		if(ds_userIdList.GetRowCount() < 1){
+			alert("통합ID가 존재하지 않습니다.");
+			edit_pid.Text = "";
+			edit_pid.setFocus();
+			return;
+		}
+
+		edt_grp.value = ds_userIdList.GetColumn(0,"USER_GRP_NM");
+		edt_area.value = ds_userIdList.GetColumn(0,"ORG_AREA_NM");
+		edt_password.SetFocus();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 엔터키 이벤트
+*******************************************************************************/
+function login_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt)
+{
+	if (nChar == 13)
+	{
+		btn_Login_OnClick();
+	}
+}
+
+function portal_id_search_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt)
+{
+	if (nChar == 13)
+	{
+		btn_Save_OnClick();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+    if (gv_closeFlag)
+    {
+		Exit();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 비밀 번호 초기화 클릭 이벤트.
+*******************************************************************************/
+function btn_findPw_OnClick(obj)
+{
+	div.Top = 136;
+	div.Left = 68;
+	div.Visible = true;
+	div.div_process.div_input.edt_userId.SetFocus();
+}
+
+/*******************************************************************************
+ * @description    : 비밀번호 초기화 버튼 클릭 이벤트
+*******************************************************************************/
+function div_div_process_btn_reset_OnClick(obj)
+{
+	if(!cf_checkObjValues(div.div_process.div_input)) return;
+
+	if(confirm(MSG_00167)){
+
+		cf_setParam(ds_resetPwd, "userId", div.div_process.div_input.edt_userId.value);
+		cf_setParam(ds_resetPwd, "email1" , div.div_process.div_input.edt_email1.value);
+		cf_setParam(ds_resetPwd, "email2" , div.div_process.div_input.edt_email2.value);
+
+		// 트랜잭션 설정
+		var sSvcID = "resetPassWord";
+		var sInDs = "nc_input_fieldDs=ds_resetPwd";
+		var sOutDs = "ds_resetPwd=nc_output_fieldDs";
+		var sArg   = "sktst.bas.USM#updatePassWordReset";
+
+		// 공통 트랜잭션 호출
+		cf_transaction(sSvcID, sInDs, sOutDs, sArg, "svUrl::reset.xmi");
+	}
+}
+
+/*******************************************************************************
+ * @description    : 취소 버튼 클릭 이벤트.
+*******************************************************************************/
+function div_div_process_btn_cancel_OnClick(obj)
+{
+	div.Visible = false;
+	div.div_process.div_input.edt_userId.value = "";
+	div.div_process.div_input.edt_email1.value = "";
+	div.div_process.div_input.edt_email2.value = "";
+
+	cmb_id.SetFocus();
+}
+
+/*******************************************************************************
+ * @description    : 닫기 아이콘 클릭 이벤트.
+*******************************************************************************/
+function div_div_process_btn_close_OnClick(obj)
+{
+	div_div_process_btn_cancel_OnClick();
+}
+
+/*******************************************************************************
+ * @description    : 사용자ID 클릭 이벤트.
+*******************************************************************************/
+function div_div_process_div_input_edt_userId_OnClick(obj)
+{
+	setReturnMsg();
+}
+
+/*******************************************************************************
+ * @description    : mail1 클릭 이벤트.
+*******************************************************************************/
+function div_div_process_div_input_edt_email1_OnClick(obj)
+{
+	setReturnMsg();
+}
+
+/*******************************************************************************
+ * @description    : mail2 클릭 이벤트.
+*******************************************************************************/
+function div_div_process_div_input_edt_email2_OnClick(obj)
+{
+	setReturnMsg();
+}
+
+/*******************************************************************************
+ * @description    : RETURN MSG HIDDEN
+*******************************************************************************/
+function setReturnMsg(){
+	div.div_process.img_success.Visible = false;
+	div.div_process.img_fail.Visible = false;
+}
+
+function Edit0_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(gv_url == "http://localhost:8088/ps/" && bShift=="1" && bCtrl =="1"){
+
+		var spwd = cmb_id.Text;
+
+		if(uf_IsNull(spwd)){
+			return;
+		}
+
+		cf_setParam(ds_condition, "password", spwd);
+
+		// 트랜잭션 설정
+		var sSvcID = "getP";
+		var sInDs = "nc_input_fieldDs=ds_condition";
+		var sOutDs = "ds_condition=nc_output_fieldDs";
+		var sArg   = "sktst.bas.USM#getP";
+
+		// 공통 트랜잭션 호출
+		cf_transaction(sSvcID, sInDs, sOutDs, sArg, "svUrl::getP.xmi");
+	}
+}
+
+function Edit0_OnClick(obj)
+{
+	edt_test.Visible = true;
+}
+
+
+
+/*******************************************************************************
+ * @description    : 비밀번호 변경 취소 버튼 클릭 이벤트.
+*******************************************************************************/
+
+function div1_findpwd_close_OnClick(obj)
+{
+	div1.Visible = false;
+	div1.div_process.div_process.edt_passWord.value = "";
+	div1.div_process.div_process.edt_newPassWord.value = "";
+	div1.div_process.div_process.edt_confirmNewPassWord.value = "";
+
+	cmb_id.SetFocus();
+}
+
+/*******************************************************************************
+ * @description    : 실명확인 취소 버튼 클릭 이벤트.
+*******************************************************************************/
+function div2_findjm_close_OnClick(obj)
+{
+	div2.Visible = false;
+	close();
+}
+
+
+/*******************************************************************************
+ * @description    :  비밀번호 변경 저장
+*******************************************************************************/
+
+
+function div1_findPwd_btn_save_OnClick(obj)
+{
+	if(!cf_checkObjValues(Div1.div_process.div_process)) return;
+
+	if(Div1.div_process.div_process.edt_passWord.value == Div1.div_process.div_process.edt_newPassWord.value){
+		alert(MSG_00164);
+		Div1.div_process.div_process.edt_newPassWord.SetFocus();
+		return;
+	}
+
+	if(Div1.div_process.div_process.edt_newPassWord.value != Div1.div_process.div_process.edt_confirmNewPassWord.value){
+		alert(MSG_00165);
+		Div1.div_process.div_process.edt_confirmNewPassWord.SetFocus();
+		return;
+	}
+
+	if(confirm(MSG_00166)){
+
+		cf_setParam(ds_pwd, "passWord", Div1.div_process.div_process.edt_passWord.value);
+		cf_setParam(ds_pwd, "newPassWord", Div1.div_process.div_process.edt_newPassWord.value);
+		cf_setParam(ds_pwd, "confirmNewPassWord", Div1.div_process.div_process.edt_confirmNewPassWord.Value);
+
+		// 트랜잭션 설정
+		var sSvcID = "savePassWord";
+		var sInDs  = "nc_input_fieldDs=ds_pwd";
+		var sOutDs = "";
+		var sArg   = "sktst.bas.USM#updatePassWord";
+
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+}
+
+
+
+/*******************************************************************************
+ * @description    :  실명인증 확인
+*******************************************************************************/
+function div2_findjm_btn_save_OnClick(obj)
+{
+		cf_setParam(ds_jm, "userName", Div2.div_process.div_process.edt_userName.value);
+		cf_setParam(ds_jm, "bizJmNum",   Div2.div_process.div_process.edt_jm1.value+Div2.div_process.div_process.edt_jm2.value);
+		cf_setParam(ds_jm, "gv_url",   gv_url);
+
+		//alert(gv_url);
+
+		// 트랜잭션 설정
+		var sSvcID = "findJm";
+		var sInDs  = "nc_input_fieldDs=ds_jm";
+		var sOutDs  = " ds_findJm=ds_findJm ";   //실명인증 결과
+		var sArg   = "sktst.bas.USM#updateJm";
+
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+function Div2_div_process_div_process_edt_jm1_OnCharChanged(obj,strPreText,strPostText)
+{
+	if ( Length(strPostText) == 6) {
+			div2.div_process.div_process.edt_jm2.SetFocus();
+	}
+}
+
+function Div2_div_process_div_process_edt_jm2_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+	    div2_findjm_btn_save_OnClick();
+	}
+
+}
+
+function btn_Save_OnClick(obj)
+{
+	var portal_id = edit_pid.Text;
+
+	if(portal_id.length < 1)
+	{
+		alert("통합아이디는 필수 항목입니다.");
+		edit_pid.SetFocus();
+		return;
+	}
+
+	cf_setParam(ds_condition, "portal_user_id", portal_id);
+
+	// 트랜잭션 설정
+	var sSvcID = "svcPLogIn";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_userIdList=userIdList";
+	var sArg   = "sktst.bas.USM#getUserIdList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "svUrl::portal_login.xmi");
+}
+
+function cmb_id_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	edt_grp.value = ds_userIdList.GetColumn(nNewIndex,"USER_GRP_NM");
+	edt_area.value = ds_userIdList.GetColumn(nNewIndex,"ORG_AREA_NM");
+}
+
+function edit_pid_OnCharChanged(obj,strPreText,strPostText)
+{
+	ds_userIdList.ClearData();
+	edt_grp.Text = "";
+	edt_area.Text = "";
+}
+]]></Script>
+</Window>

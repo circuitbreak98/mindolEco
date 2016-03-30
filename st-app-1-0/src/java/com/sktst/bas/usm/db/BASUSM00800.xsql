@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM00800">
+	<select id="getMappingUserList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00800_getMappingUserList_김연석_김연석" */
+       '0'   CHK
+     , portal_user_id
+     , a.user_id
+     , a.user_cd
+     , a.user_nm
+     , fbas_get_org_nm(a.org_id)                         org_id_nm
+     , fbas_get_commcdnm_val('ZBAS_C_00250', a.user_grp) user_grp_nm
+     , fbas_get_deal_nm(a.org_area, to_char(sysdate, 'yyyymmddhh24miss'))
+                                                         org_area_nm
+     , FBAS_GET_DEAL_NM(a.pos_agency,'')                 pos_agency_nm
+     , c.pwd                                             PWD
+     , b.org_id                                          ORG_ID
+     , b.rel_org_id                                      REL_ORG_ID
+     , a.user_grp                                        USER_TYPE_CD
+     , '20'                                              HND_STS_CD
+     , b.eff_sta_dt                                      EFF_STA_DT
+     , b.eff_end_dt                                      EFF_END_DT
+     , b.audit_user_id                                   AUDIT_USER_ID
+     , b.audit_dtm                                       AUDIT_DTM
+     , b.trans_dtm                                       TRANS_DTM
+     , 'TP'                                              SYS_CL
+     , ''                                                MQ_PUT_YN
+     , ''                                                MQ_MESSAGE
+     , b.op_dt                                           OP_DT
+     , b.op_tm                                           OP_TM
+     , b.seq                                             SEQ
+  FROM tbas_user_mgmt           a
+     , tbas_portal_mapping_recv b
+     , tbas_portal_user         c
+ WHERE a.user_nm    = #USER_NM#
+   AND b.op_dt      = #OP_DT#
+   AND b.op_tm      = #OP_TM#
+   AND b.seq        = #SEQ#
+   AND b.login_id   =  c.login_id
+   AND a.del_yn     = 'N'
+   AND a.user_grp   = 'D14'
+   AND a.eff_user_yn = 'Y'
+ ORDER BY 2, 3]]>
+	</select>
+	<select id="getMappingPsUser" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00800_getMappingPsUser_김연석_김연석" */
+       '0'   CHK
+     , portal_user_id
+     , a.user_id
+     , a.user_cd
+     , a.user_nm
+     , fbas_get_org_nm(a.org_id)                         org_id_nm
+     , fbas_get_commcdnm_val('ZBAS_C_00250', a.user_grp) user_grp_nm
+     , fbas_get_deal_nm(a.org_area, to_char(sysdate, 'yyyymmddhh24miss'))
+                                                         org_area_nm
+     , FBAS_GET_DEAL_NM(a.pos_agency,'')                 pos_agency_nm
+     , b.pwd                                             PWD
+     , b.post_org_id                                     ORG_ID
+     , b.post_org_id                                     REL_ORG_ID
+     , a.user_grp                                        USER_TYPE_CD
+     , '20'                                              HND_STS_CD
+     , ''                                                EFF_STA_DT
+     , ''                                                EFF_END_DT
+     , ''                                                AUDIT_USER_ID
+     , b.audit_dtm                                       AUDIT_DTM
+     , b.trans_dtm                                       TRANS_DTM
+     , 'TP'                                              SYS_CL
+     , ''                                                MQ_PUT_YN
+     , ''                                                MQ_MESSAGE
+     , ''                                                OP_DT
+     , ''                                                OP_TM
+     , ''                                                SEQ
+  FROM tbas_user_mgmt   a
+     , tbas_portal_User b
+ WHERE a.user_nm   =  b.han_nm
+   AND a.user_nm   = #USER_NM#
+   AND b.login_id  = #PORTAL_ID#
+   AND a.del_yn    = 'N'
+   AND a.user_grp != 'D14'
+ ORDER BY 2, 3]]>
+	</select>
+	<select id="getMappingSaleUser" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00800_getMappingUserList_김연석_김연석" */
+       '0'   CHK
+     , a.portal_user_id
+     , a.user_id
+     , a.user_cd
+     , a.user_nm
+     , fbas_get_org_nm(a.org_id)                         org_id_nm
+     , fbas_get_commcdnm_val('ZBAS_C_00250', a.user_grp) user_grp_nm
+     , fbas_get_deal_nm(a.org_area, to_char(sysdate, 'yyyymmddhh24miss'))
+                                                         org_area_nm
+     , FBAS_GET_DEAL_NM(a.pos_agency,'')                 pos_agency_nm
+     , c.pwd                                             PWD
+     , c.post_org_id                                     ORG_ID
+     , d.org_id                                          REL_ORG_ID
+     , a.user_grp                                        USER_TYPE_CD
+     , '20'                                              HND_STS_CD
+     , to_char(sysdate, 'yyyymmdd')                      EFF_STA_DT
+     , '99991231'                                        EFF_END_DT
+     , ''                                                AUDIT_USER_ID
+     , to_char(sysdate, 'yyyymmddHH24MISS')              AUDIT_DTM
+     , to_char(sysdate, 'yyyymmddHH24MISS')              TRANS_DTM
+     , 'TP'                                              SYS_CL
+     , ''                                                MQ_PUT_YN
+     , ''                                                MQ_MESSAGE
+     , ''                                                OP_DT
+     , ''                                                OP_TM
+     , 0                                                 SEQ
+  FROM tbas_user_mgmt   a
+     , tbas_portal_user c
+     , tbas_portal_org  d
+   , ( select * from tbas_deal_co_mgmt a
+        where hseq_no = (select max(hseq_no) from tbas_deal_co_mgmt
+                          where deal_co_cd = a.deal_co_cd )) b
+ WHERE a.user_nm        = #USER_NM#
+   AND c.login_id       = #PORTAL_ID#
+   AND a.org_area       =  b.deal_co_cd
+   AND a.user_nm        =  c.han_nm
+   AND b.ukey_agency_cd =  d.org_cd
+   AND d.sub_org_cd     = 'A000'
+   AND a.del_yn         = 'N'
+   AND a.user_grp       = 'D14'
+   AND a.eff_user_yn    = 'Y']]>
+	</select>
+	<update id="saveMappingUser" parameterClass="map" ><![CDATA[UPDATE TBAS_USER_MGMT  /*+ "BASUSM00800_saveMappingUser_김연석_김연석" */
+   set portal_user_id = #PORTAL_ID#
+     , pwd            = #PWD#
+     , mod_dtm        = to_char(sysdate, 'yyyymmddhh24miss')
+     , mod_user_id    = #onlineContext.userInfo.loginId#
+ where user_id        = #USER_ID#]]>
+	</update>
+	<update id="saveMappingRecv" parameterClass="map" ><![CDATA[UPDATE TBAS_PORTAL_MAPPING_RECV  /*+ "BASUSM00800_saveMappingRecv_김연석_김연석" */
+   set ps_apnd_yn  = 'Y'
+     , mod_dtm     = to_char(sysdate, 'yyyymmddhh24miss')
+     , mod_user_id = #onlineContext.userInfo.loginId#
+ where op_dt       = #OP_DT#
+   and op_tm       = #OP_TM#
+   and seq         = #SEQ#]]>
+	</update>
+</sqlMap>

@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="450" Id="ACCPDS00210" Left="8" OnLoadCompleted="ACCPDS00230_OnLoadCompleted" PidAttrib="7" Title="재고보상추가상품&#32;조회" Top="8" Ver="1.0" Width="760" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_serNumList">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodInfo"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_sum">
+				<Contents>
+					<colinfo id="tot_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="hst_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_plc_cnt" size="256" summ="default" type="STRING"/>
+					<record>
+						<hst_cnt></hst_cnt>
+						<in_plc_cnt></in_plc_cnt>
+						<tot_cnt>&#32;</tot_cnt>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_serNumList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="358" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="254" Id="grd_serNumList" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnEnterDown="grd_serNumList_OnEnterDown" Right="748" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="104" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="740">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="28"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="64"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="No"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="재고보상일"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="모델명"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="일련번호"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="입고구분"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="입고대리점"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="입고일"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="보유대리점"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="재고이동일"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="number" expr="currow+1"/>
+						<cell align="center" col="1" colid="strd_dt" display="date" imemode="english"/>
+						<cell align="center" col="2" colid="mdl_nm" display="text" imemode="english"/>
+						<cell align="center" col="3" colid="ser_num" display="text" edit="normal" imemode="english"/>
+						<cell align="center" col="4" colid="inout_dtl_cl_nm" display="text"/>
+						<cell col="5" colid="in_plc_agency_nm" display="text"/>
+						<cell col="6" colid="inout_dt" display="date"/>
+						<cell align="center" col="7" colid="hst_agency_nm" display="text"/>
+						<cell align="center" col="8" colid="agency_mov_dt" display="date"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="362" LeftMargin="5" OnClick="btn_cancel_OnClick" Style="sty_btn_d" TabOrder="3" Text="취소" Top="417" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="298" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="2" Text="확인" Top="417" Width="60"></Button>
+		<Button Cursor="HAND" Height="21" Id="Button56" ImageID="btn_i_exceldown_w" Left="725" OnClick="btn_excel_OnClick" TabOrder="4" Text="Button1" ToolTipText="Excel&#32;Download" Top="75" Width="19"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_add" ImageID="btn_i_add_w" Left="678" OnClick="btn_addRow_OnClick" TabOrder="5" Text="Button1" ToolTipText="행추가" Top="75" Width="19"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_del" ImageID="btn_i_subtract_w" Left="701" OnClick="btn_delRow_OnClick" TabOrder="6" Text="Button1" ToolTipText="추가된&#32;행삭제" Top="75" Width="19"></Button>
+		<Div Border="Raised" Height="63" Id="div_search" Left="9" Style="sty_div_input" TabOrder="7" Text="Div0" Top="5" Width="740">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="stc_prd_gb" Left="-10" Style="sty_lb_Basic" TabOrder="1" Text="대리점" Top="7" VAlign="Middle" Width="92"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="341" Style="sty_lb_Basic" TabOrder="2" Text="매입처" Top="6" VAlign="Middle" Width="76"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_prchsPlcNm" Left="422" LeftMargin="2" OnCharChanged="div_search_edt_prchsPlcNm_OnCharChanged" OnKeyDown="div_search_edt_prchsPlcId_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="6" Width="132"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="-27" OnClick="btn_agency_OnClick" TabOrder="4" Text="Button0" Top="486" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="Edit0" ImeMode="none" Left="32" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="494" Width="101"></Edit>
+				<Button Cursor="HAND" Height="21" Id="Button0" ImageID="btn_i_detail" Left="133" OnClick="btn_agency_OnClick" TabOrder="7" Text="Button0" Top="494" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="Edit1" Left="154" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="9" Top="494" Width="101"></Edit>
+				<Edit Border="Flat" Height="20" Id="Edit2" ImeMode="none" Left="-96" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="614" Width="101"></Edit>
+				<Button Cursor="HAND" Height="21" Id="Button1" ImageID="btn_i_detail" Left="5" OnClick="btn_agency_OnClick" TabOrder="10" Text="Button0" Top="614" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="Edit3" Left="26" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="614" Width="101"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_ordPlcNm" Left="87" LeftMargin="2" OnCharChanged="div_search_edt_ordPlcNm_OnCharChanged" OnKeyDown="div_search_edt_ordPlcNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="11" Top="7" UserData="대리점" Width="132"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="-10" Style="sty_lb_Basic" TabOrder="14" Text="제조사" Top="30" VAlign="Middle" Width="92"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_mfactNm" Left="87" LeftMargin="2" OnCharChanged="div_search_edt_ordPlcNm_OnCharChanged" OnKeyDown="div_search_edt_ordPlcNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="15" Top="29" UserData="제조사" Width="132"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="341" Style="sty_lb_Basic" TabOrder="17" Text="모델" Top="30" VAlign="Middle" Width="76"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_mdlNm" Left="422" LeftMargin="2" OnCharChanged="div_search_edt_prchsPlcNm_OnCharChanged" OnKeyDown="div_search_edt_prchsPlcId_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="18" Top="29" Width="132"></Edit>
+			</Contents>
+		</Div>
+		<Div Border="RaisedEdge" Height="40" Id="div_sum" Left="9" Style="sty_div_dataview" TabOrder="8" Text="Div0" Top="369" Width="740">
+			<Contents>
+				<Edit Align="RIGHT" BindDataset="ds_sum" Border="Flat" Column="hst_cnt" Enable="FALSE" Height="20" Id="edt_inSum" Left="337" LeftMargin="2" Number="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Width="70"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="229" Style="sty_lb_dataview" TabOrder="2" Text="대리점&#32;보유수량" Top="7" VAlign="Middle" Width="100"></Static>
+				<Edit Align="RIGHT" BindDataset="ds_sum" Border="Flat" Column="in_plc_cnt" Enable="FALSE" Height="20" Id="edt_outSum" Left="591" LeftMargin="2" Number="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="70"></Edit>
+				<Static Align="Right" Height="20" Id="Static0" Left="474" Style="sty_lb_dataview" TabOrder="4" Text="타대리점&#32;보유수량" Top="7" VAlign="Middle" Width="110"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Style="sty_lb_dataview" TabOrder="6" Text="적용수량" Top="7" VAlign="Middle" Width="80"></Static>
+				<Edit Align="RIGHT" BindDataset="ds_sum" Border="Flat" Column="tot_cnt" Enable="FALSE" Height="20" Id="edt_totSum" Left="88" LeftMargin="2" Number="TRUE" OnChanged="div_sum_edt_totSum_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Width="70"></Edit>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCPDS002030
+* 업무명      : 재고보상 등록 - 재고보상 사용자 추가 
+* 프로그램명  : 재고보상 사용자 추가 팝업
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.09.05
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+var FV_IN_FIX_CNT;
+var FV_IN_LIST_ROW;
+var FV_IN_DEBT_FLAG;
+var FV_POP_ORG_CD;		/** 대리점코드 */
+var FV_POP_PRCHS_CD;	/** 매입처코드 */
+var FV_POP_MFACT_ID;	/** 제조사코드 */
+var FV_POP_PROD_CD;		/** 모델코드 */
+var FV_SER_NUM;   // 일련번호
+var FV_POP_DOWN_UNIT_PRC; /***인하단가*/
+var FV_STRD_DT; /***재고보상 기준일*/
+var FV_N_ROW;
+var FV_TOT_CNT;
+var FV_HST_CNT;
+var FV_IN_PLC_CNT;
+var FV_MDL_NM ;
+var FV_DS_CNT ;
+
+function ACCPDS00230_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_serNumList);
+	
+	div_search.edt_ordPlcNm.Text = sAgencyNm;
+	div_search.edt_prchsPlcNm.Text = sPrchsNm;
+	div_search.edt_mfactNm.Text = sMfactNm;
+	div_search.edt_mdlNm.Text = sMdlNm;
+	FV_MDL_NM = sMdlNm;
+	FV_DS_CNT = sAddQty;
+	
+	FV_POP_ORG_CD = sAgencyCd;		
+	FV_POP_PRCHS_CD = sPrchsCd;	
+    FV_POP_MFACT_ID = sMfactId;	 
+    FV_POP_PROD_CD = sProdCd;		
+    FV_POP_DOWN_UNIT_PRC = sDownUnitPrc;
+    FV_STRD_DT = sStrdDt;
+	
+	f_getSerNumList();
+}
+		
+
+/*******************************************************************************
+ * @description    : 일련번호 조회
+*******************************************************************************/
+function f_getSerNumList()
+{
+    var sProdClOrg = sProdCl;
+    var sMfactIDOrg = sMfactId;
+    var sProdCdOrg = sProdCd;
+          
+    if(ds_outFixRegOrgList.rowcount >0){
+		
+		ds_outFixRegOrgList.Filter("prod_cd='"+sProdCdOrg+"'&&mfact_id='"+sMfactIDOrg+"'&&in_fix_yn='1'&&add_flag='05'");
+		
+		ds_serNumList.Assign(ds_outFixRegOrgList);
+				
+		ds_outFixRegOrgList.unFilter();
+		
+    }else{
+		ds_serNumList.AddColumn("edt_flag");
+		ds_serNumList.AddColumn("add_flag");
+		ds_serNumList.AddColumn("prod_cd");
+		ds_serNumList.AddColumn("mfact_id");
+		ds_serNumList.AddColumn("mdl_nm");
+		ds_serNumList.AddColumn("mfact_nm");
+		ds_serNumList.AddColumn("prod_cl");
+		ds_serNumList.AddColumn("prod_cl_nm");
+		ds_serNumList.AddColumn("color_cd");
+		ds_serNumList.AddColumn("color_cd_nm");
+		ds_serNumList.AddColumn("dis_amt");
+		ds_serNumList.AddColumn("ser_num");
+		ds_serNumList.AddColumn("inout_dtl_cl_nm");
+		ds_serNumList.AddColumn("hst_agency_nm");
+		ds_serNumList.AddColumn("hst_agency");
+		ds_serNumList.AddColumn("inout_dt");
+		ds_serNumList.AddColumn("in_plc_agency_nm");
+		ds_serNumList.AddColumn("agency_mov_dt");
+		ds_serNumList.AddColumn("down_unit_prc");
+		ds_serNumList.AddColumn("in_fix_yn");
+		ds_serNumList.AddColumn("in_fix_yn_tmp");
+		ds_serNumList.AddColumn("rgst_seq");
+		ds_serNumList.AddColumn("strd_dt");
+		ds_serNumList.AddColumn("key_data");
+    }
+        
+    FV_IN_LIST_ROW = sNrow;
+    ds_serNumList.row = 0;
+    FV_IN_DEBT_FLAG = sDebtFlag;
+    
+    
+	FV_HST_CNT = ds_serNumList.CaseCount("hst_agency==\""+FV_POP_ORG_CD+"\"");	//대리점 보유수량 
+	FV_IN_PLC_CNT = ds_serNumList.CaseCount("hst_agency!=\""+FV_POP_ORG_CD+"\"");	//타대리점 보유수량 
+	FV_TOT_CNT = ds_serNumList.GetRowCount();
+	
+    ds_sum.SetColumn(0,"tot_cnt",FV_TOT_CNT);
+    ds_sum.SetColumn(0,"hst_cnt",FV_HST_CNT);
+    ds_sum.SetColumn(0,"in_plc_cnt",FV_IN_PLC_CNT);
+    
+    if(FV_IN_DEBT_FLAG != "0"){
+		grd_serNumList.Editable = "false";
+		btn_confirm.Enable = "false";
+		btn_add.Enable = "false";
+		btn_del.Enable = "false";
+    }
+}
+
+
+function btn_confirm_OnClick(obj)
+{    	  
+	if(ds_serNumList.rowcount >0){
+	
+		
+		for(var i=0; i<ds_serNumList.rowcount; i++)
+		{
+			var sProdCd = ds_serNumList.GetColumn(i, "prod_cd");
+			var sColorCd = ds_serNumList.GetColumn(i, "color_cd");
+			var sSerNum = ds_serNumList.GetColumn(i, "ser_num");
+			var sInFixYn = ds_serNumList.GetColumn(i, "in_fix_yn");
+			var sInFixYnTmp = ds_serNumList.GetColumn(i, "in_fix_yn_tmp");
+			
+			
+			if(ds_outFixRegOrgList.FindRow("key_data",sProdCd+sColorCd+sSerNum) == -1){
+			   
+				cf_copyDataSet(parent.ds_outFixRegOrgList, ds_serNumList,i,null,true);
+	
+				FV_DS_CNT++;
+			}else{
+			
+				parent.ds_outFixRegOrgList.SetColumn(ds_outFixRegOrgList.FindRow("key_data",sProdCd+sColorCd+sSerNum), "in_fix_yn", sInFixYn);
+				parent.ds_outFixRegOrgList.SetColumn(ds_outFixRegOrgList.FindRow("key_data",sProdCd+sColorCd+sSerNum), "in_fix_yn_tmp", sInFixYnTmp);
+			}				
+		} 	
+	}
+		
+	//parent.ds_outFixRegList.SetColumn(FV_IN_LIST_ROW, "add_qty", FV_DS_CNT);
+	parent.ds_outFixRegList.SetColumn(FV_IN_LIST_ROW, "ADD_QTY", ds_serNumList.rowcount);
+	
+    this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 플러스 버튼 클릭 이벤트 (행 검증 및 새로운 행 추가)
+*******************************************************************************/
+function btn_addRow_OnClick(obj)
+{
+	var oGrdDs = object(grd_serNumList.BindDataset);
+	var nRow = oGrdDs.AddRow();
+	
+	oGrdDs.SetColumn(nRow,"strd_dt",FV_STRD_DT);
+	oGrdDs.SetColumn(nRow,"mdl_nm",FV_MDL_NM);
+	
+}
+
+/*******************************************************************************
+ * @description    : - 버튼 클릭 이벤트 (행 삭제 및 dataset update)
+*******************************************************************************/
+function btn_delRow_OnClick(obj)
+{
+	var oGrdDs = object(grd_serNumList.BindDataset);
+	var nRow = oGrdDs.row;
+	
+	var sDelProdCd = oGrdDs.GetColumn(nRow,"prod_cd");
+	var sDelColorCd = oGrdDs.GetColumn(nRow,"color_cd");
+	var sDelSerNum = oGrdDs.GetColumn(nRow,"ser_num");
+	var sDelInFixYn = oGrdDs.GetColumn(nRow,"in_fix_yn");
+	var sDelInFixYnTmp = oGrdDs.GetColumn(nRow,"in_fix_yn_tmp");
+	
+	if(oGrdDs.GetColumn(nRow,"hst_agency") == FV_POP_ORG_CD){
+		FV_TOT_CNT = FV_TOT_CNT-1;
+		FV_HST_CNT = FV_HST_CNT-1;
+					
+		ds_sum.SetColumn(0,"tot_cnt",FV_TOT_CNT);
+		ds_sum.SetColumn(0,"hst_cnt",FV_HST_CNT);
+	}else if(oGrdDs.GetColumn(nRow,"hst_agency") != FV_POP_ORG_CD){
+		FV_TOT_CNT = FV_TOT_CNT-1;
+		FV_IN_PLC_CNT = FV_IN_PLC_CNT-1;
+		
+		ds_sum.SetColumn(0,"tot_cnt",FV_TOT_CNT);
+		ds_sum.SetColumn(0,"in_plc_cnt",FV_IN_PLC_CNT);
+	}
+	
+	oGrdDs.DeleteRow(oGrdDs.row);
+		
+	if(sDelInFixYn =="1" && sDelInFixYnTmp = "1"){
+		parent.ds_outFixRegOrgList.SetColumn(ds_outFixRegOrgList.FindRow("key_data",sDelProdCd+sDelColorCd+sDelSerNum), "in_fix_yn", "0");
+		parent.ds_outFixRegOrgList.SetColumn(ds_outFixRegOrgList.FindRow("key_data",sDelProdCd+sDelColorCd+sDelSerNum), "in_fix_yn_tmp", "1");
+	}else if(sDelInFixYn =="1" && sDelInFixYnTmp = "0"){
+		parent.ds_outFixRegOrgList.DeleteRow(ds_outFixRegOrgList.FindRow("key_data",sDelProdCd+sDelColorCd+sDelSerNum));
+	}	
+	
+	FV_DS_CNT --;	
+}
+
+
+/*******************************************************************************
+ * @description    : 취소- 이벤트
+*******************************************************************************/
+function btn_cancel_OnClick(obj)
+{
+	this.Close();
+}
+
+
+/*******************************************************************************
+ * @description    : 일련번호 입력시 상품정보 조회 Event
+*******************************************************************************/
+function grd_serNumList_OnEnterDown(obj,nRow,nCell,strVal,nPivotIndex)
+{
+	if(nCell == 3)
+	{	
+		// 대문자로 변경.
+		ds_serNumList.SetColumn(ds_serNumList.currow,"ser_num"
+			,ToUpper(ds_serNumList.GetColumn(ds_serNumList.currow,"ser_num")));    	
+	
+		http.Sync = true;
+		
+		if( Length(ds_serNumList.GetColumn(ds_serNumList.currow, "ser_num")) == 7 || Length(ds_serNumList.GetColumn(ds_serNumList.currow, "ser_num")) == 8){
+		
+			FV_N_ROW = ds_serNumList.currow;
+		      
+			FV_SER_NUM = ds_serNumList.GetColumn(ds_serNumList.currow, "ser_num");
+			
+			var sAddFlag = "02";
+			
+			if(ds_serNumList.CaseCount("prod_cd==\""+ FV_POP_PROD_CD + "\" && ser_num==\"" + FV_SER_NUM + "\"")){
+				alert(cf_getMessage(MSG_00032, "동일한 일련번호가"));
+				ds_serNumList.DeleteRow(FV_N_ROW);	
+				return;
+			}
+			
+			if(ds_outFixRegOrgList.CaseCount("prod_cd==\""+ FV_POP_PROD_CD + "\" && add_flag==\"" +sAddFlag+ "\" && ser_num==\"" + FV_SER_NUM + "\"")){
+				alert(cf_getMessage(MSG_00032, "자동산출 모델 리스트에 같은 일련번호가"));
+				ds_serNumList.DeleteRow(FV_N_ROW);	
+				return;
+			}
+			
+			f_getProdInfo(FV_SER_NUM);
+	    
+	      
+		} else{
+		
+			alert(cf_getMessage(MSG_00151, "[단말기:7자리 || USIM:8자리]"));
+			
+			grd_serNumList.SetFocus();
+			grd_serNumList.SetCellPos(1);
+			return false;		
+		}
+	    
+	    http.Sync = false;
+	 }
+}
+
+
+
+/*******************************************************************************
+ * @description    : 상품 정보 조회
+*******************************************************************************/
+function f_getProdInfo(sSerNum)
+{
+    // 입력 파라메터 셋팅
+    ds_condition.ClearData();
+    ds_prodInfo.ClearData();
+        
+    cf_setParam(ds_condition, "prod_cd", FV_POP_PROD_CD);
+    cf_setParam(ds_condition, "ser_num", sSerNum);
+    cf_setParam(ds_condition, "org_cd",  FV_POP_ORG_CD);
+    cf_setParam(ds_condition, "prchs_plc", FV_POP_PRCHS_CD);
+    cf_setParam(ds_condition, "strd_dt", FV_STRD_DT);
+
+	// 트랜잭션 설정
+	var sSvcID = "svcProdInfo";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_prodInfo=nc_output_fieldDs";
+	var sArg = "sktst.acc.PDS#getProdInfoBySernum";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+*******************************************************************************/
+function f_callBack(sSvcID)
+{   
+    if(sSvcID == "svcProdInfo") {
+		
+		if(ds_prodInfo.GetColumn(0,"inout_dtl_cl_nm") == null){
+			alert("해당 상품 재고가 없습니다");
+			ds_serNumList.DeleteRow(FV_N_ROW);	
+			return false;
+		}else{
+			if(toNumber(ds_prodInfo.GetColumn(0,"rgst_seq")) >0 && toNumber(ds_prodInfo.GetColumn(0,"cnt")) <2){
+				
+				var sChkStrdDt = "";
+				var sPreStrdDt = ds_prodInfo.GetColumn(0,"strd_dt");
+				if(Length(sPreStrdDt) == 8 ){
+					sChkStrdDt = substr(sPreStrdDt,0,4)+"-"+substr(sPreStrdDt,4,2)+"-"+substr(sPreStrdDt,6,2);
+				}
+				
+				alert(sChkStrdDt+"일에 재고보상된 상품입니다.");
+				ds_serNumList.DeleteRow(FV_N_ROW);	
+				return false;
+			}else if(toNumber(ds_prodInfo.GetColumn(0,"rgst_seq")) >0 && toNumber(ds_prodInfo.GetColumn(0,"cnt")) >= 2){
+				
+				var sChkStrdDt = "";
+				var sPreStrdDt = ds_prodInfo.GetColumn(0,"strd_dt");
+				if(Length(sPreStrdDt) == 8 ){
+					sChkStrdDt = substr(sPreStrdDt,0,4)+"-"+substr(sPreStrdDt,4,2)+"-"+substr(sPreStrdDt,6,2);
+				}
+				
+				var sOccrAmt = toNumber(ds_prodInfo.GetColumn(0,"occr_amt"));
+				
+				alert(sChkStrdDt+"일에 "+sOccrAmt+"원 재고보상등록이 되었습니다.\n재고보상등록 자료 대사후 진행하십시오");
+				
+				ds_serNumList.CopyRow(FV_N_ROW,"ds_prodInfo",0);
+				ds_serNumList.SetColumn(FV_N_ROW,"down_unit_prc",FV_POP_DOWN_UNIT_PRC);
+				
+				if(ds_serNumList.GetColumn(FV_N_ROW,"hst_agency") == FV_POP_ORG_CD){
+					FV_TOT_CNT = FV_TOT_CNT+1;
+					FV_HST_CNT = FV_HST_CNT+1;
+					
+					ds_sum.SetColumn(0,"tot_cnt",FV_TOT_CNT);
+					ds_sum.SetColumn(0,"hst_cnt",FV_HST_CNT);
+				}else if(ds_serNumList.GetColumn(FV_N_ROW,"hst_agency") != FV_POP_ORG_CD){
+					FV_TOT_CNT = FV_TOT_CNT+1;
+					FV_IN_PLC_CNT = FV_IN_PLC_CNT+1;
+					ds_sum.SetColumn(0,"tot_cnt",FV_TOT_CNT);
+					ds_sum.SetColumn(0,"in_plc_cnt",FV_IN_PLC_CNT);
+				}
+				
+			}else{
+						
+				ds_serNumList.CopyRow(FV_N_ROW,"ds_prodInfo",0);
+				ds_serNumList.SetColumn(FV_N_ROW,"down_unit_prc",FV_POP_DOWN_UNIT_PRC);
+				
+				if(ds_serNumList.GetColumn(FV_N_ROW,"hst_agency") == FV_POP_ORG_CD){
+					FV_TOT_CNT = FV_TOT_CNT+1;
+					FV_HST_CNT = FV_HST_CNT+1;
+					
+					ds_sum.SetColumn(0,"tot_cnt",FV_TOT_CNT);
+					ds_sum.SetColumn(0,"hst_cnt",FV_HST_CNT);
+				}else if(ds_serNumList.GetColumn(FV_N_ROW,"hst_agency") != FV_POP_ORG_CD){
+					FV_TOT_CNT = FV_TOT_CNT+1;
+					FV_IN_PLC_CNT = FV_IN_PLC_CNT+1;
+					ds_sum.SetColumn(0,"tot_cnt",FV_TOT_CNT);
+					ds_sum.SetColumn(0,"in_plc_cnt",FV_IN_PLC_CNT);
+				}
+			}
+		}
+    }
+}
+
+function Button3_OnClick(obj)
+{
+	cf_debug("ds_prodInfo");
+}
+
+
+function Button2_OnClick(obj)
+{
+	cf_debug("ds_serNumList");
+}
+
+function btn_excel_OnClick(obj)
+{
+	cf_exportExcel(grd_serNumList);
+}
+]]></Script>
+</Window>

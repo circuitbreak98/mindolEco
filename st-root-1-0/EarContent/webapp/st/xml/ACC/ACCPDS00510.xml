@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCPDS00510" Left="8" OnLoadCompleted="ACCPDS00510_OnLoadCompleted" PidAttrib="7" Title="매입거래명세조회" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRCHS_PLC" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_MTH></ACC_MTH>
+						<ORG_CD>&#32;</ORG_CD>
+						<PRCHS_PLC></PRCHS_PLC>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_cmp_detail" OnColumnChanged="ds_cmp_detail_OnColumnChanged">
+				<Contents>
+					<colinfo id="flag" size="256" summ="default" type="STRING"/>
+					<colinfo id="mdl_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="mdl_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cl_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="dis_obj" size="256" summ="default" type="STRING"/>
+					<colinfo id="down_unit_prc" size="256" summ="default" type="STRING"/>
+					<colinfo id="aply_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="aply_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="exc_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="loss_amt" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_debt_list">
+				<Contents>
+					<colinfo id="ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRCHS_PLC_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRCHS_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="OCCR_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="GUBUN" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MFACT_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNIT_PRC" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_CRDT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SVC_CRDT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEBT_CRDT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="RaisedEdge" Height="40" Id="div_search" Left="10" Style="sty_div_dataview" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="2" Style="sty_lb_dataview" TabOrder="1" Text="매입월" Top="7" VAlign="Middle" Width="76"></Static>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="ACC_MTH" Enable="FALSE" Height="20" Id="cal_acc_mth" Left="82" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" NullValue="&#32;" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Type="STRING" Width="104"></MaskEdit>
+				<Button Cursor="HAND" Enable="FALSE" Height="21" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="181" OnClick="btn_monthCalendar_OnClick" TabOrder="2" Text="Button3" Top="7" Width="17"></Button>
+				<Static Align="Right" Height="20" Id="Static1" Left="211" Style="sty_lb_dataview" TabOrder="4" Text="매입처" Top="7" VAlign="Middle" Width="76"></Static>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="PRCHS_PLC" Enable="FALSE" Height="20" Id="edt_prchsPlcId" Left="291" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="6" Width="94"></Edit>
+				<Button Cursor="HAND" Enable="FALSE" Height="21" Id="btn_prchs" ImageID="btn_i_detail" Left="383" OnClick="div_search_btn_prchs_OnClick" TabOrder="6" Text="Button0" Top="6" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_prchsPlcNm" Left="402" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="6" Width="153"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_debt_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="553" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="468" Id="grd_cmp" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="85" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="88"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="70"/>
+						<col width="95"/>
+						<col width="80"/>
+						<col width="65"/>
+						<col width="67"/>
+						<col width="65"/>
+						<col width="69"/>
+						<col width="81"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="매입일" Valign="Center"/>
+						<cell col="-1" display="text">
+							<cell align="center" col="0" color="user35" display="text" font="돋움,9,Bold" Valign="Center"/>
+							<cell align="center" col="0" color="user35" display="text" font="돋움,9,Bold" row="1" text="거래구분" Valign="Center"/>
+						</cell>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="거래구분" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="상품구분" Valign="Center"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="제조사" Valign="Center"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="모델" Valign="Center"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="단가" Valign="Center"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="수량" Valign="Center"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="금액" Valign="Center"/>
+						<cell bkcolor="user34" col="8" color="user35" colspan="2" display="text" font="돋움,9,Bold" text="매입금액" Valign="Center"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="채무잔액" Valign="Center"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,9,Bold" row="1" text="현금여신" Valign="Center"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" font="돋움,9,Bold" row="1" text="개통여신" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="center" bkcolor2="user36" col="0" colid="OCCR_DT" display="date"/>
+						<cell align="center" col="1" colid="GUBUN" display="text" expr='decode(gubun,&quot;ORD&quot;,&quot;구매입고&quot;,&quot;OUT&quot;,&quot;반품출고&quot;,&quot;DIS&quot;,&quot;재고보상&quot;,&quot;PRCHS&quot;,&quot;매입할인&quot;,&quot;&quot;)'/>
+						<cell align="center" bkcolor2="user36" col="2" colid="PROD_CL_NM" display="text"/>
+						<cell align="center" bkcolor2="user36" col="3" colid="MFACT_NM" combodisplayrowcnt="0" display="text"/>
+						<cell align="center" bkcolor2="user36" col="4" colid="PROD_NM" display="text"/>
+						<cell align="right" bkcolor2="user36" col="5" colid="UNIT_PRC" display="number"/>
+						<cell align="right" bkcolor2="user32" col="6" colid="QTY" combodisplayrowcnt="0" display="number"/>
+						<cell align="right" bkcolor2="user32" col="7" colid="APLY_AMT" combodisplayrowcnt="0" display="number"/>
+						<cell align="right" bkcolor2="user32" col="8" colid="CASH_CRDT" combodisplayrowcnt="0" display="number"/>
+						<cell align="right" col="9" colid="SVC_CRDT" display="number"/>
+						<cell align="right" col="10" colid="DEBT_CRDT" display="number"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" display="text" font="돋움,9,Bold" text="계"/>
+						<cell align="right" bkcolor="user37" col="1" color="user38" display="number" font="굴림,9"/>
+						<cell align="right" bkcolor="user37" col="2" color="user38" display="number" font="굴림,9"/>
+						<cell align="right" bkcolor="user37" col="3" color="user38" display="number" font="굴림,9"/>
+						<cell align="right" bkcolor="user37" col="4" color="user38" display="number" font="굴림,9"/>
+						<cell align="right" bkcolor="user37" col="5" color="user38" display="number" expr='sum(&quot;unit_prc&quot;)' font="굴림,9"/>
+						<cell align="right" bkcolor="user37" col="6" color="user38" display="number" expr='sum(&quot;qty&quot;)' font="굴림,9"/>
+						<cell align="right" bkcolor="user37" col="7" color="user38" display="number" expr='sum(&quot;aply_amt&quot;)' font="굴림,9"/>
+						<cell align="right" bkcolor="user37" col="8" color="user38" display="number" expr='sum(&quot;cash_crdt&quot;)' font="굴림,9"/>
+						<cell align="right" bkcolor="user37" col="9" color="user38" display="number" expr='sum(&quot;svc_crdt&quot;)' font="굴림,9"/>
+						<cell align="right" bkcolor="user37" col="10" color="user38" display="number" expr='sum(&quot;debt_crdt&quot;)' font="굴림,9"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="Button56" ImageID="btn_i_exceldown_w" Left="801" OnClick="btn_excel_OnClick" TabOrder="3" Text="Button1" ToolTipText="Excel&#32;Download" Top="60" Width="19"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button23" ImageID="btn_d_2" Left="760" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="2" Text="닫기" Top="563" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCPDS00200
+* 업무명      : 매입채무 - 매입거래명세조회
+* 프로그램명  : 매입채무정산
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.02.28
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 1. 전 처리기
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+
+
+//==============================================================================
+// 3. 폼 로드
+//==============================================================================
+/*******************************************************************************
+* 함수명 : sample_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.02.02
+-------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+function ACCPDS00510_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_cmp);
+	
+	ds_condition.SetColumn(0,"ORG_CD", sInOrgCd);
+	ds_condition.SetColumn(0,"ACC_MTH", sInAccMth);
+	ds_condition.SetColumn(0,"PRCHS_PLC", sInPrchsPlc);
+	
+	div_search.edt_prchsPlcNm.Text = sInPrchsPlcNm;
+	
+	f_getPrchsDebtList();
+}
+
+
+
+function f_getPrchsDebtList()
+{	
+	var sSvcID = "svcPrchsDebtList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_debt_list=dsDebtList";
+	var sArg = "sktst.acc.PDS#getPrchsDebtDetailList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.02.02
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+function f_callBack(sSvcID)
+{   
+    if(sSvcID = "svcPrchsDebtList"){
+    
+		for(var idx=0; idx<ds_debt_list.GetRowCount();idx++){
+			if(idx ==0){
+				ds_debt_list.SetColumn(idx, "DEBT_CRDT", (ds_debt_list.GetColumn(idx, "CASH_CRDT")+ds_debt_list.GetColumn(idx, "SVC_CRDT")));
+			}else{
+				ds_debt_list.SetColumn(idx, "DEBT_CRDT", (ds_debt_list.GetColumn(idx-1, "DEBT_CRDT")+ds_debt_list.GetColumn(idx, "APLY_AMT")));
+			}
+		}
+   }
+    
+}
+		
+
+
+/*******************************************************************************
+ * @description    : 엑셀 출력 - 이벤트
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	cf_exportExcel(grd_cmp);
+}
+
+
+/*******************************************************************************
+ * @description    : 상세내역 팝업창 닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.close();
+}
+]]></Script>
+</Window>

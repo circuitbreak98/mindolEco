@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCDCS00300" Left="8" OnLoadCompleted="ACCDCS00300_OnLoadCompleted" PidAttrib="7" Title="업무&#32;일마감현황" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" GroupKey="sup_org_nm" Id="ds_list"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition" OnColumnChanged="ds_condition_OnColumnChanged"></Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="34" Id="div_search" Left="4" Style="sty_div_search" TabOrder="1" Text="Div0" Top="4" Width="1012">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static3" Left="10" Style="sty_lb_Search" TabOrder="2" Text="마감월" Top="4" VAlign="Middle" Width="68"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="313" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="4" Width="60"></Button>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="26" TabOrder="3" Top="3" Transparent="TRUE" Width="20"></Image>
+				<MaskEdit Border="Flat" Height="20" Id="cal_acc" Left="85" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="4" Type="STRING" Width="104"></MaskEdit>
+				<Button Cursor="HAND" Height="18" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="173" OnClick="btn_monthCalendar_OnClick" TabOrder="5" Text="Button3" Top="5" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Button Cursor="HAND" Height="21" Id="btn_excelDown" ImageID="btn_i_exceldown_w" Left="997" OnClick="btn_excelDown_OnClick" TabOrder="3" Text="Button1" ToolTipText="Excel&#32;Download" Top="42" Width="19"></Button>
+		<Grid BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="569" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="505" Id="grd_list" InputPanel="FALSE" Left="4" LineColor="user33" Right="1016" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="64" UseDBuff="true" UsePopupMenu="true" UseSelColor="FALSE" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1012">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="66"/>
+						<col fix="left" width="66"/>
+						<col fix="left" width="89"/>
+						<col fix="left" width="124"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="50"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="95"/>
+						<col width="123"/>
+						<col width="87"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" rowspan="2" text="마감일"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" rowspan="2" text="영업팀"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" rowspan="2" text="영업센터"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" rowspan="2" text="대리점"/>
+						<cell bkcolor="user34" col="4" color="user35" colspan="4" display="text" text="영업관리"/>
+						<cell bkcolor="user34" col="8" color="user35" colspan="3" display="text" text="재고관리"/>
+						<cell bkcolor="user34" col="11" color="user35" colspan="4" display="text" text="입금관리"/>
+						<cell bkcolor="user34" col="15" color="user35" display="text" rowspan="2" text="요청일시"/>
+						<cell bkcolor="user34" col="16" color="user35" display="text" rowspan="2" text="요청자"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" row="1" text="전송"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" row="1" text="처리"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" row="1" text="미처리"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" row="1" text="제외"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" row="1" text="예정"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" row="1" text="확정"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" row="1" text="미확정"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" row="1" text="전일잔액"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" row="1" text="입금"/>
+						<cell bkcolor="user34" col="13" color="user35" display="text" row="1" text="정산"/>
+						<cell bkcolor="user34" col="14" color="user35" display="text" row="1" text="잔액"/>
+					</head>
+					<body>
+						<cell align="expr:decode(rowlevel,2,&apos;right&apos;,&apos;defalut&apos;)" col="0" colid="req_dt" display="date" font='expr:decode(rowlevel,1,&quot;돋움,9,Bold&quot;,&quot;default&quot;)' subsumtext="소계" suppress="1"/>
+						<cell align="expr:decode(rowlevel,2,&apos;right&apos;,&apos;defalut&apos;)" col="1" colid="sup_org_nm" display="text" font='expr:decode(rowlevel,1,&quot;돋움,9,Bold&quot;,&quot;default&quot;)' suppress="2"/>
+						<cell align="expr:decode(rowlevel,2,&apos;right&apos;,&apos;defalut&apos;)" col="2" colid="org_nm" display="text" font='expr:decode(rowlevel,1,&quot;돋움,9,Bold&quot;,&quot;default&quot;)' subsumtext="소계" suppress="3"/>
+						<cell bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="3" colid="deal_co_nm" display="text" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="4" colid="ukey_cnt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="5" colid="proc_cnt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="6" colid="non_cnt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="7" colid="expt_cnt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="8" colid="total_cnt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="9" colid="confirm_y_cnt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="10" colid="confirm_n_cnt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="11" colid="bfr_in_amt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="12" colid="in_amt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="13" colid="account_amt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(mod_nm,null,&apos;User25&apos;,&apos;default&apos;)" col="14" colid="bal_amt" display="number" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+						<cell bkcolor="expr:decode(mod_nm,&apos;&apos;,&apos;User&#32;Color&#32;25&apos;,&apos;default&apos;)" col="15" colid="mod_dtm" display="text" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)' Mask="####-##-##&#32;##:##:##"/>
+						<cell bkcolor="expr:decode(mod_nm,&apos;&apos;,&apos;User&#32;Color&#32;25&apos;,&apos;default&apos;)" col="16" colid="mod_nm" display="text" font='expr:decode(rowlevel,2,&quot;돋움,9,Bold&quot;,&quot;default&quot;)'/>
+					</body>
+					<summary>
+						<cell align="center" bkcolor="user37" col="0" color="user38" colspan="4" display="text" font="돋움,9,Bold" text="합계"/>
+						<cell bkcolor="user37" col="4" color="user38" display="number" expr='sum(&quot;ukey_cnt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="5" color="user38" display="number" expr='sum(&quot;proc_cnt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="6" color="user38" display="number" expr='sum(&quot;non_cnt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="7" color="user38" display="number" expr='sum(&quot;expt_cnt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="8" color="user38" display="number" expr='sum(&quot;total_cnt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="9" color="user38" display="number" expr='sum(&quot;confirm_y_cnt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="10" color="user38" display="number" expr='sum(&quot;confirm_n_cnt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="11" color="user38" display="number" expr='sum(&quot;bfr_in_amt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="12" color="user38" display="number" expr='sum(&quot;in_amt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="13" color="user38" display="number" expr='sum(&quot;account_amt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="14" color="user38" display="number" expr='sum(&quot;bal_amt&quot;)' font="돋움,10,Bold"/>
+						<cell bkcolor="user37" col="15" color="user38" display="number"/>
+						<cell bkcolor="user37" col="16" color="user38" display="number"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : ACCDCS00300
+* 업무명      : 정산
+* 프로그램명  : 업무일마감월현황
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2010.07.26
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_ORG_ID;	//조직코드
+var FV_ORG_CL;  //조직구분
+var FV_POS_AGENCY_ID;
+var FV_POS_AGENCY_UKEY_ID;
+var FV_POS_AGENCY_NM;
+var FV_ORG_AREA_ID; // 근무지 cd.
+var FV_ORG_AREA_NM; // 근무지 nm.
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ACCDCS00300_OnLoadCompleted(obj)
+{
+
+	//일자 셋팅. 
+	div_search.cal_acc.value = Mid(Today(),0,6);
+	
+	// 권한.
+	cf_setAuth(pFrmNum);
+	
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "searchReq"){
+	  return ;	
+				
+	}
+}
+
+/*******************************************************************************
+ * @description    : excelDown 클릭- 이벤트
+*******************************************************************************/
+function btn_excelDown_OnClick(obj)
+{
+	cf_exportExcel(grd_list);
+}
+
+/*******************************************************************************
+ * @description    : search click - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	if(!cf_checkObjValues(div_search)){
+		return;
+	}
+	
+	// 넘길 파라메터 설정
+	cf_setParam(ds_condition, "cls_mth", div_search.cal_acc.Value);
+	
+	ds_list.GroupKey = "REQ_DT, SUP_ORG_NM, ORG_NM";
+	
+	// 트랜잭션 설정
+	var sSvcID = "searchReq";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=ds_list";
+	var sArg   = "sktst.acc.DCS#getMonthDayClsList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg,null,true,true);
+}
+
+
+function ds_condition_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	ds_list.ClearData();
+}
+
+
+
+/*******************************************************************************
+ * @description    :  정산월 컴퍼넌트 호출 
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_acc);
+}
+]]></Script>
+</Window>

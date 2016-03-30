@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="338" Id="BASBCO01400" Left="8" OnLoadCompleted="BASBCO01400_OnLoadCompleted" PidAttrib="7" Title="거래처검색" Top="8" Ver="1.0" Width="544" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list"></Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="518">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="419" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="3" Text="조회" Top="7" Width="58"></Button>
+				<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_uKeyCd" ImeMode="english" Left="322" LeftMargin="2" MaxLength="10" OnKeyDown="f_setEnterDown" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" UseIME="FALSE" Width="84"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="250" Style="sty_lb_Search" TabOrder="4" Text="U.Key&#32;코드" Top="7" VAlign="Middle" Width="68"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static1" Left="19" Style="sty_lb_Search" TabOrder="5" Text="거래처명" Top="7" VAlign="Middle" Width="68"></Static>
+				<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_dealNm" ImeMode="native" Left="90" LeftMargin="2" MaxLength="30" OnKeyDown="f_setEnterDown" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Width="132"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="293" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="233" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_list_OnCellDblClick" Right="528" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="60" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="518">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="92"/>
+						<col width="216"/>
+						<col width="100"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="거래처구분" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="거래처명" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="U.Key&#32;코드" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="거래처&#32;코드" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="center" bkcolor2="user36" col="0" colid="deal_co_cl1" display="combo"/>
+						<cell align="left" bkcolor2="user36" col="1" colid="deal_co_nm" display="text"/>
+						<cell align="center" bkcolor2="user36" col="2" colid="ukey_cd" display="text"/>
+						<cell align="center" col="3" colid="ukey_agency_cd" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="465" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="303" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="398" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="4" Text="확인" Top="303" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BASBCO01200
+* 업무명      : 기준정보 - 공통
+* 프로그램명  : 판매유형
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.02.24
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function BASBCO01400_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_list);
+
+	if(gds_temp.GetRowCount() > 0)
+	{
+		ds_list.Copy(gds_temp);
+		grd_list.BindDataset = "ds_list";
+	}
+
+	// 공통 코드 설정
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("grd_list", "ZBAS_C_00240", null, 0); // 거래처 구분
+	cf_checkCommonCode();
+
+	this.GetFirstComponent().setFocus();
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcList")
+	{
+		grd_list.BindDataset = "ds_list";
+	}	
+}
+
+/*******************************************************************************
+ * @description    : 조회- 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	// 조회 조건 설정
+	cf_setParam(ds_condition, "deal_co_nm", div_search.edt_dealNm.text); //거래처명
+	//cf_setParam(ds_condition, "deal_co_cd", div_search.edt_uKeyCd.text); //uKey코드
+	cf_setParam(ds_condition, "ukey_agency_cd", div_search.edt_uKeyCd.text); //uKey코드
+	cf_setParam(ds_condition, "eff_str_dtm", parent.ds_popCondition.getColumn(0, "eff_str_dtm")); // 기준일
+	cf_setParam(ds_condition, "eff_end_dtm", parent.ds_popCondition.getColumn(0, "eff_end_dtm")); // 기준일
+	cf_setParam(ds_condition, "eff_dtm", parent.ds_popCondition.getColumn(0, "eff_dtm")); // 기준일
+	cf_setParam(ds_condition, "deal_co_cl1", parent.ds_popCondition.getColumn(0, "deal_co_cl1")); // 거래처 구분
+	cf_setParam(ds_condition, "org_id", parent.ds_popCondition.getColumn(0, "org_id")); // 소속 조직
+	cf_setParam(ds_condition, "pos_agency", parent.ds_popCondition.getColumn(0, "pos_agency")); // 소속 대리점
+	cf_setParam(ds_condition, "chrgr_user_id", parent.ds_popCondition.getColumn(0, "chrgr_user_id")); // 영업 사원
+	cf_setParam(ds_condition, "deal_co_cd", parent.ds_popCondition.getColumn(0, "deal_co_cd")); // 거래처
+	cf_setParam(ds_condition, "deal_co_cl2", parent.ds_popCondition.getColumn(0, "deal_co_cl2")); // 거래처 유형
+	cf_setParam(ds_condition, "total_yn", parent.ds_popCondition.getColumn(0, "total_yn")); // 종료된 거래처 조회 여부
+
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=output";
+	var sArg = "sktst.bas.BCO#getDealPop";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 선택 - 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	f_setResult(ds_list.currow);
+}
+
+/*******************************************************************************
+ * @description    : 그리드 더블 클릭 - 이벤트
+*******************************************************************************/
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	f_setResult(ds_list.currow);
+}
+
+/*******************************************************************************
+ * @description    : 결과 설정
+*******************************************************************************/
+function f_setResult(nRow)
+{
+	if(ds_list.GetRowCount() > 0)
+	{
+		var sDealCoCd = ds_list.GetColumn(nRow, "deal_co_cd");
+		var sDealCoNm = ds_list.GetColumn(nRow, "deal_co_nm");
+		var sUkeyAgencyCd = ds_list.GetColumn(nRow, "ukey_agency_cd");
+		var sUkeySubCd = ds_list.GetColumn(nRow, "ukey_sub_cd");
+		var sUkeyChannelCd = ds_list.GetColumn(nRow, "ukey_channel_cd");
+		
+		var sDealCoCl1 = ds_list.GetColumn(nRow, "deal_co_cl1");
+		var sDealCoCl2 = ds_list.GetColumn(nRow, "deal_co_cl2");
+		var sResult = sDealCoNm+"^"+sDealCoCd+"^"+sUkeyAgencyCd+"^"+sUkeySubCd+"^"+sUkeyChannelCd+"^"+sDealCoCl1+"^"+sDealCoCl2;
+		this.Close(sResult);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 닫기- 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 엔터키 - 이벤트
+*******************************************************************************/
+function f_setEnterDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		applyData();
+		div_search_btn_search_OnClick();
+	}
+}
+]]></Script>
+</Window>

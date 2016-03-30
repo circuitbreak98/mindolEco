@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO00600">
+	<select id="getProdColorListByProd" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* 색상검색-BASBCO00600-조민지-한병곤 */
+       a.color_cd as code
+      ,b.comm_cd_val_nm as name
+FROM   tbas_prod_color a
+      ,tbas_comm_cd_dtl b
+WHERE  a.color_cd = b.comm_cd_val
+AND    a.del_yn = 'N'
+AND    b.comm_cd_id = 'ZBAS_C_00040'
+AND    a.prod_cd = #prod_cd#
+ORDER BY color_cd]]>
+	</select>
+	<select id="getProdColorListByProd_totolColor" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* 전체색상검색-BASBCO00600-조민지-한병곤 */
+       a.code
+      ,b.comm_cd_val_nm as name
+FROM   (SELECT a.comm_cd_val as code
+        FROM   tbas_comm_cd_dtl a
+        WHERE  a.comm_cd_id = 'ZBAS_C_00040'
+        AND    a.del_yn = 'N'
+        AND    a.eff_sta_dt <= to_char(sysdate,'yyyymmdd')
+        AND    a.eff_end_dt >= to_char(sysdate,'yyyymmdd')
+        MINUS
+        SELECT a.color_cd
+        FROM   tbas_prod_color a      
+        WHERE  a.del_yn = 'N'
+        AND    a.prod_cd = #prod_cd# ) a
+      ,tbas_comm_cd_dtl b
+WHERE  a.code = b.comm_cd_val    
+AND    b.comm_cd_id = 'ZBAS_C_00040'
+ORDER BY a.code]]>
+	</select>
+</sqlMap>

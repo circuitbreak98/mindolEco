@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASPDM00600">
+	<select id="getUsedProdInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00200-getProductDetail-조민지-전현주 */ 
+       prod_cd
+       ,prod_nm
+       ,mfact_id    /*제조사*/
+       ,prefer_cl		/*선호도가격구분*/
+       ,max_price	AS max_price	/*상한가*/
+       ,grade_gb /*등급구분*/
+	   ,setoff_num AS setoff_num		/*상계계수*/
+	   ,strd_sale_amt	/*출고가*/
+       ,comp_cl 	/*자사구분*/
+       ,mktg_dt /*출시일*/
+       ,end_dt  /*단종일*/
+       ,prod_cl     /*상품구분*/
+       ,sale_yn
+       ,sale_stop_dt
+       ,in_yn
+       ,in_stop_dt
+       ,prod_chrtic_1   /*상품특성1*/
+       ,prod_chrtic_2   /*상품특성2*/
+       ,bar_cd_typ      /*바코드유형*/
+       ,rgst_cl /*등록구분*/
+       ,rmks    /*비고*/
+       ,com_mthd    /*통신방식*/
+       ,mst_prod_cd /*대표코드*/
+       ,fbas_get_prod_nm(mst_prod_cd) mst_prod_nm  /*대표모델명*/
+       ,to_char(ser_len) ser_len    /*일련번호길이*/
+       ,fix_amt_yn 
+  FROM tbas_prod_mgmt
+ WHERE prod_cd = #PROD_CD#
+ AND del_yn = 'N']]>
+	</select>
+	<select id="getUplstAplyMdlCnt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00200-getProductDetail-조민지-전현주 */ count(*) as cnt
+FROM tpol_uplst_aply_mdl
+WHERE del_yn = 'N'
+AND mdl_id = #PROD_CD#]]>
+	</select>
+	<insert id="insertUsedProdInfo" parameterClass="map" ><![CDATA[INSERT INTO /* BASPDM00600-insertUsedProdInfo-조민지-전현주 */ tbas_prod_mgmt
+     	(prod_cd
+			,prod_nm
+			,mfact_id
+			,comp_cl
+			,prefer_cl
+			,max_price		
+	   		,setoff_num	
+	   		,grade_gb
+	   		,strd_sale_amt	
+			,mktg_dt
+			,end_dt
+			,prod_cl
+			,sale_yn
+			,sale_stop_dt
+			,in_yn
+			,in_stop_dt
+			,prod_chrtic_1
+			,prod_chrtic_2
+			,bar_cd_typ
+			,rgst_cl
+			,rmks
+			,del_yn
+			,upd_cnt
+			,ins_dtm
+			,ins_user_id
+			,mod_dtm
+			,mod_user_id
+			,com_mthd
+			,mst_prod_cd
+			,ser_len
+			,fix_amt_yn
+		   )
+	 VALUES(
+	    #PROD_CD#
+		  ,#PROD_NM#
+		  ,#MFACT_ID#
+		  ,#COMP_CL#
+		  ,#PREFER_CL#
+		  ,#MAX_PRICE#
+		  ,#SETOFF_NUM#
+		  ,#GRADE_GB#
+		  ,#STRD_SALE_AMT#
+		  ,#MKTG_DT#
+		 	,#END_DT#
+		 	,#PROD_CL#
+		 	,#SALE_YN#
+		 	,#SALE_STOP_DT#
+		 	,#IN_YN#
+		 	,#IN_STOP_DT#
+		 	,#PROD_CHRTIC_1#
+		 	,#PROD_CHRTIC_2#
+		 	,#BAR_CD_TYP#
+		 	,#RGST_CL#
+		 	,#RMKS#
+		 	,'N'
+		 	,1
+		 	,TO_CHAR(SYSDATE,'YYYYMMDDHH24MM')
+		 	,#onlineContext.userInfo.loginId#
+		 	,TO_CHAR(SYSDATE,'YYYYMMDDHH24MM')
+		 	,#onlineContext.userInfo.loginId#
+		 	,#COM_MTHD#
+			,#MST_PROD_CD#
+			,#SER_LEN#
+			,#FIX_AMT_YN#
+		   )]]>
+	</insert>
+	<update id="updateIfModelApplyYn" parameterClass="map" ><![CDATA[UPDATE		/*+ BASPDM00600_updateIfModelApplyYn_조민지_최승호 */ 			
+	tbas_eqp_mdl_if
+SET aply_yn = 'Y'
+WHERE 	op_dt = #op_dt#
+AND  	op_tm = #op_tm#
+AND 	seq = #seq#]]>
+	</update>
+	<update id="updateUsedProdInfo" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00600-updateUsedProdInfo-이강수-전현주 */ tbas_prod_mgmt
+   SET prod_nm         = #PROD_NM#
+   	 ,mfact_id       = #MFACT_ID#
+   	 ,comp_cl         = #COMP_CL#
+   	 ,prefer_cl      = #PREFER_CL#
+   	 ,max_price		 = #MAX_PRICE#
+	 ,setoff_num	 = #SETOFF_NUM#	
+	 ,strd_sale_amt   = #STRD_SALE_AMT#
+   	 ,mktg_dt        = #MKTG_DT#
+   	 ,end_dt         = #END_DT#
+   	 ,prod_cl        = #PROD_CL#
+   	 ,grade_gb = #GRADE_GB#
+   	   ,sale_yn        = #SALE_YN#
+	   ,sale_stop_dt   = #SALE_STOP_DT#
+	   ,in_yn          = #IN_YN#
+	   ,in_stop_dt     = #IN_STOP_DT#
+	   ,prod_chrtic_1  = #PROD_CHRTIC_1#
+	   ,prod_chrtic_2  = #PROD_CHRTIC_2#
+	   ,bar_cd_typ     = #BAR_CD_TYP#
+	   ,rgst_cl        = #RGST_CL#
+	   ,rmks           = #RMKS#
+	   ,upd_cnt        = upd_cnt+1
+	   ,mod_dtm        = TO_CHAR(SYSDATE,'YYYYMMDDHH24MM')
+	   ,mod_user_id    = #onlineContext.userInfo.loginId#
+	   ,com_mthd       = #COM_MTHD#
+	   ,mst_prod_cd    = #MST_PROD_CD#
+	   ,ser_len        = #SER_LEN#
+	   ,fix_amt_yn        = #FIX_AMT_YN#
+ WHERE prod_cd = #PROD_CD#
+ AND del_yn = 'N']]>
+	</update>
+	<delete id="deleteUsedProdInfo" parameterClass="map" ><![CDATA[DELETE FROM /* BASPDM00600-deleteUsedProdInfo-이강수-전현주 */ tbas_prod_mgmt
+ WHERE prod_cd = #PROD_CD#]]>
+	</delete>
+	<select id="getMfactPlcList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00600_getMfactPlcList_조민지_전현주 */
+	  deal_co_cd as code
+	 ,deal_co_nm as name
+	 ,MAX(hseq_no)
+FROM tbas_deal_co_mgmt
+WHERE deal_co_cl1 = '20'
+AND del_yn = 'N'
+GROUP BY deal_co_cd, deal_co_nm
+ORDER BY deal_co_nm ASC]]>
+	</select>
+	<select id="getAddedProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00600-GETADDEDPRODLIST-조민지-전현주 */ 
+       PROD_CD
+     , SEQ				/*순번*/
+     , DTL_CL			/*상세구분*/
+     , QTY				/*수량*/
+     , PRICE			/*단가*/
+     , SALE_PRICE   	/*매출단가*/ 
+     , CMP_PROD_CD		/*부가상품코드*/
+     , ST_DT            /*시작일*/
+     , ED_DT            /*종료일*/
+     , DECODE(MUST_YN,'Y','1','0') AS MUST_YN
+  FROM TBAS_PROD_DTL
+ WHERE PROD_CD = #PROD_CD#
+   AND TYPE_CL = '1'
+   AND DEL_YN = 'N'
+]]><isEmpty prepend="AND" property="SUPPL_DT">      
+<![CDATA[   TO_CHAR(SYSDATE,'YYYYMMDD') BETWEEN ST_DT AND ED_DT
+]]></isEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SUPPL_DT">      
+<![CDATA[   #SUPPL_DT# BETWEEN ST_DT AND ED_DT
+]]></isNotEmpty>
+	</select>
+	<select id="getExtProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00600-getAddedProdList-조민지-전현주 */ 
+       prod_cd
+       ,seq					/*순번*/
+       ,dtl_cl				/*상세구분*/
+       ,qty					/*수량*/
+       ,price				/*단가*/
+ FROM tbas_prod_dtl
+ WHERE prod_cd = #PROD_CD#
+ AND type_cl = '2'
+ AND del_yn = 'N']]>
+	</select>
+	<insert id="insertAddedProdInfo" parameterClass="map" ><![CDATA[INSERT INTO /* BASPDM00600-insertAddedProdInfo-이강수-전현주 */ 
+    TBAS_PROD_DTL 
+	( PROD_CD
+	, SEQ
+	, TYPE_CL
+	, DTL_CL
+	, QTY
+	, PRICE
+	, SALE_PRICE
+	, CMP_PROD_CD
+	, MUST_YN
+	, DEL_YN
+	, UPD_CNT
+	, INS_DTM
+	, INS_USER_ID
+	, MOD_DTM
+	, MOD_USER_ID
+    , ST_DT
+    , ED_DT
+	)
+VALUES (
+	  #PROD_CD#
+	, (SELECT  NVL(MAX(seq)+1,1) 
+	     FROM    tbas_prod_dtl
+	   WHERE   prod_cd = #PROD_CD#
+	       AND     del_yn = 'N'
+	  )
+	, '1'
+	, #DTL_CL#
+	, #QTY#
+	, #PRICE#
+	, #SALE_PRICE#
+	, #CMP_PROD_CD#
+	, DECODE(#MUST_YN#,'1','Y','N')
+	, 'N'
+	, 1
+	, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	, #onlineContext.userInfo.loginId#
+	, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	, #onlineContext.userInfo.loginId#
+    , #ST_DT#
+    , #ED_DT#
+	)]]>
+	</insert>
+	<insert id="insertExtProdInfo" parameterClass="map" ><![CDATA[INSERT INTO /* BASPDM00600-insertExtProdInfo-이강수-전현주 */ tbas_prod_dtl
+	(
+	prod_cd
+	,seq
+	,type_cl
+	,dtl_cl
+	,qty
+	,price
+	,del_yn
+	,upd_cnt
+	,ins_dtm
+	,ins_user_id
+	,mod_dtm
+	,mod_user_id
+	)
+VALUES (
+	#PROD_CD#
+	,(SELECT  NVL(MAX(seq)+1,1) 
+	  FROM    tbas_prod_dtl
+	  WHERE   prod_cd = #PROD_CD#
+	  AND     del_yn = 'N'
+	 )
+	,'2'
+	,#DTL_CL#
+	,#QTY#
+	,#PRICE#
+	,'N'
+	,1
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,#onlineContext.userInfo.loginId#
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,#onlineContext.userInfo.loginId#
+	)]]>
+	</insert>
+	<update id="updateAddedProdInfo" parameterClass="map" ><![CDATA[MERGE INTO /*+ "BASPDM00600_updateAddedProdInfo_이강수_전현주" */
+	TBAS_PROD_DTL
+USING DUAL   
+	ON (PROD_CD  = #PROD_CD#
+        AND SEQ = #SEQ#
+        AND DTL_CL = #DTL_CL#)
+WHEN MATCHED THEN 
+	UPDATE SET QTY         = #QTY#
+        	 , PRICE       = #PRICE#
+          	 , SALE_PRICE  = #SALE_PRICE#
+          	 , CMP_PROD_CD = #CMP_PROD_CD#
+          	 , MUST_YN     = DECODE(#MUST_YN#,'1','Y','N')
+             , DEL_YN      = 'N'
+             , UPD_CNT     = UPD_CNT + 1
+             , MOD_DTM     = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+             , mod_user_id = #onlineContext.userInfo.loginId#
+             , ST_DT       = #ST_DT#
+             , ED_DT       = #ED_DT#
+WHEN NOT MATCHED THEN
+       INSERT (
+                PROD_CD
+               , SEQ
+               , TYPE_CL
+               , DTL_CL
+               , QTY
+               , PRICE
+               , SALE_PRICE
+               , CMP_PROD_CD
+               , MUST_YN
+               , DEL_YN
+               , UPD_CNT
+               , INS_DTM
+               , INS_USER_ID
+               , MOD_DTM
+               , MOD_USER_ID
+               , ST_DT
+               , ED_DT
+       ) VALUES (
+                  #PROD_CD#
+                , (SELECT NVL(MAX(SEQ)+1,1) 
+                     FROM TBAS_PROD_DTL
+                	WHERE PROD_CD = #PROD_CD# )
+                , '1'
+                , #DTL_CL#
+                , #QTY#
+                , #PRICE#
+                , #SALE_PRICE#
+                , #CMP_PROD_CD#
+                , DECODE(#MUST_YN#,'1','Y','N')
+                , 'N'
+                , 1
+                , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+                , #onlineContext.userInfo.loginId#
+                , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+                , #onlineContext.userInfo.loginId#
+                , #ST_DT#
+                , #ED_DT#
+       )]]>
+	</update>
+	<update id="updateExtProdInfo" parameterClass="map" ><![CDATA[MERGE INTO /*+ "BASPDM00600_updateExtProdInfo_이강수_전현주" */
+       tbas_prod_dtl
+USING DUAL   
+       ON (prod_cd  = #PROD_CD#
+           AND seq = #SEQ#
+           AND dtl_cl = #DTL_CL#)
+WHEN MATCHED THEN 
+       UPDATE SET qty =  #QTY#
+          	,price  =  #PRICE#
+          	,del_yn = 'N'
+            ,upd_cnt = upd_cnt + 1
+            ,mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            ,mod_user_id = #onlineContext.userInfo.loginId#
+WHEN NOT MATCHED THEN
+       INSERT (
+                  prod_cd
+                	,seq
+                	,type_cl
+                	,dtl_cl
+                	,qty
+                	,price
+                	,del_yn
+                	,upd_cnt
+                	,ins_dtm
+                	,ins_user_id
+                	,mod_dtm
+                	,mod_user_id
+       ) VALUES (
+                   #PROD_CD#
+                	,(SELECT  NVL(MAX(seq)+1,1) 
+                	  FROM    tbas_prod_dtl
+                	  WHERE   prod_cd = #PROD_CD#
+                	 )
+                	,'2'
+                	,#DTL_CL#
+                	,#QTY#
+                	,#PRICE#
+                	,'N'
+                	,1
+                	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+                	,#onlineContext.userInfo.loginId#
+                	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+                	,#onlineContext.userInfo.loginId#
+       )]]>
+	</update>
+	<delete id="deleteAddedProdInfo" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00600-deleteAddedProdInfo-이강수-전현주 */  tbas_prod_dtl
+SET del_yn = 'Y'
+WHERE prod_cd = #PROD_CD#
+AND   type_cl = '1']]>
+	</delete>
+	<delete id="deleteExtProdInfo" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00600-deleteExtProdInfo-이강수-전현주 */  tbas_prod_dtl
+SET del_yn = 'Y'
+WHERE prod_cd = #PROD_CD#
+AND   type_cl = '2']]>
+	</delete>
+	<select id="getUsedProdCodeCheck" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /* BASPDM00600-getUsedProdCodeCheck-조민지-전현주 */ count(*) as CNT1
+FROM tbas_prod_mgmt
+WHERE del_yn = 'N'
+AND prod_cd = #PROD_CD#]]>
+	</select>
+	<select id="getUsedProdNmCheck" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /* BASPDM00600-getUsedProdNmCheck-조민지-전현주 */ count(*) as CNT2
+FROM tbas_prod_mgmt
+WHERE del_yn = 'N'
+AND prod_nm = #PROD_NM#]]>
+	</select>
+	<delete id="deleteAddedProdIList" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00600-deleteAddedProdIList-이강수-전현주 */  tbas_prod_dtl
+SET del_yn = 'Y'
+WHERE prod_cd = #PROD_CD#
+AND   seq     = #SEQ#
+AND   type_cl = '1']]>
+	</delete>
+	<delete id="deleteExtProdList" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00600-deleteExtProdInfo-이강수-전현주 */  tbas_prod_dtl
+SET del_yn = 'Y'
+WHERE prod_cd = #PROD_CD#
+AND   seq     = #SEQ#
+AND   type_cl = '2']]>
+	</delete>
+	<select id="getUsedProdColor" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00600-getUsedProdColor-이강수-전현주 */ 
+  	   a.prod_cd as prod_cd 
+	   ,b.comm_cd_val as code 
+	   ,b.comm_cd_val_nm as name
+FROM tbas_prod_color a, tbas_comm_cd_dtl b
+WHERE a.color_cd = b.comm_cd_val
+AND b.comm_cd_id = 'ZBAS_C_00040'
+AND a.del_yn = 'N'
+AND a.prod_cd= #PROD_CD#]]>
+	</select>
+	<delete id="deleteUsedProdColor" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00600-deleteUsedProdColor-이강수-전현주 */  tbas_prod_color
+SET del_yn = 'Y'
+WHERE prod_cd = #PROD_CD#]]>
+	</delete>
+	<insert id="insertUsedProdColor" parameterClass="map" ><![CDATA[INSERT INTO /* BASPDM00600-insertUsedProdColor-이강수-전현주 */ tbas_prod_color
+	(
+	prod_cd
+	,ser_num
+	,color_cd
+	,del_yn
+	,upd_cnt
+	,ins_dtm
+	,ins_user_id
+	,mod_dtm
+	,mod_user_id
+	)
+VALUES (
+	#PROD_CD#
+	,(SELECT  NVL(MAX(ser_num)+1,1) as ser_num
+	  FROM    tbas_prod_color 
+	  WHERE   prod_cd = #PROD_CD#
+	 )
+	,#CODE#
+	,'N'
+	,1
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,#onlineContext.userInfo.loginId#
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,#onlineContext.userInfo.loginId#
+	)]]>
+	</insert>
+</sqlMap>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Miplatform Copy Files" default="all" basedir=".">
+
+	<property environment="env" />
+
+	<!-- ################################################################## -->
+	<!-- ## [Nexbuild] Auto-generated property ############################ -->
+	<!-- ################################################################## -->
+	<property name="project.name" value="st-miplatform-1-0" />
+
+	<!-- ################################################################## -->
+	<!-- ## [NEXCORE_HOME] common build property ########################## -->
+	<!-- ################################################################## -->
+	<!-- custombuild build.properties -->
+	<property file="${NEXCORE_HOME_ANT}/script/build/${project.name}.build.properties" />
+	<!-- default build.properties -->
+	<property file="${NEXCORE_HOME_ANT}/script/build/nexcore.build.properties" />
+	<!-- custombuild for CI tool (Continuous Integration : quickBuild etc) -->
+	<property file="${ant.home}/${project.name}.build.properties" />
+	<!-- default for CI tool (Continuous Integration : quickBuild etc) -->
+	<property file="${ant.home}/nexcore.build.properties" />
+	<target name="check.nexcore.property" unless="NEXCORE_HOME">
+		<echo message=" find ANT_HOME ..." />
+		<available file="${ant.home}/nexcore.build.properties" property="check.property.ant" />
+		<antcall target="check.nexcore.property.anthome" />
+	</target>
+	<target name="check.nexcore.property.anthome" unless="check.property.ant">
+		<echo message="ERROR: " />
+		<echo message="      define property 'NEXCORE_HOME_ANT' first " />
+		<echo message="      in your Eclipse Preferences [Ant-Runtime-properties]" />
+		<echo message="      before depoying" />
+		<fail message="ERROR: Ant runtime property 에 'NEXCORE_HOME_ANT'을 등록하세요. " />
+	</target>
+
+	<!-- ################################################################## -->
+	<!-- ## default Deployment ############################################ -->
+	<!-- ################################################################## -->
+	<target name="all" depends="check.nexcore.property">
+		<antcall target="all-miplatform" />
+	</target>
+
+	<!-- ################################################################## -->
+	<!-- ## WEB classed Deployment ######################################## -->
+	<!-- ################################################################## -->
+	<target name="all-miplatform" depends="check.nexcore.property">	   
+		<antcall target="copy-miplatform" />    
+	</target>
+
+	<target name="copy-miplatform">	   
+		<!-- Web파일 복사 -->
+		<copy todir="${jeus.ear.web.path}/xml" overwrite="true" preservelastmodified="true" includeemptydirs="false">
+			<fileset dir="./SKTST" defaultexcludes="false">
+				<exclude name="**/.svn/**" />
+				<exclude name="build-miplatform.xml" />
+			    <exclude name="MRD/**" />
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		<copy todir="${jeus.ear.web.path}/MRD" overwrite="true" preservelastmodified="true" includeemptydirs="false">
+			<fileset dir="./SKTST/MRD" defaultexcludes="false">
+				<exclude name="**/.svn/**" />
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+    
+</project>

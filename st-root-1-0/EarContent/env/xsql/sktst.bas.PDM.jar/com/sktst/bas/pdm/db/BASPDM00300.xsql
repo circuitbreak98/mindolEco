@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASPDM00300">
+	<select id="getSuplSvc" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASPDM00300_getSuplSvc_조민지_전현주 */ 
+		supl_svc_cd 
+	   ,supl_svc_cl
+	   ,supl_svc_cl as supl_svc_cl_tmp
+	   ,supl_svc_nm 
+	   ,rgst_cl
+	   ,rgst_cl as rgst_cl_tmp
+	   ,prod_st
+	   ,prod_st as prod_st_tmp
+	   ,mktg_dt
+	   ,scrb_stop_dt 
+	   ,wdrl_dt
+	   ,(case when prod_st = '1' then mktg_dt
+	   		 when prod_st = '2' then scrb_stop_dt
+			 when prod_st = '3' then wdrl_dt
+	    end) as rgst_dt
+	   ,nvl(comb_prod_yn,'N') as comb_prod_yn
+	   ,nvl(use_yn,'N') as use_yn
+	   ,wire_cl
+FROM tbas_supl_svc_mgmt
+WHERE del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="supl_svc_nm">
+<![CDATA[	  supl_svc_nm LIKE '%$SUPL_SVC_NM$%' 
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_st">
+<![CDATA[	  prod_st = #PROD_ST#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="rgst_cl">
+<![CDATA[	  rgst_cl = #RGST_CL#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="supl_svc_cl">
+<![CDATA[	  supl_svc_cl = #SUPL_SVC_CL#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="comb_prod_yn">
+<![CDATA[	  nvl(comb_prod_yn,'N') = #COMB_PROD_YN#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="use_yn">
+<![CDATA[	  nvl(use_yn,'N') = #USE_YN#
+]]></isNotEmpty>
+<![CDATA[/*ORDER BY supl_svc_cd ASC*/]]>
+	</select>
+	<insert id="addSuplSvc" parameterClass="map" ><![CDATA[INSERT INTO /*+ BASPDM00300_addSuplSvc_조민지_전현주 */ 
+tbas_supl_svc_mgmt
+	(supl_svc_cd,
+	 supl_svc_cl,  
+	 supl_svc_nm, 
+	 rgst_cl,
+	 del_yn, 
+	 upd_cnt, 
+	 ins_dtm, 
+	 ins_user_id, 
+	 mod_dtm, 
+	 mod_user_id,
+	 prod_st,
+	 mktg_dt,
+	 scrb_stop_dt,
+	 wdrl_dt,
+	 comb_prod_yn,
+	 use_yn
+	)
+VALUES(
+ 	#SUPL_SVC_CD#,
+ 	#SUPL_SVC_CL#, 
+ 	#SUPL_SVC_NM#, 
+ 	'2',
+	'N', 
+	0, 
+	TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM'), 
+	#onlineContext.userInfo.loginId#, 
+	TO_CHAR(SYSDATE, 'yyyymmddhh24miss'), 
+	#onlineContext.userInfo.loginId#,
+	#PROD_ST#,
+	#MKTG_DT#,
+	#SCRB_STOP_DT#,
+	#WDRL_DT#,
+	#COMB_PROD_YN#,
+	#USE_YN#
+	)]]>
+	</insert>
+	<update id="updateSuplSvc" parameterClass="map" ><![CDATA[UPDATE /*+ BASPDM00300_updateSuplSvc_조민지_전현주 */ tbas_supl_svc_mgmt
+	SET supl_svc_nm = #SUPL_SVC_NM#,
+		supl_svc_cl = #SUPL_SVC_CL#,
+		rgst_cl = #RGST_CL#,
+		prod_st = #PROD_ST#,
+		mktg_dt = #MKTG_DT#,
+		scrb_stop_dt = #SCRB_STOP_DT#,
+		wdrl_dt = #WDRL_DT#,
+		upd_cnt = upd_cnt + 1,
+		mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM'),
+		mod_user_id = #onlineContext.userInfo.loginId#,
+		comb_prod_yn = #COMB_PROD_YN#,
+		use_yn = #USE_YN#
+WHERE supl_svc_cd = #SUPL_SVC_CD#]]>
+	</update>
+	<delete id="deleteSuplSvc" parameterClass="map" ><![CDATA[UPDATE /* BASPDM00300_deleteSuplSvc_조민지_전현주 */ tbas_supl_svc_mgmt 
+	SET del_yn = 'Y' 
+WHERE supl_svc_cd = #SUPL_SVC_CD#]]>
+	</delete>
+</sqlMap>

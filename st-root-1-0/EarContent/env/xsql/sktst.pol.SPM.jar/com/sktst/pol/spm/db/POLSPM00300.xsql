@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="POLSPM00300">
+	<insert id="insertSplstChg" parameterClass="map" ><![CDATA[INSERT INTO TPOL_SPLST /*+ POLSPM00200_insertSplstChg_이문규 */       
+(
+  splst_id
+ ,aply_ym
+ ,org_id
+ ,sale_typ_cd
+ ,aply_sta_dtm
+ ,aply_end_dtm
+ ,rmks
+ ,pol_cl
+ ,del_yn
+ ,upd_cnt
+ ,ins_dtm
+ ,ins_user_id
+ ,mod_dtm
+ ,mod_user_id
+)
+SELECT 
+       #new_splst_id#
+      ,a.aply_ym
+      ,a.org_id
+      ,a.sale_typ_cd
+      ,#aply_mod_dtm#
+      ,a.aply_end_dtm
+      ,''
+      ,a.pol_cl
+      ,'N'            /* del_yn   */
+      ,0              /* upd_cnt  */
+      ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,#onlineContext.userInfo.loginId#
+      ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,#onlineContext.userInfo.loginId#
+FROM   tpol_splst a
+WHERE  a.splst_id    = #splst_id#
+AND    a.aply_ym     = #aply_ym#
+AND    a.org_id      = #org_id#
+AND    a.sale_typ_cd = #sale_typ_cd#]]>
+	</insert>
+	<insert id="insertSplstMdlChg" parameterClass="map" ><![CDATA[INSERT INTO TPOL_SPLST_MDL /*+ POLSPM00300_insertSplstMdlChg_이문규 */       
+(
+  splst_id
+ ,aply_ym
+ ,org_id
+ ,sale_typ_cd
+ ,mdl_id
+ ,sale_prc
+ ,sale_cmms
+ ,del_yn
+ ,upd_cnt
+ ,ins_dtm
+ ,ins_user_id
+ ,mod_dtm
+ ,mod_user_id
+)
+SELECT 
+       #new_splst_id#
+      ,a.aply_ym
+      ,a.org_id
+      ,a.sale_typ_cd
+      ,a.mdl_id
+      ,a.sale_prc
+      ,a.sale_cmms
+      ,'N'            /* del_yn   */
+      ,0              /* upd_cnt  */
+      ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,#onlineContext.userInfo.loginId#
+      ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,#onlineContext.userInfo.loginId#
+FROM   tpol_splst_mdl a          
+WHERE  a.splst_id    = #splst_id#
+AND    a.aply_ym     = #aply_ym#
+AND    a.org_id      = #org_id#
+AND    a.sale_typ_cd = #sale_typ_cd#]]>
+	</insert>
+	<update id="updateObjSplstClose" parameterClass="map" ><![CDATA[UPDATE TPOL_SPLST /*+ POLSPM00300_updateObjSplstClose_이문규 */       
+SET    aply_end_dtm = TO_CHAR(TO_DATE(#aply_mod_dtm#,'yyyymmddhh24MI') - 1/24/60, 'yyyymmddhh24MI') /* 1분전을 마감으로함.*/
+      ,upd_cnt      = upd_cnt + 1
+      ,mod_dtm      = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+      ,mod_user_id  = #onlineContext.userInfo.loginId#
+WHERE splst_id    = #splst_id#
+AND   aply_ym     = #aply_ym#
+AND   org_id      = #org_id#
+AND   sale_typ_cd = #sale_typ_cd#]]>
+	</update>
+</sqlMap>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="711" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="New&#32;Form" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="Dataset0">
+				<Contents>
+					<colinfo id="column0" size="256" summ="default" type="STRING"/>
+					<colinfo id="column1" size="256" summ="default" type="STRING"/>
+					<colinfo id="column2" size="256" summ="default" type="STRING"/>
+					<record>
+						<column0></column0>
+						<column1></column1>
+						<column2></column2>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" BindDataset="Dataset0" BkColor2="default" BoldHead="true" Bottom="386" Editable="TRUE" Enable="true" EndLineColor="default" Height="317" Id="Grid0" InputPanel="FALSE" Left="172" LineColor="default" OnEnterDown="Grid0_OnEnterDown" Right="818" TabOrder="1" TabStop="true" Top="69" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="default" WheelScrollRow="1" Width="646">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="67"/>
+						<col width="177"/>
+					</columns>
+					<head>
+						<cell col="0" display="text"/>
+						<cell col="1" display="text"/>
+					</head>
+					<body>
+						<cell col="0" display="text" expr="currow+1"/>
+						<cell col="1" colid="column0" display="text" edit="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<TextArea Height="225" Id="TextArea0" Left="520" TabOrder="2" Top="112" Width="281"></TextArea>
+	</Form>
+	<Script><![CDATA[
+function Grid0_OnEnterDown(obj,nRow,nCell,strVal,nPivotIndex)
+{
+	trace(strVal);
+	var newRow = Dataset0.AddRow();
+
+	//Grid0.AutoEnter = true;
+	
+	var objDs = Dataset0;
+	objDs.row = newRow;
+	
+	Grid0.SetCellPos(1);
+	Grid0.Setfocus();
+	//Grid0.AutoEnter = false;
+	
+	for(var i = 0 ; i < 3 ; i++){
+		trace(i);
+	}
+}
+
+function form_OnLoadCompleted(obj)
+{
+
+}
+]]></Script>
+</Window>

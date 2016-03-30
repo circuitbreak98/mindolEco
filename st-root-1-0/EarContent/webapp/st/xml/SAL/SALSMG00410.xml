@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="400" Id="SALSMG00410" Left="8" OnLoadCompleted="SALSMG00410_OnLoadCompleted" PidAttrib="7" Title="판매세부내역" Top="8" Ver="1.0" Width="800" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_saleDtlList">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_Condition"></Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_saleDtlList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="347" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="320" Id="grd_serNumList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="790" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="27" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="780">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="28"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="120"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="판매일자"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="판매담당자"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="일련번호"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="currow+1"/>
+						<cell align="center" col="1" colid="sale_dt" display="text" Mask="####-##-##"/>
+						<cell align="center" col="2" colid="sale_chgrg_id" display="text"/>
+						<cell align="center" col="3" colid="prod_nm" display="text"/>
+						<cell align="center" col="4" colid="color_nm" display="text"/>
+						<cell align="center" col="5" colid="ser_num" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_c_2" Left="731" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_c" TabOrder="2" Text="닫기" Top="358" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : SALSMG00310
+* 업무명      : 영업
+* 프로그램명  : 일련번호조회
+--------------------------------------------------------------------------------
+* 작성자      : 전희경
+* 작성일      : 2010.11.01
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_DS_SMG300;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SALSMG00410_OnLoadCompleted(obj)
+{
+    // 그리드 체크박스 설정 및 정렬
+	cf_setGrdChecknSortEvent(grd_serNumList);
+	
+	//alert("FV_HLD_PLC="+FV_HLD_PLC+" FV_PROD_CD="+FV_PROD_CD
+	//	+" FV_COLOR_CD="+FV_COLOR_CD+" FV_GUBUN="+FV_GUBUN);
+	f_search();
+	
+}
+
+/*******************************************************************************
+ * @description    : 닫기- 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 일련번호 조회
+*******************************************************************************/
+function f_search() {
+	http.Sync = true;
+		
+	// 입력 파라메터 설정
+	cf_setParam(ds_condition, "sale_dt_fr"       , sale_dt_fr); 
+	cf_setParam(ds_condition, "sale_dt_to"       , sale_dt_to); 
+	cf_setParam(ds_condition, "agency_cd"   	 , agency_cd); 
+	cf_setParam(ds_condition, "sale_plc"   	 	 , sale_plc); 
+	cf_setParam(ds_condition, "sale_typ_cd"   	 , sale_typ_cd); 	
+	cf_setParam(ds_condition, "prod_cd"      	 , prod_cd); 
+	cf_setParam(ds_condition, "stl_plc"   		 , stl_plc); 	
+	
+	http.Sync = false;
+
+    // 출력 Dataset 초기화
+    ds_saleDtlList.ClearData();
+   
+    // 트랜잭션 설정
+	var sSvcID = "svcSaleDtlList";
+	var sInDs = "nc_input_fieldDs=ds_Condition";
+	var sOutDs = "ds_saleDtlList=List";
+	var sArg = "sktst.sal.SMG#getSaleDtlListByPlc";
+			
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcSaleDtlList")
+	{
+	    
+	}
+
+}
+]]></Script>
+</Window>

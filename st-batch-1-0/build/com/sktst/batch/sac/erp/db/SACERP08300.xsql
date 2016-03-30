@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08300">
+
+	<select id="getMmErpTrmsNotConfirmCnt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT  /* SACERP08300_getMmErpTrmsNotConfirmCnt_월ERP전송미완료건수조회_하창주 */
+				count(*) as cnt
+		FROM	(
+				SELECT #YYMM# as yymm, comm_cd_val, comm_cd_val_nm, deal_co_cd, deal_co_nm, ukey_agency_cd
+				  FROM
+					(
+					SELECT	comm_cd_val, comm_cd_val_nm
+					  FROM	tbas_comm_cd_dtl
+					 WHERE	comm_cd_id = 'ZSAC_C_00060'
+					   AND	#YYMM# between substr(eff_sta_dt, 1, 6) and substr(eff_end_dt, 1, 6)
+					   AND	comm_cd_val not in ('F01', 'F02', 'F05', 'F07')
+					) a,
+					(
+					SELECT	deal_co_cd, deal_co_nm, ukey_agency_cd
+					  FROM	tbas_deal_co_mgmt a
+					 WHERE	deal_co_cl1	= 'A1'
+					   AND	del_yn		= 'N'
+					   AND	deal_end_yn	= 'N'
+					   AND	a.hseq_no	= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+													hseq_no 
+											  FROM    tbas_deal_co_mgmt
+											 WHERE    deal_co_cd = a.deal_co_cd AND rownum = 1
+										  )
+					) b
+				) x,
+				tsac_mm_erp_trms y
+		 WHERE	x.yymm = y.yymm(+)
+		   AND	x.deal_co_cd = y.agency(+)
+		   AND	x.comm_cd_val = y.trms_item(+)
+		   AND	(trms_yn is null OR y.trms_yn not in ('4', '9'))
+	]]>
+	</select>
+
+	<insert id="insertTbasBatLog" parameterClass="hmap">
+	<![CDATA[
+		INSERT INTO tbas_bat_log (	/* SACERP08300_insertTbasBatLog_배치로그추가_하창주 */
+				 op_dt
+				,prog_id
+				,seq
+				,op_rslt
+				,fail_cnt
+				,sta_dtm
+				,end_dtm
+				,rmks
+				,del_yn
+				,upd_cnt
+				,ins_dtm
+				,ins_user_id
+				,mod_dtm
+				,mod_user_id
+				,obj_dt
+		) VALUES (
+				 TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+				,#PROG_ID#
+				,NVL(
+        				(SELECT MAX(seq) + 1 FROM tbas_bat_log
+						  WHERE SUBSTR(op_dt,1,8) = TO_CHAR(SYSDATE, 'YYYYMMDD')
+				            AND prog_id = #PROG_ID#)
+				     ,1)
+				,'S'
+				,0
+				,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+				,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+				,#RMKS#
+				,'N'
+				,1
+				,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+				,substr(#PROG_ID#, 1, 10)
+				,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+				,substr(#PROG_ID#, 1, 10)
+				,#OBJ_DT#
+			)
+	]]>
+	</insert>
+
+</sqlMap>

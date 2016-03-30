@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSUI08500">
+	<select id="getToDay" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select to_char(sysdate, 'YYYYMMDD') as WORK_DT
+	  from dual
+	]]>
+	</select>
+	<select id="getSuplList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[    
+    SELECT /* SALSUI08500_getSuplList_부가상품대상 목록 */
+           DISTINCT SUPL_SVC_CD
+      FROM TBAS_SUPL_SVC_MGMT
+     WHERE USE_YN = 'Y'
+	]]>
+	</select>
+	<select id="getAgencyDealInfo" resultClass="hmap" fetchSize="50" ><![CDATA[
+		SELECT 
+		       nvl((
+		          SELECT 
+		                 nvl(b.user_id,'')
+		            FROM 
+		                 tbas_user_mgmt b
+		           WHERE 
+		                 b.u_key_id = #U_KEY_ID#
+		                 AND rownum = 1            
+		       ),'') as user_id
+		    ,  nvl(a.deal_co_cd,'') as deal_co_cd
+		    ,  nvl((
+		          SELECT 
+		                 nvl(b.deal_co_cd,'')
+		            FROM 
+		                 tbas_deal_co_mgmt b
+		           WHERE 
+		                 b.ukey_agency_cd = a.ukey_agency_cd
+		                 AND b.ukey_sub_cd = #UKEY_SUB_CD#
+		                 AND #EFF_DTM# BETWEEN b.eff_sta_dtm AND b.eff_end_dtm 
+		                 AND b.ukey_channel_cd is null 
+		                 AND rownum = 1            
+		       ),'') as sub_deal_co_cd
+		    ,  nvl((
+		          SELECT 
+		                 nvl(b.deal_co_cd,'')
+		            FROM 
+		                 tbas_deal_co_mgmt b
+		           WHERE 
+		                 b.ukey_agency_cd = #SUPL_AGENCY_CD#
+		                 AND #EFF_DTM# BETWEEN b.eff_sta_dtm AND b.eff_end_dtm 
+		                 AND b.deal_co_cl1 = 'A1' 
+		                 AND rownum = 1            
+		       ),'') as supl_deal_co_cd
+	    FROM 
+	         tbas_deal_co_mgmt a
+	   WHERE 
+	         a.ukey_agency_cd = #UKEY_AGENCY_CD#
+	         AND #EFF_DTM# BETWEEN a.eff_sta_dtm AND a.eff_end_dtm 
+	         AND a.deal_co_cl1 = 'A1' 
+	         AND rownum = 1            
+
+	]]>
+	</select>
+
+	<select id="getAgencyCount" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT 
+	       DEAL_CO_CD, Count(DEAL_CO_CD) EXIST_CNT
+	  FROM 
+	       TBAS_DEAL_CO_MGMT 
+	 WHERE 
+	       UKEY_AGENCY_CD = #UKEY_AGENCY_CD#
+	       AND #EFF_DTM# BETWEEN eff_sta_dtm AND eff_end_dtm 
+	       AND deal_co_cl1 = 'A1' 
+	 GROUP BY DEAL_CO_CD
+	]]>
+	</select>
+	<select id="getAgencyInfo" resultClass="hmap" fetchSize="50" ><![CDATA[
+	select nvl(DEAL_CO_CD,'') as DEAL_CO_CD
+	  from TBAS_DEAL_CO_MGMT
+	 where UKEY_AGENCY_CD  = #UKEY_AGENCY_CD#
+	   and #EFF_DTM# between eff_sta_dtm and eff_end_dtm
+	   and deal_co_cl1 = 'A1'
+	   and rownum   = 1 ]]>
+	</select>
+	<select id="getDealCount" resultClass="hmap" fetchSize="50" ><![CDATA[
+	select DEAL_CO_CD, Count(DEAL_CO_CD) EXIST_CNT
+	  from TBAS_DEAL_CO_MGMT
+	 where UKEY_AGENCY_CD  = #UKEY_AGENCY_CD#
+	   and UKEY_SUB_CD     = #UKEY_SUB_CD#
+	   and #EFF_DTM# between eff_sta_dtm and eff_end_dtm
+	   and UKEY_CHANNEL_CD is null	
+	   group by DEAL_CO_CD
+	]]>
+	</select>
+	<select id="getDealInfo" resultClass="hmap" fetchSize="50" ><![CDATA[
+	select nvl(DEAL_CO_CD,'') as DEAL_CO_CD
+	  from TBAS_DEAL_CO_MGMT
+	 where UKEY_AGENCY_CD  = #UKEY_AGENCY_CD#
+	   and UKEY_SUB_CD     = #UKEY_SUB_CD#
+	   and #EFF_DTM# between eff_sta_dtm and eff_end_dtm
+	   and UKEY_CHANNEL_CD is null
+	   and rownum   = 1 ]]>
+	</select>
+	<select id="getUserCount" resultClass="hmap" fetchSize="50" ><![CDATA[
+	select USER_ID, Count(USER_ID) EXIST_CNT
+	  from TBAS_USER_MGMT
+	 where U_KEY_ID = #U_KEY_ID#	
+	 group by USER_ID
+	 ]]>
+	</select>
+	<select id="getUserInfo" resultClass="hmap" fetchSize="50" ><![CDATA[
+	select nvl(USER_ID,'') as USER_ID
+	  from TBAS_USER_MGMT
+	 where U_KEY_ID = #U_KEY_ID#
+	   and rownum   = 1]]>
+	</select>
+	<update id="deleteWorkMonth" parameterClass="map"><![CDATA[DELETE /*+ SALSUI08500_deleteWorkMonth_전일작업 자료 삭제 */
+      FROM TSAL_SKTPSD97_IF
+     WHERE WK_MONTH = #WORK_MONTH#
+	]]>
+	</update>
+	<insert id="addSktpsd97IF" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08500_addSktpsd97IF_부가서비스가입전문 저장 */           
+           TSAL_SKTPSD97_IF    ( WK_MONTH
+                               , POS_AGENCY_CD
+                               , SCRB_DT
+                               , UKEY_AGENCY_CD
+                               , UKEY_SUB_CD
+                               , SVC_MGMT_NUM
+                               , EQP_MDL_CD
+                               , EQP_SER_NUM
+                               , GNRL_SALE_NO
+                               , SCRB_TM
+                               , UKEY_USER_ID
+                               , SUPL_SVC_CL
+                               , SUPL_SVC_CD
+                               , SCRB_AGENCY_CD
+                               , SVC_PLC
+                               , PROC_USER_ID
+                               , SUPL_AGENCY_CD
+                               , DEL_YN
+                               , UPD_CNT
+                               , INS_USER_ID
+                               , INS_DTM
+                               , MOD_USER_ID
+                               , MOD_DTM
+            )  VALUES  ( 
+                                 #WK_MONTH#
+                               , #POS_AGENCY_CD#
+                               , #SCRB_DT#
+                               , #UKEY_AGENCY_CD#
+                               , #UKEY_SUB_CD#
+                               , #SVC_MGMT_NUM#
+                               , #EQP_MDL_CD#
+                               , #EQP_SER_NUM#
+                               , #GNRL_SALE_NO#
+                               , #SCRB_TM#
+                               , #UKEY_USER_ID#
+                               , #SUPL_SVC_CL#
+                               , #SUPL_SVC_CD#
+                               , #SCRB_AGENCY_CD#
+                               , #SVC_PLC#
+                               , #PROC_USER_ID#
+                               , #SUPL_AGENCY_CD#
+                               , 'N'
+                               , 1
+                               , #USER_ID#
+                               , TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+                               , #USER_ID#
+                               , TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+    )]]>
+	</insert>
+</sqlMap>

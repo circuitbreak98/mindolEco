@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="CSTRET00100">
+	<update id="updatePrchsMgmtRtn" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET RTN_DT = #RTN_DT#
+     , RTN_RMKS = #RTN_RMKS#
+     , RTN_YN = 'Y'
+ WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#
+   ]]>
+	</update>
+	<select id="getBoxPrchsLst" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT '' AS CHK , 
+       FBAS_GET_PROD_NM(PROD_CD) AS PROD_NM , 
+       SER_NUM , 
+       CUST_NM , 
+       TEL_NO , 
+       ZIP_CD1 ||'-'|| PRCH.ZIP_CD2 AS ZIP_CD , 
+       ADDR || ' ' ||PRCH.DTL_ADDR AS ADDR , 
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490',PRC_ST) AS PRC_NM , 
+       PRC_ST , 
+       PRCHS_MGMT_NO
+  FROM TCST_PRCHS_MGMT PRCH
+ WHERE BOX_NO= #BOX_NO#
+   AND PRCH.DEL_YN = 'N'
+   AND PRCH.SKN_YN = 'N']]>
+	</select>
+</sqlMap>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="ADMCNR00300">
+	<select id="getUserList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT
+       usr.user_id     
+,      usr.u_key_id    
+,      usr.user_cd     
+,      usr.user_nm     
+,      usr.pwd         
+,      usr.eff_user_yn 
+,      usr.wphon       
+,      usr.mbl_phon    
+,      usr.user_grp    
+,      usr.org_id      
+,      usr.org_area    
+,      usr.pwd_end_dt  
+,      usr.email1      
+,      usr.email2      
+,      usr.duty        
+,      usr.pos_agency  
+,      usr.attc_cat    
+,      usr.mbl_phon2   
+,      usr.mbl_phon3   
+,      FBAS_GET_ORG_NM(usr.org_id) org_id_nm
+,      FBAS_GET_DEAL_NM(usr.org_area,'') org_area_nm
+,      FBAS_GET_DEAL_NM(usr.pos_agency,'') pos_agency_nm
+FROM   tbas_user_mgmt usr
+WHERE  1=1
+]]><isNotEmpty prepend="AND" property="org_id">
+<![CDATA[      usr.org_id   = #org_id#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="org_area">
+<![CDATA[      usr.org_area = #org_area#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="user_nm">
+<![CDATA[      usr.user_nm LIKE '%' || #user_nm# || '%'
+]]></isNotEmpty>
+<![CDATA[ORDER BY usr.org_id
+,        usr.user_nm  ]]>
+	</select>
+</sqlMap>

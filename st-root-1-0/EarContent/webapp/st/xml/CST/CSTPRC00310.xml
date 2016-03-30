@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="304" Id="form" Left="8" OnLoadCompleted="DISDCO00310_OnLoadCompleted" PidAttrib="7" Title="일련번호&#32;조회" Top="8" Ver="1.0" Width="248" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_serNumList">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_delSerNumList"></Dataset>
+		</Datasets>
+		<Div Height="21" Id="div_process" Left="163" TabOrder="2" Text="Div2" Top="6" Width="77">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_delRow" ImageID="btn_i_subtract_w" Left="58" OnClick="div_process_btn_delRow_OnClick" TabOrder="1" Text="Button1" ToolTipText="추가된&#32;행삭제" Width="19"></Button>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_serNumList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="264" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="233" Id="grd_serNumList" InputPanel="FALSE" Left="5" LineColor="user33" MinWidth="100" OnHeadClick="grd_serNumList_OnHeadClick" Right="240" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="31" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="235">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="17"/>
+						<col width="28"/>
+						<col width="92"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="checkbox" edit="checkbox"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="일련번호"/>
+					</head>
+					<body>
+						<cell align="center" bkcolor='expr:Iif(fix_yn==&quot;Y&quot;,&quot;user13&quot;,&quot;&quot;)' col="0" colid="chk" display="checkbox" edit="checkbox"/>
+						<cell align="center" col="1" display="text" expr="currow+1"/>
+						<cell align="center" col="2" colid="ser_num" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="60" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="274" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="124" LeftMargin="5" OnClick="btn_cancel_OnClick" Style="sty_btn_d" TabOrder="4" Text="취소" Top="274" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : DISDCO00300
+* 업무명      : 재고
+* 프로그램명  : 일련번호조회
+--------------------------------------------------------------------------------
+* 작성자      : 한병곤
+* 작성일      : 2009.01.28
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_DS_DCO300;
+var FV_STR_DS_ORG_DCO300;
+var FV_OBJ_DS_ORG_DCO300;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function DISDCO00310_OnLoadCompleted(obj)
+{
+    ds_serNumList.Clear();
+    ds_delSerNumList.Clear();
+	ds_serNumList.Copy(Object("parent."+FV_STR_DS_DCO300));
+	FV_OBJ_DS_ORG_DCO300 = Object("parent."+FV_STR_DS_ORG_DCO300);
+	
+    // 그리드 체크박스 설정 및 정렬
+	//cf_setGrdChecknSortEvent(grd_serNumList);
+	ds_serNumList.Sort("ser_num");
+}
+
+/*******************************************************************************
+ * @description    : 로우 삭제- 이벤트
+*******************************************************************************/
+function div_process_btn_delRow_OnClick(obj)
+{ 
+    for(var i=0; i<ds_serNumList.rowcount; i++)
+    {
+        if(ds_serNumList.GetColumn(i, "chk") == "1")
+        {
+            if(ds_delSerNumList.colcount == 0)
+            {
+                ds_delSerNumList.AddColumn("ser_num");
+                ds_delSerNumList.AddColumn("prod_cd");
+            }
+            ds_delSerNumList.AddRow();
+            ds_delSerNumList.SetColumn(ds_delSerNumList.rowcount-1, "ser_num", ds_serNumList.GetColumn(i, "ser_num"));
+            ds_delSerNumList.SetColumn(ds_delSerNumList.rowcount-1, "prod_cd", ds_serNumList.GetColumn(i, "prod_cd"));
+            
+            ds_serNumList.DeleteRow(i);
+            i--;
+        }
+    }
+}
+
+/*******************************************************************************
+ * @description    : 확인- 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+    for(var i=0; i<ds_delSerNumList.rowcount; i++)
+    {
+        var sDelSerNum = ds_delSerNumList.GetColumn(i, "ser_num")+ds_delSerNumList.GetColumn(i, "prod_cd");
+
+        for(var j=0; j<FV_OBJ_DS_ORG_DCO300.rowcount; j++)
+        {
+            var sOrgSerNum = FV_OBJ_DS_ORG_DCO300.GetColumn(j, "ser_num")+FV_OBJ_DS_ORG_DCO300.GetColumn(j, "prod_cd");
+
+            if(sDelSerNum == sOrgSerNum)
+            {
+                FV_OBJ_DS_ORG_DCO300.DeleteRow(j);
+                j--;
+            }
+        }
+    }
+    
+    // 입고/출고예정에서만 적용.
+    if(cf_isValid("ds_prodInoutIf",parent) != null){
+		for(var i=0; i<ds_delSerNumList.rowcount; i++)
+		{
+			var sDelSerNum = ds_delSerNumList.GetColumn(i, "ser_num")+ds_delSerNumList.GetColumn(i, "prod_cd");
+	
+			for(var j=0; j<ds_prodInoutIf.rowcount; j++)
+			{
+				var sOrgSerNum = ds_prodInoutIf.GetColumn(j, "ser_num")+ds_prodInoutIf.GetColumn(j, "prod_cd");
+	
+				if(sDelSerNum == sOrgSerNum)
+				{
+					ds_prodInoutIf.DeleteRow(j);
+					j--;
+				}
+			}
+		}  
+    } 
+    
+    parent.f_setDsGroup(ds_serNumList.GetDelRowCount());
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 취소- 이벤트
+*******************************************************************************/
+function btn_cancel_OnClick(obj)
+{
+	this.Close();
+}
+
+function grd_serNumList_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell == 0){
+		var sValue = '0';
+		obj.Redraw = false;
+			
+		var sChkValue = obj.GetCellProp("head", nCell, "text");		
+		
+		if (sChkValue == 1) sValue='0';
+		else sValue='1';	
+				
+		obj.SetCellProp("head", nCell, "text", sValue);			
+		
+//		for(var i = 0 ; i < ds_serNumList.rowcount ; i++){
+		
+//			if( ds_serNumList.GetColumn(i,"fix_yn") != "Y"){
+//				ds_serNumList.SetColumn(i,"chk",sValue);
+//			}
+//		}
+		
+		obj.Redraw = true;
+	}
+}
+]]></Script>
+</Window>

@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCOPA00200" Left="8" OnLoadCompleted="ACCOPA00200_OnLoadCompleted" PidAttrib="7" Title="온라인거래처정산" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset CanRowPosChange="ds_oldRtnEquipList_CanRowPosChange" DataSetType="Dataset" Id="ds_oldRtnEquipList" OnRowPosChanged="ds_oldRtnEquipList_OnRowPosChanged">
+				<Contents>
+					<colinfo id="CHK" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_SCHD_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_SALE_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ONLINE_CMMS" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SPLY_PRC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="VAT" size="256" summ="default" type="STRING"/>
+					<colinfo id="FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEL_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="UPD_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CUD_FLAG" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_orgList">
+				<Contents>
+					<colinfo id="ORG_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_oldRtnEquipList2" OnColumnChanged="ds_oldRtnEquipList2_OnColumnChanged" OnRowDeleted="ds_oldRtnEquipList2_OnColumnChanged">
+				<Contents>
+					<colinfo id="ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADD_SUB_ITM_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="mem_row" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEL_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="CUD_FLAG" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_addsubamt" OnColumnChanged="ds_oldRtnEquipList2_OnColumnChanged" OnRowDeleted="ds_oldRtnEquipList2_OnColumnChanged">
+				<Contents>
+					<colinfo id="ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADD_SUB_ITM_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="mem_row" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_mfixyn">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_input"></Dataset>
+		</Datasets>
+		<Button Height="20" Id="btn_delRow" ImageID="btn_i_subtract_w" Left="800" OnClick="btn_delRow_OnClick" TabOrder="4" Text="Button7" Top="371" Width="20"></Button>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="5" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="6" Style="sty_lb_Search" TabOrder="6" Text="영업센터" Top="7" VAlign="Middle" Width="84"></Static>
+				<Combo Border="Flat" DisableBKColor="user13" DisableColor="user12" Height="20" Id="cmb_centerList" Left="91" Style="sty_ipt_search" TabOrder="4" Top="6" Width="116"></Combo>
+				<Static Align="Right" Border="None" Height="20" Id="stc_pol_ym" Left="216" Style="sty_lb_Search" TabOrder="9" Text="정산월" Top="7" VAlign="Middle" Width="84"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="Button0" ImageID="btn_a_2" Left="426" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="5" Text="조회" Top="7" Width="58"></Button>
+				<MaskEdit Border="Flat" Height="20" Id="cal_acc_mth" Left="303" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Type="STRING" Width="114"></MaskEdit>
+				<Button Cursor="HAND" Height="18" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="399" OnClick="btn_monthCalendar_OnClick" TabOrder="6" Text="Button3" Top="8" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_oldRtnEquipList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="361" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="276" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_list_OnCellDblClick" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="85" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="27"/>
+						<col width="132"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="83"/>
+						<col width="84"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="굴림,9,Bold" text="확정" Valign="Center"/>
+						<cell bkcolor="user34" celltype="head" col="0" color="user35" display="checkbox" row="1" text="0" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="거래처" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="현금매출금" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="온라인수수료" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="정산금액" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="가감금액" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="공급가액" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="7" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="세액" Valign="Center"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="확정금액" Valign="Center"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="정산일" Valign="Center"/>
+					</head>
+					<body>
+						<cell bkcolor2="user32" col="0" colid="CHK" display="checkbox" edit="checkbox"/>
+						<cell bkcolor2="user32" col="1" colid="DEAL_CO_NM" display="text"/>
+						<cell bkcolor2="user32" col="2" colid="CASH_SALE_AMT" display="number" edit='expr:Iif(CHK==&quot;1&quot;,&quot;none&quot;,&quot;normal&quot;)'/>
+						<cell bkcolor2="user32" col="3" colid="ONLINE_CMMS" display="number" edit='expr:Iif(CHK==&quot;1&quot;,&quot;none&quot;,&quot;normal&quot;)'/>
+						<cell bkcolor2="user32" col="4" colid="ACC_AMT" display="number" expr="CASH_SALE_AMT&#32;-&#32;ONLINE_CMMS"/>
+						<cell bkcolor2="user32" col="5" colid="ADD_SUB_AMT" display="number"/>
+						<cell bkcolor2="user32" col="6" colid="SPLY_PRC_AMT" display="number" expr="DECODE(((CASH_SALE_AMT&#32;-&#32;ONLINE_CMMS)&#32;+&#32;ADD_SUB_AMT)/&#32;1.1,NULL,NULL,ROUND(((CASH_SALE_AMT&#32;-&#32;ONLINE_CMMS)&#32;+&#32;ADD_SUB_AMT)/&#32;1.1,0))"/>
+						<cell bkcolor2="user32" col="7" colid="VAT" display="number" expr="(((CASH_SALE_AMT&#32;-&#32;ONLINE_CMMS)&#32;+&#32;ADD_SUB_AMT)/&#32;1.1)/10"/>
+						<cell bkcolor2="user32" col="8" colid="FIX_AMT" display="number" expr="(CASH_SALE_AMT&#32;-&#32;ONLINE_CMMS)&#32;+&#32;ADD_SUB_AMT"/>
+						<cell bkcolor2="user32" col="9" colid="ACC_DT" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_oldRtnEquipList2" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="548" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="152" Id="grd_list2" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="396" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="254"/>
+						<col width="132"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="가감항목"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="가감금액"/>
+					</head>
+					<body>
+						<cell align="left" col="0" colid="ADD_SUB_ITM_NM" display="text" edit="normal"/>
+						<cell align="right" col="1" colid="ADD_SUB_AMT" display="number" edit="integer"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user35" display="text" font="돋움,10,Bold" text="계"/>
+						<cell align="right" bkcolor="user37" col="1" color="user35" display="number" expr='decode(sum(&quot;ADD_SUB_AMT&quot;),0,&apos;&apos;,sum(&quot;ADD_SUB_AMT&quot;))'/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Button Height="20" Id="btn_addRow" ImageID="btn_i_add_w" Left="776" OnClick="btn_addRow_OnClick" TabOrder="5" Text="Button7" Top="371" Width="20"></Button>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="6" Text="온라인&#32;거래처&#32;정산&#32;현황" Top="60" Width="192"></Image>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="7" Text="가감금액" Top="371" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Height="25" Id="Button1" ImageID="btn_c_2" Left="762" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="8" Text="저장" Top="565" Width="58"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCSOPA00200	
+* 업무명      : 정산 - 온라인거래처정산
+* 프로그램명  : 온라인거래처정산
+--------------------------------------------------------------------------------
+* 작성자      : 이종혁
+* 작성일      : 2009.02.05
+*******************************************************************************/
+
+//==============================================================================
+// 1. 전 처리기
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+//#include "lib::lib_commMsg_ex.js"
+#include "lib::lib_util.js"
+
+
+//==============================================================================
+// 2. 폼 변수 정의
+//==============================================================================
+var FV_STR_FLAG = "";
+var FV_STR_SEARCH_STATE = "";
+var FV_ORG_CD;//로그인상대의 조직코드
+var FV_ORG_CL;//로그인상대의 조직구분
+//==============================================================================
+// 3. 폼 로드
+//==============================================================================
+/*******************************************************************************
+* 함수명 : ACCOPA00200_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function ACCOPA00200_OnLoadCompleted(obj)
+{	
+	
+	FV_ORG_CD = gds_session.GetColumn(0,"orgId");
+	FV_ORG_CL = gds_session.GetColumn(0,"orgCl");
+	
+	//체크박스.
+	cf_setGrdChecknSortEvent(grd_list,0);
+	
+	if(FV_ORG_CL == 2)
+	{
+		gds_org.InsertRow(0);
+		gds_org.SetColumn(0,"ORGNM","선택");
+		gds_org.SetColumn(0,"ORGID","");
+		div_search.cmb_centerList.Index = 0;
+	}
+	cf_setOrgInfo(div_search.cmb_centerList);
+	//월달력설정
+	cf_setGrdCalendarEvent(grd_list,2);
+	//정산월 초기 화면 설정
+	f_init();
+	f_enableFalse();
+
+}
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	
+	//정산현황,가감내역 조회 
+	if(sSvcID == "getDealAccList")
+	{	
+	    var sInsDtm = ds_oldRtnEquipList.getcolumn(0, "ins_dtm");//입력날짜(입력날짜는 테이블에 내용이 저장되있을시에만 등록되기때문에 구분자로 사용)
+		var sAddSub = ds_oldRtnEquipList.getcolumn(0, "ADD_SUB_AMT");//가감금액
+		if(sInsDtm == "" || sInsDtm == null){
+			if(sAddSub == "" || sAddSub == null){
+				f_enableFalse();//가감그리드 비활성화
+				ds_oldRtnEquipList2.ClearData();
+			}else{
+				f_enableFalse();
+				ds_oldRtnEquipList2.ClearData();
+			}
+		}else{
+			if(sAddSub == "" || sAddSub == null){
+				//입력날짜가 널이 아니고 가감금액이 널인경우
+				f_enableFalse();
+				ds_oldRtnEquipList2.ClearData();
+			}else{
+				//입력날짜가 널이 아니고 가감금액도 널이 아닌경우
+				//첫번째 row의 가감금액 리스트 가져오기
+				cf_setParam(ds_condition, "DEAL_CO_CD",ds_oldRtnEquipList.GetColumn(0,"deal_co_cd"));
+				f_subList();
+				f_enableFalse();
+			}
+		}
+
+	}
+	//등록,수정
+	else if(sSvcID == "addOnlineDeal")
+	{
+		//영업센터정산확정여부
+		var sId = trim(div_search.cmb_centerList.Value);
+		var sMth = trim(div_search.cal_acc_mth.Value);
+		cf_setParam(ds_condition, "ORG_ID",sId);
+		cf_setParam(ds_condition, "ACC_MTH",sMth.SubStr(0,6));
+		
+		// sync 처리
+		http.Sync = true;			
+		
+		var sSvcID = "getAccM";
+		var sInDs  = "nc_input_fieldDs=ds_condition";
+		var sOutDs = "ds_mfixyn=MfixYn";
+		var sArg   = "sktst.acc.OPA#getAccM";
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+		
+		var sCdYn = ds_mfixyn.GetColumn(0,"ORG_CD_YN");//확정여부가 모두 Y인가
+		var sMcdYn = ds_mfixyn.GetColumn(0,"M_ORG_CD_YN");//온라인거래처정산에 해당영업센터가 등록되있는가
+		
+		if(sCdYn == "Y" && sMcdYn =="N")
+		{	
+			//정산내역테이블의 확정여부가 모두 Y 이고 온라인거래처정산에 확정이 안되있기때문에 확정  트랜젝션 타기
+			var sSvcID = "addAccM";
+			var sInDs  = "nc_input_fieldDs=ds_condition";
+			var sOutDs = "";
+			var sArg   = "sktst.acc.OPA#addAccM";
+			cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+			
+		}else{
+			//이미 확정되었거나 확정여부가 모두 Y가 아니면  그냥 가감내역 리스트 조회
+			f_accList();
+		}
+		
+		// sync 처리
+		http.Sync = false;		
+	
+	}
+	else if(sSvcID == "addAccM")
+	{   
+		//온라인거래처정산(영업센터쪽)확정	
+		f_accList();//확정트랜젝션 후  조회
+	}
+	else if(sSvcID == "getSubAmtList")
+	{
+		if(ds_oldRtnEquipList2.rowcount>0)
+		{
+			
+		}
+	}
+}
+//==============================================================================
+// 4. 권한 제어
+//==============================================================================
+/*******************************************************************************
+* 함수명 : df_auth
+* 기능명 : 사용자의 권한별 버튼 제어
+*******************************************************************************/
+function df_auth()
+{
+	trace("초기화");
+}
+
+/*******************************************************************************
+* 함수명 : div_search_btn_search_OnClick(obj)
+* 기능명 : 공통 조회 버튼 클릭
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{	
+	f_accList();
+}
+/*******************************************************************************
+* 함수명 : btn_save_OnClick(obj)
+* 기능명 : 저장 버튼 클릭
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{	
+	f_setAccList();//grd_list  값 ds_oldRtnEquipList dataset 에 세팅
+	f_setSubList();//grd_list2 값 ds_oldRtnEquipList2 dataset에 세팅
+	alert(ds_oldRtnEquipList.SaveXML());return;
+	cf_copyDataSet(ds_input,ds_oldRtnEquipList);
+	
+    var sSvcID = "addOnlineDeal";
+    var sInDs = "insertAcc=ds_input:U addsubAcc=ds_oldRtnEquipList2:U";
+    var sOutDs = "";
+	var sArg   = "sktst.acc.OPA#addOnlineDeal";
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	
+}
+//==============================================================================
+//  사용자정의함수 
+//==============================================================================
+/*******************************************************************************
+* 함수명 : btn_addRow_OnClick 
+* 기능명 : 로우 추가
+*******************************************************************************/
+function btn_addRow_OnClick(obj)
+{
+	var oGrdDs = object(grd_list2.BindDataset);
+	oGrdDs.AddRow();
+	
+	//GetRowType(여기는 로우추가!! 로우의 값이 변경(update),삭제(delete),입력(insert)시 해당로우의 타입을 보여준다) 
+	//GetDelRowCount(삭제된로우가 몇개인지 값은 무엇인지 알수있다) 
+	
+	oGrdDs.SetColumn(oGrdDs.currow, "mem_row", object(grd_list.BindDataset).currow);
+}
+/*******************************************************************************
+* 함수명 : btn_delRow_OnClick 
+* 기능명 : 로우 삭제
+*******************************************************************************/
+function btn_delRow_OnClick(obj)
+{
+	var oGrdDs = object(grd_list2.BindDataset);
+	oGrdDs.DeleteRow(oGrdDs.row);
+}
+/*******************************************************************************
+ * @description    : 정산현황 dataset 담기 
+*******************************************************************************/
+function f_setAccList(obj)
+{	
+	for(var i = 0; i<ds_oldRtnEquipList.GetRowCount(); i++)
+	{
+		
+		var sOrg = ds_oldRtnEquipList.getcolumn(i, "ORG_CD");//조직코드
+		var sMth = trim(div_search.cal_acc_mth.Value);//정산월
+		var sDeal = ds_oldRtnEquipList.getcolumn(i, "DEAL_CO_CD");//거래처코드
+		var sCash = ds_oldRtnEquipList.getcolumn(i, "CASH_SALE_AMT");//현금매출금
+		var sOnline = ds_oldRtnEquipList.getcolumn(i, "ONLINE_CMMS");//온라인수수료
+		var sAcc = sCash - sOnline;//정산금액
+		var sAddsub = ds_oldRtnEquipList.getcolumn(i, "ADD_SUB_AMT");//가감금액
+		var sFix = sAcc + sAddsub;//확정금액
+		var sSply = ParseInt(sFix) / 1.1;//공급가액
+		var sSplyr = Round( sSply, 0 );//수수점 첫번째에서 반올림
+		var sVat = sFix - sSplyr; //세액
+		
+		//등록을 안했을땐 저장 불가
+		if(sAcc == "" || sAcc == null){
+			//정산금액이 없을경우에는 해당로우 저장을 안한다.
+			ds_oldRtnEquipList.DeleteRow(i);
+			i--;
+		}else{
+			
+			ds_oldRtnEquipList.setcolumn(i, "ORG_CD",sOrg );
+			ds_oldRtnEquipList.setcolumn(i, "ACC_MTH",sMth.SubStr(0,6) );
+			ds_oldRtnEquipList.setcolumn(i, "DEAL_CO_CD",sDeal );
+			ds_oldRtnEquipList.setcolumn(i, "ACC_AMT", sAcc);
+			ds_oldRtnEquipList.setcolumn(i, "FIX_AMT", sFix);
+			ds_oldRtnEquipList.setcolumn(i, "SPLY_PRC_AMT", sSplyr);
+			ds_oldRtnEquipList.setcolumn(i, "VAT", sVat);
+		}
+	}
+}
+/*******************************************************************************
+ * @description    : 가감금액 dataset 담기 
+*******************************************************************************/
+function f_setSubList(obj)
+{
+	for(var i = 0; i < ds_oldRtnEquipList.GetRowCount(); i++)
+	{
+		var org = ds_oldRtnEquipList.getcolumn(i, "ORG_CD");//조직코드
+		var mth = ds_oldRtnEquipList.getcolumn(i, "ACC_MTH");//정산월
+		var deal = ds_oldRtnEquipList.getcolumn(i, "DEAL_CO_CD");//거래처코드
+		ds_oldRtnEquipList2.Filter("mem_row = '" + i + "'");
+		for(var j = 0; j <ds_oldRtnEquipList2.GetRowCount() ; j++)
+		{
+			ds_oldRtnEquipList2.setcolumn(j, "ORG_CD", org);
+			ds_oldRtnEquipList2.setcolumn(j, "ACC_MTH", mth);
+			ds_oldRtnEquipList2.setcolumn(j, "DEAL_CO_CD", deal);
+		}	
+	}
+
+}
+/*******************************************************************************
+ * @description    : 가감금액 합계 변경 - 이벤트
+*******************************************************************************/
+function ds_oldRtnEquipList2_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	ds_oldRtnEquipList.setColumn(ds_oldRtnEquipList.currow, "ADD_SUB_AMT", ds_oldRtnEquipList2.sum("ADD_SUB_AMT"));
+}
+/*******************************************************************************
+ * @description    : 가감금액 활성화 - 이벤트
+*******************************************************************************/
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	ds_oldRtnEquipList.GetColumn(nRow,"DEAL_CO_NM");
+	
+	if(nCell == 1){
+		if(grd_list2.Enable){
+		   f_enableFalse();
+		} 
+		else
+		{	
+			if(ds_oldRtnEquipList.GetColumn(nRow,"fix_yn") == "1"){
+				//확정check 상태에서 거래처 더블클릭했을때(가감금액그리드 비활성화)
+				f_enableFalse();
+			}else{
+				//확정uncheck 상태에서 거래처 더블클릭했을때(가감금액그리드 활성화)
+				grd_list2.Enable = "true";
+				grd_list2.Editable = "true";
+				btn_addRow.Enable = "true";
+				btn_delRow.Enable = "true";
+				
+		    }
+		}
+	}
+}
+/*******************************************************************************
+ * @description    : 가감내역 그리드 비활성화
+*******************************************************************************/
+function f_enableFalse()
+{	
+	grd_list2.Enable = "false";
+	grd_list2.Editable = "false";
+	btn_addRow.Enable = "false";
+	btn_delRow.Enable = "false";
+}
+/*******************************************************************************
+ * @description    : 가감내역 상세정보가져오기
+*******************************************************************************/
+function f_subList()
+{	
+	//해당row의 가감금액 리스트 가져오기
+	var sSvcID = "getSubAmtList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_oldRtnEquipList2=SubAmtList";
+	var sArg   = "sktst.acc.OPA#getSubAmtList";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+/*******************************************************************************
+ * @description    : 정산내역정보가져오기 조회
+*******************************************************************************/
+function f_accList()
+{
+	var sId = trim(div_search.cmb_centerList.Value);
+	var sMth = trim(div_search.cal_acc_mth.Value);
+	cf_setParam(ds_condition, "ORG_ID",sId);
+	cf_setParam(ds_condition, "ACC_MTH",sMth.SubStr(0,6));
+	
+	var sSvcID = "getDealAccList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	//sOutDs에서 DealAccList는 정산현황리스트
+	var sOutDs = "ds_oldRtnEquipList=DealAccList";
+	var sArg   = "sktst.acc.OPA#getDealAccList";
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+function ds_oldRtnEquipList_OnRowPosChanged(obj,nOldRow,nRow)
+{
+	
+}
+
+/*******************************************************************************
+ * @description    :해당로우의  가감내역 수정중 다른 로우변경 막기.
+*******************************************************************************/
+function ds_oldRtnEquipList_CanRowPosChange(obj,nOldRow,nRow)
+{
+	if (ds_oldRtnEquipList2.GetUpdate()) 
+	{
+		var sState  = ds_oldRtnEquipList.GetColumn(nRow,"CUD_FLAG");
+		
+		if(sState == "U")
+		{
+			alert(cf_getMessage(MSG_00012,"가감내역 저장 ; 다른 거래처 내역을 선택"));
+			return false;
+		}
+	}
+	var sInsDtm = ds_oldRtnEquipList.getcolumn(nRow, "ins_dtm");//입력날짜(입력날짜는 테이블에 내용이 저장되있을시에만 등록되기때문에 구분자로 사용) 
+	var sAddSub = ds_oldRtnEquipList.getcolumn(nRow, "ADD_SUB_AMT");//가감금액
+	if(sInsDtm == "" || sInsDtm == null){
+		if(sAddSub == "" || sAddSub == null){
+			ds_oldRtnEquipList2.Filter("mem_row = '" + nRow + "'");
+			f_enableFalse();//가감그리드 비활성화
+		}else{
+			ds_oldRtnEquipList2.Filter("mem_row = '" + nRow + "'");
+			f_enableFalse();
+		}
+	}else{
+		if(sAddSub == "" || sAddSub == null){
+			//입력날짜가 널이 아니고 가감금액이 널인경우
+			ds_oldRtnEquipList2.Filter("mem_row = '" + nRow + "'");
+			f_enableFalse();
+		}else{
+				
+			//입력날짜가 널이 아니고 가감금액도 널이 아닌경우
+			//해당row의 가감금액 리스트 가져오기
+			cf_setParam(ds_condition, "DEAL_CO_CD",ds_oldRtnEquipList.GetColumn(nRow,"deal_co_cd"));
+			f_subList();
+			f_enableFalse();
+			
+		}
+	}
+}
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_acc_mth);
+}
+//==============================================================================
+// 함수
+//==============================================================================
+/*******************************************************************************
+ * @description    : 정산월 초기화면 셋팅
+*******************************************************************************/
+function f_init()
+{
+	div_search.cal_acc_mth.Value = Today();
+}]]></Script>
+</Window>

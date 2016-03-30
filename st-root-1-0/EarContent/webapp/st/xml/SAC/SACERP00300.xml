@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SACERP00300" Left="8" OnLoadCompleted="SACERP00300_OnLoadCompleted" PidAttrib="7" Title="ERP거래처Check" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition" OnColumnChanged="ds_condition_OnColumnChanged">
+				<Contents>
+					<colinfo id="pos_agency" size="256" summ="default" type="STRING"/>
+					<colinfo id="chk_result" size="256" summ="default" type="STRING"/>
+					<colinfo id="chk" size="256" summ="default" type="STRING"/>
+					<record>
+						<chk></chk>
+						<chk_result></chk_result>
+						<pos_agency></pos_agency>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="pos_agency_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cl1" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cl2" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_sta_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="normal_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_end_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="pay_stop_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="out_stop_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_stop_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="check_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="check_result_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_resultYn">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="name" size="256" summ="default" type="STRING"/>
+					<record>
+						<code></code>
+						<name>전체</name>
+					</record>
+					<record>
+						<code>1</code>
+						<name>정상</name>
+					</record>
+					<record>
+						<code>2</code>
+						<name>승인대기중</name>
+					</record>
+					<record>
+						<code>3</code>
+						<name>미등록</name>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_excelList">
+				<Contents>
+					<colinfo id="pos_agency_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cl1" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cl2" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_sta_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="normal_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_end_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="pay_stop_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="out_stop_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_stop_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="check_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="check_result_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="43" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="692" LeftMargin="5" OnClick="btn_search_onClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="7" Width="60"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_agencyNm" ImeMode="none" Left="68" LeftMargin="2" OnCharChanged="div_search_edt_agencyNm_OnCharChanged" OnKeyDown="div_search_edt_agencyNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" UserData="대리점" Width="93"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="161" OnClick="btn_agency_OnClick" TabOrder="2" Text="Button0" Top="7" Width="19"></Button>
+				<Static Align="Right" Height="20" Id="Static4" Left="6" Style="sty_lb_Search" TabOrder="3" Text="대리점" Top="7" VAlign="Middle" Width="60"></Static>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="12" TabOrder="5" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" ImeMode="none" Left="180" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Width="72"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCd" Left="251" MaxLength="10" Style="sty_ipt_form" TabOrder="7" Top="7" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static3" Left="259" Style="sty_lb_Search" TabOrder="9" Text="CHECK결과" Top="8" VAlign="Middle" Width="84"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" CodeColumn="code" Color="user29" Column="chk_result" DataColumn="name" Height="20" Id="cmb_resultYn" INDEX="0" InnerDataset="ds_resultYn" Left="347" OnKeyDown="div_search_common_OnKeyDown" Style="sty_ipt_form" TabOrder="8" Top="6" Width="103"></Combo>
+				<Checkbox BindDataset="ds_condition" Column="CHK" Height="20" Id="chk_hst" Left="515" LeftMargin="5" Style="sty_opt_search" TabOrder="10" Text="전체&#32;대리점" Top="7" Width="95"></Checkbox>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image3" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="ERP거래처&#32;내역" Top="60" Width="192"></Image>
+		<Grid AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="547" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="462" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="821" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="85" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="811">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="130"/>
+						<col width="94"/>
+						<col width="210"/>
+						<col width="90"/>
+						<col width="110"/>
+						<col width="95"/>
+						<col width="90"/>
+						<col width="100"/>
+						<col width="120"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,10,Bold" text="대리점" wordwrap="word"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,10,Bold" text="거래처코드" wordwrap="word"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,10,Bold" text="거래처명" wordwrap="word"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,10,Bold" text="거래처구분" wordwrap="word"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,10,Bold" text="거래처유형" wordwrap="word"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,10,Bold" text="거래개시일" wordwrap="word"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,10,Bold" text="거래상태" wordwrap="word"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,10,Bold" text="CHECK일자" wordwrap="word"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,10,Bold" text="CHECK결과" wordwrap="word"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="pos_agency_nm" display="text"/>
+						<cell align="center" col="1" colid="deal_co_cd" display="text"/>
+						<cell align="left" col="2" colid="deal_co_nm" display="text"/>
+						<cell align="center" col="3" colid="deal_co_cl1" display="text"/>
+						<cell align="center" col="4" colid="deal_co_cl2" display="text"/>
+						<cell align="center" col="5" colid="deal_sta_dt" display="date"/>
+						<cell align="center" col="6" display="text" expr="checkDealStatus(normal_yn,&#32;deal_end_yn,&#32;pay_stop_yn,&#32;out_stop_yn,&#32;sale_stop_yn)"/>
+						<cell align="center" col="7" colid="check_dt" display="date"/>
+						<cell align="left" col="8" colid="check_result_nm" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="Button56" ImageID="btn_i_exceldown_w" Left="797" OnClick="btn_excel_OnClick" TabOrder="4" Text="Button1" ToolTipText="Excel&#32;Download" Top="59" Width="19"></Button>
+		<Grid AutoFit="TRUE" BindDataset="ds_excelList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="237" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="24" Id="grd_excelList" InputPanel="FALSE" Left="24" LineColor="user33" MinWidth="100" Right="48" RowHeight="21" Style="sty_Grid" TabOrder="5" TabStop="true" Top="213" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="FALSE" VLineColor="user33" WheelScrollRow="1" Width="24">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="139"/>
+						<col width="110"/>
+						<col width="160"/>
+						<col width="110"/>
+						<col width="110"/>
+						<col width="110"/>
+						<col width="110"/>
+						<col width="100"/>
+						<col width="150"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,10,Bold" text="대리점명" wordwrap="word"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,10,Bold" text="거래처코드" wordwrap="word"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,10,Bold" text="거래처명" wordwrap="word"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,10,Bold" text="거래처구분" wordwrap="word"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,10,Bold" text="거래처유형" wordwrap="word"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,10,Bold" text="거래개시일" wordwrap="word"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,10,Bold" text="거래상태" wordwrap="word"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,10,Bold" text="CHECK일자" wordwrap="word"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" font="돋움,10,Bold" text="CHECK결과" wordwrap="word"/>
+					</head>
+					<body>
+						<cell align="left" col="0" colid="pos_agency_nm" display="text"/>
+						<cell align="center" col="1" colid="deal_co_cd" display="text"/>
+						<cell align="left" col="2" colid="deal_co_nm" display="text"/>
+						<cell align="left" col="3" colid="deal_co_cl1" display="text"/>
+						<cell align="left" col="4" colid="deal_co_cl2" display="text"/>
+						<cell align="center" col="5" colid="deal_sta_dt" display="date"/>
+						<cell align="left" col="6" display="text" expr="checkDealStatus(normal_yn,&#32;deal_end_yn,&#32;pay_stop_yn,&#32;out_stop_yn,&#32;sale_stop_yn)"/>
+						<cell align="center" col="7" colid="check_dt" display="date"/>
+						<cell align="left" col="8" colid="check_result_nm" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : SACERP00300
+* 업무명      : ERP거래처 CHeck
+* 프로그램명  : ERP거래처 CHeck
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.09.15
+--------------------------------------------------------------------------------
+* 1. 변경이력
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_SAL.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_ORG_ID;         	//조직코드 
+var FV_ORG_CL;			// 소속구분
+var FV_USER_GRP;
+var FV_POS_AGENCY_ID;
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SACERP00300_OnLoadCompleted(obj)
+{
+	FV_ORG_ID 	= gds_session.GetColumn(0, "orgId");	
+	FV_USER_GRP = gds_session.GetColumn(0, "userGrp");	
+	FV_POS_AGENCY_ID = gds_session.GetColumn(0, "posAgencyId");
+	
+	cf_setGrdChecknSortEvent(grd_list);
+	
+	// 권한 설정
+    cf_setAuth(pFrmNum);	
+    
+    uf_enableAgencyByAuth("div_search", "edt_agencyNm,edt_agencyCd,btn_agency", "edt_agencyUkeyCd");
+    
+    if(FV_USER_GRP != null){
+		if(substr(FV_USER_GRP,0,1) =="P"){
+			div_search.chk_hst.Visible = true;
+			div_search.chk_hst.Enable = true;
+		}else if(substr(FV_USER_GRP,0,1) =="D"){
+			div_search.chk_hst.Visible = false;
+			div_search.chk_hst.Enable = false;
+			
+		}
+    }
+    
+}
+
+
+
+/*******************************************************************************
+ * @description    : 대리점 검색 팝업
+*******************************************************************************/
+
+function btn_agency_OnClick(obj)
+{
+	var sArg  =  "org_id="+quote(FV_ORG_ID);  // 필수
+	
+	cf_callAgencyPop(sArg, div_search, "edt_agencyNm,edt_agencyCd,edt_agencyUkeyCd");	
+}
+
+
+/*******************************************************************************
+ * @description    : 대리점 _OnCharChanged  Event
+*******************************************************************************/
+function div_search_edt_agencyNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	div_search.edt_agencyCd.Text = "";
+	div_search.edt_agencyUkeyCd.Text = "";
+	
+}
+
+
+
+/*******************************************************************************
+ * @description    : 대리점 전체 선택
+*******************************************************************************/
+function ds_condition_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if (strColumnID == "chk") { 
+		if (varNewValue == "1" && substr(FV_USER_GRP,0,1) =="P") {
+		
+			div_search.edt_agencyNm.Value = "";
+			div_search.edt_agencyUkeyCd.Value = "";
+			div_search.edt_agencyCd.Value = "";
+			div_search.edt_agencyNm.Enable = false;
+			div_search.edt_agencyUkeyCd.Enable = false;
+			div_search.edt_agencyCd.Enable = false;
+			div_search.btn_agency.Enable = false;
+			
+		} else if (varNewValue == "0" && substr(FV_USER_GRP,0,1) =="P") {
+		
+			div_search.edt_agencyNm.Enable = true;
+			div_search.edt_agencyUkeyCd.Enable = true;
+			div_search.edt_agencyCd.Enable = true;
+			div_search.btn_agency.Enable = true;
+			
+			if(FV_POS_AGENCY_ID != null){
+				 uf_enableAgencyByAuth("div_search", "edt_agencyNm,edt_agencyCd,btn_agency", "edt_agencyUkeyCd");
+			}
+		}
+	}
+} 
+
+
+/*******************************************************************************
+ * @description    : 대리점 key down팝업
+*******************************************************************************/
+function div_search_edt_agencyNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == "13"){
+		var sArg  =  "org_id="+quote(FV_ORG_ID);  // 필수
+		
+		cf_callAgencyPop(sArg, div_search, "edt_agencyNm,edt_agencyCd,edt_agencyUkeyCd");	
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if ( sSvcID == "getErpCheckList" )
+	{
+		
+	}
+	/*
+	else if(sSvcID == "getExcelDeal")
+	{ 
+		cf_exportExcel(grd_excelList);
+		
+	}
+	*/
+	
+}
+
+
+/*******************************************************************************
+ * @description    : 조회 Event
+*******************************************************************************/
+function btn_search_onClick(obj)
+{
+
+	if(uf_isNull(trim(div_search.edt_agencyCd.Text)) && div_search.chk_hst.Value =="0"){
+		alert(cf_getMessage(MSG_00047,"대리점을"));
+		div_search.edt_agencyNm.SetFocus();
+		return false;
+	}
+	
+	if(div_search.chk_hst.Value == "0"){
+		ds_condition.SetColumn(0,"chk", div_search.chk_hst.Value);
+	}
+	
+	ds_condition.SetColumn(0,"pos_agency",div_search.edt_agencyCd.Value);
+	ds_condition.SetColumn(0,"chk_result",div_search.cmb_resultYn.Value);
+	
+	var sSvcID = "getErpCheckList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=rs_list";
+	var sArg   = "sktst.sac.ERP#getErpCheckList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+function btn_excel_OnClick(obj)
+{
+	//fn_ExcelExport();
+	cf_exportExcel(grd_list);
+}
+
+
+
+function fn_ExcelExport()
+{
+	// 조회 조건 설정
+	ds_condition.SetColumn(0,"pos_agency",div_search.edt_agencyCd.Value);
+	ds_condition.SetColumn(0,"chk_result",div_search.cmb_resultYn.Value);
+
+	// 트랜잭션 설정
+	var sSvcID 	= "getExcelDeal";
+	var sInDs 	= "nc_input_fieldDs=ds_condition";
+	var sOutDs 	= "ds_excelList=rs_excelList";
+	var sArg 	= "sktst.sac.ERP#getErpCheckExcelList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+
+}
+
+
+
+/*******************************************************************************
+ * @description            : 거래처 구분 표시값 설정
+ * @param   normal_yn      : 정상
+			deal_end_yn    : 거래 종료
+			pay_stop_yn    : 수납 정지
+			out_stop_yn    : 출고 정지
+		   sale_stop_yn    : 판매 정지
+*******************************************************************************/
+function checkDealStatus(normal_yn, deal_end_yn, pay_stop_yn, out_stop_yn, sale_stop_yn)
+{
+	var sResult = "";
+	
+	if(pay_stop_yn != null)
+	{
+		if(toUpper(pay_stop_yn) == "Y")
+		{
+			sResult += ",수납정지";	
+		}
+	}
+	
+	if(out_stop_yn != null)
+	{
+		if(toUpper(out_stop_yn) == "Y")
+		{
+			sResult += ",출고정지";	
+		}
+	}
+	
+	if(sale_stop_yn != null)
+	{
+		if(toUpper(sale_stop_yn) == "Y")
+		{
+			sResult += ",판매정지";	
+		}
+	}
+	
+	if(normal_yn != null)
+	{
+		if(toUpper(normal_yn) == "Y")
+		{
+			sResult += ",정상";	
+		}
+	}	
+	
+	if(deal_end_yn != null)
+	{
+		if(toUpper(deal_end_yn) == "Y")
+		{
+			sResult += ",거래종료";	
+		}
+	}	
+	
+	return substr(sResult, 1);
+}
+
+function Button0_OnClick(obj)
+{
+	cf_debug("ds_excelList");
+}
+]]></Script>
+</Window>

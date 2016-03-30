@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTSKN01000">
+	<select id="getPrchsChagDedtSknList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[   SELECT con.CON_MGMT_NO
+     , con.CON_DT
+	 , con.PROD_CD
+	 , con.SER_NUM
+     , con.COLOR_CD
+     , deal.ORG_ID
+     , FBAS_GET_ORG_NM(deal.ORG_ID) ORG_NM
+     , deal.UKEY_AGENCY_CD    
+     , FBAS_GET_AGENCY_NM(deal.POS_AGENCY,con.CON_DT) AGENCY_NM        
+     , FBAS_GET_DEAL_NM(con.CON_PLC_CD,con.CON_DT) CON_PLC_NM
+     , con.CON_PLC_CD
+     , FBAS_GET_PROD_NM(con.PROD_CD) PROD_NM
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', con.COLOR_CD) COLOR_NM
+     , con.CON_AMT
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00060', con.BANK_CD) BANK_NM
+     , con.ACC_NO
+     , con.SVC_NO
+     , con.SVC_MGMT_NO
+     , con.CUST_NM
+     , con.TEL_NO
+     , con.CLCT_DT
+     , '0' PRC_CHECK
+     , deal.POS_AGENCY
+     , con.RES_NO
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', con.PRC_ST) PRC_NM
+     , con.PRC_ST
+     , con.EQP_ST
+     , con.SKN_EQP_ST
+     , con.SKN_CON_AMT
+     , decode(con.OLDEQ_PAY_MTHD_CD,'01','송금','02','요금공제') OLDEQ_PAY_MTHD_NM
+     , decode(NVL(con.OLDEQ_PAY_MTHD_CD,'N'),'02','Y',NVL(con.OLDEQ_PAY_MTHD_CD,'N')) OLDEQ_PAY_MTHD_YN     
+     , con.OLDEQ_PAY_MTHD_CD
+     , con.OLDEQ_PAY_DT
+     , NVL(con.FIRST_DC_YN,'N') FIRST_DC_YN   
+     , NVL(FBAS_GET_RESERVE_AMT(con.CON_MGMT_NO),0) UBO_AMT        
+  FROM TCST_CONSULT_MGMT con  
+  	 , TBAS_DEAL_CO_MGMT deal
+ WHERE con.CON_PLC_CD = deal.DEAL_CO_CD
+   AND deal.EFF_STA_DTM <= con.CON_DT||'235959'
+   AND deal.EFF_END_DTM >= con.CON_DT||'235959'
+]]><isEqual property="DT_GB" compareValue="1"> 
+<![CDATA[   AND con.CON_DT BETWEEN #CON_FROM_DT# AND #CON_TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isEqual property="DT_GB" compareValue="2"> 
+<![CDATA[   AND con.CLCT_DT BETWEEN #CON_FROM_DT# AND #CON_TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isEqual property="DT_GB" compareValue="3"> 
+<![CDATA[   AND con.OLDEQ_PAY_DT BETWEEN #CON_FROM_DT# AND #CON_TO_DT#   
+   AND con.OLDEQ_PAY_MTHD_CD = '02'
+]]></isEqual>
+<![CDATA[   AND con.DEL_YN = 'N'
+   AND deal.DEL_YN = 'N'
+   AND con.SKN_YN = 'Y'
+   AND con.ACC_NO IS NULL
+   AND con.SVC_MGMT_NO IS NOT NULL
+   AND con.CLCT_YN = 'Y'
+   AND con.ASIANA_CARD_NO IS NULL
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[	   deal.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[       con.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">      
+<![CDATA[       con.SER_NUM = #SER_NUM#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       con.PROD_CD = #PROD_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[       con.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEqual property="FIRST_DC_YN" compareValue="A"> 
+<![CDATA[   AND con.FIRST_DC_YN = #FIRST_DC_YN#
+]]></isNotEqual>    
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       con.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+	</select>
+	<select id="getPrchsDtlChagDedtSknList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT a.PRCHS_MGMT_NO
+	 , ''               chk
+	 , ''               prod_cl_nm
+	 , ''               mfact_id
+	 , ''               color_nm
+	 , ''               edt_flg
+	 , ''               prod_cd_org
+	 , ''               dis_st
+	 , '99'             color_cd
+	 , ''               color_cd_org
+	 , ''               mod_dtm
+	 , ''               dum_yn
+	 , ''               prod_cd_color_cd
+	 , ''               prod_nm
+	 , ''               bad_yn
+	 , ''               mfact_nm
+	 , ''               nc_rec_status
+	 , ''               fix_yn
+	 , ''               prod_cd_ser_num
+	 , ''               bar_cd_typ
+	 , ''               ser_num
+	 , ''               eqp_st	 	 	 
+     , c.CPNT_PROD_CD   prod_cd
+     , d.PROD_CL        prod_cl
+     , c.HLD_QTY        in_qty
+     , c.UNIT_PRC       in_amt
+  FROM TCST_PRCHS_MGMT a   
+  	 , TBAS_DEAL_CO_MGMT b
+     , TCST_PRCHS_DTL c
+     , TBAS_PROD_MGMT d
+ WHERE a.CON_PLC_CD = b.DEAL_CO_CD
+   AND a.PRCHS_MGMT_NO = c.PRCHS_MGMT_NO
+   AND c.CPNT_PROD_CD = d.PROD_CD(+)
+   AND b.EFF_STA_DTM <= a.CON_DT||'235959'
+   AND b.EFF_END_DTM >= a.CON_DT||'235959'
+   AND a.BUY_CL = 'Y'
+   AND c.HLD_QTY > 0 
+   AND a.DEL_YN = 'N'
+   AND b.DEL_YN = 'N'
+   AND c.DEL_YN = 'N'
+   AND d.DEL_YN(+) = 'N'
+   AND a.SKN_YN = 'Y'
+   AND a.CHECK_DT BETWEEN #PRC_FROM_DT# AND #PRC_TO_DT#
+   AND a.ACC_NO IS NULL
+   AND a.SVC_MGMT_NO IS NOT NULL
+   AND a.ASIANA_CARD_NO IS NULL
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[	   b.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[       a.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">      
+<![CDATA[       a.SER_NUM = #SER_NUM#
+]]></isNotEmpty>	         
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       a.PROD_CD = #PROD_CD#
+]]></isNotEmpty>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[       a.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       a.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="BOX_NO">   
+<![CDATA[       a.BOX_NO = #BOX_NO#
+]]></isNotEmpty>
+	</select>
+	<update id="updateSknChagDedtYes" parameterClass="map" ><![CDATA[UPDATE TCST_CONSULT_MGMT
+   SET OLDEQ_PAY_MTHD_CD = '02'
+   	  ,OLDEQ_PAY_DT = #OLDEQ_PAY_DT#
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#	
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+	<update id="updateSknChagDedtNo" parameterClass="map" ><![CDATA[UPDATE TCST_CONSULT_MGMT
+   SET OLDEQ_PAY_MTHD_CD = ''
+   	  ,OLDEQ_PAY_DT = ''
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#	
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+</sqlMap>

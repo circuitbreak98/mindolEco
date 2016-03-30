@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="544" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" OnUnloadCompleted="form_OnUnloadCompleted" PidAttrib="7" Title="SMS&#32;전송" Top="8" Ver="1.0" Width="200" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_sms">
+				<Contents>
+					<colinfo id="title" size="256" summ="default" type="STRING"/>
+					<colinfo id="context" size="256" summ="default" type="STRING"/>
+					<colinfo id="sender_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="RTN_TEL_NO" size="256" summ="default" type="STRING"/>
+					<colinfo id="tran_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="tran_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="TRAN_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="sms_job_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="send_time" size="256" summ="default" type="STRING"/>
+					<record>
+						<context></context>
+						<RTN_TEL_NO></RTN_TEL_NO>
+						<send_time></send_time>
+						<sender_nm></sender_nm>
+						<sms_job_cl></sms_job_cl>
+						<title></title>
+						<tran_cnt></tran_cnt>
+						<tran_dt></tran_dt>
+						<TRAN_USER_ID></TRAN_USER_ID>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_addr"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_smsSelectedUser">
+				<Contents>
+					<colinfo id="cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="grp" size="256" summ="default" type="STRING"/>
+					<record>
+						<cd>01026684798</cd>
+						<cl></cl>
+						<grp></grp>
+						<nm>홍길동</nm>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_excelData">
+				<Contents>
+					<colinfo id="cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="grp" size="256" summ="default" type="STRING"/>
+					<record>
+						<cd>01026684798</cd>
+						<cl></cl>
+						<grp></grp>
+						<nm>홍길동</nm>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_tel">
+				<Contents>
+					<colinfo id="rtn_tel_no" size="256" summ="default" type="STRING"/>
+					<colinfo id="rtn_tel_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Image Height="544" Id="img_phone" ImageID="img_sms_bg" TabOrder="1" Width="206"></Image>
+		<Button Cursor="HAND" Height="50" Id="btn_send" ImageID="btn_sms_send" Left="22" OnClick="btn_send_OnClick" TabOrder="2" Text="Button0" Top="481" Width="163"></Button>
+		<Button Cursor="HAND" Height="18" Id="btn_reWrite" ImageID="btn_sms_write" Left="124" OnClick="btn_reWrite_OnClick" TabOrder="3" Text="Button0" Top="244" Width="60"></Button>
+		<Button Cursor="HAND" Height="25" Id="btn_addr" ImageID="btn_sms_list" Left="42" OnClick="btn_addr_OnClick" TabOrder="4" Text="Button0" Top="314" Width="55"></Button>
+		<Button Cursor="HAND" Height="25" Id="btn_reset" ImageID="btn_sms_reset" Left="114" OnClick="btn_reset_OnClick" TabOrder="5" Text="초기화" Top="314" Width="55"></Button>
+		<TextArea BindDataset="ds_sms" Border="None" CheckLength="Byte" Column="context" Font="돋움,12" Height="145" Id="txa_body" Left="33" MaxLength="160" OnCharChanged="txa_body_OnCharChanged" TabOrder="6" Top="92" Width="143"></TextArea>
+		<Static Align="Right" Height="20" Id="stc_byte" Left="38" TabOrder="7" Text="0" Top="244" VAlign="Middle" Width="26"></Static>
+		<Grid AutoFit="TRUE" BindDataset="ds_smsSelectedUser" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="437" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="92" Id="grd_selectedUser" InputPanel="FALSE" Left="18" LineColor="user33" MinWidth="100" OnCellClick="grd_selectedUser_OnCellClick" Right="191" RowHeight="15" Style="sty_Grid" TabOrder="8" TabStop="true" Top="345" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="173">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="57"/>
+						<col width="96"/>
+						<col width="16"/>
+					</columns>
+					<body>
+						<cell col="0" colid="nm" display="text"/>
+						<cell col="1" colid="cd" display="text" Mask="expr:iif(length(cd)==10,&apos;###-###-####&apos;,&apos;###-####-####&apos;)"/>
+						<cell bkimageid="login_close" col="2" cursor="hand" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Border="Flat" Height="91" Id="div_add" Left="315" TabOrder="9" Text="Div0" Top="248" Visible="FALSE" Width="181">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="27" LeftMargin="5" OnClick="div_add_btn_confirm_OnClick" Style="sty_btn_c" TabOrder="1" Text="확인" Top="57" Width="60"></Button>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="86" LeftMargin="5" OnClick="div_add_btn_close_OnClick" Style="sty_btn_d" TabOrder="2" Text="닫기" Top="57" Width="60"></Button>
+				<Edit Border="Flat" CheckLength="Byte" Height="20" Id="edt_name" ImeMode="native" Left="4" LeftMargin="2" MaxLength="20" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="29" Width="59"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_telNo" ImeMode="english" Left="66" LeftMargin="2" MaxLength="11" Number="TRUE" OnChar="uf_allowNumMinusEvent" OnKeyDown="div_add_edt_telNo_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="29" UseIME="FALSE" Width="105"></Edit>
+				<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="사용자&#32;추가" Top="4" Width="137"></Image>
+			</Contents>
+		</Div>
+		<Static Height="20" Id="Static0" Left="67" TabOrder="10" Text="/160&#32;Byte" Top="248" Width="53"></Static>
+		<Div Border="Raised" Height="30" Id="div_Search" Left="17" Style="sty_div_input" TabOrder="11" Text="Div0" Top="17" Visible="FALSE" Width="174">
+			<Contents>
+				<Edit Border="Flat" Height="20" Id="edt_filePath" Left="2" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="2" Width="102"></Edit>
+				<Button Cursor="HAND" Height="20" Id="btn_search" ImageID="btn_i_detail_b" Left="104" OnClick="btn_search_OnClick" TabOrder="1" Text="Button0" Top="2" Width="20"></Button>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_ok" ImageID="btn_a_2" Left="128" LeftMargin="5" OnClick="div_Search_btn_ok_OnClick" Style="sty_btn_a" TabOrder="1" Text="ok" Top="2" Width="60"></Button>
+				<FileDialog Bottom="25" Filter="Excel&#32;Files&#32;(*.xls)|*.xls" Height="24" Id="fld_excel" Left="3" Right="27" TabOrder="7" Top="1" Type="Save" Width="24"></FileDialog>
+			</Contents>
+		</Div>
+		<Edit BKColor="navy" Border="None" BorderColor="navy" Height="9" Id="edt_excel" Left="190" OnKeyDown="edt_excel_OnKeyDown" TabOrder="12" Text="Edit0" Top="2" Width="11"></Edit>
+		<Combo Border="Flat" Height="20" Id="cmb_SmsJobCl" ImeMode="none" INDEX="0" Left="288" Style="sty_ipt_form" TabOrder="13" Top="488" Visible="FALSE" Width="60"></Combo>
+		<Combo Border="Flat" CodeColumn="rtn_tel_no" DataColumn="rtn_tel_nm" Height="19" Id="cmb_TelNo" ImeMode="none" INDEX="0" InnerDataset="ds_tel" Left="18" Style="sty_ipt_form" TabOrder="14" Top="461" Width="163"></Combo>
+		<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="19" Id="cal_mod_ymd" Left="19" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="15" TodayColor="user26" Top="443" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="115"></Calendar>
+		<Edit Align="CENTER" Border="Flat" Font="굴림,-1" Height="19" Id="ed_hour" Left="134" LeftMargin="2" MaxLength="2" Number="TRUE" RightMargin="2" Style="sty_ipt_search" TabOrder="16" Top="443" Width="22"></Edit>
+		<Edit Align="CENTER" Border="Flat" Font="굴림,-1" Height="19" Id="ed_min" Left="157" LeftMargin="2" MaxLength="2" Number="TRUE" RightMargin="2" Style="sty_ipt_search" TabOrder="17" Top="443" Width="22"></Edit>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ADMNTC00500
+* 업무명      : admin - SMS 전송 등록
+* 프로그램명  : SMS 전송 등록
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.04.22
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+
+	http.Sync = true;
+
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	// SMS 업무구분 : ZADM_C_00110
+	cf_setCommonCode("div_search.cmb_SmsJobCl", "ZADM_C_00110");
+	
+	var sStrDate = GetDate();
+	cal_mod_ymd.Value = Mid(sStrDate,0,8) ;
+	ed_hour.Value = Mid(sStrDate,8,2) ;
+	ed_min.Value = Mid(sStrDate,10,2) ;
+	
+	div_search.cmb_SmsJobCl.Index = 0;
+		
+	// 설정된 코드를 기반으로 공통 코드를 추가 및 데이타 바인딩
+	cf_checkCommonCode();
+
+	// 업무구분 Arg로 받음
+	var sCond = SmsJobCl;
+	cmb_SmsJobCl.Value = sCond;
+
+	http.Sync = false;
+
+	ds_sms.SetColumn(0,"TRAN_USER_ID", gds_session.GetColumn(0, "loginId"));
+	txa_body.SetFocus();
+	
+	getSenderTelNo();
+	
+	ds_smsSelectedUser.ClearData();	
+	
+	// 공지사항에서 sms 전송하기 때 사용.
+	/*
+	if(IsExistVar("sNoticeYn", true))
+	{
+		ds_sms.SetColumn(0,"context",ds_detail.getColumn(0,"CONTENTS"));
+		
+		stc_byte.Text = lengthb(ds_detail.getColumn(0,"CONTENTS"));
+		
+		for(var i = 0 ; i < ds_selectedTarget.rowcount ; i++){
+			
+			if(length(ds_selectedTarget.getColumn(i,"mbl_phon")) >= 10){
+				var iRow = ds_smsSelectedUser.AddRow();
+				ds_smsSelectedUser.SetColumn(iRow,"cd",ds_selectedTarget.getColumn(i,"mbl_phon"));
+				ds_smsSelectedUser.SetColumn(iRow,"nm",ds_selectedTarget.getColumn(i,"nm"));
+			}
+		}
+	}
+	*/
+	
+	if(IsExistVar("sNoticeYn", true))
+	{
+		ds_sms.SetColumn(0,"context",ds_detail.getColumn(0,"CONTENTS"));
+		
+		stc_byte.Text = lengthb(ds_detail.getColumn(0,"CONTENTS"));
+		
+		for(var i = 0 ; i < ds_mblPhon.rowcount ; i++){
+			
+			if(length(ds_mblPhon.getColumn(i,"mbl_phon")) >= 10){
+				var iRow = ds_smsSelectedUser.AddRow();
+				ds_smsSelectedUser.SetColumn(iRow,"cd",ds_mblPhon.getColumn(i,"mbl_phon"));
+				ds_smsSelectedUser.SetColumn(iRow,"nm",ds_mblPhon.getColumn(i,"user_nm"));
+			}
+		}
+	}
+	
+}
+
+/*******************************************************************************
+ * @description    : 내용 초기화 - 이벤트
+*******************************************************************************/
+function btn_reWrite_OnClick(obj)
+{
+	ds_sms.SetColumn(0, "context", "");
+	stc_byte.Text = 0;
+}
+
+/*******************************************************************************
+ * @description    : 주소록 열기 - 이벤트
+*******************************************************************************/
+function btn_addr_OnClick(obj)
+{	
+	var iLeft = toNumber(GetPlatformInfo("WorkArea","Left"))+205;
+	var iTop  = GetPlatformInfo("WorkArea","Top");
+
+	dialog("ADM::ADMNTC00600.xml","",506, 544,"OpenStyle=Max CloseFlag=false",iLeft, iTop);
+}
+
+/*******************************************************************************
+ * @description    : sms 대상 추가- 이벤트
+*******************************************************************************/
+function btn_add_OnClick(obj)
+{
+	div_add.Visible = true;
+	div_add.edt_name.SetFocus();
+}
+
+/*******************************************************************************
+ * @description    : 사용자 추가 화면 닫기- 이벤트
+*******************************************************************************/
+function div_add_btn_close_OnClick(obj)
+{
+	div_add.Visible = false;
+	div_add.edt_name.Text = "";
+	div_add.edt_telNo.Text = "";
+}
+
+/*******************************************************************************
+ * @description    : 사용자 추가 - 이벤트
+*******************************************************************************/
+function div_add_btn_confirm_OnClick(obj)
+{
+	var sTelNo = div_add.edt_telNo.Text;
+	if(sTelNo.length  < 10)
+	{
+		alert("전화번호는 10자리 이상의 필수 입력 항목입니다.");
+		div_add.edt_telNo.SetFocus();
+		return;
+	}
+	
+	if(ds_smsSelectedUser.findRow("cd", sTelNo) == -1)
+	{
+		var nRow = ds_smsSelectedUser.AddRow();
+		var sNm = div_add.edt_name.Text;
+		ds_smsSelectedUser.SetColumn(nRow, "nm", sNm);
+		ds_smsSelectedUser.SetColumn(nRow, "cd", sTelNo);
+		ds_smsSelectedUser.SetColumn(nRow, "cl", "9");
+	}
+	
+	div_add_btn_close_OnClick();
+}
+
+/*******************************************************************************
+ * @description    : 사용자 제거 - 이벤트
+*******************************************************************************/
+function grd_selectedUser_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	ds_smsSelectedUser.DeleteRow(nRow);
+}
+
+/*******************************************************************************
+ * @description    : 사용자 추가 엔터 이벤트 - 이벤트
+*******************************************************************************/
+function div_add_edt_telNo_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		applyData();
+		div_add_btn_confirm_OnClick();
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 내용 byte 계산 - 이벤트
+*******************************************************************************/
+function txa_body_OnCharChanged(obj,strPreText,strPostText)
+{
+	stc_byte.Text = lengthb(strPostText);
+}
+
+
+/*******************************************************************************
+ * @description    : sms 전송 - 이벤트
+*******************************************************************************/
+function btn_send_OnClick(obj)
+{
+	if(!f_checkValidation()) return;
+
+	if(cmb_TelNo.value == null){
+		alert("사용자정보[전화번호]를 확인하십시오.");
+		return;
+	}
+	
+	if(length(cal_mod_ymd.value) !=8){
+		alert("전송일자를 확인해주십시오.");
+		cal_mod_ymd.SetFocus();
+		return false;	
+	}else{
+		if(cal_mod_ymd.value < Mid(getDate(),0,8)){
+			alert("전송일자를 확인해주십시오.");
+			cal_mod_ymd.SetFocus();
+			return false;	
+		}
+	}
+	
+	if(length(ed_hour.value) !=2 || length(ed_hour.value) !=2 ){
+		alert("전송일시를 확인해주십시오.");
+		ed_hour.SetFocus();
+		return false;	
+	}
+		
+	if(ed_hour.value > "23" || ed_hour.value < "00")
+	{
+		alert("전송시간이 범위를 벗어났습니다.");
+		ed_hour.SetFocus();
+		return false;
+	}
+
+	if(ed_min.value > "59" || ed_min.value < "00")
+	{
+		alert("전송시간이 범위를 벗어났습니다.");
+		ed_min.SetFocus();
+		return false;
+	}
+	
+	
+	if(cal_mod_ymd.value+""+ed_hour.value+""+ed_min.value <= Mid(getDate(),0,12) ){
+		ds_sms.SetColumn(0, "send_time"   , "");
+	}else{
+		ds_sms.SetColumn(0, "send_time"   , cal_mod_ymd.value+""+ed_hour.value+""+ed_min.value+"00");
+	}
+	
+	
+	ds_sms.SetColumn(0, "tran_dt"   , today());
+	ds_sms.SetColumn(0, "title"     , midb(ds_sms.GetColumn(0,"context"), 0, 40));
+	ds_sms.SetColumn(0, "sms_job_cl", cmb_SmsJobCl.value);
+	ds_sms.SetColumn(0, "RTN_TEL_NO", cmb_TelNo.value);
+	
+	
+	var sSvcID	= "svcSave";
+	var sInDs 	= "sms=ds_sms:U addr=ds_smsSelectedUser:A";
+	var sOutDs	= "";
+	var sArg 	= "sktst.adm.NTC#saveSendSms";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	
+}
+
+
+/*******************************************************************************
+ * @description    : 전송자 전화번호 취득 - 이벤트
+*******************************************************************************/
+function getSenderTelNo()
+{
+	var sSvcID	= "svcTel";
+	var sInDs 	= "";
+	var sOutDs	= "gds_temp=output";
+	var sArg 	= "sktst.adm.NTC#getSenderTelNo";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+ /*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "svcSave")
+	{
+		alert("SMS 전송이 요청 되었습니다.");
+		this.Close("1");
+	}
+	
+	if(sSvcID == "svcTel")
+	{
+		var nCheck = 1;
+		var sMsg;
+		
+		if(gds_temp.GetRowCount() >0){
+			for(var i=0; i<gds_temp.GetRowCount();i++){
+				var sTelNo = uf_StripSpecialChar(gds_temp.GetColumn(i, "RTN_TEL_NO"));
+				gds_temp.SetColumn(i,"RTN_TEL_NO",sTelNo);
+				if(sTelNo.length == 10){
+					gds_temp.SetColumn(i,"RTN_TEL_NM",substr(sTelNo,0,3)+"-"+substr(sTelNo,3,3)+"-"+substr(sTelNo,6,4));
+				}else if(sTelNo.length == 11){
+					gds_temp.SetColumn(i,"RTN_TEL_NM",substr(sTelNo,0,3)+"-"+substr(sTelNo,3,4)+"-"+substr(sTelNo,7,4));
+				
+				}else if(sTelNo.length == 8){
+					gds_temp.SetColumn(i,"RTN_TEL_NM",substr(sTelNo,0,4)+"-"+substr(sTelNo,4,4));
+				}else if(sTelNo.length == 9){
+					gds_temp.SetColumn(i,"RTN_TEL_NM",substr(sTelNo,0,2)+"-"+substr(sTelNo,3,3)+"-"+substr(sTelNo,5,4));
+				}
+			}
+		}
+		
+		if(gds_temp.GetRowCount() ==0){
+			cmb_TelNo.Enable = false;
+			gds_temp.SetColumn(0,"RTN_TEL_NM","");
+		}
+		
+		cf_copyDataset(ds_tel, gds_temp, null, false, true);
+		
+		cmb_TelNo.Index = 0;
+		
+		/*
+		var sTelNo = uf_StripSpecialChar(gds_temp.GetColumn(0, "RTN_TEL_NO"));
+
+		if(sTelNo.length == 10)
+		{
+			msk_senderTelNo.Mask = "###-###-####";
+		}
+		*/
+		
+		//ds_sms.SetColumn(0, "RTN_TEL_NO", sTelNo);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 유효성 체크
+*******************************************************************************/
+function f_checkValidation()
+{
+	if(trim(txa_body.Text).length < 1)
+	{
+		alert("SMS 내용을 입력해 주십시요!");
+		txa_body.SetFocus();
+		return false;
+	}
+	
+	if(ds_smsSelectedUser.GetRowCount() < 1)
+	{
+		alert("SMS 전송 대상을 등록해 주십시요!");
+		return false;
+	}
+	
+	return true;
+}
+
+function btn_search_OnClick(obj)
+{
+    //데이터셋 초기화 및 컬럼 재정의
+	ds_excelData.Clear();
+	cf_setParam(ds_excelData, "cd", "");
+	
+	var	sDsName = "ds_excelData"; //데이터셋
+	var	nUseDsInfo = 1;	              //기본정보
+	var	nStartIndex = 0;              //시작index
+
+	div_Search.fld_excel.Type = "OPEN";
+	var bResult = div_Search.fld_excel.Open();
+	
+	if ( bResult )
+	{
+		var sFullPath = div_Search.fld_excel.FilePath + '\\' + div_Search.fld_excel.FileName;
+		div_Search.edt_filePath.Text = sFullPath;
+
+		return ext_ExcelImportByIndex(sFullPath, 0, sDsName, nUseDsInfo, 0, 0, nStartIndex);
+	}		
+}
+
+function edt_excel_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar==192){
+		div_search.Visible = true;
+	}
+}
+
+function div_Search_btn_ok_OnClick(obj)
+{
+	ds_smsSelectedUser.ClearData();
+	ds_smsSelectedUser.Copy(ds_excelData);
+	ds_excelData.Clear();
+	div_search.Visible = false;
+}
+
+function btn_reset_OnClick(obj)
+{
+	ds_smsSelectedUser.ClearData();
+}
+
+function grd_selectedUser_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell == 2){
+		ds_smsSelectedUser.DeleteRow(nRow);
+	}
+}
+
+function form_OnUnloadCompleted(obj)
+{
+	this.close("1");
+}
+
+function Button0_OnClick(obj)
+{
+	cf_debug("ds_smsSelectedUser");
+}
+
+]]></Script>
+</Window>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="biz.org">
+    
+    <select id="getOrgComboList" parameterClass="map" resultClass="hmap">
+    <![CDATA[
+	SELECT
+		A.ORG_ID AS orgId
+		,A.ORG_NM AS orgNm
+	FROM
+	 	TBAS_ORG_MGMT A
+	WHERE
+		A.EFF_ORG_YN = 'Y'
+		AND A.ORG_CL = '3'
+		AND A.DEL_YN <> 'Y'
+		AND A.ORG_BIZ_CL = '1']]>
+	<isEqual prepend="AND" property="orgCl" compareValue="1">
+		<![CDATA[A.SUP_ORG IN ( SELECT ORG_ID FROM TBAS_ORG_MGMT WHERE SUP_ORG = #orgId# )]]>
+	</isEqual>	
+	<isEqual prepend="AND" property="orgCl" compareValue="2">
+		<![CDATA[A.SUP_ORG = #orgId#]]>
+	</isEqual>	
+	<isEqual prepend="AND" property="orgCl" compareValue="3">
+		<![CDATA[A.ORG_ID = #orgId#]]>
+	</isEqual>
+    </select>    
+
+ </sqlMap>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALBBS00500">
+	<select id="getSaleProdCheck" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALBBS00500_getSaleProdCheck_전미량 */
+	   '' AS CHK ,
+	   A.PROD_CD , 
+       E.PROD_NM , 
+       A.COLOR_CD , 
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', A.COLOR_CD) COLOR_NM , 
+       A.SER_NUM , 
+       A.OLD_SER_NUM , 
+       A.HLD_PLC_ID,
+       FBAS_GET_DEAL_NM(A.HLD_PLC_ID,'') AS HLD_PLC_NM , 
+       FBAS_GET_DEAL_NM(D.SALE_PRC_PLC,'') AS SALE_PRC_PLC_NM , 
+       SUBSTR(SALE_DTM,0,8) AS SALE_DTM , 
+       SALE_AMT , 
+       CON_MGMT_NO , 
+       D.GNRL_SALE_NO , 
+       D.GNRL_SALE_CHG_SEQ ,
+       SALE_SEQ,
+       '0' AS CASH_PAY_AMT,
+       '0' AS CRDTCRD_PAY_AMT,
+       C.SALE_PRC,
+       C.SALE_MAR,
+       C.SALE_CMMS,
+       C.SALE_VAT_PRC
+  FROM TDIS_PROD_DIS A, 
+       TSAL_EQUIPMENT_SALE C, 
+       TSAL_GNRL_SALE D, 
+       TBAS_PROD_MGMT E 
+ WHERE A.PROD_CD = E.PROD_CD 
+   AND DIS_ST = '02' 
+   AND A.LAST_INOUT_CL = '200' 
+   AND A.LAST_INOUT_DTL_CL = '205' 
+   AND A.DEL_YN = 'N' 
+   AND C.GNRL_SALE_NO = D.GNRL_SALE_NO 
+   AND C.GNRL_SALE_CHG_SEQ = D.GNRL_SALE_CHG_SEQ 
+   AND C.GNRL_SALE_CHG_SEQ = (SELECT MAX(GNRL_SALE_CHG_SEQ) 
+         						FROM TSAL_GNRL_SALE 
+        					   WHERE GNRL_SALE_NO = C.GNRL_SALE_NO
+        					     AND DEL_YN = 'N'
+       						 ) 
+   AND C.PROD_SER_NUM = A.SER_NUM
+   AND C.DEL_YN = 'N'
+   AND D.DEL_YN = 'N'
+   AND E.DEL_YN = 'N'
+   AND D.SALE_CNCL_YN = 'N'
+   AND A.PROD_CD  = #prod_cd#
+   AND A.SER_NUM = #ser_num#
+   AND A.OLD_SER_NUM = #old_ser_num#]]>
+	</select>
+</sqlMap>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTSKN01500">
+	<insert id="addSaleEqpC" parameterClass="map" ><![CDATA[INSERT INTO PS_MNG.TCST_SALE_EQP
+      (
+        CON_MGMT_NO
+       ,SEQ
+       ,PROC_DT
+       ,POWER_ST
+       ,USIM_ST
+       ,CHARGE_ST
+       ,BELL_ST
+       ,VIBRATION_ST
+       ,CPNT_ST
+       ,JODO_ST
+       ,GYRO_ST
+       ,PROXIMITY_ST
+       ,CAMERA_ST
+       ,BATTERY_ST
+       ,AFTERIMAGE_ST
+       ,TOUCH_ST
+       ,WIFI_ST
+       ,STAIN_ST
+       ,BRUISE_ST
+       ,SQUASH_ST
+       ,LIQUEFIED_ST
+       ,LED_ST
+       ,BUTTON_ST
+       ,BOTTOM_ST
+       ,BODY_ST
+       ,DMB_ST
+       ,GLASS_ST
+       ,TEETH_ST
+       ,WINDOW_ST
+       ,EDGE_ST
+       ,RETURN_CL
+       ,RETURN_ST
+       ,SALE_EQP_ST
+       ,DEL_YN
+       ,UPD_CNT
+       ,INS_DTM
+       ,INS_USER_ID
+       ,MOD_DTM
+       ,MOD_USER_ID
+       ,EQP_ST
+      ) 
+      VALUES
+      (
+        #CON_MGMT_NO#
+       ,(SELECT NVL(MAX(SEQ)+1,1)
+           FROM PS_MNG.TCST_SALE_EQP 
+          WHERE CON_MGMT_NO = #CON_MGMT_NO#)
+       ,TO_CHAR(SYSDATE,'YYYYMMDD')   
+       ,#POWER_ST#
+       ,#USIM_ST#
+       ,#CHARGE_ST#
+       ,#BELL_ST#
+       ,#VIBRATION_ST#
+       ,#CPNT_ST#
+       ,#JODO_ST#
+       ,#GYRO_ST#
+       ,#PROXIMITY_ST#
+       ,#CAMERA_ST#
+       ,#BATTERY_ST#
+       ,#AFTERIMAGE_ST#
+       ,#TOUCH_ST#
+       ,#WIFI_ST#
+       ,#STAIN_ST#
+       ,#BRUISE_ST#
+       ,#SQUASH_ST#
+       ,#LIQUEFIED_ST#
+       ,#LED_ST#
+       ,#BUTTON_ST#
+       ,#BOTTOM_ST#
+       ,#BODY_ST#
+       ,#DMB_ST#
+       ,#GLASS_ST#
+       ,#TEETH_ST#
+       ,#WINDOW_ST#
+       ,#EDGE_ST#
+       ,#RETURN_CL#
+       ,#RETURN_ST#
+       ,#SALE_EQP_ST#
+       ,'N'
+       ,0
+       ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+       ,#onlineContext.userInfo.loginId#
+       ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+       ,#onlineContext.userInfo.loginId#
+       ,#EQP_ST#
+      )]]>
+	</insert>
+	<select id="getSaleEqpC" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT CON_MGMT_NO
+     , SEQ
+     , POWER_ST
+     , USIM_ST
+     , CHARGE_ST
+     , BELL_ST
+     , VIBRATION_ST
+     , CPNT_ST
+     , JODO_ST
+     , GYRO_ST
+     , PROXIMITY_ST
+     , CAMERA_ST
+     , BATTERY_ST
+     , AFTERIMAGE_ST
+     , TOUCH_ST
+     , WIFI_ST
+     , STAIN_ST
+     , BRUISE_ST
+     , SQUASH_ST
+     , LIQUEFIED_ST
+     , LED_ST
+     , BUTTON_ST
+     , BOTTOM_ST
+     , BODY_ST
+     , DMB_ST
+     , GLASS_ST
+     , TEETH_ST
+     , WINDOW_ST
+     , EDGE_ST
+     , RETURN_CL
+     , RETURN_ST
+     , SALE_EQP_ST
+     , INS_USER_ID
+     , MOD_USER_ID
+     , EQP_ST
+  FROM PS_MNG.TCST_SALE_EQP
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#
+   AND SEQ = (SELECT MAX(SEQ) FROM PS_MNG.TCST_SALE_EQP
+               WHERE CON_MGMT_NO = #CON_MGMT_NO# AND DEL_YN = 'N')
+   AND DEL_YN = 'N']]>
+	</select>
+	<update id="updateConsultSaleEqpC" parameterClass="map" ><![CDATA[update TCST_CONSULT_MGMT
+   set SALE_EQP_ST = #SALE_EQP_ST#
+ where CON_MGMT_NO = #CON_MGMT_NO#
+   and DEL_YN = 'N']]>
+	</update>
+	<update id="updatePrchsSaleEqpC" parameterClass="map" ><![CDATA[update TCST_PRCHS_MGMT 
+   set SALE_EQP_ST = #SALE_EQP_ST#
+ where CON_MGMT_NO = #CON_MGMT_NO#
+   and DEL_YN = 'N']]>
+	</update>
+	<update id="updateSaleEqpC" parameterClass="map" ><![CDATA[UPDATE PS_MNG.TCST_SALE_EQP
+   SET DEL_YN = 'Y'
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#
+   AND SEQ < (SELECT NVL(MAX(SEQ),0)
+                FROM PS_MNG.TCST_SALE_EQP 
+               WHERE CON_MGMT_NO = #CON_MGMT_NO#)]]>
+	</update>
+</sqlMap>

@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="상품배정요청&#32;관리" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="REQ_DTM" size="255" summ="default" type="STRING"/>
+					<colinfo id="AGENCY_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="AGENCY_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="REQ_PLC" size="255" summ="default" type="STRING"/>
+					<colinfo id="REQ_PLC_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="REQ_SEQ" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROD_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="COLOR_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="COLOR_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="REQ_CHRGR_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="REQ_CHRGR_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="REQ_QTY" size="15" summ="default" type="DECIMAL"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ChrgrUser">
+				<Contents>
+					<colinfo id="chrgr_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="chrgr_user_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="63" Id="div_search" Left="8" Style="sty_div_search" TabOrder="1" Text="Div0" Top="14" Width="1000">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_searchList" ImageID="btn_a_2" Left="916" LeftMargin="5" OnClick="btn_searchList_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="30" Width="60"></Button>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="35" TabOrder="4" TabStop="FALSE" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static1" Left="33" Style="sty_lb_Search" TabOrder="1" Text="요청일자" Top="7" VAlign="Middle" Width="68"></Static>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_reqDtmFrom" Left="105" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="1" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="101"></Calendar>
+				<Static Align="Right" Height="20" Id="Static0" Left="41" Style="sty_lb_Search" TabOrder="3" Text="대리점" Top="30" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCdNm" Left="104" MaxLength="10" OnCharChanged="div_search_edt_agencyCdNm_OnCharChanged" OnKeyDown="div_search_edt_agencyCdNm_OnKeyDown" Style="sty_ipt_form" TabOrder="1" Top="30" UpperOnly="TRUE" Width="86"></Edit>
+				<Button BindDataset="ds_DlvFee" Cursor="HAND" Height="20" Id="btn_agency" ImageID="btn_i_detail_b" Left="189" OnClick="div_search_btn_agency_OnClick" TabOrder="1" Text="Button0" Top="30" Width="20"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="208" MaxLength="10" Style="sty_ipt_form" TabOrder="3" TabStop="FALSE" Top="30" UpperOnly="TRUE" Width="68"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCd" Left="278" MaxLength="10" Style="sty_ipt_form" TabOrder="5" TabStop="FALSE" Top="30" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+				<Static Align="Center" Height="20" Id="Static9" Left="204" TabOrder="11" Text="~" Top="7" VAlign="Middle" Width="20"></Static>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_reqDtmTo" Left="224" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="1" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="101"></Calendar>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="50" TabOrder="12" TabStop="FALSE" Top="30" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static2" Left="421" Style="sty_lb_Search" TabOrder="13" Text="요청처" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_reqPlcNm" Left="486" MaxLength="10" OnCharChanged="div_search_edt_reqPlcNm_OnCharChanged" OnKeyDown="div_search_edt_reqPlcNm_OnKeyDown" Style="sty_ipt_form" TabOrder="14" Top="7" UpperOnly="TRUE" Width="160"></Edit>
+				<Button BindDataset="ds_DlvFee" Cursor="HAND" Height="20" Id="btn_reqPlc" ImageID="btn_i_detail_b" Left="644" OnClick="div_search_btn_reqPlc_OnClick" TabOrder="15" Text="Button0" Top="7" Width="20"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_reqPlc" Left="662" MaxLength="10" Style="sty_ipt_form" TabOrder="16" TabStop="FALSE" Top="7" UpperOnly="TRUE" Width="72"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_reqPlcUkeyCd" Left="735" MaxLength="10" Style="sty_ipt_form" TabOrder="16" TabStop="FALSE" Top="7" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+				<Static Align="Right" Height="20" Id="Static8" Left="414" Style="sty_lb_Search" TabOrder="19" Text="영업담당" Top="30" VAlign="Middle" Width="68"></Static>
+				<Combo Border="Flat" CodeColumn="chrgr_user_id" DataColumn="chrgr_user_nm" Height="20" Id="cmb_ChrgrUser" InnerDataset="ds_ChrgrUser" Left="485" Style="sty_ipt_form" TabOrder="18" Top="30" Value="영업사원" Width="70"></Combo>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="584" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="472" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_list_OnCellDblClick" OnSummDBLClick="grd_list_OnSummDblClick" Right="1008" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="112" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1000">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="50"/>
+						<col width="107"/>
+						<col width="170"/>
+						<col width="170"/>
+						<col width="110"/>
+						<col width="110"/>
+						<col width="102"/>
+						<col width="110"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="요청일자"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="대리점"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="요청처"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="상품"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="요청수량"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="요청자"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell align="center" col="1" colid="REQ_DTM" display="date"/>
+						<cell col="2" colid="AGENCY_NM" display="text"/>
+						<cell col="3" colid="REQ_PLC_NM" display="text"/>
+						<cell col="4" colid="PROD_NM" display="text"/>
+						<cell col="5" colid="COLOR_NM" display="text"/>
+						<cell align="right" col="6" colid="REQ_QTY" display="number"/>
+						<cell col="7" colid="REQ_CHRGR_NM" display="text"/>
+					</body>
+					<summary>
+						<cell bkcolor="user37" col="0" color="user36" display="text" font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="1" color="user36" display="text" font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="2" color="user36" display="text" font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="3" color="user36" display="text" font="돋움,9,Bold"/>
+						<cell bkcolor="user37" col="4" color="user36" display="text" font="돋움,9,Bold"/>
+						<cell align="right" bkcolor="user37" col="5" color="user36" display="text" font="돋움,9,Bold" text="합계"/>
+						<cell align="right" bkcolor="user37" col="6" color="user36" display="number" expr='sum(&quot;REQ_QTY&quot;)' font="돋움,9,Bold" Mask="##,###,##0"/>
+						<cell bkcolor="user37" col="7" color="user36" display="text" font="돋움,9,Bold"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Div Height="21" Id="Div1" Left="806" TabOrder="2" Text="Div2" Top="83" Width="204">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="181" OnClick="btn_excel_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Top="1" Width="19"></Button>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="상품배정&#32;요청내역" Top="83" Width="192"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALSCO00700
+* 업무명      :  도매 - 수납대항관리
+* 프로그램명  : 상품배정요청 관리
+--------------------------------------------------------------------------------
+* 작성자      : 이강수
+* 작성일      : 2010.05.26
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_NAME; // 사용자 이름
+var sJob = "NEW";
+
+// 글로벌 세션정보
+var FV_USER_ID;	// 사용자ID
+var FV_USER_NM;		// 사용자명
+
+var	FV_ORG_ID;				// 소속 
+var	FV_ORG_NM;				// 소속명
+var	FV_ORG_CL;				// 소속구분
+var	FV_AGENCY_ID;           // 소속 대리점ID
+var	FV_AGENCY_NM;           // 소속 대리점명
+var	FV_AGENCY_UKEY_ID;      // 소속 대리점UKEY ID	
+
+var	FV_DUTY;					// 사용자 직책
+var	FV_ORG_AREA_CL1;			// 근무지 구분		
+var	FV_ORG_AREA_ID;				// 근무지 ID
+var	FV_ORG_AREA_NM;				// 근무지명
+var	FV_ORG_AREA_POS_AGENCY_CD;	// 근무지 
+var	FV_ORG_AREA_UKEY_ID;     // 근무지ukeyid
+var	FV_ORG_AREA_SUB_CD;      // 근무지subcd
+var	FV_ORG_AREA_CHANNEL_CD;  // 근무지 channelcd	
+var	FV_USER_GRP;			 // 유저그룹
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{	
+	cf_setGrdChecknSortEvent(grd_list);	// 그리드 정렬
+	cf_setAuth(pFrmNum);	// 권한 공통
+
+	// 영업담당 조회
+	f_getChrgrUserIdList();
+
+	f_init();
+}
+
+/*******************************************************************************
+ 공통 스크립트 영역 끝
+*******************************************************************************/
+
+//==============================================================================
+// 기타 업무 메소드들
+//==============================================================================
+
+
+/*******************************************************************************
+ * @description    : 리스트 조회 - 이벤트
+*******************************************************************************/
+function btn_searchList_OnClick(obj)
+{
+	if(f_isValidSearch() == false) return;
+	ds_condition.Clear();
+
+	// 넘길 파라메터 설정
+	cf_setParam(ds_condition, "req_dtm_from" , div_search.cal_reqDtmFrom.Value); 
+	cf_setParam(ds_condition, "req_dtm_to"   , div_search.cal_reqDtmTo.Value); 
+	cf_setParam(ds_condition, "agency_cd"    , div_search.edt_agencyCd.Text); 
+	cf_setParam(ds_condition, "req_plc"      , div_search.edt_reqPlc.Value); 
+	cf_setParam(ds_condition, "chrgr_user_id", div_search.cmb_ChrgrUser.Value); 
+	
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=List";
+	var sArg   = "sktst.sal.SCO#getPrdAssignMgmtList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	switch(sSvcID)
+	{
+	case "svcMdl":
+		break;
+		
+	case "svcList":
+//		trace(ds_list.SaveXML());
+		break;
+	default:
+		break;	
+	}	
+}
+
+
+/*******************************************************************************
+ * @description    : 엑셀 출력 - 이벤트
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	// cf_excel(oGrd, nMode)
+	// oGrd - 엑셀화할 그리드 객체 , nMode - 엑셀 저장 모드 1 or null : 엑셀로드 , 2 : 파일 저장
+	cf_exportExcel(grd_list);
+}
+
+
+/*******************************************************************************
+ * @description    : 화면 로딩시
+*******************************************************************************/
+function f_init()
+{
+	f_setAuth();
+
+	div_search.cal_reqDtmFrom.value = sf_getFirstDay();//AddDate(Today(),-7);
+	div_search.cal_reqDtmTo.value = Today();
+	f_setCombo();
+}
+
+
+
+/*******************************************************************************
+ * @description    : 권한 설정
+*******************************************************************************/
+function f_setAuth()
+{
+	f_getSession();
+
+	uf_enableAgencyByAuth("div_search" ,"edt_agencyCdNm,edt_agencyCd,btn_agency","edt_agencyUkeyCd");
+	uf_enableDealByAuth("div_search" ,"edt_reqPlcNm,edt_reqPlc,btn_reqPlc","edt_reqPlcUkeyCd");
+}
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function f_getSession()
+{
+	FV_USER_ID        = gds_session.GetColumn(0, "loginid");	// 사용자ID
+	FV_USER_NM        = gds_session.GetColumn(0, "usernm");		// 사용자명
+
+	FV_ORG_ID         = gds_session.GetColumn(0, "orgid");				// 소속 
+	FV_ORG_NM         = gds_session.GetColumn(0, "orgnm");				// 소속명
+	FV_ORG_CL         = gds_session.GetColumn(0, "orgcl");				// 소속구분
+	FV_AGENCY_ID      = gds_session.GetColumn(0, "posAgencyId");        // 소속 대리점ID
+	FV_AGENCY_NM      = gds_session.GetColumn(0, "posAgencyNm");        // 소속 대리점명
+	FV_AGENCY_UKEY_ID = gds_session.GetColumn(0, "posAgencyUkeyId");    // 소속 대리점UKEY ID	
+	
+	FV_ORG_AREA_ID            = gds_session.GetColumn(0, "orgareaid");			// 근무지 ID
+	FV_ORG_AREA_NM            = gds_session.GetColumn(0, "orgareanm");			// 근무지명
+	FV_ORG_AREA_POS_AGENCY_CD = gds_session.GetColumn(0, "orgareaposagencycd");	// 근무지 
+	FV_ORG_AREA_UKEY_ID       = gds_session.GetColumn(0, "orgareaukeyid");      // 근무지ukeyid
+	FV_ORG_AREA_SUB_CD        = gds_session.GetColumn(0, "orgareaukeysubcd");   // 근무지subcd
+	FV_ORG_AREA_CHANNEL_CD    = gds_session.GetColumn(0, "orgareaukeychannelcd");  // 근무지 channelcd	
+	FV_USER_GRP               = gds_session.GetColumn(0, "usergrp");			// 유저그룹
+	FV_ORG_AREA_CL1           = gds_session.GetColumn(0, "orgareacl1");			// 근무지 구분
+	FV_DUTY                   = gds_session.GetColumn(0, "duty");	   		    // 직책	
+		                        
+}
+
+
+/*******************************************************************************
+ * @description    :  콤보 셋팅
+*******************************************************************************/
+function f_setCombo()
+{	
+}
+
+
+function f_isValidSearch()
+{
+	if( uf_isNull(div_search.edt_agencyCd.Text) == true)
+	{
+		alert(cf_getMessage(MSG_00083, "대리점"));
+		div_search.edt_agencyCdNm.SetFocus();
+		return false;
+	}
+
+	if(sf_isValidDateFromTo(div_search.cal_reqDtmFrom,div_search.cal_reqDtmTo, 0, true) == false) return;
+}
+
+
+/*******************************************************************************
+ * @description    :  그리드 더블클릭 이벤트
+*******************************************************************************/
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	var sArg  = " sReqDtmFrom=" +quote(ds_list.GetColumn(nRow,"REQ_DTM"));
+	    sArg += " sReqDtmTo="   +quote(ds_list.GetColumn(nRow,"REQ_DTM"));
+	    sArg += " sAgencyCd="   +quote(ds_list.GetColumn(nRow,"AGENCY_CD"));
+	    sArg += " sAgencyNm="   +quote(ds_list.GetColumn(nRow,"AGENCY_NM"));
+	    sArg += " sReqPlc="     +quote(ds_list.GetColumn(nRow,"REQ_PLC"));
+	    sArg += " sReqPlcNm="   +quote(ds_list.GetColumn(nRow,"REQ_PLC_NM"));
+	    sArg += " sReqSeq="     +quote(ds_list.GetColumn(nRow,"REQ_SEQ"));
+	    sArg += " sChrgrUserId="+quote("");
+	    sArg += " sChrgrUserNm="+quote("");
+
+	dialog("SAL::SALSCO00800.xml", sArg , 830, 600);
+}
+
+/*******************************************************************************
+ * @description    :  그리드 SUM 더블클릭 이벤트
+*******************************************************************************/
+function grd_list_OnSummDblClick(obj,nCell,nX,nY,nPivotIndex)
+{
+	var sArg  = " sReqDtmFrom=" +quote(div_search.cal_reqDtmFrom.Value);
+	    sArg += " sReqDtmTo="   +quote(div_search.cal_reqDtmTo.Value);
+	    sArg += " sAgencyCd="   +quote(div_search.edt_agencyCd.Text);
+	    sArg += " sAgencyNm="   +quote(div_search.edt_agencyCdNm.Text);
+	    sArg += " sReqPlc="     +quote(div_search.edt_reqPlc.Text);
+	    sArg += " sReqPlcNm="   +quote(div_search.edt_reqPlcNm.Text);
+	    sArg += " sReqSeq="     +quote("");
+	    sArg += " sChrgrUserId="+quote(div_search.cmb_ChrgrUser.Value);
+	    sArg += " sChrgrUserNm="+quote(div_search.cmb_ChrgrUser.Text);
+
+	dialog("SAL::SALSCO00800.xml", sArg , 830, 600);
+}
+
+
+/*******************************************************************************
+ * @description    :  대리점 키 이벤트
+*******************************************************************************/
+function div_search_edt_agencyCdNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+
+	if(nChar == 13)
+	{
+		var sArg  = "org_id="+quote(FV_ORG_ID); 
+			sArg += " org_cl="+quote(FV_ORG_CL); 
+
+		cf_callAgencyPop(sArg, div_search, "edt_agencyCdNm,edt_agencyCd,edt_agencyUkeyCd");
+		
+	http.Sync = true;
+
+	// 영업담당 조회
+	f_getChrgrUserIdList();
+	
+	http.Sync = false;	
+
+	cf_setInitDataForCmb(div_search.cmb_ChrgrUser,"전체");
+	}
+}
+
+
+
+/*******************************************************************************
+ * @description    :  대리점 문자값 변경 이벤트
+*******************************************************************************/
+function div_search_edt_agencyCdNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	sf_clearControls("div_search.edt_agencyCd,div_search.edt_agencyUkeyCd");
+	sf_clearControls("div_search.edt_reqPlcNm,div_search.edt_reqPlc,div_search.edt_reqPlcUkeyCd");	
+	http.Sync = true;
+
+	// 영업담당 조회
+	f_getChrgrUserIdList();
+	
+	http.Sync = false;	
+
+	cf_setInitDataForCmb(div_search.cmb_ChrgrUser,"전체");
+}
+
+/*******************************************************************************
+ * @description    :  대리점 버튼 이벤트
+*******************************************************************************/
+function div_search_btn_agency_OnClick(obj)
+{
+	sf_clearControls("div_search.edt_agencyCd,div_search.edt_agencyUkeyCd");
+	sf_clearControls("div_search.edt_reqPlcNm,div_search.edt_reqPlc,div_search.edt_reqPlcUkeyCd");
+
+	var sArg  = "org_id="+quote(FV_ORG_ID); 
+		sArg += " org_cl="+quote(FV_ORG_CL); 
+
+	cf_callAgencyPop(sArg, div_search, "edt_agencyCdNm,edt_agencyCd,edt_agencyUkeyCd");
+
+	http.Sync = true;
+
+	// 영업담당 조회
+	f_getChrgrUserIdList();
+	
+	http.Sync = false;	
+
+	cf_setInitDataForCmb(div_search.cmb_ChrgrUser,"전체");
+}
+
+
+
+/*******************************************************************************
+ * @description    :  요청처  버튼 클릭 이벤트 
+*******************************************************************************/
+function div_search_btn_reqPlc_OnClick(obj)
+{
+	sf_clearControls("div_search.edt_reqPlc,div_search.edt_reqPlcUkeyCd");
+	
+	var sPosAgency = div_search.edt_agencyCd.Text;
+	
+	if(uf_isNull(sPosAgency) == true)
+	{
+		alert(cf_getMessage(MSG_00083, "대리점")); 
+		div_input.edt_agencyCdNm.SetFocus();
+		return;
+	}	
+		
+	var sArg  = "deal_co_cl1="+quote(sf_getDealCoCl1());
+		sArg += " pos_agency="+quote(sPosAgency); // 옵션
+	cf_callDealPop(sArg, div_search, "edt_reqPlcNm,edt_reqPlc,edt_reqPlcUkeyCd");	
+}
+
+
+/*******************************************************************************
+ * @description    :  요청처  키 이벤트 
+*******************************************************************************/
+function div_search_edt_reqPlcNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	
+	if(nChar == 13)
+	{
+		var sPosAgency = div_search.edt_agencyCd.Text;
+		
+		if(uf_isNull(sPosAgency) == true)
+		{
+			alert(cf_getMessage(MSG_00083, "대리점")); 
+			div_input.edt_agencyCdNm.SetFocus();
+			return;
+		}	
+			
+		var sArg  = "deal_co_cl1="+quote(sf_getDealCoCl1());
+			sArg += " pos_agency="+quote(sPosAgency); // 옵션
+		cf_callDealPop(sArg, div_search, "edt_reqPlcNm,edt_reqPlc,edt_reqPlcUkeyCd");	
+	}	
+}
+
+
+
+/*******************************************************************************
+ * @description    :  요청처  문자값 변경 이벤트 
+*******************************************************************************/
+function div_search_edt_reqPlcNm_OnCharChanged(obj,strPreText,strPostText)
+{	
+	sf_clearControls("div_search.edt_reqPlc,div_search.edt_reqPlcUkeyCd");
+}
+
+/*******************************************************************************
+ * @description    : 영업담당 조회
+*******************************************************************************/
+function f_getChrgrUserIdList()
+{
+	// 입력 파라메터 설정
+	cf_setParam(ds_Condition, "pos_agency", div_search.edt_AgencyCd.Value);  // 대리점
+
+    // 출력 Dataset 초기화
+    ds_ChrgrUser.ClearData();
+    
+	// 트랜잭션 설정
+	var sSvcID = "svcChrgrUserIdList";
+	var sInDs = "nc_input_fieldDs=ds_Condition";
+	var sOutDs = "ds_ChrgrUser=ds_ChrgrUser";
+	var sArg = "sktst.dis.BEQ#getChrgrUserId";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+]]></Script>
+</Window>

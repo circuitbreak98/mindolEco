@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASSAM00100">
+	<select id="getSamList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASSAM00100_getSamList - 김만수 */
+  SEQ
+  , AMT_FROM 
+  , AMT_TO
+  , PRT_SEQ
+  , EFF_STA_DT || '~' || EFF_END_DT AS EFF_DT
+  , EFF_STA_DT
+  , EFF_END_DT
+FROM TBAS_SPLST_AMT_MGMT
+WHERE EFF_STA_DT <= #eff_dt#
+AND EFF_END_DT >= #eff_dt#
+AND DEL_YN = 'N'
+ORDER BY SEQ ASC, PRT_SEQ ASC]]>
+	</select>
+</sqlMap>

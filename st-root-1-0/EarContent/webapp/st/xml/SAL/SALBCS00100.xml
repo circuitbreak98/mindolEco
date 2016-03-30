@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SALBCS00100" Left="8" OnLoadCompleted="SALBCS00100_OnLoadCompleted" PidAttrib="7" Title="B2C&#32;상품&#32;판매관리" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_cond">
+				<Contents>
+					<colinfo id="str_dt_fr" size="256" summ="default" type="STRING"/>
+					<colinfo id="str_dt_to" size="256" summ="default" type="STRING"/>
+					<colinfo id="agency_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_gubun" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_chgrg_id" size="256" summ="default" type="STRING"/>
+					<record>
+						<agency_cd></agency_cd>
+						<sale_chgrg_id></sale_chgrg_id>
+						<sale_gubun></sale_gubun>
+						<str_dt_fr></str_dt_fr>
+						<str_dt_to></str_dt_to>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodDisList"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_saleChgrgId">
+				<Contents>
+					<colinfo id="user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="user_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_goDetail"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_input">
+				<Contents>
+					<colinfo id="gnrl_sale_chg_seq" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="mktg_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="mov_chk" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_chg_hst_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="hld_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="hld_plc_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_unit_prc" size="256" summ="default" type="STRING"/>
+					<colinfo id="max" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="ser_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="old_ser_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="upd_cnt" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Height="21" Id="Div1" Left="803" TabOrder="1" Text="Div2" Top="92" Width="205">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="181" OnClick="btn_excel_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Top="1" Width="19"></Button>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="40" Id="div_search" Left="8" Style="sty_div_search" TabOrder="2" Text="Div0" Top="8" Width="1004">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="924" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="7" Width="60"></Button>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="18" TabOrder="0" TabStop="FALSE" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static1" Left="16" Style="sty_lb_Search" TabOrder="3" Text="조회기간" Top="7" VAlign="Middle" Width="68"></Static>
+				<Static Align="Right" Height="20" Id="Static0" Left="328" Style="sty_lb_Search" TabOrder="0" Text="팀" Top="7" VAlign="Middle" Width="60"></Static>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="362" TabOrder="5" TabStop="FALSE" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static2" Left="652" Style="sty_lb_Search" TabOrder="6" Text="판매담당자" Top="7" VAlign="Middle" Width="72"></Static>
+				<Edit BindDataset="ds_cond" Border="Flat" Column="agency_cd" Enable="FALSE" Height="20" Id="edt_agencyCd" Left="494" MaxLength="10" Style="sty_ipt_form" TabOrder="7" TabStop="FALSE" Top="7" UpperOnly="TRUE" Visible="FALSE" Width="64"></Edit>
+				<Button BindDataset="ds_DlvFee" Cursor="HAND" Height="20" Id="btn_agency" ImageID="btn_i_detail_b" Left="466" OnClick="div_search_btn_agency_OnClick" TabOrder="8" Text="Button0" Top="7" Width="19"></Button>
+				<Edit BindDataset="ds_cond" Border="Flat" Height="20" Id="edt_agencyCdNm" Left="391" LeftMargin="2" MaxLength="10" OnCharChanged="div_search_edt_agencyCdNm_OnCharChanged" OnKeyDown="div_search_edt_agencyCdNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="9" Top="7" UpperOnly="TRUE" Width="77"></Edit>
+				<Calendar BindDataset="ds_cond" Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_saleDtmFrom" Left="88" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="10" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="92"></Calendar>
+				<Static Align="Center" Height="20" Id="Static9" Left="181" TabOrder="12" Text="~" Top="7" VAlign="Middle" Width="20"></Static>
+				<Calendar BindDataset="ds_cond" Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_saleDtmTo" Left="202" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="11" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="92"></Calendar>
+				<Combo BindDataset="ds_cond" Border="Flat" CodeColumn="user_id" Column="SALE_CHGRG_ID" DataColumn="user_nm" Height="20" Id="cmb_saleChgrgId" InnerDataset="ds_saleChgrgId" Left="734" Search="FILTERED" Style="sty_ipt_form" TabOrder="13" Top="6" Width="120"></Combo>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_prodDisList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="555" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="467" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_list_OnCellDblClick" OnHeadClick="cf_markGridSort" Right="1008" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1000">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="47"/>
+						<col width="94"/>
+						<col width="95"/>
+						<col width="85"/>
+						<col width="110"/>
+						<col width="100"/>
+						<col width="80"/>
+						<col width="76"/>
+						<col width="81"/>
+						<col width="88"/>
+						<col width="88"/>
+						<col width="63"/>
+						<col width="84"/>
+						<col width="91"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" rowspan="2" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" rowspan="2" text="판매일자"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" rowspan="2" text="조직"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" rowspan="2" text="팀"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" rowspan="2" text="판매처"/>
+						<cell bkcolor="user34" col="5" display="text" rowspan="2">
+							<cell col="0" color="user35" display="text" text="UKEY"/>
+							<cell col="0" color="user35" display="text" row="1" text="AGENCY"/>
+						</cell>
+						<cell bkcolor="user34" col="6" color="user35" display="text" rowspan="2" text="판매담당자"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" rowspan="2" text="고객명"/>
+						<cell bkcolor="user34" col="8" display="text" rowspan="2">
+							<cell col="0" color="user35" display="text" text="상품"/>
+							<cell col="0" color="user35" display="text" row="1" text="일련번호"/>
+						</cell>
+						<cell bkcolor="user34" col="9" display="text" rowspan="2">
+							<cell col="0" color="user35" display="text" text="단말기"/>
+							<cell col="0" color="user35" display="text" row="1" text="모델"/>
+						</cell>
+						<cell bkcolor="user34" col="10" display="text" rowspan="2">
+							<cell col="0" color="user35" display="text" text="단말기"/>
+							<cell col="0" color="user35" display="text" row="1" text="일련번호"/>
+						</cell>
+						<cell bkcolor="user34" col="11" color="user35" display="text" rowspan="2" text="결제조건"/>
+						<cell bkcolor="user34" col="12" color="user35" colspan="2" display="text" text="판매수납정보"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" row="1" text="현금수납"/>
+						<cell bkcolor="user34" col="13" color="user35" display="text" row="1" text="신용카드수납"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell align="center" col="1" colid="sale_dtm" display="text"/>
+						<cell align="left" col="2" colid="org_nm" display="text"/>
+						<cell align="center" col="3" colid="agency_nm" display="text"/>
+						<cell col="4" colid="sale_nm" display="text"/>
+						<cell align="center" col="5" colid="ukey_agency_cd" display="text"/>
+						<cell align="center" col="6" colid="sale_chgrg_nm" display="text"/>
+						<cell align="center" col="7" colid="cust_nm" combodataset="ds_prodCl" display="combo"/>
+						<cell align="center" col="8" colid="prod_ser_num" display="text"/>
+						<cell col="9" colid="eqp_mdl_cd" display="text"/>
+						<cell align="center" col="10" colid="eqp_ser_num" display="text"/>
+						<cell align="center" col="11" colid="settl_cond_nm" display="text"/>
+						<cell align="right" col="12" colid="cash_pay_amt" display="number"/>
+						<cell align="right" col="13" colid="CRDTCRD_PAY_AMT" display="number"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="8" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="판매&#32;내역" Top="60" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_new" ImageID="btn_e_4" Left="8" LeftMargin="17" OnClick="btn_new_OnClick" Style="sty_btn_e" TabOrder="5" Text="신규등록" Top="569" Width="85"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_excelUp" ImageID="btn_i_excelup_w" Left="991" OnClick="btn_excelUp_OnClick" TabOrder="7" Text="Button1" ToolTipText="Excel&#32;Upload" Top="60" Width="19"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="972" OnClick="btn_excel_OnClick" TabOrder="6" Text="Button1" ToolTipText="Excel&#32;Download" Top="60" Width="19"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALBCS00100
+* 업무명      : B2C-상품판매관리
+* 프로그램명  : 상품판매관리
+--------------------------------------------------------------------------------
+* 작성자      : 안희수
+* 작성일      : 20011.10.10
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_global.js"
+#include "lib::lib_util.js"
+#include "lib::lib_SAL.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_NAME; // 사용자 이름
+
+// 글로벌 세션정보
+var FV_USER_ID;	// 사용자ID
+var FV_USER_NM;		// 사용자명
+
+var	FV_ORG_ID;				// 소속 
+var	FV_ORG_NM;				// 소속명
+var	FV_ORG_CL;				// 소속구분
+var	FV_AGENCY_ID;           // 소속 대리점ID
+var	FV_AGENCY_NM;           // 소속 대리점명
+var	FV_AGENCY_UKEY_ID;      // 소속 대리점UKEY ID	
+	
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SALBCS00100_OnLoadCompleted(obj)
+{
+
+	cf_setAuth(pFrmNum);	// 권한 공통
+	cf_setGrdChecknSortEvent(grd_list);	// 그리드 정렬
+	
+	f_init();
+
+}
+
+/*******************************************************************************
+ 공통 스크립트 영역 끝
+*******************************************************************************/
+
+//==============================================================================
+// 기타 업무 메소드들
+//==============================================================================
+
+
+/*******************************************************************************
+ * @description    : 리스트 조회 - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	if(f_isValidSearch() == false) return;
+
+	ds_prodDisList.Clear();
+		
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs  = "nc_input_fieldDs=ds_cond";
+	var sOutDs = "ds_prodDisList=ProdDisList";
+	var sArg   = "sktst.sal.BCS#getProdDisList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+
+
+/*******************************************************************************
+* 기능명 : 조회 유효성
+*******************************************************************************/
+function f_isValidSearch()
+{
+	if(uf_isNull(div_search.cal_saleDtmFrom.Value) == true || uf_isNull(div_search.cal_saleDtmTo.Value) == true)
+	{
+		alert("조회일자를 확인하시오.");
+		div_search.cal_saleDtmFrom.SetFocus();
+		return false;
+	}
+	if(uf_CheckDate(div_search.cal_saleDtmFrom.Value, "YYYYMMDD") == false || uf_CheckDate(div_search.cal_saleDtmTo.Value, "YYYYMMDD") == false)
+	{
+		alert("조회일자를 확인하시오.");
+		div_search.cal_saleDtmFrom.SetFocus();
+		return false;
+	}
+
+	if( uf_isEmpty(div_search.edt_agencyCd.Value))
+	{
+		alert(cf_getMessage(MSG_00083, "팀"));
+		div_search.edt_agencyCdNm.SetFocus();
+		return false;
+	}
+
+	
+	return sf_isValidDateFromTo(div_search.cal_saleDtmFrom,div_search.cal_saleDtmTo, 0, true);
+}
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	switch(sSvcID)
+	{
+		case "svcChrgrIdList":
+		cf_setInitDataForCmb(div_search.cmb_saleChgrgId, "선택");
+			break;
+
+		default:
+			break;
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 엑셀 출력 - 이벤트
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	cf_exportExcel(grd_list);
+}
+
+
+/*******************************************************************************
+ * @description    : 화면 로딩시
+*******************************************************************************/
+function f_init()
+{
+	f_setAuth();
+	
+    //조회기간의 초기값 설정
+	div_search.cal_saleDtmFrom.value = sf_getFirstDay();
+	div_search.cal_saleDtmTo.value = Today();
+	
+	f_setCombo();
+
+}
+
+
+/*******************************************************************************
+ * @description    :  콤보박스 셋팅
+*******************************************************************************/
+function f_setCombo()
+{
+
+	http.Sync = true;
+	
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv(); //  서버세션이 종료되었습니다..재로그인 하십쇼....
+	
+	//f_getChgrgIdList();
+	// 공통 코드 조회
+	//cf_setCommonCode("ds_eqpSt", "ZBAS_P_00060");   // 단말기등급
+	
+	// 설정된 코드를 기반으로 공통 코드를 추가 및 데이타 바인딩
+	cf_checkCommonCode();
+	
+	http.Sync = false;
+}
+
+
+/*******************************************************************************
+ * @description    : 모델 click 이벤트
+*******************************************************************************/
+function div_search_btn_ProdCd_OnClick(obj)
+{
+	cf_commPopProd("div_search.edt_ProdCd", "div_search.edt_ProdNm", 13);
+}
+
+
+
+/*******************************************************************************
+ * @description    : 권한 설정 (사용자의 권한별 Button 제어)
+*******************************************************************************/
+function f_setAuth()
+{
+	f_getSession();
+	
+	div_search.edt_agencyCdNm.Text =  FV_AGENCY_NM;
+	div_search.edt_agencyCd.Text = FV_AGENCY_ID;
+	
+	uf_enableAgencyByAuth("div_search", "edt_agencyCdNm, edt_agencyCd, btn_agency");
+}                
+
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function f_getSession()
+{
+	FV_USER_ID        			= gds_session.GetColumn(0, "loginid");				// 사용자ID
+	FV_USER_NM        			= gds_session.GetColumn(0, "usernm");				// 사용자명
+
+	FV_ORG_ID         			= gds_session.GetColumn(0, "orgid");				// 소속 
+	FV_ORG_NM        			= gds_session.GetColumn(0, "orgnm");				// 소속명
+	FV_ORG_CL         			= gds_session.GetColumn(0, "orgcl");				// 소속구분
+	FV_AGENCY_ID      			= gds_session.GetColumn(0, "posAgencyId");        	// 소속 대리점ID
+	FV_AGENCY_NM      			= gds_session.GetColumn(0, "posAgencyNm");        	// 소속 대리점명
+	FV_AGENCY_UKEY_ID 			= gds_session.GetColumn(0, "posAgencyUkeyId");    	// 소속 대리점UKEY ID	
+}
+
+
+/*******************************************************************************
+ * @description    :  대리점 버튼 클릭 이벤트
+*******************************************************************************/
+function div_search_btn_agency_OnClick(obj)
+{	
+	sf_clearControls("div_search.edt_agencyCdNm,div_search.edt_AgencyCd");
+	
+	f_initSaleChgrgId();
+	
+	
+	var sArg  = "org_id="+quote(FV_ORG_ID); 
+		sArg += " org_cl="+quote(FV_ORG_CL); 
+
+	cf_callAgencyPop(sArg, div_search, "edt_agencyCdNm,edt_agencyCd");
+
+	if(uf_isNull(FV_STR_POP_RESULT) == true) return;
+	
+	f_getChgrgIdList();
+
+}
+
+
+/*******************************************************************************
+ * @description    :  대리점 키 이벤트
+*******************************************************************************/
+function div_search_edt_agencyCdNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	
+	if(nChar == 13)
+	{
+		var sArg  = "org_id="+quote(FV_ORG_ID); 
+			sArg += " org_cl="+quote(FV_ORG_CL); 
+			
+		cf_callAgencyPop(sArg, div_search, "edt_agencyCdNm,edt_agencyCd");
+
+		if(uf_isNull(FV_STR_POP_RESULT) == true) return;
+		
+		// 판매담당자 가져오기 
+		//f_getSaleChgChgrgId();
+	}
+}
+
+
+/*******************************************************************************
+ * @description    :  판매 담당자 초기화
+*******************************************************************************/
+function f_initSaleChgrgId()
+{
+	ds_saleChgrgId.DeleteAll();
+	cf_setInitDataForCmb(div_search.cmb_saleChgrgId, "선택");
+}
+
+
+/*******************************************************************************
+ * @description    :  판매담당자 취득
+*******************************************************************************/
+function f_getChgrgIdList()
+{
+	var sSalePlc = div_search.edt_agencyCd.Text;
+
+	// 공통 트랜잭션 호출
+	sf_getChgrgIdList("ds_input", "ds_saleChgrgId", sSalePlc);	// 근무지
+
+}
+
+
+/*******************************************************************************
+ * @description    :  대리점 문자값 변경 이벤트
+*******************************************************************************/
+function div_search_edt_agencyCdNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	sf_clearControls("div_search.edt_agencyCd");
+}
+
+/*******************************************************************************
+ * @description    : 신규등록 
+*******************************************************************************/
+
+function btn_new_OnClick(obj)
+{    
+	Dialog("SAL::SALBCS00200.xml", "FV_NEW = "+ 'Y', 830, 600);
+}
+
+/*******************************************************************************
+ * @description    : 행 더블클릭후 신규등록화면에서 수정
+*******************************************************************************/
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+
+	Dialog("SAL::SALBCS00200.xml", "FV_NEW = N FV_ROW = " + nRow, 830, 600);
+}
+
+/*******************************************************************************
+ * @description    : 엑셀 업로드
+*******************************************************************************/
+function btn_excelUp_OnClick(obj)
+{
+	Dialog("SAL::SALBCS00300.xml", "FV_NEW = "+ 'Y', 830, 600);
+}
+]]></Script>
+</Window>

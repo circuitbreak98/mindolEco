@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" OnTimer="form_OnTimer" PidAttrib="7" Title="시스템점검&#32;시간설정" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="defCloseFromTime" size="256" summ="default" type="STRING"/>
+					<colinfo id="defCloseToTime" size="256" summ="default" type="STRING"/>
+					<colinfo id="closeFromDate" size="256" summ="default" type="STRING"/>
+					<colinfo id="closeToDate" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ipAddress"></Dataset>
+		</Datasets>
+		<Div Border="RaisedEdge" Height="208" Id="div_process" Left="8" Style="sty_div_dataview" TabOrder="1" Text="Div0" Top="16" Width="810">
+			<Contents>
+				<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="15" LeftMargin="15" Style="sty_img_tit" TabOrder="1" Text="정규&#32;시스템&#32;점검&#32;시간" Top="58" Width="150"></Image>
+				<MaskEdit Border="Flat" DisplayComma="FALSE" Height="20" Id="msk_standardStartTime" Left="15" LeftMargin="10" Mask="##:##" OnChanged="div_process_msk_standardStartTime_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="83" Type="STRING" Width="50"></MaskEdit>
+				<Static Align="Center" Height="20" Id="Static0" Left="69" TabOrder="3" Text="~" Top="83" VAlign="Middle" Width="20"></Static>
+				<MaskEdit Border="Flat" DisplayComma="FALSE" Height="20" Id="msk_standardEndTime" Left="95" LeftMargin="10" Mask="##:##" OnChanged="div_process_msk_standardEndTime_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="83" Type="STRING" Width="50"></MaskEdit>
+				<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="15" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="추가&#32;시스템&#32;점검&#32;시간" Top="116" Width="150"></Image>
+				<MaskEdit Border="Flat" DisplayComma="FALSE" Height="20" Id="msk_extraStartTime" Left="108" LeftMargin="10" Mask="##:##" OnChanged="div_process_msk_extraStartTime_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="141" Type="STRING" Width="50"></MaskEdit>
+				<Static Align="Center" Height="20" Id="Static1" Left="165" TabOrder="7" Text="~" Top="141" VAlign="Middle" Width="20"></Static>
+				<MaskEdit Border="Flat" DisplayComma="FALSE" Height="20" Id="msk_extraEndTime" Left="284" LeftMargin="10" Mask="##:##" OnChanged="div_process_msk_extraEndTime_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="141" Type="STRING" Width="50"></MaskEdit>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_extraStartDate" Left="15" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="9" TodayColor="user26" Top="141" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_extraEndDate" Left="191" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="10" TodayColor="user26" Top="141" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="15" LeftMargin="15" Style="sty_img_tit" TabOrder="11" Text="현재시간&#32;(PC시간)" Top="10" Width="150"></Image>
+				<Static Height="20" Id="sta_time" Left="17" TabOrder="12" Top="34" Width="259"></Static>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="760" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="2" Text="저장" Top="229" Visible="FALSE" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  ADMOPC00100
+* 업무명      :  시스템 점검 스케줄
+* 프로그램명  :  시스템 점검 스케줄
+--------------------------------------------------------------------------------
+* 작성자      : 한병곤 
+* 작성일      : 2009.06.04
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 
+수정일    :	
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+ 
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{	
+	SetTimer(1,1000);
+	// 권한 설정
+	cf_setAuth(pFrmNum);	
+	
+	f_getData();
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "getData"){
+
+		if(ds_result.rowcount == 0 ){
+			ds_result.AddRow();
+		}else{
+
+			div_process.msk_standardStartTime.value = ds_result.GetColumn(0,"defCloseFromTime");
+			div_process.msk_standardEndTime.value = ds_result.GetColumn(0,"defCloseToTime");
+			div_process.cal_extraStartDate.value = substr(ds_result.GetColumn(0,"closeFromDate"),0,8);
+			div_process.cal_extraEndDate.value = substr(ds_result.GetColumn(0,"closeToDate"),0,8);
+			div_process.msk_extraStartTime.value = substr(ds_result.GetColumn(0,"closeFromDate"),8);
+			div_process.msk_extraEndTime.value = substr(ds_result.GetColumn(0,"closeToDate"),8);
+		}
+		
+	}else if( sSvcID == "saveOpc"){
+	        
+        var sSvcID = "refresh";
+        var sInDs  = "";
+        var sOutDs = "";
+        var sArg   = "sktst.adm.OPC#refreshConfigAll";
+        
+        cf_Transaction(sSvcID, sInDs, sOutDs, sArg);  
+	}
+}   
+ 
+/*******************************************************************************
+ * @description    : 저장버튼 클릭 - 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	var sStandStartTime = div_process.msk_standardStartTime.value;
+	var sStandEndTiem = div_process.msk_standardEndTime.value;
+	var sExtrStartDate =  div_process.cal_extraStartDate.value;
+	var sExtrEndDate =  div_process.cal_extraEndDate.value;	
+	var sExtrStartTime = div_process.msk_extraStartTime.value;
+	var sExtrEndTime = div_process.msk_extraEndTime.value;
+	
+	var sStart = sExtrStartDate+sExtrStartTime;
+	var sEnd   = sExtrEndDate+sExtrEndTime;		
+	
+	ds_result.SetColumn(0,"defCloseFromTime",sStandStartTime);
+	ds_result.SetColumn(0,"defCloseToTime",sStandEndTiem);
+	ds_result.SetColumn(0,"closeFromDate",sStart);
+	ds_result.SetColumn(0,"closeToDate",sEnd);
+
+	if(ds_result.GetUpdate() == 0){
+		alert(cf_getMessage(MSG_00071,"")); // 처리할 대상이 없습니다
+		return;
+	}		
+
+	// validation
+	if(uf_IsNull(sStandStartTime) 
+		&& !uf_IsNull(sStandEndTiem)){
+		
+		alert('시작시간을 입력하세요.');
+		div_process.msk_standardStartTime.SetFocus();
+		return;
+	}
+	
+	if(!uf_IsNull(sStandStartTime) 
+		&& uf_IsNull(sStandEndTiem)){
+		
+		alert('종료시간을 입력하세요.');
+		div_process.msk_standardEndTime.SetFocus();
+		return;
+	}
+		
+	// 변경이 없을 경우 체크하지 않는다.
+	if(ds_result.GetOrgColumn(0,"closeFromDate") == sExtrStartDate+sExtrStartTime
+		&& ds_result.GetOrgColumn(0,"closeToDate") == sExtrEndDate+sExtrEndTime ){
+		
+	}else{
+		
+		if(uf_IsNull(sExtrStartDate) 
+			&& !uf_IsNull(sExtrStartTime)){
+			
+			alert('시작일을 입력하세요.');
+			div_process.cal_extraStartDate.SetFocus();
+			return;
+		}		
+		
+		if(!uf_IsNull(sExtrStartDate) 
+			&& uf_IsNull(sExtrStartTime)){
+			
+			alert('시작시간을 입력하세요.');
+			div_process.msk_extraStartTime.SetFocus();
+			return;
+		}	
+		
+		if(uf_IsNull(sExtrEndDate) 
+			&& !uf_IsNull(sExtrEndTime)){
+			
+			alert('종료일을 입력하세요.');
+			div_process.cal_extraEndDate.SetFocus();
+			return;
+		}		
+		
+		if(!uf_IsNull(sExtrEndDate) 
+			&& uf_IsNull(sExtrEndTime)){
+			
+			alert('종료시간을 입력하세요.');
+			div_process.msk_extraEndTime.SetFocus();
+			return;
+		}	
+		
+		if(uf_IsNull(sExtrStartDate) 
+			&& !uf_IsNull(sExtrEndDate)){
+			
+			alert('시작일을 입력하세요.');
+			div_process.cal_extraStartDate.SetFocus();
+			return;
+		}	
+		
+		if(!uf_IsNull(sExtrStartDate) 
+			&& uf_IsNull(sExtrEndDate)){
+			
+			alert('종료일을 입력하세요.');
+			div_process.cal_extraEndDate.SetFocus();
+			return;
+		}	
+			
+		if(!uf_IsNull(sExtrStartDate)
+			&& !uf_IsNull(sExtrEndDate)){
+			
+			if(sStart > sEnd){
+				alert('추가시스템 점검 시작시간이 종료시간보다 이전입니다.');
+				div_process.cal_extraEndDate.SetFocus();
+				return;
+			}
+			
+			var strDate = cf_getDate();
+			strDate = Mid(strDate,0,8);
+		   
+			if(sEnd < strDate){
+				alert('종료일이 과거 입니다.');
+				div_process.cal_extraEndDate.SetFocus();
+				return;
+			}
+		}
+	}
+	
+	// 트랜잭션 설정
+	var sSvcID = "saveOpc";
+	var sInDs  = "nc_input_fieldDs=ds_result";
+	var sOutDs = "";
+	var sArg   = "sktst.adm.OPC#updateCloseProperties";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	
+	
+}
+
+function f_getData(){
+	// 트랜잭션 설정
+	var sSvcID = "getData";
+	var sInDs  = "nc_input_fieldDs=ds_result";
+	var sOutDs = "ds_result=nc_output_fieldDs";
+	var sArg   = "sktst.adm.OPC#getCloseProperties";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	
+}
+
+function div_process_msk_standardStartTime_OnChanged(obj,strText)
+{
+	if(!f_checkDate(obj)){		
+		return;
+	}	
+}
+
+function f_checkDate(obj){
+	
+	var sTime = obj.value;
+	
+	if(uf_IsNull(sTime)){
+		return true;
+	}
+	
+	if(length(sTime) != 4){
+		alert('잘못된 시간입니다.');
+		obj.setFocus();
+		
+		return false;
+	}
+	
+	if(substr(sTime,0,2) > 25){
+		alert('잘못된 시입니다.');
+		obj.setFocus();
+		
+		return false;		
+	}
+	
+	if(substr(sTime,2,2) > 60){
+		alert('잘못된 분입니다.');
+		obj.setFocus();
+		
+		return false;		
+	}	
+	
+	
+}
+
+function div_process_msk_standardEndTime_OnChanged(obj,strText)
+{
+	if(!f_checkDate(obj)){		
+		return;
+	}	
+}
+
+function div_process_msk_extraStartTime_OnChanged(obj,strText)
+{
+	if(!f_checkDate(obj)){		
+		return;
+	}		
+}
+
+function div_process_msk_extraEndTime_OnChanged(obj,strText)
+{
+	if(!f_checkDate(obj)){		
+		return;
+	}		
+}
+
+function f_GetCurTime() {
+    intDay = GetDay(Today());
+	strDay = Decode( intDay, 0, "일요일", 1, "월요일", 2, "화요일", 3, "수요일", 4, "목요일", 5, "금요일", 6, "토요일" );
+    return ToString(getDate(),"@@@@년 @@월 @@일(" + strDay + ") @@시 @@분 @@초"); 
+}
+
+function form_OnTimer(obj,nEventID)
+{
+	div_process.sta_time.Text = f_GetCurTime();
+}
+]]></Script>
+</Window>

@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Nexcore Build Common" default="description" basedir=".">
+
+	<!-- ################################################################## -->
+	<!-- ## One Stop Build ### Weblogic Deployer ########################## -->
+	<!-- ################################################################## -->
+    <!--
+	<taskdef name="wldeploy" classname="weblogic.ant.taskdefs.management.WLDeploy" classpath="${wls.home}/server/lib/weblogic.jar" />
+	-->
+
+	<!-- ################################################################## -->
+	<!-- ## One Stop Build ### common property ############################ -->
+	<!-- ################################################################## -->
+
+	<property name="overwrite.resource" value="true" />
+
+	<property name="target" value="${NEXCORE_HOME}" />
+	<property name="target.ear" value="${jeus.ear.path}" />
+    <property name="target.commonlib" value="${jeus.ear.lib}" />
+    <property name="target.commonclasses" value="${target.ear}/APP-INF/classes" />
+	<property name="target.env" value="${target.ear}/env" />
+	<property name="target.web" value="${jeus.ear.web.path}" />
+
+	<property name="analysis.src" value="${NEXCORE_HOME}/src/analysis" />
+
+    <taskdef name="jeusappcompiler" classname="nexcore.framework.build.antsupport.jeus50.EjbCompiler" classpath="${NEXCORE_HOME}/lib/nexcore-ant.jar" />
+
+	<!-- ################################################################## -->
+	<!-- ## One Stop Build ### check property ############################# -->
+	<!-- ################################################################## -->
+	<target name="check.property" unless="NEXCORE_CLASSPATH">
+		<echo message="ERROR: " />
+		<echo message="      define property 'NEXCORE_HOME??' first " />
+		<echo message="      in your nexcore.build.properties" />
+		<echo message="      before depoying" />
+		<fail message="ERROR: nexcore.build.properties 파일을 확인해주십시오. " />
+	</target>
+	<target name="description" description="" depends="check.property">
+		<echo>test ant call</echo>
+		<echo>${project.name}</echo>
+		<echo>${component.fqId}</echo>
+		<echo>${basedir}</echo>
+	</target>
+
+
+
+	<!-- ################################################################## -->
+	<!-- ## EJB Deployment ################################################ -->
+	<!-- ################################################################## -->
+	<target name="all-ejb" depends="check.property">
+
+		<!-- mkdir.src for analysis -->
+		<!--mkdir dir="${analysis.src}/${component.fqId}.jar/${component.path}" /-->
+
+		<!-- copy.src for analysis -->
+		<!--copy todir="${analysis.src}/${component.fqId}.jar/${component.path}" verbose="true" preservelastmodified="true">
+			<fileset dir=".">
+				<include name="biz/*.java" />
+				<include name="db/*.xsql" />
+				<include name="ejb/*.java" />
+			</fileset>
+		</copy-->
+
+		<property name="ejb-jar.working" value="${target}/build/${component.fqId}" />
+		<property name="ejb-jar.destfile" value="${ejb-jar.working}.jar" />
+
+		<!-- delete.ejb-jar -->
+		<delete dir="${ejb-jar.working}" failonerror="false" />
+		<delete file="${ejb-jar.destfile}" failonerror="false" />
+		<delete file="${ejb-jar.working}Client.jar" failonerror="false" />
+
+		<!-- mkdir.ejb-jar -->
+		<mkdir dir="${ejb-jar.working}" />
+
+		<!-- compile.classes -->
+		<javac srcdir="./" destdir="${ejb-jar.working}" includes="**/*.java" excludes="**/*Test.java" encoding="utf-8" debug="true">
+			<classpath>
+				<pathelement path="${NEXCORE_CLASSPATH};${add.classpath}" />
+			    <fileset dir="${target.commonlib}" includes="*.jar" excludes="${component.fqId}Client.jar" />
+			    <fileset dir="${target.commonclasses}" includes="**/*.class"/>
+			</classpath>
+		</javac>
+
+		<!-- copy.ejb.META-INF -->
+		<copy todir="${ejb-jar.working}" verbose="true" preservelastmodified="true">
+			<fileset dir="ejb">
+				<include name="META-INF/*" />
+			</fileset>
+		</copy>
+
+		<property name="jar.classpath" value="asm-util-3.0.jar cglib-nodep-2.2_beta1.jar j2ee.jar APP-INF/lib/fwkadmin-common.jar APP-INF/lib/bsh-2.0b4.jar APP-INF/lib/commons-codec-1.3.jar APP-INF/lib/commons-collections-3.2.jar APP-INF/lib/commons-httpclient-3.0.1.jar APP-INF/lib/commons-lang-2.1.jar APP-INF/lib/commons-logging.jar APP-INF/lib/ehcache-1.2.4.jar APP-INF/lib/ibatis-sqlmap-2.3.0.677-nc.jar APP-INF/lib/jaxen-1.1.1.jar APP-INF/lib/jdom.jar APP-INF/lib/log4j-1.2.14.jar APP-INF/lib/nexcore-batch.jar APP-INF/lib/nexcore-channel.jar APP-INF/lib/nexcore-core.jar APP-INF/lib/nexcore.framework.batch.agent.jar APP-INF/lib/nexcore.framework.batch.controller.jar APP-INF/lib/nexcore.framework.online.jar APP-INF/lib/spring.jar APP-INF/lib/velocity-1.5.jar" />
+		<!-- make.ejb-jar -->
+		<jar destfile="${ejb-jar.destfile}" duplicate="add">
+			<fileset dir="${ejb-jar.working}">
+				<include name="**/*" />
+			</fileset>
+			<manifest>
+				<attribute name="Built-By" value="Nexcore Framework" />
+				<attribute name="Class-Path" value="${jar.classpath}" />
+			</manifest>
+		</jar>
+	    
+
+		<!-- make.ejb-jar.client -->
+	    <!--
+		<jar destfile="${ejb-jar.working}Client.jar" duplicate="add">
+			<fileset dir="${ejb-jar.working}">
+				<include name="${component.path}/ejb/${component.id}.class" />
+				<include name="${component.path}/ejb/${component.id}Home.class" />
+				<include name="META-INF/ejb-jar.xml" />
+				<include name="META-INF/weblogic-ejb-jar.xml" />
+			</fileset>
+		</jar>
+		-->
+
+	    <!-- JEUS5.0 support : appcompiler -->
+        <jeusappcompiler
+                jeushome="${jeus.home}"
+                target="${ejb-jar.destfile}"
+                keep="true"
+                ear="false">
+            <serverclasspath dir="${target.commonlib}" >
+                <include name="*.jar" />
+                <exclude name="${component.fqId}Client.jar" />
+            </serverclasspath>
+        </jeusappcompiler>
+
+		<!-- deploy.ejb-jar -->
+		<copy todir="${target.ear}/ejbs" overwrite="${overwrite.resource}" preservelastmodified="true" file="${ejb-jar.destfile}" flatten="true" />
+	    <!--
+		<copy todir="${target.commonlib}" overwrite="${overwrite.resource}" preservelastmodified="true" file="${ejb-jar.working}Client.jar" flatten="true" />
+		-->
+
+		<!-- all-component.xml -->
+		<antcall target="all-component.xml">
+		</antcall>
+
+		<!-- all-xsql.xml -->
+		<antcall target="all-xsql.xml">
+		</antcall>
+
+	    <!-- cleanup : 디버깅을 위해서는 주석처리 하는 것이 좋다. -->
+	    <antcall target="all-ejb-cleanup">
+	    </antcall>
+
+        <!-- component.fqId를 임시로 보관하는 파일 생성 -->
+        <antcall target="make.component.fqId.temp.properties">
+        </antcall>
+
+	</target>
+
+	<target name="make.component.fqId.temp.properties" if="biz_path">
+    	<propertyfile file="${NEXCORE_HOME}/build/component.fqId.temp.properties">
+    	    <entry  key="component.fqId" value="${component.fqId}"/>
+    	</propertyfile>
+    </target>
+	    
+    <target name="all-ejb-cleanup" unless="suppress.cleanup">
+	    <delete dir="${ejb-jar.working}" failonerror="false" />
+		<delete file="${ejb-jar.destfile}" failonerror="false" />
+		<delete file="${ejb-jar.working}Client.jar" failonerror="false" />
+    </target>
+
+    <target name="all-ejb-delete" >
+		<property name="ejb-jar.beans" value="${target.ear}/ejbs/${component.fqId}.jar" />
+		<property name="ejb-jar.interfaces" value="${target.commonlib}/${component.fqId}Client.jar" />
+        <property name="ejb-jar.componentinfo" value="${target.env}/component/${component.fqId}.component"/>
+        <property name="ejb-jar.xsqls" value="${target.env}/xsql/${component.fqId}.jar" />
+
+        <delete file="${ejb-jar.beans}" />
+        <delete file="${ejb-jar.interfaces}" />
+        <delete file="${ejb-jar.componentinfo}" />
+        <delete dir="${ejb-jar.xsqls}" failonerror="false" />
+    </target>
+
+	<!-- ################################################################## -->
+	<!-- ## component Deployment ########################################## -->
+	<!-- ################################################################## -->
+	<target name="all-component.xml" depends="check.property">
+
+		<copy todir="${target.env}/component" overwrite="${overwrite.resource}" file="./${component.fqId}.component" flatten="true" />
+
+	</target>
+
+	<!-- ################################################################## -->
+	<!-- ## xsql Deployment ############################################### -->
+	<!-- ################################################################## -->
+	<target name="all-xsql.xml" depends="check.property">
+		<!-- /env/xsql/xxx.xxx.jar/-/-/db/~~~.xsql -->
+		<property name="env.xsql.path" value="${target.env}/xsql/${component.fqId}.jar/${component.path}/db" />
+
+		<!-- delete.env.xsql.path -->
+		<delete dir="${env.xsql.path}" failonerror="false" />
+
+		<!-- mkdir.env.xsql.path -->
+		<mkdir dir="${env.xsql.path}" />
+
+		<copy todir="${env.xsql.path}" overwrite="${overwrite.resource}" preservelastmodified="true" flatten="true" failonerror="false">
+			<fileset dir="./db">
+				<include name="**/*.xsql" />
+			</fileset>
+		</copy>
+
+	</target>
+
+
+	<!-- ################################################################## -->
+	<!-- ## WEB Deployment ################################################ -->
+	<!-- ################################################################## -->
+	<target name="all-web" depends="check.property">
+
+		<!-- Web파일-jsp/resource 복사 -->
+	    <!--
+		<copy todir="${target.web}" overwrite="${overwrite.resource}" preservelastmodified="true" includeemptydirs="false">
+			<fileset dir="../../../../../../web" defaultexcludes="false">
+				<exclude name="WEB-INF/**" />
+				<exclude name="**/.svn/**" />
+				<exclude name="web.xml" />
+			    <include name="ext/**/*" />
+				<include name="jsp/${web.path}/**/*" />
+			</fileset>
+		</copy>
+		-->
+        <!-- component.fqId를 임시로 보관하는 파일 생성 -->
+        <antcall target="make.component.fqId.temp.properties">
+        </antcall>	    
+
+	</target>
+
+
+	<!-- ################################################################## -->
+	<!-- ## WEB classed Deployment ######################################## -->
+	<!-- ################################################################## -->
+	<target name="all-web-classes" depends="check.property">
+
+		<!-- compile.classes -->
+	    <!--
+		<javac srcdir="./" destdir="${target.web}/WEB-INF/classes" includes="**/*.java" excludes="**/*Test.java" encoding="utf-8" debug="true">
+			<classpath>
+				<pathelement path="${NEXCORE_CLASSPATH};${target.commonlib}/${common.jar.name}.jar;${add.classpath}" />
+			</classpath>
+		</javac>
+		<copy todir="${target.web}/WEB-INF/classes" overwrite="${overwrite.resource}" preservelastmodified="true" includeemptydirs="false">
+			<fileset dir="./" defaultexcludes="false">
+				<exclude name="**/.svn/**" />
+				<exclude name="build-web.xml" />
+				<include name="**/*.xml" />
+				<include name="**/*.dtd" />
+				<include name="**/*.properties" />
+			</fileset>
+		</copy>
+		-->
+
+	</target>
+
+
+	<!-- ################################################################## -->
+	<!-- ## CleanUp        ################################################ -->
+	<!-- ################################################################## -->
+	<target name="cleanup" depends="check.property">
+
+		<!-- build 디렉토리 삭제 -->
+		<!-- build가 동시에 될수있으므로 상위 폴더를 삭제하는 것은 우선 막아줍니다. -->
+		<!-- delete dir="${target}/build" / -->
+		<!-- 꼭 지우고 싶다면 ejb 빌드시  지우는 부분을 이곳으로 복사하여 사용하시면 됩니다. -->
+
+	</target>
+
+</project>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISINN01600">
+	<select id="getSaleEqpList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', NVL(prc.PRC_ST,con.PRC_ST)) PRC_NM
+     , con.CON_MGMT_NO
+     , con.CON_DT
+     , con.IN_DT
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00020', prod.PROD_CHRTIC_1) PROD_CHRTIC_NM   
+     , FBAS_GET_DEAL_NM(prod.MFACT_ID,'') as MFACT_NM   
+     , FBAS_GET_PROD_NM(NVL(prc.PROD_CD,con.PROD_CD)) PROD_NM
+     , NVL(prc.SER_NUM,con.SER_NUM) SER_NUM
+     , market.HQ_NM
+     , market.MARKET_CD
+     , market.MARKET_NM      
+     , FBAS_GET_ORG_NM(deal.ORG_ID) ORG_NM
+     , deal.UKEY_AGENCY_CD 
+     , deal.UKEY_SUB_CD   
+     , FBAS_GET_AGENCY_NM(deal.POS_AGENCY,con.CON_DT) AGENCY_NM      
+     , FBAS_GET_DEAL_NM(con.CON_PLC_CD,con.CON_DT) CON_PLC_NM
+     , NVL(prc.CUST_NM,con.CUST_NM) CUST_NM
+     , con.SVC_DT
+     , DECODE(con.SVC_DT,NULL,NULL,
+           CASE WHEN (SUBSTR(con.CON_DT,7,2) - SUBSTR(con.SVC_DT,7,2)) >= 0
+                   THEN TO_CHAR((SUBSTR(con.CON_DT,0,4) - SUBSTR(con.SVC_DT,0,4)) * 12 + (SUBSTR(con.CON_DT,5,2) - SUBSTR(con.SVC_DT,5,2)) + 1)||'개월'
+                ELSE TO_CHAR((SUBSTR(con.CON_DT,0,4) - SUBSTR(con.SVC_DT,0,4)) * 12 + (SUBSTR(con.CON_DT,5,2) - SUBSTR(con.SVC_DT,5,2)))||'개월'
+            END) USE_MONTH
+     , BATT
+     , BATT_CASE
+     , GENDAR
+     , CHARGER
+     , EARPHONE
+     , DECODE((SELECT MIN_PRICE
+                  FROM TBAS_RATE_MGMT rate
+                    , TBAS_PROD_MGMT prod
+               WHERE prod.PREFER_CL = rate.GRADE
+                 AND rate.TYPE_CL = '2'
+                 AND FROM_DT <= TO_CHAR(SYSDATE,'YYYYMMDD')
+                 AND TO_DT >= TO_CHAR(SYSDATE,'YYYYMMDD')
+                 AND rate.DEL_YN = 'N'
+                 AND prod.DEL_YN = 'N'
+                 AND prod.PROD_CD = prc.PROD_CD),NVL(prc.PRCHS_AMT,0),'최저가',prc.EQP_ST) EQP_ST_T
+     , prc.EQP_ST            
+     , DECODE(NVL(FIX_AMT_YN,'N'),'Y',prc.PRCHS_AMT - prc.ADJ_AMT,DECODE(NVL(prc.PRCHS_AMT,0),0,prc.PRCHS_AMT,prc.PRCHS_AMT + (TRUNC(con_dtl.DDCT_AMT,-2)-prc.ADJ_AMT))) EQP_ST_AMT             
+     , DECODE(NVL(FIX_AMT_YN,'N'),'Y',0,DECODE(prc.PRCHS_AMT,NULL,NULL,TRUNC(con_dtl.DDCT_AMT,-2))) DDCT_AMT
+     , prc.ADJ_AMT
+     , prc.PRCHS_AMT
+     , DECODE(prc.REMIT_YN,'Y',prc.REMIT_DT,DECODE(prc.CHAG_DEDT_OP_YN,'Y',
+     prc.CHAG_DEDT_OP_DT,DECODE(prc.POL_OP_YN,'Y',prc.POL_OP_DT,DECODE(prc.CORN_PRCHS_OP_YN,'Y',prc.CORN_PRCHS_OP_DT,'')))) PRCHS_DT
+     , DECODE(CUST_YN,'Y','확정','N','거부') CUST_CONF
+     , DECODE(prc.CHAG_DEDT_YN,'1','Y','') CHAG_DEDT_YN
+     , DECODE(prc.REMIT_YN,'Y','Y',' ') REMIT_YN
+     , prc.REMIT_DT
+     , DECODE(prc.CHAG_DEDT_OP_YN,'Y','Y',' ') CHAG_DEDT_OP_YN
+     , prc.CHAG_DEDT_OP_DT
+     , DECODE(prc.CORN_PRCHS_OP_YN,'Y','Y',' ') CORN_PRCHS_OP_YN
+     , prc.CORN_PRCHS_OP_DT     
+     , DECODE(prc.POL_OP_YN,'Y','Y',' ') POL_OP_YN
+     , prc.POL_OP_DT          
+     , FBAS_GET_USER_NM(prc.CHECK_USER_ID) CHECK_USER_NM
+     , prc.CHECK_DT
+     , FBAS_GET_USER_NM(prc.CUST_USER_ID) CUST_USER_NM
+     , prc.CUST_DT
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00440', prod.COM_MTHD) COM_MTHD_NM
+     , NVL(prc.BOX_NO, con.BOX_NO) BOX_NO
+     , prc.EQP_ST_DTL
+     , NVL(con.FIRST_DC_YN,'N') FIRST_DC_YN
+     , DECODE(NVL(prc.PRCHS_AMT,1),1,0,NVL(FBAS_GET_RESERVE_AMT(con.CON_MGMT_NO),0)) UBO_AMT
+     , prc.PRCHS_AMT + NVL(FBAS_GET_RESERVE_AMT(con.CON_MGMT_NO),0) TOT_AMT
+     , NVL(prc.IMEI,con.IMEI) IMEI
+     , con.CUST_GROUP_NM
+     , FBAS_GET_USER_NM(con.IN_USER_ID) IN_USER_NM
+     , FBAS_GET_USER_NM(nvl(prc.BOX_USER_ID,con.BOX_USER_ID)) BOX_USER_NM
+     , substr(nvl(prc.BOX_DTM,con.BOX_DTM),0,8) BOX_DT
+     , substr(nvl(prc.BOX_DTM,con.BOX_DTM),9,2)||':'||substr(nvl(prc.BOX_DTM,con.BOX_DTM),11,2) BOX_TIME
+     , decode(DISP_AFTERIMAGE_CL,'A','강','B','약','') DISP_AFTERIMAGE_CL    
+     , prc.RMKS      
+     , con.ASIANA_CARD_NO
+     , DECODE(NVL(con.JOIN_WAY,'A'),'C','기변','') JOIN_WAY
+     , prc.SALE_EQP_ST
+  FROM TCST_CONSULT_MGMT con
+     , TCST_PRCHS_MGMT prc
+     , TBAS_PROD_MGMT prod
+     , TCST_SALE_EQP sale
+     , TDIS_PROD_DIS
+     , TSAL_EQUIPMENT_SALE
+ WHERE con.CON_MGMT_NO = con_dtl.CON_MGMT_NO(+)
+   AND con.CON_PLC_CD = deal.DEAL_CO_CD
+   AND con.CON_MGMT_NO = prc.CON_MGMT_NO
+   AND prc.CON_MGMT_NO = sale.CON_MGMT_NO
+   AND con.PROD_CD = prod.PROD_CD 
+   AND con.DEL_YN = 'N'
+   AND prc.DEL_YN(+) = 'N'
+   AND prod.DEL_YN = 'N' 
+]]><isEqual property="DT_GB" compareValue="1"> 
+<![CDATA[   AND con.CON_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isEqual property="DT_GB" compareValue="2"> 
+<![CDATA[   AND prc.PROC_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isEqual property="DT_GB" compareValue="3">
+<![CDATA[   AND con.IN_YN = 'Y'
+   AND con.IN_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       NVL(prc.PROD_CD,con.PROD_CD) = #PROD_CD#
+]]></isNotEmpty>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">
+<![CDATA[       NVL(prc.SER_NUM,con.SER_NUM) = #SER_NUM#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       con.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+<![CDATA[   ORDER BY con_dt]]>
+	</select>
+</sqlMap>

@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDCL08400">
+  <select id="getSmsAgencyList" resultClass="hmap" fetchSize="50" >
+  <![CDATA[
+            SELECT POS_AGENCY
+                 , DECODE(DIS_SMS_A2, 'Y', 'A2') A2
+                 , DECODE(DIS_SMS_A3, 'Y', 'A3') A3
+                 , DECODE(DIS_SMS_B1, 'Y', 'B1') B1
+                 , DECODE(DIS_SMS_B2, 'Y', 'B2') B2
+                 , DECODE(DIS_SMS_C1, 'Y', 'C1') C1
+                 , DIS_RESEV_TIME
+              FROM TSAL_SMS_MGMT
+             WHERE ( DIS_SMS_A2  = 'Y' OR
+                     DIS_SMS_A3  = 'Y' OR
+                     DIS_SMS_B1  = 'Y' OR
+                     DIS_SMS_B2  = 'Y' OR
+                     DIS_SMS_C1  = 'Y'
+                   )
+  ]]>
+  </select>
+  <select id="getDisList" resultClass="hmap" fetchSize="50" >
+  <![CDATA[ SELECT /*+ DISDCL08400_getDisList_이강수 */
+       HLD_PLC_ID
+     , PROD_CD
+     , COLOR_CD
+     , SER_NUM
+     , IN_DT
+     , IN_DAY
+     , MOV_DT
+     , MOV_DAY
+     , TO_CHAR(SYSDATE, 'YYYYMMDD') TRAN_DT
+  FROM (
+        SELECT TMD.PROD_CD
+             , TMD.COLOR_CD
+             , TMD.SER_NUM
+             , TMD.HLD_PLC_ID
+             , TD.FST_IN_FIX_DT IN_DT
+             , NVL(TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD'),'YYYYMMDD') - TO_DATE(TD.FST_IN_FIX_DT, 'YYYYMMDD') + 1, 0) IN_DAY
+             , NVL(TMD.INOUT_DT, TD.FST_IN_FIX_DT) MOV_DT
+             , NVL(TO_DATE(TO_CHAR(SYSDATE,'YYYYMMDD'),'YYYYMMDD') - TO_DATE(NVL(TMD.INOUT_DT, TD.FST_IN_FIX_DT), 'YYYYMMDD') + 1, 0) MOV_DAY
+          FROM (SELECT  PROD_CD
+                     ,  COLOR_CD
+                     ,  SER_NUM
+                     ,  HLD_PLC_ID
+                     , (SELECT /*+ index_desc(tpih XDIS_PROD_INOUT_HST_PK) */
+                               INOUT_DT
+                          FROM TDIS_PROD_INOUT_HST TPIH
+                         WHERE IN_PLC_ID  = PROD.HLD_PLC_ID
+                           AND INOUT_CL = '300'
+                           AND INOUT_DTL_CL = '302'
+                           AND PROD_CD = PROD.PROD_CD
+                           AND COLOR_CD = PROD.COLOR_CD
+                           AND SER_NUM = PROD.SER_NUM
+                           AND ROWNUM = 1
+                        ) INOUT_DT
+                  FROM  (SELECT IN_PROD.RNUM
+                              , IN_PROD.PROD_CD
+                              , IN_PROD.COLOR_CD
+                              , IN_PROD.SER_NUM
+                              , IN_PROD.HLD_PLC_ID
+                           FROM (SELECT ROW_NUMBER() OVER(PARTITION BY PROD_CD,COLOR_CD,SER_NUM,HLD_PLC_ID ORDER BY PROD_CD,COLOR_CD,SER_NUM,HLD_PLC_ID) AS RNUM
+                                      , PROD_CD
+                                      , COLOR_CD
+                                      , SER_NUM
+                                      , HLD_PLC_ID
+                                   FROM(/* 상품 전월재고 */
+                                        SELECT /*+ index(a XDIS_MTH_DIS_01) */
+                                               TMD.PROD_CD
+                                             , COLOR_CD
+                                             , SER_NUM
+                                             , HLD_PLC_ID
+                                          FROM TDIS_MTH_DIS       TMD
+                                             , TBAS_DEAL_CO_MGMT  TDCM
+                                             , TBAS_PROD_MGMT     TPM
+                                         WHERE TMD.HLD_PLC_ID   = TDCM.DEAL_CO_CD
+                                           AND TDCM.HSEQ_NO     = (SELECT MAX(HSEQ_NO)
+                                                                    FROM TBAS_DEAL_CO_MGMT
+                                                                   WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                                                  )
+                                          AND TDCM.POS_AGENCY   = #POS_AGENCY#
+                                          AND TDCM.DEAL_CO_CL1  = #DEAL_CO_CL1#
+                                          AND TMD.PROD_CD       = TPM.PROD_CD
+                                          AND TPM.PROD_CL       = '1'
+                                          AND TMD.STRD_YM       = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')
+                                          AND TMD.DEL_YN        = 'N'
+                                        UNION ALL
+                                        /* 상품 입고 (구매입고,교품입고) */
+                                        /* 상품 이동출고 (이동입고) */
+                                        /* 상품 판매입고 (기기교환입고,판매취소입고) */
+                                        SELECT TPIH.PROD_CD
+                                             , TPIH.COLOR_CD
+                                             , TPIH.SER_NUM
+                                             , TPIH.IN_PLC_ID AS HLD_PLC_ID
+                                          FROM TDIS_PROD_INOUT_HST   TPIH
+                                             , TBAS_DEAL_CO_MGMT     TDCM
+                                             , TBAS_PROD_MGMT        TPM
+                                         WHERE TPIH.IN_PLC_ID   = TDCM.DEAL_CO_CD
+                                           AND TDCM.HSEQ_NO     = (SELECT MAX(HSEQ_NO)
+                                                                    FROM TBAS_DEAL_CO_MGMT
+                                                                   WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                                                  )
+                                          AND TDCM.POS_AGENCY   = #POS_AGENCY#
+                                          AND TDCM.DEAL_CO_CL1  = #DEAL_CO_CL1#
+                                          AND TPIH.PROD_CD      = TPM.PROD_CD
+                                          AND TPM.PROD_CL       = '1'
+                                          AND TPIH.INOUT_DT BETWEEN TO_CHAR(SYSDATE, 'YYYYMM')|| '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                          AND TPIH.INOUT_CL      IN ('100','300')
+                                          AND TPIH.INOUT_DTL_CL  IN ('101','102','301','104','105')  /* 구매입고,교품입고,이동입고,기기교환입고,판매취소입고 */
+                                        UNION ALL
+                                        /* 상품 출고 (반품출고취소,교품반품출고취소) */
+                                        /* 상품 이동출고 (이동출고취소) */
+                                        SELECT TPIH.PROD_CD
+                                             , TPIH.COLOR_CD
+                                             , TPIH.SER_NUM
+                                             , TPIH.OUT_PLC_ID AS HLD_PLC_ID
+                                          FROM TDIS_PROD_INOUT_HST   TPIH
+                                             , TBAS_DEAL_CO_MGMT     TDCM
+                                             , TBAS_PROD_MGMT        TPM
+                                         WHERE TPIH.OUT_PLC_ID  = TDCM.DEAL_CO_CD
+                                           AND TDCM.HSEQ_NO     = (SELECT MAX(HSEQ_NO)
+                                                                     FROM TBAS_DEAL_CO_MGMT
+                                                                    WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                                                   )
+                                           AND TDCM.POS_AGENCY   = #POS_AGENCY#
+                                           AND TDCM.DEAL_CO_CL1  = #DEAL_CO_CL1#
+                                           AND TPIH.PROD_CD      = TPM.PROD_CD
+                                           AND TPM.PROD_CL       = '1'
+                                           AND TPIH.INOUT_DT BETWEEN TO_CHAR(SYSDATE, 'YYYYMM')|| '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                           AND TPIH.INOUT_CL IN ('200','300')
+                                           AND TPIH.INOUT_DTL_CL IN ('207','210','212','304')  /* 반품출고취소,교품반품출고취소, 선출고취소, 이동출고취소 */
+                                       )
+                                ) IN_PROD
+                         MINUS
+                         SELECT OUT_PROD.RNUM
+                              , OUT_PROD.PROD_CD
+                              , OUT_PROD.COLOR_CD
+                              , OUT_PROD.SER_NUM
+                              , OUT_PROD.HLD_PLC_ID
+                           FROM (SELECT ROW_NUMBER() OVER(PARTITION BY PROD_CD,COLOR_CD,SER_NUM,HLD_PLC_ID ORDER BY PROD_CD,COLOR_CD,SER_NUM,HLD_PLC_ID) AS RNUM
+                                      , PROD_CD
+                                      , COLOR_CD
+                                      , SER_NUM
+                                      , HLD_PLC_ID
+                                   FROM (/* 상품 입고 (구매입고취소,교품입고취소) */
+                                         /* 상품 이동출고 (이동입고취소) */
+                                        SELECT TPIH.PROD_CD
+                                             , TPIH.COLOR_CD
+                                             , TPIH.SER_NUM
+                                             , TPIH.IN_PLC_ID AS HLD_PLC_ID
+                                          FROM TDIS_PROD_INOUT_HST   TPIH
+                                             , TBAS_DEAL_CO_MGMT     TDCM
+                                             , TBAS_PROD_MGMT        TPM
+                                         WHERE TPIH.IN_PLC_ID   = TDCM.DEAL_CO_CD
+                                           AND TDCM.HSEQ_NO     = (SELECT MAX(HSEQ_NO)
+                                                                    FROM TBAS_DEAL_CO_MGMT
+                                                                   WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                                                  )
+                                          AND TDCM.POS_AGENCY   = #POS_AGENCY#
+                                          AND TDCM.DEAL_CO_CL1  = #DEAL_CO_CL1#
+                                          AND TPIH.PROD_CD      = TPM.PROD_CD
+                                          AND TPM.PROD_CL       = '1'
+                                          AND TPIH.INOUT_DT BETWEEN TO_CHAR(SYSDATE, 'YYYYMM')|| '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                          AND TPIH.INOUT_CL      IN ('100','300')
+                                          AND TPIH.INOUT_DTL_CL  IN ('106','107','304')  /* 구매입고취소,교품입고취소,이동입고취소 */
+                                        UNION ALL
+                                          /* 상품 출고 (반품출고,교품반품출고) */
+                                          /* 상품 이동출고 (이동출고) */
+                                          /* 상품 판매출고 */
+                                        SELECT TPIH.PROD_CD
+                                             , TPIH.COLOR_CD
+                                             , TPIH.SER_NUM
+                                             , TPIH.OUT_PLC_ID AS HLD_PLC_ID
+                                          FROM TDIS_PROD_INOUT_HST   TPIH
+                                             , TBAS_DEAL_CO_MGMT     TDCM
+                                             , TBAS_PROD_MGMT        TPM
+                                         WHERE TPIH.OUT_PLC_ID  = TDCM.DEAL_CO_CD
+                                           AND TDCM.HSEQ_NO     = (SELECT MAX(HSEQ_NO)
+                                                                     FROM TBAS_DEAL_CO_MGMT
+                                                                    WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                                                   )
+                                           AND TDCM.POS_AGENCY   = #POS_AGENCY#
+                                           AND TDCM.DEAL_CO_CL1  = #DEAL_CO_CL1#
+                                           AND TPIH.PROD_CD      = TPM.PROD_CD
+                                           AND TPM.PROD_CL       = '1'
+                                           AND TPIH.INOUT_DT BETWEEN TO_CHAR(SYSDATE, 'YYYYMM')|| '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                           AND TPIH.INOUT_CL IN ('200','300')
+                                           AND TPIH.INOUT_DTL_CL IN ('201','206','211','301','204','205')  /* 반품출고,교품반품출고,선출고,이동출고,기기교환출고,판매출고 */
+                                        UNION ALL
+                                         /* 15 이전에 SMS를 발송한 경우 */
+                                        SELECT TLTD.PROD_CD
+                                             , TLTD.COLOR_CD
+                                             , TLTD.SER_NUM
+                                             , TLTD.HLD_PLC_ID
+                                          FROM TDIS_LONG_TERM_DIS    TLTD
+                                             , TBAS_DEAL_CO_MGMT     TDCM
+                                             , TBAS_PROD_MGMT        TPM
+                                         WHERE TLTD.HLD_PLC_ID  = TDCM.DEAL_CO_CD
+                                           AND TDCM.HSEQ_NO     = (SELECT MAX(HSEQ_NO)
+                                                                     FROM TBAS_DEAL_CO_MGMT
+                                                                    WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                                                  )
+                                           AND TDCM.POS_AGENCY   = #POS_AGENCY#
+                                           AND TDCM.DEAL_CO_CL1  = #DEAL_CO_CL1#
+                                           AND TLTD.PROD_CD      = TPM.PROD_CD
+                                           AND TPM.PROD_CL       = '1'
+                                           AND TLTD.TRAN_DT      > TO_CHAR(SYSDATE - 15, 'YYYYMMDD')
+                                        )
+                                ) OUT_PROD
+                        ) PROD
+              ) TMD
+              , TDIS_DIS          TD
+          WHERE TMD.PROD_CD     = TD.PROD_CD
+            AND TMD.COLOR_CD    = TD.COLOR_CD
+            AND TMD.SER_NUM     = TD.SER_NUM
+        )
+ WHERE 1=1
+   AND MOV_DAY >= 90
+  ]]>
+  </select>  
+  
+    <select id="getUserList" resultClass="hmap" fetchSize="50" >
+  <![CDATA[
+        SELECT USER_ID
+             , USER_NM
+             , MBL_PHON
+             , USER_GRP
+          FROM (
+                /* 영업사원 */
+                SELECT TUM.USER_ID
+                     , TUM.USER_NM
+                     , TUM.MBL_PHON
+                     , 'D99' USER_GRP
+                  FROM TBAS_DEAL_CO_MGMT TDCM
+                     , TBAS_USER_MGMT    TUM
+                 WHERE TDCM.CHRGR_USER_ID = TUM.USER_ID
+                   AND TDCM.DEAL_CO_CD  = #HLD_PLC_ID#
+                   AND TDCM.HSEQ_NO  = (SELECT MAX(HSEQ_NO)
+                                          FROM TBAS_DEAL_CO_MGMT
+                                         WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                       )
+                UNION ALL
+                /* 판매점/MM(D14) */
+                SELECT TUM.USER_ID
+                     , TUM.USER_NM
+                     , TUM.MBL_PHON
+                     , TUM.USER_GRP
+                  FROM TBAS_USER_MGMT     TUM
+                     , TBAS_DEAL_CO_MGMT  TDCM
+                 WHERE TUM.ORG_AREA   = TDCM.DEAL_CO_CD
+                   AND TDCM.HSEQ_NO   = (SELECT MAX(HSEQ_NO)
+                                           FROM TBAS_DEAL_CO_MGMT
+                                          WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                        )
+                   AND TDCM.DEAL_CO_CD  = #HLD_PLC_ID#
+                   AND TUM.EFF_USER_YN  = 'Y'
+                   AND TUM.DEL_YN       = 'N'
+                   AND TUM.USER_GRP     = 'D14'
+                   AND TUM.MBL_PHON IS NOT NULL
+                UNION ALL
+                /* 대리점 재고담당(D10), 대리점 Admin(D22) */
+                SELECT TUM.USER_ID
+                     , TUM.USER_NM
+                     , TUM.MBL_PHON
+                     , TUM.USER_GRP
+                  FROM TBAS_USER_MGMT     TUM
+                     , TBAS_DEAL_CO_MGMT  TDCM
+                 WHERE TUM.POS_AGENCY = TDCM.POS_AGENCY
+                   AND TDCM.HSEQ_NO   = (SELECT MAX(HSEQ_NO)
+                                           FROM TBAS_DEAL_CO_MGMT
+                                          WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                        )
+                   AND TDCM.DEAL_CO_CD  = #HLD_PLC_ID#
+                   AND TUM.EFF_USER_YN  = 'Y'
+                   AND TUM.DEL_YN       = 'N'
+                   AND TUM.USER_GRP    IN ('D10', 'D22')
+                   AND TUM.MBL_PHON IS NOT NULL
+             )
+  ]]>
+  </select>
+
+  <select id="getSmsSendAgencyList" resultClass="hmap" fetchSize="50" >
+  <![CDATA[
+      SELECT /* DISDCL08400_getSmsSendAgencyList_장기재고보유 대리점 조회-이강수 */
+             TDCM.POS_AGENCY
+           , SUBSTR(TLTD.TRAN_DT,0, 4) || '-' || 
+             SUBSTR(TLTD.TRAN_DT,5, 2) || '-' || 
+             SUBSTR(TLTD.TRAN_DT,7, 2) TRAN_DT
+        FROM TDIS_LONG_TERM_DIS TLTD
+           , TBAS_DEAL_CO_MGMT  TDCM
+       WHERE TLTD.HLD_PLC_ID  = TDCM.DEAL_CO_CD
+         AND TDCM.HSEQ_NO     = (SELECT MAX(HSEQ_NO)
+                                   FROM TBAS_DEAL_CO_MGMT
+                                  WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                 )
+         AND TLTD.TRAN_DT     = TO_CHAR(SYSDATE, 'YYYYMMDD')
+       GROUP BY TLTD.TRAN_DT, TDCM.POS_AGENCY
+   ]]>
+  </select>
+
+  <select id="getSmsSendHldPlcIdList" resultClass="hmap" fetchSize="50" >
+  <![CDATA[
+      SELECT /* DISDCL08400_getSmsSendHldPlcIdList_장기재고보유 보유처 조회-이강수 */
+             TLTD.HLD_PLC_ID
+           , FBAS_GET_DEAL_NM(TLTD.HLD_PLC_ID, '') HLD_PLC_NM
+        FROM TDIS_LONG_TERM_DIS TLTD
+           , TBAS_DEAL_CO_MGMT  TDCM
+       WHERE TLTD.HLD_PLC_ID  = TDCM.DEAL_CO_CD
+         AND TDCM.HSEQ_NO     = (SELECT MAX(HSEQ_NO)
+                                   FROM TBAS_DEAL_CO_MGMT
+                                  WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                                 )
+         AND TLTD.TRAN_DT     = TO_CHAR(SYSDATE, 'YYYYMMDD')
+         AND TDCM.POS_AGENCY  = #POS_AGENCY#
+       GROUP BY TLTD.HLD_PLC_ID
+  ]]>
+  </select>
+
+  <select id="getSmsText" resultClass="hmap" fetchSize="50" >
+  <![CDATA[
+      SELECT /* DISDCL08400_getSmsText_SMS 내용 조회-이강수 */
+             SUBSTR(FBAS_GET_PROD_NM_SMS(FBAS_GET_PROD_NM(TLTD.PROD_CD)),0 ,9)
+             || ' ' || COUNT(TLTD.SER_NUM) SMS_TEXT
+           , COUNT(TLTD.SER_NUM) CNT
+        FROM TDIS_LONG_TERM_DIS       TLTD
+           , TBAS_DEAL_CO_MGMT        TDCM
+       WHERE TLTD.HLD_PLC_ID  = TDCM.DEAL_CO_CD
+         AND TDCM.HSEQ_NO     = (SELECT MAX(HSEQ_NO)
+                                   FROM TBAS_DEAL_CO_MGMT
+                                  WHERE DEAL_CO_CD  = TDCM.DEAL_CO_CD
+                                )
+         AND TDCM.POS_AGENCY = #POS_AGENCY#
+    ]]>  <isNotEmpty prepend="AND" property="HLD_PLC_ID">
+    <![CDATA[	TLTD.HLD_PLC_ID = #HLD_PLC_ID#     ]]>
+         </isNotEmpty>
+  <![CDATA[
+       GROUP BY TLTD.PROD_CD
+  ]]>
+  </select>
+
+	<select id="getTranCnt" parameterClass="map" resultClass="hmap">
+		<![CDATA[SELECT /*+ DISDCL08400_getTranCnt_이강수 */
+	       sadm_sms_tran_seq.nextval as TRAN_CNT
+	     , TO_CHAR(SYSDATE, 'yyyymmdd') AS TRAN_DT
+	       FROM dual
+	    ]]>
+	</select>
+	<select id="getSmsMsgSerNum" parameterClass="map" resultClass="hmap">
+		<![CDATA[SELECT /*+ DISDCL08400_getSmsMsgSerNum_이강수 */ 
+    		   SADM_SMS_SEQ.NEXTVAL AS MSG_SER_NUM		/* 메세지 일련번호 */
+	       FROM DUAL
+	    ]]>
+	</select>
+	<select id="getCmpMsgId" parameterClass="map" resultClass="hmap">
+		<![CDATA[SELECT /*+ DISDCL08400_getCmpMsgId_이강수 */
+	           sadm_sms_cmp_msg_seq.nextval as CMP_MSG_ID
+	      FROM dual
+	    ]]>
+	</select>  
+
+  <select id="getSmsUser" resultClass="hmap" fetchSize="50" >
+  <![CDATA[
+      SELECT /* DISDCL08400_getSmsUser_SMS 수신자 조회-이강수 */
+             TLTDU.USER_ID
+           , TUM.USER_NM
+           , TUM.MBL_PHON
+           , NVL((SELECT USER_ID
+                   FROM tbas_user_mgmt
+                  WHERE user_id LIKE 'TP000%'
+                    AND pos_agency = #POS_AGENCY#
+                    AND user_grp   = 'D22' 
+                 ), 'dev01') TRAN_USER_ID
+        FROM TDIS_LONG_TERM_DIS      TLTD
+           , TDIS_LONG_TERM_DIS_USER TLTDU
+           , TBAS_DEAL_CO_MGMT       TDCM
+           , TBAS_USER_MGMT          TUM
+       WHERE TLTD.TRAN_DT    = TLTDU.TRAN_DT
+         AND TLTD.PROD_CD    = TLTDU.PROD_CD
+         AND TLTD.COLOR_CD   = TLTDU.COLOR_CD
+         AND TLTD.SER_NUM    = TLTDU.SER_NUM
+         AND TLTD.HLD_PLC_ID = TDCM.DEAL_CO_CD
+         AND TDCM.HSEQ_NO    = (SELECT MAX(HSEQ_NO)
+                                  FROM TBAS_DEAL_CO_MGMT
+                                 WHERE DEAL_CO_CD = TDCM.DEAL_CO_CD
+                               )
+         AND TLTDU.USER_ID   = TUM.USER_ID
+         AND TLTD.TRAN_DT    = TO_CHAR(SYSDATE, 'YYYYMMDD')
+         AND TDCM.POS_AGENCY = #POS_AGENCY#
+    ]]>
+    <isEqual property="AGENCY_YN" compareValue="Y">
+    <![CDATA[     AND TLTDU.USER_GRP IN ('D10', 'D22')  ]]>
+    </isEqual>
+    <isEqual property="AGENCY_YN" compareValue="N">
+    <![CDATA[     AND TLTD.HLD_PLC_ID = #HLD_PLC_ID#
+                  AND TLTDU.USER_GRP  = #USER_GRP#
+      ]]>
+    </isEqual>
+    <![CDATA[
+       GROUP BY TLTDU.USER_ID, TUM.USER_NM, TUM.MBL_PHON  
+  ]]>
+  </select>
+      
+  <insert id="insertTdisLongTermDis" parameterClass="hmap">
+  <![CDATA[
+    INSERT INTO TDIS_LONG_TERM_DIS (  /* DISDCL08400_insertTdisLongTermDis_이강수 */
+       TRAN_DT
+      ,PROD_CD
+      ,COLOR_CD
+      ,SER_NUM
+      ,HLD_PLC_ID
+      ,IN_DT
+      ,IN_DAY
+      ,MOV_DT
+      ,MOV_DAY
+      ,del_yn
+      ,upd_cnt
+      ,ins_dtm
+      ,ins_user_id
+      ,mod_dtm
+      ,mod_user_id
+    )
+    VALUES (
+       #TRAN_DT#
+      ,#PROD_CD#
+      ,#COLOR_CD#
+      ,#SER_NUM#
+      ,#HLD_PLC_ID#
+      ,#IN_DT#
+      ,#IN_DAY#
+      ,#MOV_DT#
+      ,#MOV_DAY#
+      ,'N'
+      ,1
+      ,TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+      ,'psadm'
+      ,TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+      ,'psadm'
+    )
+  ]]>
+  </insert>  
+
+  <insert id="insertTdisLongTermDisUser" parameterClass="hmap">
+  <![CDATA[
+    INSERT INTO TDIS_LONG_TERM_DIS_USER (  /* DISDCL08400_insertTdisLongTermDisUser_이강수 */
+       TRAN_DT
+      ,PROD_CD
+      ,COLOR_CD
+      ,SER_NUM
+      ,SEQ
+      ,USER_GRP
+      ,USER_ID
+      ,del_yn
+      ,upd_cnt
+      ,ins_dtm
+      ,ins_user_id
+      ,mod_dtm
+      ,mod_user_id
+    )
+    VALUES (
+       #TRAN_DT#
+      ,#PROD_CD#
+      ,#COLOR_CD#
+      ,#SER_NUM#
+      ,(SELECT NVL(MAX(SEQ), 0) + 1
+          FROM TDIS_LONG_TERM_DIS_USER
+         WHERE TRAN_DT   = #TRAN_DT#
+           AND PROD_CD   = #PROD_CD#
+           AND COLOR_CD  = #COLOR_CD#
+           AND SER_NUM   = #SER_NUM#)
+      ,#USER_GRP#
+      ,#USER_ID#
+      ,'N'
+      ,1
+      ,TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+      ,'psadm'
+      ,TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+      ,'psadm'
+    )
+  ]]>
+  </insert>
+
+	<insert id="insertTadmSmsTran" parameterClass="map" ><![CDATA[INSERT /*+ SALSMG01000_insertTadmSmsTran_이강수 */ 
+  INTO TADM_SMS_TRAN
+       ( TRAN_DT
+       , TRAN_CNT
+       , TITLE
+       , TRAN_USER_ID
+       , RTN_TEL_NO
+       , CONTEXT
+       , DEL_YN
+       , UPD_CNT
+       , INS_DTM
+       , INS_USER_ID
+       , MOD_DTM
+       , MOD_USER_ID
+       , MSG_SER_NUM
+       , SMS_JOB_CL
+       )
+VALUES
+       ( #TRAN_DT#
+       , #TRAN_CNT#
+       , #TITLE#
+       , #TRAN_USER_ID#
+       , #RTN_TEL_NO#
+       , #SND_MSG#
+       , 'N'
+       , 0
+       , TO_CHAR(SYSDATE, 'yyyymmddhh24MIss')
+       , #TRAN_USER_ID#
+       , TO_CHAR(SYSDATE, 'yyyymmddhh24MIss')
+       , #TRAN_USER_ID#
+       , #MSG_SER_NUM#
+       , #SMS_JOB_CL#
+       )]]>
+	</insert>
+	<insert id="insertTadmSmsTranDtl" parameterClass="map" ><![CDATA[INSERT
+  INTO TADM_SMS_TRAN_DTL
+       ( TRAN_DT
+       , TRAN_CNT
+       , SEQ
+       , NAME
+       , TEL_NO
+       , ADDR_CAT
+       , DEL_YN
+       , UPD_CNT
+       , INS_DTM
+       , INS_USER_ID
+       , MOD_DTM
+       , MOD_USER_ID
+       , SKT_YN
+       , CMP_MSG_ID
+       )
+VALUES
+       ( #TRAN_DT#
+       , #TRAN_CNT#
+       , (SELECT NVL(MAX(SEQ), 0) + 1
+            FROM TADM_SMS_TRAN_DTL
+           WHERE TRAN_DT   = #TRAN_DT#
+             AND TRAN_CNT  = #TRAN_CNT#)
+       , #USER_NM#
+       , #MBL_PHON#
+       , ''
+       , 'N'
+       , 0
+       , TO_CHAR(SYSDATE, 'yyyymmddhh24MIss')
+       , #TRAN_USER_ID#
+       , TO_CHAR(SYSDATE, 'yyyymmddhh24MIss')
+       , #TRAN_USER_ID#
+       , ''
+       , #CMP_MSG_ID#
+       )]]>
+	</insert>
+	<insert id="insertTelinkSms" parameterClass="map" ><![CDATA[INSERT
+  INTO TELINK_SMS
+       ( CMP_MSG_ID
+       , CMP_USR_ID
+       , ODR_FG
+       , SMS_GB
+       , USED_CD
+       , MSG_GB
+       , WRT_DTTM
+       , SND_DTTM
+       , SND_PHN_ID
+       , RCV_PHN_ID
+       , CALLBACK
+       , SND_MSG
+       , CMP_SND_DTTM
+       , CMP_RCV_DTTM
+       , REG_SND_DTTM
+       , REG_RCV_DTTM
+       , EXPIRE_VAL
+       , SMS_ST
+       , RSLT_VAL
+       , RSRVD_ID
+       , RSRVD_WD
+       )
+VALUES
+       ( #CMP_MSG_ID#
+       , '00000'
+       , '2'
+       , '1'
+       , '00 '
+       , 'A'
+       , ''
+       , TO_CHAR(SYSDATE, 'YYYYMMDD')
+              ||(SELECT DIS_RESEV_TIME || '00'
+                   FROM TSAL_SMS_MGMT
+                  WHERE pos_agency = #POS_AGENCY#
+                 )
+       , ''
+       , #MBL_PHON#
+       , ''
+       , #SND_MSG#
+       , ''
+       , ''
+       , ''
+       , ''
+       , 0
+       , '0'
+       , 99
+       , ''
+       , ''
+       )]]>
+	</insert>
+</sqlMap>

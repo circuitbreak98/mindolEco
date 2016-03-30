@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="316" Id="BASBCO00100" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="소속조직검색" Top="8" Ver="1.0" Width="330" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="ORG_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="SUP_ORG" size="256" summ="default" type="STRING"/>
+					<colinfo id="U_KEY_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="EFF_ORG_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="MBL_PHON" size="256" summ="default" type="STRING"/>
+					<colinfo id="ZIP_CD1" size="256" summ="default" type="STRING"/>
+					<colinfo id="ZIP_CD2" size="256" summ="default" type="STRING"/>
+					<colinfo id="OTH_ADDR" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEL_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="UPD_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="org_cl_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="ORG_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="org_cl" size="256" summ="default" type="STRING"/>
+					<record>
+						<org_cl></org_cl>
+						<ORG_ID></ORG_ID>
+						<ORG_NM></ORG_NM>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="167" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="1" Text="닫기" Top="282" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_confirm" ImageID="btn_c_2" Left="101" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="2" Text="확인" Top="282" Width="60"></Button>
+		<Grid AutoFit="TRUE" BindDataset="ds_result" BkColor2="default" BoldHead="true" Border="Flat" Bottom="272" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="212" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_list_OnCellDblClick" OnHeadClick="cf_markGridSort" Right="320" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="60" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="310">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="61"/>
+						<col width="88"/>
+						<col width="154"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="조직코드" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="조직구분" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="조직명" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="center" bkcolor2="user36" col="0" colid="ORG_ID" display="text"/>
+						<cell align="left" bkcolor2="user36" col="1" colid="org_cl_nm" display="text"/>
+						<cell align="left" bkcolor2="user36" col="2" colid="ORG_NM" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Border="Raised" Height="40" Id="divS" Left="10" Style="sty_div_search" TabOrder="4" Text="Div0" Top="10" Width="310">
+			<Contents>
+				<Button ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="171" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="3" Text="조회" Top="7" Width="60"></Button>
+				<Edit Border="Flat" Font="굴림,-1" Height="20" Id="edt_condition" Left="67" LeftMargin="2" OnKeyDown="edt_condition_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Width="92"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="4" Style="sty_lb_Search" TabOrder="2" Text="조직명" Top="7" VAlign="Middle" Width="61"></Static>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : BASBCO00100
+* 업무명      : 기준정보 - 공통
+* 프로그램명  : 소속조직검색(P)
+--------------------------------------------------------------------------------
+* 작성자      : shimyunjung
+* 작성일      : 2009.01.16
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var org_Nm = "";
+var org_Id = "";
+var org_Cl = "";
+var ds_Flag = false;
+var ds_Parent = "";
+var row_Parent = "";
+var	F_SvcID = "";
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	ds_Flag = dsFlag;
+	
+	if (ds_Flag == "true") {
+		f_initDs();
+	} else {
+		f_init();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 확인 - 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+
+	if (F_SvcID == "svc_init") {
+		if(orgNm != null) {
+			org_Nm.text  = ds_result.GetColumn(ds_result.currow,"ORG_NM");
+			org_Id.text  = ds_result.GetColumn(ds_result.currow,"ORG_ID");
+		}
+	} else if (F_SvcID == "svc_initDs") {
+		cf_copyDataSetPop(ds_Parent, rowParent, ds_result, ds_result.currow);
+	}
+	
+	this.Close();
+}
+/*******************************************************************************
+ * @description    : 폼 로드시 조회 - 이벤트
+*******************************************************************************/
+function f_parentSearch()
+{
+	var sSvcID 	= F_SvcID;
+	var sInDs 	= "nc_input_fieldDs=ds_condition";
+	var sOutDs 	= "ds_result=ds_result";
+	var sArg = "";
+
+
+	if (F_SvcID == "svc_init") {
+		sArg = "sktst.bas.BCO#getOrg";
+	} else if (F_SvcID == "svc_initDs") {
+		sArg = "sktst.bas.BCO#getOrgList";
+	}
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    : 조회 - 이벤트
+*******************************************************************************/
+function btn_search_OnClick(obj)
+{
+	ds_condition.SetColumn(0, "ORG_NM", divS.edt_condition.Text); 
+	ds_condition.SetColumn(0, "org_cl", org_cl); 
+	
+	var sSvcID 	= "selectOrgNm";
+	var sInDs  	= "nc_input_fieldDs=ds_condition";
+	var sOutDs 	= "ds_result=ds_result";
+	var sArg	= "sktst.bas.BCO#getOrgList";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    :  콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == F_SvcID) {
+		if(ds_result.GetRowCount() == 1 ){
+			btn_confirm_OnClick();
+		}
+	}
+	
+	grd_list.SetFocus();
+
+}
+
+/*******************************************************************************
+ * @description    : 조회조건에서 엔터키 입력
+*******************************************************************************/
+function edt_condition_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if (nChar==13) { 				
+		btn_search_OnClick();
+	}
+}
+
+
+
+/*******************************************************************************
+ * @description    : 폼 로드시 세팅 
+*******************************************************************************/
+function f_init()
+{
+	if(orgNm != null) {
+		org_Nm = eval("parent."+orgNm);
+		//divS.edt_condition.Text = orgNm.text;
+	}
+
+	if(orgId != null) {
+		org_Id = eval("parent."+orgId);
+		ds_condition.SetColumn(0, "ORG_ID", org_Id.Text); 
+	}
+	
+	if(orgId != orgCl) {
+		org_Cl = orgCl;
+		ds_condition.SetColumn(0, "org_Cl", org_Cl); 
+	}
+	
+	F_SvcID = "svc_init";
+	f_parentSearch(F_SvcID);
+} 
+
+function f_initDs ()
+{	
+	ds_Parent =  eval("parent."+dsParent);
+	row_Parent =  rowParent;
+
+	divS.edt_condition.Text = ds_Parent.GetColumn(rowParent, "ORG_NM");
+	ds_condition.SetColumn(0, "ORG_NM", ds_Parent.GetColumn(rowParent, "ORG_NM")); 
+	ds_condition.SetColumn(0, "ORG_CL", ds_Parent.GetColumn(rowParent, "ORG_CL")); 
+	
+	F_SvcID = "svc_initDs";
+	f_parentSearch(F_SvcID);
+}
+
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	btn_confirm_OnClick();
+}
+
+]]></Script>
+</Window>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMap
+    PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN"
+    "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="biz.log">
+
+	<insert id="insertTxLog" parameterClass="map" >
+	<![CDATA[
+		insert into tadm_connect_log(
+		seq, 
+		tran_dt, 
+		user_id, 
+		proc_st_tm, 
+		proc_ed_tm, 
+		proc_dur_tm, 
+		connect_ip, 
+		method_id, 
+		menu_num, 
+		org_id, 
+		agency_cd, 
+		org_area, 
+		day_cl
+		)values(
+		SADM_CONNECT_LOG_SEQ.nextval,
+		#tranDt#,
+		#userId#,
+		#startTime#,
+		#endTime#,
+		#txTime#,
+		#clientIP#,
+		#txId#,
+		#menuId#,
+		#orgId#,
+		#agencyCd#,
+		#orgArea#,
+		decode(TO_CHAR(SYSDATE, 'DY'),'월','1','화','2','수','3','목','4','금','5','토','6','일','7')
+		)
+	]]>
+	</insert>
+	
+ </sqlMap>

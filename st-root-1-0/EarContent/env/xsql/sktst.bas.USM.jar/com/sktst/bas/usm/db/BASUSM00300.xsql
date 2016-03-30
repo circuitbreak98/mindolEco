@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM00300">
+	<select id="getInfPersonInfoList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select *
+from
+	(
+		SELECT    /*+ "BASUSM00300_getInfPersonInfoList_하창주" */
+			'0' as chk
+			,empno
+			,hname
+			,ename
+			,regno
+			,intelno
+			,movetelno
+			,email as email1
+			,'' email2
+			,to_char(a.senddt, 'YYYYMMDD') as senddt
+			,aply_yn
+			,(CASE WHEN substr(empno, 1, 1) = '1' THEN 'N' ELSE 'Y' END) as noemployee_yn
+			,b.u_key_id
+			,'' as pwd
+			,b.user_grp
+			,b.duty
+			,(CASE WHEN substr(empno, 1, 1) = '1' THEN '1' ELSE '9' END) as attc_cat
+			,(CASE WHEN b.org_id is null THEN #org_id# ELSE b.org_id END) as org_id
+			,(CASE WHEN c.org_nm is null THEN #org_nm# ELSE c.org_nm END) as org_nm
+			,c.org_cl
+			,b.pos_agency
+			,d.deal_co_nm as pos_agency_nm
+			,b.org_area
+			,e.deal_co_nm as org_area_nm
+			,(CASE	WHEN aply_yn = 'Y' THEN a.t_flag
+					WHEN b.user_cd is not null AND a.t_flag = 'I' THEN 'U'
+					WHEN b.user_cd is not null THEN a.t_flag
+					WHEN b.user_cd is null AND (a.t_flag = 'I' OR a.t_flag = 'U') THEN 'I'
+					WHEN b.user_cd is null AND a.t_flag = 'D' THEN 'X'
+				ELSE 'X' END) as t_flag
+			,a.indept
+			,a.booser
+			,a.sosok
+			,(select content from inf_common_code where majorcd = '001' and minorcd = a.jbgrp) as jbgrp
+			,(select content from inf_common_code where majorcd = '007' and minorcd = a.jbrank) as jbrank
+			,(select content from inf_common_code where majorcd = '011' and minorcd = a.jbcharge) as jbcharge
+			,a.place
+			,a.affairs1
+			,a.wrkaddr
+		FROM	INF_PERSON_INFO	a,
+				TBAS_USER_MGMT	b,
+				TBAS_ORG_MGMT	c,
+				(SELECT	deal_co_cd, deal_co_nm
+				   FROM	tbas_deal_co_mgmt
+				  WHERE	deal_co_cl1 = 'A1'
+				    AND eff_end_dtm = '99991231235959'
+				) d,
+				(select deal_co_cd, deal_co_nm
+				   from tbas_deal_co_mgmt
+				  where del_yn <> 'Y'
+				    AND eff_end_dtm = '99991231235959'
+				 group by deal_co_cd, deal_co_nm ) e
+		WHERE	a.empno			= b.user_cd(+)
+		AND		b.org_id		= c.org_id(+)
+		AND		b.pos_agency	= d.deal_co_cd(+)
+		AND		b.org_area		= e.deal_co_cd(+)
+		AND		#sta_send_dt# <= to_char(a.senddt, 'YYYYMMDD')
+		AND		#end_send_dt# >= to_char(a.senddt, 'YYYYMMDD')
+]]>			<isNotEmpty prepend="AND" property="aply_yn">
+<![CDATA[				aply_yn = #aply_yn#
+]]>			</isNotEmpty>
+<![CDATA[]]>			<isNotEmpty prepend="AND" property="indept">
+<![CDATA[				a.indept = #indept#
+]]>			</isNotEmpty>
+<![CDATA[]]>			<isNotEmpty prepend="AND" property="ps_org_id">
+<![CDATA[				b.org_id = #ps_org_id#
+]]>			</isNotEmpty>
+<![CDATA[		ORDER BY a.senddt, a.empno
+	)	x
+where	1 = 1
+]]>	<isNotEmpty prepend="AND" property="t_flag">
+<![CDATA[		t_flag = #t_flag#
+]]>	</isNotEmpty>
+	</select>
+	<insert id="addBasUserMgmt" parameterClass="map" ><![CDATA[INSERT INTO TBAS_USER_MGMT (	/*+ "BASUSM00300_addBasUserMgmt_하창주" */
+	 USER_ID			/* 사용자ID */
+	,U_KEY_ID			/* UKey ID */
+	,USER_CD			/* 사번 */
+	,USER_NM			/* 사용자이름 */
+	,PWD				/* 비밀번호 */
+	,EFF_USER_YN		/* 유효사용자여부 */
+	,WPHON				/* 유선전화 */
+	,MBL_PHON			/* 이동전화 */
+	,USER_GRP			/* 사용자그룹 */
+	,ORG_ID				/* 소속 */
+	,ORG_AREA			/* 근무지 */
+	,RMKS				/* 비고 */
+	,DEL_YN				/* 삭제여부 */
+	,UPD_CNT			/* Update count */
+	,INS_DTM			/* 입력일시 */
+	,INS_USER_ID		/* 입력자ID */
+	,MOD_DTM			/* 수정일시 */
+	,MOD_USER_ID		/* 수정자ID */
+	,PWD_END_DT			/* 비밀번호종료일(비밀번호사용종료일) */
+	,EMAIL1				/* Email 1 */
+	,EMAIL2				/* Email2 */
+	,DUTY				/* 직책(1:관리, 2:일반, 9:외부) */
+	,POS_AGENCY			/* 소속대리점 */
+	,ATTC_CAT			/* 소속구분('1':정직, '2':계약직, '9':비직원) */
+)
+VALUES (
+	 #empno#
+	,#u_key_id#
+	,#empno#
+	,#hname#
+	,#pwd#
+	,'Y'
+	,#intelno#
+	,#movetelno#
+	,#user_grp#
+	,#org_id#
+	,#org_area#
+	,''
+	,'N'
+	,0
+	,to_char(sysdate, 'yyyyMMddHH24miss')
+	,#onlineContext.userInfo.loginId#
+	,to_char(sysdate, 'yyyyMMddHH24miss')
+	,#onlineContext.userInfo.loginId#
+	,TO_CHAR(ADD_MONTHS(SYSDATE,3),'yyyyMMdd')
+	,#email1#
+	,#email2#
+	,#duty#
+	,#pos_agency#
+	,#attc_cat#
+)]]>
+	</insert>
+	<update id="updateInfPersonInfo" parameterClass="map" ><![CDATA[UPDATE		/*+ "BASUSM00300_updateInfPersonInfo_하창주" */
+	inf_person_info
+SET    aply_yn  = 'Y'
+WHERE  empno    = #empno#]]>
+	</update>
+	<update id="saveBasUserMgmt" parameterClass="map" ><![CDATA[UPDATE TBAS_USER_MGMT		/*+ "BASUSM00300_saveBasUserMgmt_하창주" */
+SET	 WPHON			= #intelno#				/* 유선전화 */
+	,MBL_PHON		= #movetelno#			/* 이동전화 */
+	,USER_GRP		= #user_grp#			/* 사용자그룹 */
+	,ORG_ID			= #org_id#				/* 소속 */
+	,ORG_AREA		= #org_area#			/* 근무지 */
+	,UPD_CNT		= UPD_CNT+1				/* Update count */
+	,MOD_DTM		= to_char(sysdate, 'yyyyMMddHH24miss')	/* 수정일시 */
+	,MOD_USER_ID	= #onlineContext.userInfo.loginId#		/* 수정자ID */
+	,EMAIL1			= #email1#				/* Email 1 */
+	,EMAIL2			= #email2#				/* Email2 */
+	,DUTY			= #duty#				/* 직책(1:관리, 2:일반, 9:외부) */
+	,POS_AGENCY		= #pos_agency#			/* 소속대리점 */
+	,ATTC_CAT		= #attc_cat#			/* 소속구분('1':정직, '2':계약직, '9':비직원) */
+WHERE USER_ID = #empno#]]>
+	</update>
+	<select id="getUserCd" parameterClass="map" resultClass="hmap" fetchSize="1" ><![CDATA[SELECT		/*+ "BASUSM00300_getUserCd_하창주" */
+		USER CD
+FROM	TBAS_USER_MGMT
+WHERE	USER_CD = #empno#]]>
+	</select>
+	<update id="updateEffUserYn" parameterClass="map" ><![CDATA[UPDATE		/*+ "BASUSM00300_updateEffUserYn_하창주" */
+	TBAS_USER_MGMT
+SET    EFF_USER_YN = 'N'
+WHERE  USER_CD = #empno#]]>
+	</update>
+	<update id="updateTFlag" parameterClass="map" ><![CDATA[UPDATE		/*+ "BASUSM00300_updateTFlag_하창주" */
+	INF_PERSON_INFO
+SET    T_FLAG = 'X'
+WHERE  EMPNO = #empno#]]>
+	</update>
+	<select id="getDeptCd" resultClass="hmap" fetchSize="50" ><![CDATA[select dept_cd
+from tbas_org_mgmt
+where org_id = #org_id#]]>
+	</select>
+</sqlMap>

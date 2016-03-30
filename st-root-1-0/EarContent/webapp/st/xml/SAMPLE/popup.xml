@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="344" Id="popup" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="팝업" Top="8" Ver="1.0" Width="352" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_detail">
+				<Contents>
+					<colinfo id="id" size="256" summ="default" type="STRING"/>
+					<colinfo id="name" size="256" summ="default" type="STRING"/>
+					<colinfo id="memo" size="256" summ="default" type="STRING"/>
+					<record>
+						<id></id>
+						<memo></memo>
+						<name></name>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_msg1" ImageID="btn_b_6" Left="8" OnClick="btn_msg1_OnClick" Style="sty_btn_form" TabOrder="1" Text="공통메세지" Top="216" Width="90"></Button>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_msg2" ImageID="btn_b_6" Left="112" OnClick="btn_msg2_OnClick" Style="sty_btn_form" TabOrder="2" Text="조합메세지" Top="216" Width="90"></Button>
+		<Static Border="None" Color="user8" Font="굴림,9,Bold" Height="22" Id="Static0" Left="2" TabOrder="3" Text="*&#32;화면상의&#32;메세지는&#32;스크립트에&#32;정의된&#32;메세지를&#32;사용" Top="177" VAlign="Middle" Width="368"></Static>
+		<Static Border="None" Color="user8" Font="굴림,9,Bold" Height="22" Id="Static1" Left="2" TabOrder="4" Text="*&#32;필요에&#32;따라&#32;적절한&#32;메세지&#32;참조" Top="193" VAlign="Middle" Width="277"></Static>
+		<Div Border="Raised" Height="126" Id="Div1" Left="8" Style="sty_div_input" TabOrder="5" Text="Div0" Top="26" Width="336">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static0" Left="22" Style="sty_lb_Basic" TabOrder="1" Text="ID" Top="7" VAlign="Middle" Width="60"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="22" Style="sty_lb_Basic" TabOrder="2" Text="NAME" Top="30" VAlign="Middle" Width="60"></Static>
+				<Static Align="Right" Height="20" Id="Static2" Left="22" Style="sty_lb_Basic" TabOrder="3" Text="MEMO" Top="53" VAlign="Middle" Width="60"></Static>
+				<TextArea BindDataset="ds_detail" Border="Flat" Column="memo" Height="66" Id="TextArea0" Left="86" Style="sty_ipt_form" TabOrder="4" Top="52" VScroll="TRUE" Width="241"></TextArea>
+				<Edit BindDataset="ds_detail" Border="Flat" Column="name" Height="20" Id="Edit1" Left="86" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="29" Width="121"></Edit>
+				<Edit BindDataset="ds_detail" Border="Flat" Column="ID" Height="20" Id="Edit2" Left="86" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="5" Width="121"></Edit>
+			</Contents>
+		</Div>
+		<Static Align="Right" Height="20" Id="Static3" Left="23" Style="sty_lb_dataview" TabOrder="6" Text="팝업&#32;파라메터로&#32;넘오온&#32;데이타" Top="4" VAlign="Middle" Width="192"></Static>
+		<Image Height="21" Id="Image0" ImageID="bul_mand" Left="13" TabOrder="7" Top="4" Transparent="TRUE" Width="20"></Image>
+		<Static Align="Right" Height="20" Id="Static4" Left="40" Style="sty_lb_dataview" TabOrder="8" Text="닫기시&#32;부모창에&#32;파라메터&#32;전달&#32;&lt;-&#32;" Top="155" VAlign="Middle" Width="240"></Static>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="284" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="9" Text="닫기" Top="153" Width="60"></Button>
+		<Image Height="21" Id="Image1" ImageID="bul_mand" Left="5" TabOrder="11" Top="244" Transparent="TRUE" Width="20"></Image>
+		<Static Align="Right" Height="20" Id="Static2" Left="15" Style="sty_lb_dataview" TabOrder="10" Text="parent에서&#32;child의&#32;함수&#32;호출" Top="244" VAlign="Middle" Width="192"></Static>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_confirm" ImageID="btn_a_2" Left="224" OnClick="btn_confirm_OnClick" Style="sty_btn_search" TabOrder="12" Text="확인" Top="240" Width="54"></Button>
+		<Static Border="None" Color="user8" Font="굴림,9,Bold" Height="22" Id="Static5" Left="8" TabOrder="13" Text="1.&#32;그리드의&#32;parentFunc&#32;호출" Top="272" VAlign="Middle" Width="277"></Static>
+		<Static Border="None" Color="user8" Font="굴림,9,Bold" Height="22" Id="Static6" Left="8" TabOrder="14" Text="2.&#32;parentFunc에서&#32;현재&#32;팝업의&#32;childFunc&#32;호출" Top="288" VAlign="Middle" Width="312"></Static>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : popup
+* 업무명      : 샘플관리
+* 프로그램명  : 팝업
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	var id = param1;
+	var name = param2;
+	var memo = param3;
+	
+	if(ds_detail.GetRowCount() < 1)
+	{
+		ds_detail.AddRow();
+	}
+	ds_detail.SetColumn(0, "id", id);
+	ds_detail.SetColumn(0, "name", name);
+	ds_detail.SetColumn(0, "memo", memo);
+}
+
+
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	/*
+	// 데이타셋 기반 전달 방식
+	if(parent.ds_input.GetRowCount() < 1)
+	{
+		parent.ds_input.AddRow();
+	}
+	
+	
+	parent.ds_input.SetColumn(0, "id", ds_detail.GetColumn(0, "id"));
+	parent.ds_input.SetColumn(0, "name", ds_detail.GetColumn(0, "name"));
+	parent.ds_input.SetColumn(0, "memo", ds_detail.GetColumn(0, "memo"));
+	*/
+	
+// 전달 받은 부모 데이타셋과 팝업 데이타셋이 서로 상이할 경우	
+ds_detail.AddColumn("test1");
+ds_detail.AddColumn("test2");
+ds_detail.SetColumn(0, "test1", "ttt111");
+ds_detail.SetColumn(0, "test2", "ttt222");
+
+	// 함수를 이용한 부모창 값 전달
+/*******************************************************************************
+ * @description          : 데이타셋의 카피 - 대상 DS를 기준으로 목적 DS에 정보를 복사
+                          - 없으면 추가한다.
+ * @param oTargetDs      : 목적 DS 객체
+		  oSourceDs      : 대상 DS 객체
+		  nRow           : 대상 로우 - 없으면 전체
+		  bOption       : false시 목적 DS에 로우가 존재하고, 칼럼이 있는 것만 복사
+*******************************************************************************/
+	cf_copyDataSet(parent.ds_pop, ds_detail);
+
+	// 인수로 전달 받은 부모창의 함수를 실행하고 창을 종료한다
+/*******************************************************************************
+ * @description         : 인수로 넘겨 받은 명의 함수를 실행학소 창을 종료 - 공통 팝업시
+ * @param sMethodName   : 메소드 명 
+		  sParam   		: 메소드 인자
+*******************************************************************************/
+	cf_callnClose(excuteMethod, "param1, param2");
+	
+	// 클로즈 함수에 전달할 값을 지정하는 방식 - 호출한 부모폼에서 변수로 해당값을 받음
+	// this.close(sData); 
+}
+
+
+
+/*******************************************************************************
+ * @description    : 메세지 출력 - 이벤트
+*******************************************************************************/
+function btn_msg1_OnClick(obj)
+{
+	alert(COM_MSG_004);
+}
+
+/*******************************************************************************
+ * @description    : 메세지 출력 - 이벤트
+*******************************************************************************/
+function btn_msg2_OnClick(obj)
+{
+
+/*
+ * @description           : 공통 메세지와 지정한 문자를 조합
+ * @param sFixedMsg       : 공통 메세지
+		 sMsgStr          : 지정 문자
+*/
+
+	alert(cf_getMessage(MSG_00001, "사용자 ID"));
+	
+// 현재는 조건 메세지가 여럿일 경우 ; 로 구분 처리하였습니다.
+	alert(cf_getMessage(MSG_00096, "시작일;종료일"));
+}
+
+/*******************************************************************************
+ * @description    : 호출 함수 - 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	parent.parentFunc();
+}
+
+/*******************************************************************************
+ * @description    :  parent 에서 호출하는 함수
+*******************************************************************************/
+function childFunc()
+{
+	alert("parent에서 호출한 함수");
+}
+]]></Script>
+</Window>

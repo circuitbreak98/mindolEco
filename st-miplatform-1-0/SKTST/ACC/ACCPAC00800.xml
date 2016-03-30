@@ -1,0 +1,986 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="700" Id="ACCPAC00800" Left="8" OnLoadCompleted="ACCPAC00800_OnLoadCompleted" PidAttrib="7" Title="(월)입금정산&#32;등록" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_list" OnColumnChanged="ds_list_OnColumnChanged">
+				<Contents>
+					<colinfo id="FLAG" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST_FIX_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST_FIX_YN_TMP" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST_FIX_YN_ORG" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_DTM_TMP" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SVC_MGMT_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="CUST_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SVC_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_PAY_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST_FIX_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DPST_USER_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_SEQ" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="PAY_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="STL_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CL" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset CanColumnChange="ds_payFixList_CanColumnChange" DataSetType="Dataset" Id="ds_payFixList" OnColumnChanged="ds_payFixList_OnColumnChanged">
+				<Contents>
+					<colinfo id="CHAG_ACC" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRE_CHAG_ACC_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRE_ETC_ACC_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_ACC_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC" size="256" summ="default" type="STRING"/>
+					<colinfo id="TO_CHAG_ACC_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TO_ETC_ACC_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRP_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASA_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_ACC_DPAC_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC_DPAC_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRP_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASA_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<record>
+						<CASA_BOND_BAMT></CASA_BOND_BAMT>
+						<CASA_DPST_ACC_AMT></CASA_DPST_ACC_AMT>
+						<CHAG_ACC></CHAG_ACC>
+						<CHAG_ACC_DPAC_BAMT></CHAG_ACC_DPAC_BAMT>
+						<CHAG_ACC_DPST_AMT>&#32;</CHAG_ACC_DPST_AMT>
+						<CHAG_BOND_BAMT></CHAG_BOND_BAMT>
+						<CHAG_DPST_ACC_AMT></CHAG_DPST_ACC_AMT>
+						<ETC_ACC></ETC_ACC>
+						<ETC_ACC_DPAC_BAMT></ETC_ACC_DPAC_BAMT>
+						<ETC_ACC_DPST_AMT></ETC_ACC_DPST_AMT>
+						<PRE_CHAG_ACC_DPST_AMT></PRE_CHAG_ACC_DPST_AMT>
+						<PRE_ETC_ACC_DPST_AMT></PRE_ETC_ACC_DPST_AMT>
+						<PRP_BOND_BAMT></PRP_BOND_BAMT>
+						<PRP_DPST_ACC_AMT></PRP_DPST_ACC_AMT>
+						<RMKS></RMKS>
+						<TO_CHAG_ACC_DPST_AMT></TO_CHAG_ACC_DPST_AMT>
+						<TO_ETC_ACC_DPST_AMT></TO_ETC_ACC_DPST_AMT>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_payList">
+				<Contents>
+					<colinfo id="CHAG_ACC" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_ACC_NO" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC_NO" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRP_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASA_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<record>
+						<CASA_BOND_BAMT></CASA_BOND_BAMT>
+						<CHAG_ACC></CHAG_ACC>
+						<CHAG_ACC_NO></CHAG_ACC_NO>
+						<CHAG_BOND_BAMT></CHAG_BOND_BAMT>
+						<ETC_ACC></ETC_ACC>
+						<ETC_ACC_NO></ETC_ACC_NO>
+						<PRP_BOND_BAMT></PRP_BOND_BAMT>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_bondList">
+				<Contents>
+					<colinfo id="CHAG_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRP_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASA_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<record>
+						<CASA_BOND_BAMT></CASA_BOND_BAMT>
+						<CHAG_BOND_BAMT>&#32;</CHAG_BOND_BAMT>
+						<PRP_BOND_BAMT></PRP_BOND_BAMT>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dpstAccList">
+				<Contents>
+					<colinfo id="CHAG_ACC" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_ACC_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRP_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASA_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_ACC_DPAC_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC_DPAC_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRP_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASA_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<record>
+						<CASA_BOND_BAMT></CASA_BOND_BAMT>
+						<CASA_DPST_ACC_AMT></CASA_DPST_ACC_AMT>
+						<CHAG_ACC></CHAG_ACC>
+						<CHAG_ACC_DPAC_BAMT></CHAG_ACC_DPAC_BAMT>
+						<CHAG_ACC_DPST_AMT>&#32;</CHAG_ACC_DPST_AMT>
+						<CHAG_BOND_BAMT></CHAG_BOND_BAMT>
+						<CHAG_DPST_ACC_AMT></CHAG_DPST_ACC_AMT>
+						<ETC_ACC></ETC_ACC>
+						<ETC_ACC_DPAC_BAMT></ETC_ACC_DPAC_BAMT>
+						<ETC_ACC_DPST_AMT></ETC_ACC_DPST_AMT>
+						<PRP_BOND_BAMT></PRP_BOND_BAMT>
+						<PRP_DPST_ACC_AMT></PRP_DPST_ACC_AMT>
+						<RMKS></RMKS>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list_tmp" OnColumnChanged="ds_list_OnColumnChanged">
+				<Contents>
+					<colinfo id="FLAG" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST_FIX_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_DTM_TMP" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SVC_MGMT_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="CUST_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SVC_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_PAY_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST_FIX_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_payFixTmpList">
+				<Contents>
+					<colinfo id="CHAG_ACC" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_ACC_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC_DPST_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRP_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASA_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_ACC_DPAC_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_ACC_DPAC_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRP_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASA_BOND_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<record>
+						<CASA_BOND_BAMT></CASA_BOND_BAMT>
+						<CASA_DPST_ACC_AMT></CASA_DPST_ACC_AMT>
+						<CHAG_ACC></CHAG_ACC>
+						<CHAG_ACC_DPAC_BAMT></CHAG_ACC_DPAC_BAMT>
+						<CHAG_ACC_DPST_AMT>&#32;</CHAG_ACC_DPST_AMT>
+						<CHAG_BOND_BAMT></CHAG_BOND_BAMT>
+						<CHAG_DPST_ACC_AMT></CHAG_DPST_ACC_AMT>
+						<ETC_ACC></ETC_ACC>
+						<ETC_ACC_DPAC_BAMT></ETC_ACC_DPAC_BAMT>
+						<ETC_ACC_DPST_AMT></ETC_ACC_DPST_AMT>
+						<PRP_BOND_BAMT></PRP_BOND_BAMT>
+						<PRP_DPST_ACC_AMT></PRP_DPST_ACC_AMT>
+						<RMKS></RMKS>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dayCheck"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dpstCheck"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_erpCheck"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dayEtcCheck"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_minAccDt">
+				<Contents>
+					<colinfo id="MIN_ACC_DT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_mthInfo"></Dataset>
+			<Dataset CanColumnChange="ds_list_CanColumnChange" DataSetType="Dataset" Id="ds_list_0">
+				<Contents>
+					<colinfo id="FLAG" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST_FIX_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST_FIX_YN_TMP" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST_FIX_YN_ORG" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_DTM_TMP" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SVC_MGMT_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="CUST_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SVC_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_PAY_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_DPST_FIX_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_SEQ" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_closeInfo"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_req">
+				<Contents>
+					<colinfo id="REQ_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="REQ_DT" size="256" summ="default" type="STRING"/>
+					<record>
+						<REQ_DT></REQ_DT>
+						<REQ_YN>&#32;</REQ_YN>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="RaisedEdge" Height="71" Id="div_search" Left="10" Style="sty_div_dataview" TabOrder="1" Text="Div0" Top="10" Width="1004">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static1" Left="292" Style="sty_lb_dataview" TabOrder="1" Text="대리점" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_salePlcNm" Left="613" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="143"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="549" Style="sty_lb_dataview" TabOrder="2" Text="판매점" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_ordPlcNm" Left="356" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" Width="143"></Edit>
+				<Shape Bottom="33" Height="1" Id="Shape0" Left="-1" LineColor="user8" Right="1023" TabOrder="5" Top="32" Width="1024"></Shape>
+				<Static Align="Right" Height="20" Id="Static3" Left="30" Style="sty_lb_dataview" TabOrder="7" Text="정산일" Top="7" VAlign="Middle" Width="60"></Static>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_acc_dt" Left="94" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="6" TitleTextColor="white" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="121"></Calendar>
+				<Static Align="Right" Height="20" Id="Static0" Left="30" Style="sty_lb_dataview" TabOrder="11" Text="처리일" Top="39" VAlign="Middle" Width="60"></Static>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="edt_inputDt" Left="94" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="10" TitleTextColor="white" TodayColor="user26" Top="39" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="121"></Calendar>
+				<Static Align="Right" Height="20" Id="Static4" Left="292" Style="sty_lb_dataview" TabOrder="8" Text="처리자" Top="39" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_userNm" Left="356" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="9" Top="39" Width="143"></Edit>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="SKT요금&#32;세부&#32;입금정산" Top="100" Width="192"></Image>
+		<Button Cursor="HAND" Height="21" Id="Button56" ImageID="btn_i_exceldown_w" Left="995" OnClick="btn_excel_OnClick" TabOrder="3" Text="Button1" ToolTipText="Excel&#32;Download" Top="100" Width="19"></Button>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_payFixList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="546" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="66" Id="grd_pay_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnChar="grd_pay_list_OnChar" Right="1012" RowHeight="21" Style="sty_Grid" TabOrder="4" TabStop="true" Top="480" UseDBuff="true" UsePopupMenu="true" UseSelColor="FALSE" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" colspan="2" display="text" text="전일&#32;정산잔액"/>
+						<cell bkcolor="user34" col="2" color="user35" colspan="2" display="text" text="당일&#32;입금금액"/>
+						<cell bkcolor="user34" col="0" color="user35" display="text" row="1" text="요금계좌"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" row="1" text="기타계좌"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" row="1" text="요금계좌"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" row="1" text="기타계좌"/>
+						<cell bkcolor="user34" col="4" color="user35" colspan="2" display="text" text="입금금액"/>
+						<cell bkcolor="user34" col="6" color="user35" colspan="3" display="text" text="입금정산"/>
+						<cell bkcolor="user34" col="9" color="user35" colspan="2" display="text" text="입금정산잔액"/>
+						<cell bkcolor="user34" col="11" color="user35" colspan="3" display="text" text="채권잔액"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" row="1" text="현금매출"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" row="1" text="요금계좌"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" row="1" text="기타계좌"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" row="1" text="SKT요금"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" row="1" text="SKT예수금"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" row="1" text="요금계좌"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" row="1" text="기타계좌"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" row="1" text="SKT요금"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" row="1" text="SKT예수금"/>
+						<cell bkcolor="user34" col="13" color="user35" display="text" row="1" text="현금매출"/>
+					</head>
+					<body>
+						<cell align="right" col="0" colid="PRE_CHAG_ACC_DPST_AMT" display="number"/>
+						<cell align="right" col="1" colid="PRE_ETC_ACC_DPST_AMT" display="number"/>
+						<cell align="right" col="2" colid="TO_CHAG_ACC_DPST_AMT" display="number"/>
+						<cell align="right" col="3" colid="TO_ETC_ACC_DPST_AMT" display="number"/>
+						<cell align="right" col="4" colid="CHAG_ACC_DPST_AMT" display="number"/>
+						<cell align="right" col="5" colid="ETC_ACC_DPST_AMT" display="number"/>
+						<cell align="right" col="6" colid="CHAG_DPST_ACC_AMT" display="number"/>
+						<cell align="right" col="7" colid="PRP_DPST_ACC_AMT" display="number" edit="number"/>
+						<cell align="right" col="8" colid="CASA_DPST_ACC_AMT" display="number" edit="number"/>
+						<cell align="right" col="9" colid="CHAG_ACC_DPAC_BAMT" display="number"/>
+						<cell align="right" col="10" colid="ETC_ACC_DPAC_BAMT" display="number"/>
+						<cell align="right" col="11" colid="CHAG_BOND_BAMT" display="number"/>
+						<cell align="right" col="12" colid="PRP_BOND_BAMT" display="number"/>
+						<cell align="right" col="13" colid="CASA_BOND_BAMT" display="number"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="월&#32;입금정산&#32;확정" Top="455" Width="192"></Image>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="9" LeftMargin="15" Style="sty_img_tit" TabOrder="6" Text="비고" Top="558" Width="192"></Image>
+		<Div Border="Raised" Height="66" Id="Div1" Left="9" Style="sty_div_input" TabOrder="7" Text="Div1" Top="583" Width="1004">
+			<Contents>
+				<TextArea BindDataset="ds_payFixList" Border="Flat" Column="RMKS" Height="46" Id="TextArea0" Left="7" Style="sty_ipt_form" TabOrder="1" Top="7" VScroll="TRUE" Width="984"></TextArea>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="890" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="8" Text="저장" Top="660" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button0" ImageID="btn_d_2" Left="956" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="9" Text="취소" Top="660" Width="60"></Button>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="447" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="317" Id="grd_prodList" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnHeadClick="grd_prodList_OnHeadClick" OnMouseOver="grd_prodList_OnMouseOver" Right="1012" RowHeight="21" Style="sty_Grid" TabOrder="10" TabStop="true" Top="130" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="15"/>
+						<col width="30"/>
+						<col width="40"/>
+						<col width="69"/>
+						<col width="68"/>
+						<col width="124"/>
+						<col width="58"/>
+						<col width="60"/>
+						<col width="100"/>
+						<col width="75"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="120"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" colspan="2" cursor="hand" display="checkbox" edit="checkbox">
+							<cell col="0" color="user35" display="checkbox"/>
+							<cell col="1" color="user35" display="text" text="확정"/>
+						</cell>
+						<cell bkcolor="user34" col="2" color="user35" cursor="hand" display="text" text="번호"/>
+						<cell bkcolor="user34" col="3" color="user35" cursor="hand" display="text" text="판매일"/>
+						<cell bkcolor="user34" col="4" color="user35" cursor="hand" display="text" text="거래처구분"/>
+						<cell bkcolor="user34" col="5" color="user35" cursor="hand" display="text" text="수납처"/>
+						<cell bkcolor="user34" col="6" color="user35" cursor="hand" display="text" text="수납유형"/>
+						<cell bkcolor="user34" col="7" color="user35" cursor="hand" display="text" text="고객명"/>
+						<cell bkcolor="user34" col="8" color="user35" cursor="hand" display="text" text="개통번호"/>
+						<cell bkcolor="user34" col="9" color="user35" cursor="hand" display="text" text="현금수납"/>
+						<cell bkcolor="user34" col="10" color="user35" cursor="hand" display="text" text="입금정산일"/>
+						<cell bkcolor="user34" col="11" color="user35" cursor="hand" display="text" text="처리자"/>
+						<cell bkcolor="user34" col="12" color="user35" cursor="hand" display="text" text="비고"/>
+					</head>
+					<body>
+						<cell bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="0" colid="CASH_DPST_FIX_YN" colspan="2" combodisplaynltext="true" cursor="hand" display="checkbox" edit="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;none&apos;,&apos;N&apos;,&apos;checkbox&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;none&apos;,&apos;checkbox&apos;))"/>
+						<cell align="center" bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="2" display="text" expr="row+1"/>
+						<cell align="center" bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="3" colid="PAY_DTM" display="date"/>
+						<cell bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="4" colid="DEAL_CO_CL" display="text"/>
+						<cell bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="5" colid="PAY_PLC_NM" display="text"/>
+						<cell bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="6" colid="PAY_CL" display="text"/>
+						<cell align="center" bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="7" colid="CUST_NM" display="text" expr='uf_formatString(CUST_NM,&#32;&quot;#*##########&quot;)'/>
+						<cell align="center" bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="8" colid="SVC_NUM" display="text" expr='uf_formatString(SVC_NUM,&#32;&quot;###-##**-#*******&quot;)'/>
+						<cell align="right" bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="9" colid="CASH_PAY_AMT" display="number"/>
+						<cell bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="10" colid="CASH_DPST_FIX_DT" display="date"/>
+						<cell align="center" bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="11" colid="DPST_USER_NM" display="normal"/>
+						<cell bkcolor="expr:decode(CASH_DPST_FIX_YN_ORG,&apos;S&apos;,&apos;User13&apos;,&apos;N&apos;,&apos;default&apos;,decode((CASH_DPST_FIX_DT&#32;&gt;&#32;F_ACC_DT),&#32;true,&apos;User41&apos;,&apos;default&apos;))" col="12" colid="RMKS" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCPAC00800
+* 업무명      : 입금관리 - (월)입금정산관리
+* 프로그램명  : 입금정산등록, 세부내역
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2010.08.02
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+/*
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_SAL.js"
+*/
+
+#include "lib::lib_commF.js"
+#include "lib::lib_DIS.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+
+
+var FV_LOGIN_ID 	= gds_session.GetColumn(0, "loginId");	//사용자계정
+var FV_USER_NM		= gds_session.GetColumn(0, "userNm");	//사용자명 
+var F_row = "";
+var F_DAY_CHECK = true;
+var F_DAY_CHECK_VALUE = "";
+var F_DAY_ETC_CHECK = true;
+var F_DAY_ETC_CHECK_VALUE = "";
+var F_MIN_ACC_DT = "";
+var F_MON_CLOSE_CHECK = false;
+var F_ACC_DT = "";
+var F_PRP_DPST_BAMT = "";
+var F_CASA_DPST_BAMT = "";
+var ds_Parent = "";
+var FV_CLOSE_MTH = "";
+var F_MTH_CLOSE_DAY = "";
+var F_CLOSE_REQ_CHK = "N";
+var F_CLOSE_REQ_DT="";
+var F_ERP_ACC_MTH;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ACCPAC00800_OnLoadCompleted(obj)
+{
+	
+	ds_condition.ClearData();
+	
+	//cf_setGrdChecknSortEvent(grd_prodList);
+	
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	div_search.cal_acc_dt.Text = sAccMth;
+	//정산일 변수설정
+	F_ACC_DT = sAccMth;
+	
+	div_search.edt_ordPlcNm.Text = sOldPlcNm ;
+	div_search.edt_salePlcNm.Text = sDpstPlcNm;
+	//div_search.edt_inputDt.Value = cf_today();
+	div_search.edt_inputDt.Value = Today();
+	div_search.edt_userNm.Text = FV_USER_NM;
+	
+	//입금정산 확정 데이터셋 bind
+	ds_Parent =  eval("parent."+dsParent);
+	
+	cf_copyDataSet(ds_payFixList, ds_Parent);
+	
+	//예수금 , 현금매출 채권잔액 
+	F_PRP_DPST_BAMT = toNumber(ds_payFixList.GetColumn(0,"PRP_BOND_BAMT"));
+	F_CASA_DPST_BAMT = toNumber(ds_payFixList.GetColumn(0,"CASA_BOND_BAMT"));
+		
+	cf_setParam(ds_condition, "PAY_DTM", substr(div_search.cal_acc_dt.Text,0,4)+substr(div_search.cal_acc_dt.Text,5,2)+substr(div_search.cal_acc_dt.Text,8,2)); 
+	cf_setParam(ds_condition, "STL_PLC", sOldPlcId); 
+	cf_setParam(ds_condition, "PAY_PLC", sDpstPlc); 	
+	cf_setParam(ds_condition, "DEAL_CL", sDealCl); 
+	cf_setParam(ds_condition, "MOD_DTM", sModDtm); 
+	cf_setParam(ds_condition, "CHAG_IMAG_ACC_NO", sChagAccNo); 
+	cf_setParam(ds_condition, "CASA_IMAG_ACC_NO", sCasaAccNo); 
+	//cf_setParam(ds_condition, "GUBUN", "03"); 
+	
+	//ERP 전송된 정산건
+	F_ERP_ACC_MTH = sErpAccMth;
+	
+	
+	 if (length(F_ERP_ACC_MTH) == 6){
+		alert("ERP 전송된 정산건 입니다. ");
+		grd_prodList.Editable = "false";
+		btn_save.Enable = false;
+	}
+	
+	if(sFnshYn =="1"){
+		
+		f_fixDpstAccSearch();
+		
+		/*
+		//erp 전송이 된 입금정산 건은 수정, 저장 불가능함 , 원부장님 요청
+		if(uf_CheckDate( sErpTrmsDt ,"YYYYMMDD")== true){
+			grd_prodList.Editable = "false";
+			//grd_prodList.Enable = "false";
+			btn_save.Enable = false;
+		}
+		*/
+		
+	}else{
+		
+		f_search();		
+	}
+}
+
+/*******************************************************************************
+ * @description    : 입금 미확정 수납대행 리스트 조회 
+*******************************************************************************/
+
+function f_search()
+{
+	var sSvcID 	= "svcCharge";
+	var sInDs  	= "nc_input_fieldDs=ds_condition";
+	var sOutDs 	= "ds_list=rs_chargeList ds_closeInfo=rs_closeInfo ds_req=rs_req";
+	var sArg	= "sktst.acc.PAC#getSktChargeMonthList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg,null,true,true);
+}
+
+
+/*******************************************************************************
+ * @description    : 입금 확정 수납대행 리스트 조회
+*******************************************************************************/
+function f_fixDpstAccSearch()
+{
+	var sSvcID 	= "svcChargeFix";
+	var sInDs  	= "nc_input_fieldDs=ds_condition";
+	var sOutDs 	= "ds_list=rs_chargeList ds_closeInfo=rs_closeInfo ds_req=rs_req";
+	var sArg	= "sktst.acc.PAC#getSktChargeFixMonthList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg,null,true,true);
+}
+
+
+
+
+/*******************************************************************************
+ * @description    :  콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	 if(sSvcID == "svcCharge"){
+	
+		/*
+		if(ds_erpCheck.GetColumn(0,"FIX_YN") !=null){
+			grd_prodList.Editable = "false";
+			btn_save.Enable = false;
+		}
+				
+		
+		if(ds_minAccDt.GetColumn(0,"MIN_ACC_DT") !=null && ds_minAccDt.getRowCount() >0){
+			F_MIN_ACC_DT = ds_minAccDt.GetColumn(0,"MIN_ACC_DT");
+		}
+		*/
+				
+		//정산일 이전 달이 마감월인지 체크
+		//f_monthCloseCheck();	
+		
+		var sCloseYYYYMM = ds_closeInfo.GetColumn(0,"close_info"); 
+
+	    if(sCloseYYYYMM != null && sCloseYYYYMM != "" && sCloseYYYYMM.length == 6 ){
+	        FV_CLOSE_MTH = sCloseYYYYMM;
+	    }
+	    
+	    var sCloseYYYYMMDD = ds_closeInfo.GetColumn(0,"close_day"); 
+
+	    if(sCloseYYYYMMDD != null && sCloseYYYYMMDD != "" && sCloseYYYYMMDD.length == 8 ){
+	        F_MTH_CLOSE_DAY = sCloseYYYYMMDD;
+	    }
+	    
+	    if(ds_req.GetRowCount() >0){
+			F_CLOSE_REQ_CHK = ds_req.GetColumn(0,"req_yn");
+			F_CLOSE_REQ_DT = ds_req.GetColumn(0,"req_dt");
+	    }
+		
+    }else if(sSvcID == "svcChargeFix"){
+		
+		/*
+		if(ds_erpCheck.GetColumn(0,"FIX_YN") !=null){
+			grd_prodList.Editable = "false";
+			btn_save.Enable = false;
+		}
+	    		
+		if(ds_minAccDt.GetColumn(0,"MIN_ACC_DT") !=null && ds_minAccDt.getRowCount() >0){
+			F_MIN_ACC_DT = ds_minAccDt.GetColumn(0,"MIN_ACC_DT");
+		}
+		
+		*/
+		
+		//정산일 이전 달이 마감월인지 체크
+		//f_monthCloseCheck();
+		
+		var sCloseYYYYMM = ds_closeInfo.GetColumn(0,"close_info"); 
+
+	    if(sCloseYYYYMM != null && sCloseYYYYMM != "" && sCloseYYYYMM.length == 6 ){
+	        FV_CLOSE_MTH = sCloseYYYYMM;
+	    }
+	   	
+	   	var sCloseYYYYMMDD = ds_closeInfo.GetColumn(0,"close_day"); 
+
+	    if(sCloseYYYYMMDD != null && sCloseYYYYMMDD != "" && sCloseYYYYMMDD.length == 8 ){
+	        F_MTH_CLOSE_DAY = sCloseYYYYMMDD;
+	    }
+	    
+	    if(ds_req.GetRowCount() >0){
+			F_CLOSE_REQ_CHK = ds_req.GetColumn(0,"req_yn");
+			F_CLOSE_REQ_DT = ds_req.GetColumn(0,"req_dt");
+	    }
+	    
+    }else if(sSvcID == "svcSaveDpstAcc"){
+		alert(cf_getMessage(MSG_00006, "입금정산 저장이"));
+		
+		gf_movenCall("100000737", "f_search");
+	    this.Close();
+    }
+}
+
+
+
+/*******************************************************************************
+ * @description    : 닫기- 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+
+/*******************************************************************************
+ * @description    : 입금정산 세부내역 확정 클릭시 입금정산 확정 목록의 skt 요금 세팅
+*******************************************************************************/
+
+/*
+function ds_list_CanColumnChange(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	
+	if(strColumnID =="CASH_DPST_FIX_YN"){
+		if(varNewValue =="0" && varOldValue =="1"){
+			
+			//선택수납건의 상계등록일이 마감일보다 작거나 같으면 상계 해제 못함
+			if(ds_list.GetColumn(nRow, "CASH_DPST_FIX_YN") =="1" && ds_list.GetColumn(nRow, "CASH_DPST_FIX_DT") <= F_MTH_CLOSE_DAY){
+				//ds_list.SetColumn(nRow,"CASH_DPST_FIX_YN","0");
+					alert("마감일 이전 입금정산 건은 정산 해제할 수 없습니다. ");
+					return false;			
+			}
+		}
+	}
+}
+*/
+
+
+
+function ds_list_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if(strColumnID =="CASH_DPST_FIX_YN"){
+		if(varNewValue =="1"){
+			
+			if(toNumber(ds_payFixList.GetColumn(0,"CHAG_DPST_ACC_AMT")) >= 0){
+				/*	
+				if(toNumber(ds_list.GetColumn(nRow,"CASH_PAY_AMT")) > toNumber(ds_payFixList.GetColumn(0,"CHAG_ACC_DPAC_BAMT"))){
+					//ds_list.SetColumn(nRow,"CASH_DPST_FIX_YN","0");
+					alert("입금정산 잔액을 확인하십시오. ");
+					return false;					
+				}
+				*/
+			}
+						
+			ds_payFixList.SetColumn(0,"CHAG_DPST_ACC_AMT",(toNumber(ds_payFixList.GetColumn(0,"CHAG_DPST_ACC_AMT"))+toNumber(ds_list.GetColumn(nRow,"CASH_PAY_AMT"))));
+			ds_payFixList.SetColumn(0, "CHAG_BOND_BAMT", toNumber(ds_payFixList.GetColumn(0, "CHAG_BOND_BAMT"))-toNumber(ds_list.GetColumn(nRow, "CASH_PAY_AMT")));
+		}else if(varNewValue =="0"){
+			ds_payFixList.SetColumn(0,"CHAG_DPST_ACC_AMT",(toNumber(ds_payFixList.GetColumn(0,"CHAG_DPST_ACC_AMT"))-toNumber(ds_list.GetColumn(nRow,"CASH_PAY_AMT"))));
+			ds_payFixList.SetColumn(0, "CHAG_BOND_BAMT", toNumber(ds_payFixList.GetColumn(0, "CHAG_BOND_BAMT"))+toNumber(ds_list.GetColumn(nRow, "CASH_PAY_AMT")));
+			
+		}
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 입금정산 잔액 요금계좌 계산
+*******************************************************************************/
+
+function ds_payFixList_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{		
+	obj.fireEvent = false;
+	
+	if(strColumnID =="CHAG_DPST_ACC_AMT"){
+		ds_payFixList.SetColumn(0, "CHAG_ACC_DPAC_BAMT", toNumber(ds_payFixList.GetColumn(0, "CHAG_ACC_DPST_AMT"))-toNumber(ds_payFixList.GetColumn(0, "CHAG_DPST_ACC_AMT")));
+		
+	}else if(strColumnID =="PRP_DPST_ACC_AMT"){
+		
+		if(varNewValue != varOldValue){			
+		
+			if(toNumber(varNewValue)-toNumber(varOldValue) >= toNumber(ds_payFixList.GetColumn(0,"ETC_ACC_DPST_AMT"))){
+				
+				//입력한 예수금 입금정산 값이 기타계좌 잔액보다 크거나 같을 때 
+				ds_payFixList.SetColumn(0, "PRP_DPST_ACC_AMT", toNumber(ds_payFixList.GetColumn(0,"ETC_ACC_DPST_AMT")));
+				ds_payFixList.SetColumn(0, "ETC_ACC_DPAC_BAMT", toNumber(ds_payFixList.GetColumn(0,"ETC_ACC_DPAC_BAMT"))-toNumber(ds_payFixList.GetColumn(0,"PRP_DPST_ACC_AMT")));
+				ds_payFixList.SetColumn(0, "PRP_BOND_BAMT", toNumber(ds_payFixList.GetColumn(0,"PRP_BOND_BAMT"))-toNumber(ds_payFixList.GetColumn(0, "PRP_DPST_ACC_AMT")));
+			}else{
+			
+				//입력한 예수금 입금정산 값이 기타계좌 잔액보다 작을 떄
+				ds_payFixList.SetColumn(0, "PRP_DPST_ACC_AMT", toNumber(varNewValue));
+				ds_payFixList.SetColumn(0, "ETC_ACC_DPAC_BAMT", toNumber(ds_payFixList.GetColumn(0,"ETC_ACC_DPAC_BAMT"))-(toNumber(varNewValue)-toNumber(varOldValue)));
+				ds_payFixList.SetColumn(0, "PRP_BOND_BAMT", toNumber(ds_payFixList.GetColumn(0,"PRP_BOND_BAMT"))+(toNumber(varOldValue)-toNumber(varNewValue)));
+			
+			}
+		}
+		
+	}else if(strColumnID =="CASA_DPST_ACC_AMT"){
+		
+		if(varNewValue != varOldValue){			 
+				
+			if((toNumber(varNewValue)-toNumber(varOldValue)) > toNumber(ds_payFixList.GetColumn(0,"ETC_ACC_DPAC_BAMT"))){
+			
+				//ds_payFixList.SetColumn(0, "CASA_DPST_ACC_AMT", toNumber(ds_payFixList.GetColumn(0,"ETC_ACC_DPAC_BAMT")));
+				ds_payFixList.SetColumn(0, "CASA_DPST_ACC_AMT", toNumber(varOldValue)+toNumber(ds_payFixList.GetColumn(0,"ETC_ACC_DPAC_BAMT")));
+				ds_payFixList.SetColumn(0, "ETC_ACC_DPAC_BAMT", toNumber(ds_payFixList.GetColumn(0,"ETC_ACC_DPAC_BAMT"))-(toNumber(ds_payFixList.GetColumn(0,"CASA_DPST_ACC_AMT"))-toNumber(varOldValue)));
+				ds_payFixList.SetColumn(0, "CASA_BOND_BAMT", toNumber(ds_payFixList.GetColumn(0,"CASA_BOND_BAMT"))-(toNumber(ds_payFixList.GetColumn(0, "CASA_DPST_ACC_AMT"))-toNumber(varOldValue)));
+			}else{	
+				//현금매출 입금정산액이 기타계좌 잔액보다 작을 떄 
+				ds_payFixList.SetColumn(0, "CASA_DPST_ACC_AMT", toNumber(varNewValue));
+				ds_payFixList.SetColumn(0, "ETC_ACC_DPAC_BAMT", toNumber(ds_payFixList.GetColumn(0,"ETC_ACC_DPAC_BAMT"))-(toNumber(varNewValue)-toNumber(varOldValue)));
+				ds_payFixList.SetColumn(0, "CASA_BOND_BAMT", toNumber(ds_payFixList.GetColumn(0,"CASA_BOND_BAMT"))+(toNumber(varOldValue)-toNumber(varNewValue)));
+			}							
+		}	
+	}
+	obj.fireEvent = true;
+}
+
+
+/*******************************************************************************
+ * @description    : 입금정산 저장
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{	
+
+	var errMsg = "";
+	errMsg = "저장하시겠습니까?";
+
+   // 마감월 체크
+   //일마감이 돌아야 정산이 가능하도록 
+  
+  // cf_CheckCloseDay('03',div_search.cal_acc_dt.value,"정산일");
+   //if(FV_BOOLEAN_CLOSE) return; 
+  
+
+   //현재 입력일시가 일마감일 보다 커야함 
+   //cf_CheckCloseDay('04',Left(cf_getDate(), 8),"저장일"); 
+   //if(FV_BOOLEAN_CLOSE) return; 
+   
+   
+   // 업무 일마감 요청한 날짜에 입금정산을 등록할 수 없다.  20100511
+   if(F_CLOSE_REQ_CHK == "Y" && (ds_condition.GetColumn(0,"MOD_DTM") == AddDate(F_MTH_CLOSE_DAY,1))){
+	
+		var sBeqReqDt = Mid(F_CLOSE_REQ_DT,0,4) +"-"+Mid(F_CLOSE_REQ_DT,4,2)+"-"+Mid(F_CLOSE_REQ_DT,6,2);
+		alert(sBeqReqDt+"일은 업무 일마감 요청중입니다");
+		return false;	
+	}
+	
+  
+   if(ds_condition.GetColumn(0,"MOD_DTM") != AddDate(F_MTH_CLOSE_DAY,1)){
+		alert("처리 가능한 저장일은 최종마감일의 익일인 ["+AddDate(F_MTH_CLOSE_DAY,1)+"]입니다.");
+		return false;
+	}
+	
+    //회계 월마감 완료된 달은 정산수정, 등록할 수 없다
+  
+  
+   if(FV_CLOSE_MTH !=""){
+      var sChkMth = substr(div_search.cal_acc_dt.Text,0,4)+substr(div_search.cal_acc_dt.Text,5,2);
+      if(sChkMth <=FV_CLOSE_MTH){
+           alert("["+sChkMth+ "] 월은 회계 월마감이 완료되어 정산 등록할 수 없습니다. ");
+		   return;
+      }
+   }
+  
+       
+   if ( uf_IsNull(ds_condition.GetColumn(0,"CHAG_IMAG_ACC_NO")))
+    {
+        alert("요금계좌번호가 입력되지 않은 정산처입니다.\n 요금계좌번호를 입력하십시오.");
+        return false;
+    }
+   
+   
+    if ( uf_IsNull(ds_condition.GetColumn(0,"CASA_IMAG_ACC_NO")))
+    {
+        alert("기타계좌번호가 입력되지 않은 정산처입니다.\n 기타계좌번호를 입력하십시오.");
+        return false;
+    }
+   
+	var sChkInt = 0;
+	if(ds_list.GetRowCount() >0){
+		for(var idx=0;idx<ds_list.GetRowCount();idx++){
+			if(ds_list.GetColumn(idx,"CASH_DPST_FIX_YN") =="1"){
+				sChkInt++;
+			}
+		}
+	}
+	
+	//입금정산 첫 등록시에 금액 입력 없이 정산 등록하는 걸 막는다.
+    if(sFnshYn =="0"){
+		if(sChkInt ==0 && toNumber(ds_payFixList.GetColumn(0,"PRP_DPST_ACC_AMT")) ==0 && toNumber(ds_payFixList.GetColumn(0,"CASA_DPST_ACC_AMT")) ==0){
+			alert("처리한 대상이 없습니다."); 
+			return;
+		}
+	}
+	
+	var sAccBamt= toNumber(ds_payFixList.GetColumn(0,"CHAG_ACC_DPAC_BAMT"));
+	var sEtcAccAmt= toNumber(ds_payFixList.GetColumn(0,"ETC_ACC_DPST_AMT"));
+	var sPrpDpstAccAmt= toNumber(ds_payFixList.GetColumn(0,"PRP_DPST_ACC_AMT"));
+	var sCasaDpstAccAmt= toNumber(ds_payFixList.GetColumn(0,"CASA_DPST_ACC_AMT"));
+	
+	if(sAccBamt < 0){
+		alert("요금계좌의 입금정산 잔액을 확인하십시오. ");
+		return false;
+	}else if(sEtcAccAmt < (sPrpDpstAccAmt+sCasaDpstAccAmt)){
+		alert("기타계좌의 입금정산 잔액을 확인하십시오. ");
+		return false;
+	}
+		
+	if(sPrpDpstAccAmt > F_PRP_DPST_BAMT && (F_PRP_DPST_BAMT >0)){
+		alert("예수금 입금정산액을 예수금 채권잔액보다 적은 금액으로 입력해주십시오.");
+		return false;
+	}else if(sCasaDpstAccAmt > F_CASA_DPST_BAMT && (F_CASA_DPST_BAMT > 0)){
+		alert("현금매출 입금정산액을 현금매출 채권잔액보다 적은 금액으로 입력해주십시오");
+		return false;
+	}
+	
+	if(Confirm(errMsg) == true) {
+	
+		f_setChargeFixYn();
+		
+		var sSvcID 	= "svcSaveDpstAcc";
+		var sInDs 	= "nc_input_fieldDs=ds_condition rs_payFixList=ds_payFixList rs_uptChargeList=ds_list_0";
+		var sOutDs 	= "";
+		var sArg	= "";
+		
+		if(sFnshYn =="1"){
+			sArg	= "sktst.acc.PAC#updateMonthDpstAcc";
+		}else{
+			sArg	= "sktst.acc.PAC#addMonthDpstAcc";
+		}
+		
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+		
+	} else {
+		return false;
+	}
+	
+}
+
+/*******************************************************************************
+ * @description    : 확정체크한 수납대행 세부내역 현금수납확정여부 'Y' update
+*******************************************************************************/
+function f_setChargeFixYn(){
+	
+	var nTotCnt = ds_list.GetCount();
+	
+	for(var nRow=0; nRow<nTotCnt; nRow++){
+	  
+	   if(ds_list.GetColumn(nRow,"CASH_DPST_FIX_YN") =="1" && ds_list.GetColumn(nRow,"CASH_DPST_FIX_DT") ==null){
+			//세부내역에서 확정 선택한 수납대행건을 dataset에 넣어서 tsal_skt_charge의 cash_dpst_fix_yn = 'Y' update	
+			ds_list_0.AddRow();
+			ds_list_0.CopyRow(ds_list_0.lastrow,ds_list,nRow);
+			ds_list_0.SetColumn(ds_list_0.lastrow, "CASH_DPST_FIX_YN", "1");
+		}else if(ds_list.GetColumn(nRow,"CASH_DPST_FIX_YN") =="0" && ds_list.GetColumn(nRow,"CASH_DPST_FIX_YN_TMP") =="1"){
+			//입금정산 수정 시 기존에 입금정산 확정한 수납대행 건을 확정 취소할 떄 tsal_skt_charge의 cash_dpst_fix_yn 를 'Y'->'N' update	
+			ds_list_0.AddRow();
+			ds_list_0.CopyRow(ds_list_0.lastrow,ds_list,nRow);
+			ds_list_0.SetColumn(ds_list_0.lastrow, "CASH_DPST_FIX_YN", "0");
+		}
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : excel export
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	cf_exportExcel(grd_prodList);
+}
+
+/*******************************************************************************
+ * @description    : 비고 OnMouseOver event
+*******************************************************************************/
+function grd_prodList_OnMouseOver(obj,nPosX,nPosY,nRow,nCell,nPivotIndex)
+{
+	grd_prodList.ToolTipText = obj.GetCellValue(nRow, 10);
+}
+
+
+/*******************************************************************************
+ * @description    : 헤더부분 클릭시 SKT 수납대행 내역 전체 확정 선택
+*******************************************************************************/
+function grd_prodList_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell >0 ){
+		cf_markGridSort(grd_prodList, nCell, nX, nY, nPivotIndex);
+	}else{		
+		if(toNumber(ds_payFixList.GetColumn(0,"CHAG_ACC_DPST_AMT")) >0){	
+			var sValue = '0';
+			obj.Redraw = false;
+			var sChkValue = obj.GetSubCellProp("head", nCell, 0, "text");		
+			
+			if (sChkValue == 1) sValue='0';
+			else sValue='1';		
+			
+			obj.SetSubCellProp("head", nCell, 0, "text", sValue);
+			
+			for (var i=0; i<ds_list.rowcount; i++)
+			{		
+				
+				if(sValue == "1"){
+					
+					if(ds_list.GetColumn(i,"CASH_DPST_FIX_YN_ORG") != 'S'){
+						if(ds_list.GetColumn(i, "CASH_DPST_FIX_DT") ==null || toNumber(ds_list.GetColumn(i, "CASH_DPST_FIX_DT")) <= toNumber(F_ACC_DT)){
+							ds_list.SetColumn(i, "CASH_DPST_FIX_YN", "1");
+						}
+					}
+				}else if(sValue == "0"){
+					if(ds_list.GetColumn(i,"CASH_DPST_FIX_YN_ORG") != 'S'){
+					
+						if(ds_list.GetColumn(i, "CASH_DPST_FIX_DT") ==null || toNumber(ds_list.GetColumn(i, "CASH_DPST_FIX_DT")) <= toNumber(F_ACC_DT)){
+							ds_list.SetColumn(i, "CASH_DPST_FIX_YN", "0");
+						}
+					}
+				}
+				
+			}		
+			
+			obj.Redraw = true;
+		}else{
+			alert("요금 계좌 잔액을 확인하십시오.");
+			return false;
+		}
+		
+	}
+}
+
+
+/************************************************************************************
+ * @description    : 예수금, 현금매출 입금정산 금액 입력시 마이너스 금액 insert방지
+************************************************************************************/
+function grd_pay_list_OnChar(obj,strPreText,nChar,strPostText,nLLParam,nHLParam,nRow,nCell,nPivotIndex)
+{
+	if(nCell ==7){
+		
+		if(nChar==45){
+			alert(cf_getMessage(MSG_00056, "")); 
+			return;
+		}
+		
+	}else if(nCell ==8){
+		
+		if(nChar==45){
+			alert(cf_getMessage(MSG_00056, "")); 
+			return;
+		}
+		
+	}	
+}
+
+
+/************************************************************************************
+ * @description    : 예수금, 현금매출 입금정산 금액 입력시 채권잔액 비교 
+************************************************************************************/
+function ds_payFixList_CanColumnChange(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if(strColumnID =="PRP_DPST_ACC_AMT"){
+		
+		if(varNewValue != varOldValue){			
+
+			if(toNumber(varNewValue)-toNumber(varOldValue) > toNumber(ds_payFixList.GetColumn(0,"PRP_BOND_BAMT"))){
+				//입력한 예수금 입금정산 값이 예수금 채권잔액보다 크거나 같을 때 
+				ds_payFixList.SetColumn(0, "PRP_DPST_ACC_AMT", 0);
+				alert("예수금 입금정산금액이 예수금 채권잔액보다 큽니다");
+				return false;
+			}
+		}
+	}else if(strColumnID =="CASA_DPST_ACC_AMT"){
+		
+		if(varNewValue != varOldValue){			
+
+			if(toNumber(varNewValue)-toNumber(varOldValue) > toNumber(ds_payFixList.GetColumn(0,"CASA_BOND_BAMT"))){
+				//입력한 현금매출 입금정산 값이 현금매출 채권잔액보다 크거나 같을 때 
+				ds_payFixList.SetColumn(0, "CASA_DPST_ACC_AMT", 0);
+				alert("현금매출 입금정산금액이 현금매출 채권잔액보다 큽니다");
+				return false;
+			}
+		}
+		
+	}
+}
+
+function Button1_OnClick(obj)
+{
+	cf_debug("ds_Parent");
+}
+]]></Script>
+</Window>

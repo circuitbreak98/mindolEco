@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDSM08300">
+	<insert id="addDailyDisCount" parameterClass="hmap">
+	<![CDATA[
+		INSERT INTO TDIS_DAILY_DIS_COUNT ( /* DISDSM08300_addDailyDisCount_일별재고집계 재고수량 등록_이강수_김연석 */
+            DIS_DT
+          , POS_AGENCY
+          , DEAL_CL
+          , HLD_PLC_ID
+          , PROD_CL
+          , PROD_CD
+          , COLOR_CD
+          , MFACT_ID
+          , USER_ID
+          , BAD_QTY
+          , DIS_QTY
+          , HLD_QTY
+          , SALES_QTY
+          , SALES_DAY
+          , BUJIN_180
+          , BUJIN_90
+          , DEL_YN
+          , UPD_CNT
+          , INS_DTM
+          , INS_USER_ID
+          , MOD_DTM
+          , MOD_USER_ID
+		   ) 
+		   (select #PROC_DT# DIS_DT
+                 , c.pos_agency
+                 , c.deal_co_cl1
+                 , a.hld_plc_id
+                 , b.prod_cl
+                 , a.prod_cd
+                 , a.color_cd
+                 , b.mfact_id
+                 , nvl(c.chrgr_user_id, ' ') user_id
+                 , sum(bad_qty) bad_qty     
+                 , sum(dis_qty) dis_qty     
+                 , sum(hld_qty) hld_qty
+                 , 0            sales_qty
+                 , fbas_get_sales_day('D', substr(#PROC_DT#, 1, 6) || '01', #PROC_DT#)
+                 , sum(decode(a.bujin_cl, '1', 1, 0)) bujin_180
+                 , sum(decode(a.bujin_cl, '2', 1, 0)) bujin_90
+                 , 'N', 0
+                 , to_char(sysdate, 'yyyymmddHH24MISS')
+                 , 'DISDSM0830'
+                 , to_char(sysdate, 'yyyymmddHH24MISS')
+                 , 'DISDSM0830'
+              from tbas_prod_mgmt       b
+              ,  ( select hld_plc_id, prod_cd, color_cd
+                        , decode(bad_yn, '02', 1, 0) bad_qty
+                        , decode(dis_st, '01', 1, 0) dis_qty
+                        , 1                          hld_qty
+                        , case when ( to_date(#PROC_DT#,   'yyyymmdd')
+                                    - to_date(fst_in_fix_dt, 'yyyymmdd') + 1) >= 180 then '1'
+                               when ( to_date(#PROC_DT#,   'yyyymmdd')
+                                    - to_date(fst_in_fix_dt, 'yyyymmdd') + 1) >=  90 then '2'
+                               else  '0'
+                          end  bujin_cl
+                     from tdis_dis
+                    where   del_yn = 'N'
+                      and ((last_inout_dtl_cl >= '100'
+                      and   last_inout_dtl_cl <= '199')
+                       or  (last_inout_dtl_cl >= '300'
+                      and   last_inout_dtl_cl <= '309'))  ) a
+              ,  ( select * from tbas_deal_co_mgmt a
+                    where hseq_no = (select /*+ INDEX_DESC(z xbas_deal_co_mgmt_pk) */ hseq_no
+                                       from tbas_deal_co_mgmt z
+                                      where deal_co_cd = a.deal_co_cd
+                                        and rownum = 1)) c
+             where   a.prod_cd          = b.prod_cd
+               and   a.hld_plc_id       = c.deal_co_cd
+             group by c.pos_agency, c.deal_co_cl1, a.hld_plc_id, c.chrgr_user_id, b.prod_cl, a.prod_cd, a.color_cd, b.mfact_id
+		)
+	]]>
+	</insert>
+    <select id="getDailySalesCount" resultClass="hmap" fetchSize="50" ><![CDATA[select  /* DISDSM08300_getDailySalesCount_판매수량 추출_이강수_김연석 */
+	   c.pos_agency, c.deal_co_cl1 deal_cl, a.hld_plc_id, nvl(c.chrgr_user_id, 'N') user_id
+	 , b.prod_cl, a.prod_cd, a.color_cd, b.mfact_id, a.last_inout_dt dis_dt
+     , sum(1) sales_qty
+  from tdis_dis       a
+     , tbas_prod_mgmt b
+  ,  ( select * from tbas_deal_co_mgmt a
+        where hseq_no = (select /*+ INDEX_DESC(z xbas_deal_co_mgmt_pk) */ hseq_no
+                           from tbas_deal_co_mgmt z
+                          where deal_co_cd = a.deal_co_cd
+                            and rownum = 1)) c
+ where   a.prod_cd          = b.prod_cd
+   and   a.hld_plc_id       = c.deal_co_cd
+   and   last_inout_dtl_cl  = '205'
+   and   a.mod_dtm   between #PROC_DT# || '000000' and #PROC_DT# || '235959'
+   and   a.del_yn = 'N'
+ group by c.pos_agency, c.deal_co_cl1, a.hld_plc_id, nvl(c.chrgr_user_id, 'N'), b.prod_cl, a.prod_cd, a.color_cd, b.mfact_id, a.last_inout_dt
+	]]>
+	</select>
+    <select id="getDailySalesCheck" resultClass="hmap" fetchSize="50" ><![CDATA[select  /* DISDSM08300_getDailySalesCount_판매수량 Check_이강수_김연석 */
+	   dis_dt, sales_qty
+  from TDIS_DAILY_DIS_COUNT
+ where DIS_DT     = #DIS_DT#
+   and POS_AGENCY = #POS_AGENCY#
+   and DEAL_CL    = #DEAL_CL#
+   and HLD_PLC_ID = #HLD_PLC_ID#
+   and PROD_CL    = #PROD_CL#
+   and PROD_CD    = #PROD_CD#
+   and COLOR_CD   = #COLOR_CD#
+   and MFACT_ID   = #MFACT_ID#
+	]]>
+	</select>
+	<insert id="addDailySalesCount" parameterClass="map" >
+	<![CDATA[
+		INSERT INTO TDIS_DAILY_DIS_COUNT /* DISDSM08300_addDailyDisCount_일별재고집계 판매수량 등록_이강수_김연석 */
+          ( DIS_DT
+          , POS_AGENCY
+          , DEAL_CL
+          , HLD_PLC_ID
+          , PROD_CL
+          , PROD_CD
+          , COLOR_CD
+          , MFACT_ID
+          , USER_ID
+          , BAD_QTY
+          , DIS_QTY
+          , HLD_QTY
+          , SALES_QTY
+          , SALES_DAY
+          , BUJIN_180
+          , BUJIN_90
+          , DEL_YN
+          , UPD_CNT
+          , INS_DTM
+          , INS_USER_ID
+          , MOD_DTM
+          , MOD_USER_ID
+		  ) values (
+		    #DIS_DT#
+          , #POS_AGENCY#
+          , #DEAL_CL#
+          , #HLD_PLC_ID#
+          , #PROD_CL#
+          , #PROD_CD#
+          , #COLOR_CD#
+          , #MFACT_ID#
+          , #USER_ID#
+          , 0
+          , 0
+          , 0
+          , #SALES_QTY#
+          , fbas_get_sales_day('D', substr(#DIS_DT#, 1, 6) || '01', #DIS_DT#)
+          , 0
+          , 0
+          , 'N', 0
+          , to_char(sysdate, 'yyyymmddHH24MISS')
+          , 'DISDSM0830'
+          , to_char(sysdate, 'yyyymmddHH24MISS')
+          , 'DISDSM0830'
+		  )]]>
+	</insert>
+	<update id="updateDailySalesCount" parameterClass="map"><![CDATA[update /*+ SALSUI08810_updateDailyResult_일별 개통실적 변경 */
+       TDIS_DAILY_DIS_COUNT
+   set SALES_QTY   = SALES_QTY + #SALES_QTY#
+     , mod_user_id = 'DISDSM0830'
+     , mod_dtm     = to_char(sysdate, 'yyyyMMddHH24miss')
+ where DIS_DT      = #DIS_DT#
+   and POS_AGENCY  = #POS_AGENCY#
+   and DEAL_CL     = #DEAL_CL#
+   and HLD_PLC_ID  = #HLD_PLC_ID#
+   and PROD_CL     = #PROD_CL#
+   and PROD_CD     = #PROD_CD#
+   and COLOR_CD    = #COLOR_CD#
+   and MFACT_ID    = #MFACT_ID#
+	]]>
+	</update>
+</sqlMap>

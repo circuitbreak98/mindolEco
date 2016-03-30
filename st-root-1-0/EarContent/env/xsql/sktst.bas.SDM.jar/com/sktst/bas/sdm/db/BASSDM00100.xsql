@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASSDM00100">
+	<select id="getSalesDayList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select 
+		DECODE(a.sales_day,null,'I','U') as flag
+		,b.tran_dt
+        ,b.weekday
+        ,(CASE WHEN a.sales_day = 1
+         THEN '1' 
+         ELSE '0'
+         END
+         ) as day_check
+         ,(CASE WHEN a.sales_day = 0.5
+         THEN '1' 
+         ELSE '0'
+         END
+         ) as  half_check
+        ,a.rmks 
+from 
+tbas_sales_day a,
+(
+select #SALE_MTH#||lpad(rownum,2,'0') as tran_dt,
+decode(to_char(to_date(#SALE_MTH#||lpad(rownum,2,'00')),'D'),'1','일요일','2','월요일','3','화요일','4','수요일','5','목요일','6','금요일'
+,'7','토요일') as weekday
+,'0' as day_check
+,'0' as half_check
+,'' as  rmks
+from dual
+connect by level <= to_char(last_day(to_date(#SALE_MTH#,'YYYYMM')),'DD')
+) b
+where a.tran_dt(+) = b.tran_dt]]>
+	</select>
+	<update id="saveSalesDayList" parameterClass="map" ><![CDATA[MERGE INTO  /*+ BASSDM00100_saveSalesDayList_이강수_전현주 */ tbas_sales_day
+USING  DUAL
+ON     ( 	tran_dt = #tran_dt#  )
+WHEN MATCHED THEN
+UPDATE SET 
+    sales_day  = DECODE(#day_check#,'1', 1, 0.5),
+    rmks = #rmks#,
+		upd_cnt = upd_cnt +1,
+		mod_dtm = to_char(sysdate,'YYYYMMDDHH24MISS'),
+		mod_user_id = #onlineContext.userInfo.loginId#
+WHEN NOT MATCHED THEN	
+INSERT 
+	(
+	tran_dt,
+	sales_day,
+	rmks,
+	del_yn,
+	upd_cnt,
+	ins_dtm,
+	ins_user_id,
+	mod_dtm,
+	mod_user_id
+	)
+VALUES (
+	#tran_dt# ,
+	DECODE(#day_check#,'1', 1, 0.5),
+	#rmks#,
+	'N',
+	0,
+	to_char(sysdate,'YYYYMMDDHH24MISS'),
+	#onlineContext.userInfo.loginId#,
+	to_char(sysdate,'YYYYMMDDHH24MISS'),
+	#onlineContext.userInfo.loginId#
+	)]]>
+	</update>
+	<insert id="addSalesDayList" parameterClass="map" ><![CDATA[INSERT INTO tbas_sales_day
+	(
+	tran_dt,
+	sales_day,
+	rmks,
+	del_yn,
+	upd_cnt,
+	ins_dtm,
+	ins_user_id,
+	mod_dtm,
+	mod_user_id
+	)
+VALUES (
+	#tran_dt# ,
+	DECODE(#day_check#,'1', 1, 0.5),
+	#rmks#,
+	'N',
+	0,
+	to_char(sysdate,'YYYYMMDDHH24MISS'),
+	#onlineContext.userInfo.loginId#,
+	to_char(sysdate,'YYYYMMDDHH24MISS'),
+	#onlineContext.userInfo.loginId#
+	)]]>
+	</insert>
+	<update id="updateSalesDayList" parameterClass="map" ><![CDATA[UPDATE tbas_sales_day
+SET sales_day  = DECODE(#day_check#,'1', 1, 0.5),
+    rmks = #rmks#,
+		upd_cnt = upd_cnt +1,
+		mod_dtm = to_char(sysdate,'YYYYMMDDHH24MISS'),
+		mod_user_id = #onlineContext.userInfo.loginId#
+WHERE tran_dt = #tran_dt# ]]>
+	</update>
+</sqlMap>

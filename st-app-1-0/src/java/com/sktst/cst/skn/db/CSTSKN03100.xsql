@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTSKN03100">
+	<insert id="addInPrhcsAll" parameterClass="map" ><![CDATA[INSERT INTO TCST_PRCHS_MGMT (
+	 PRCHS_MGMT_NO
+	,CON_MGMT_NO
+    ,PROD_CD         
+    ,SER_NUM         
+    ,PRCHS_DT
+    ,CON_DT          
+    ,CON_PLC_CD      
+    ,COLOR_CD        
+    ,SVC_DT          
+    ,EQP_ST          
+    ,USEPRD_DDCT_AMT 
+    ,CORROSION_YN    
+    ,POWER_YN        
+    ,CALL_YN         
+    ,DATA_YN         
+    ,DISP_YN          
+    ,FUNCTION_YN     
+    ,LOST_YN         
+    ,RETURN_YN       
+    ,LEASE_YN        
+    ,FLOOD_YN        
+    ,USIM_YN         
+    ,OTHER_YN        
+    ,RMKS            
+    ,CONFIRM_YN      
+    ,FULLSET_YN      
+    ,PRCHS_AMT
+    ,BUY_CL  
+    ,RES_NO
+  	,CUST_NM
+  	,BANK_CD
+  	,ACC_NO
+  	,TEL_NO
+  	,ZIP_CD1
+  	,ZIP_CD2
+  	,ADDR
+  	,DTL_ADDR        
+    ,REMIT_YN
+    ,ADJ_AMT           
+    ,DEL_YN          
+    ,UPD_CNT         
+    ,INS_DTM         
+    ,INS_USER_ID
+    ,MOD_DTM
+    ,MOD_USER_ID
+    ,CHAG_DEDT_YN
+    ,SVC_NO
+    ,SVC_MGMT_NO
+    ,IMEI
+    ,OTHER_CPNT
+    ,CHECK_USER_ID
+    ,CHECK_DT
+    ,POL_YN
+    ,POL_CD
+    ,PRC_ST
+	,BOX_NO
+	,SKN_YN
+	,SKN_EQP_ST
+	,SKN_SPPRAISAL_CL
+	,SKN_PRCHS_AMT
+	,SKN_DIFF_AMT
+	,AGN_DDCT_YN
+	,EQP_ST_DTL	
+	,SKN_SPPRAISAL_CL_SUB
+	,OLDEQ_PAY_MTHD_CD
+	,OLDEQ_PAY_DT
+) VALUES (
+	 #PRCHS_MGMT_NO#
+	,#CON_MGMT_NO#
+    ,#PROD_CD#        
+    ,#SER_NUM#       
+    ,TO_CHAR(SYSDATE,'YYYYMMDD')
+    ,NVL(#CON_DT#,TO_CHAR(SYSDATE,'YYYYMMDD'))
+    ,#CON_PLC_CD#      
+    ,#COLOR_CD#
+    ,#SVC_DT#
+    ,#EQP_ST#
+    ,0
+    ,NVL(#CORROSION_YN#,'N')
+    ,NVL(#POWER_YN#,'N')
+    ,NVL(#CALL_YN#,'N')
+    ,NVL(#DATA_YN#,'N')
+    ,NVL(#DISP_YN#,'N')
+    ,NVL(#FUNCTION_YN# ,'N')    
+    ,NVL(#LOST_YN#,'N')
+    ,NVL(#RETURN_YN#,'N')
+    ,NVL(#LEASE_YN#,'N')
+    ,NVL(#FLOOD_YN#,'N')
+    ,NVL(#USIM_YN#,'N')
+    ,NVL(#OTHER_YN#,'N')
+    ,#PRCHS_RMKS#
+    ,#CONFIRM_YN#
+    ,#FULLSET_YN#
+    ,#CON_AMT#
+    ,'Y'
+    ,#RES_NO#
+  	,#CUST_NM#
+  	,#BANK_CD#
+  	,#ACC_NO#
+  	,#TEL_NO#
+  	,#ZIP_CD1#
+  	,#ZIP_CD2#
+  	,#ADDR#
+  	,#DTL_ADDR#      
+    ,#REMIT_YN#
+    ,#ADJ_AMT#
+    ,'N'
+    ,1
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,#CHAG_DEDT_YN#
+    ,#SVC_NO#
+    ,#SVC_MGMT_NO#
+    ,#IMEI# 
+    ,#OTHER_CPNT#
+    ,#onlineContext.userInfo.loginId#
+    ,TO_CHAR(SYSDATE,'YYYYMMDD')
+    ,#POL_YN#
+    ,#POL_CD#
+    ,'13'
+	,#BOX_NO#
+	,'Y'
+	,#SKN_EQP_ST#
+	,'01'
+	,#SKN_CON_AMT#
+	,#SKN_DIFF_AMT#
+	,DECODE(#AGN_DDCT_YN#,'1','Y','N')
+	,DECODE(#EQP_ST_TXT#,'A',#EQP_ST_DTL#,'')	
+	,'01'
+	,#OLDEQ_PAY_MTHD_CD#
+	,#OLDEQ_PAY_DT#
+) ]]>
+	</insert>
+	<select id="getConsultMgmtSkn" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT CON_MGMT_NO
+     , PROD_CD
+     , SER_NUM
+     , CON_DT
+     , CON_PLC_CD
+     , COLOR_CD
+     , SVC_DT
+     , EQP_ST
+     , USEPRD_DDCT_AMT
+     , CORROSION_YN
+     , POWER_YN
+     , CALL_YN
+     , DATA_YN
+     , DISP_YN
+     , FUNCTION_YN
+     , LOST_YN
+     , RETURN_YN
+     , LEASE_YN
+     , FLOOD_YN
+     , USIM_YN
+     , OTHER_YN
+     , RMKS
+     , CONFIRM_YN
+     , FULLSET_YN
+     , CON_AMT
+     , BUY_CL
+     , RES_NO
+     , CUST_NM
+     , BANK_CD
+     , ACC_NO
+     , TEL_NO
+     , ZIP_CD1
+     , ZIP_CD2
+     , ADDR
+     , DTL_ADDR
+     , OUT_YN
+     , DEL_YN
+     , UPD_CNT
+     , INS_DTM
+     , INS_USER_ID
+     , MOD_DTM
+     , MOD_USER_ID
+     , CHAG_DEDT_YN
+     , SVC_NO
+     , SVC_MGMT_NO
+     , IMEI
+     , IN_YN
+     , IN_DT
+     , OTHER_CPNT
+     , IN_RMKS
+     , POL_YN
+     , POL_CD
+     , PRC_ST
+     , ACC_ORG_ID
+     , ACC_ORG_ID2
+     , BOX_NO
+     , RTN_YN
+     , RTN_DT
+     , RTN_RMKS
+     , SKN_YN
+     , SKN_EQP_ST
+     , SKN_CON_AMT
+     , EQP_ST_DTL
+     , REMIT_YN
+     , REMIT_DT
+     , CHAG_DEDT_OP_YN
+     , CHAG_DEDT_OP_DT
+     , OLDEQ_PAY_YN
+     , CLCT_YN
+     , CLCT_DT
+     , OLDEQ_PAY_MTHD_CD
+     , OLDEQ_PAY_DT
+     , IN_USER_ID
+     , OLDEQ_PAY_SEND_YN
+     , '' PRCHS_MGMT_NO     
+  FROM TCST_CONSULT_MGMT
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#
+   AND DEL_YN = 'N'
+   AND SKN_YN = 'Y']]>
+	</select>
+	<select id="getConsultDtlSkn" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT CON_MGMT_NO
+     , CON_SEQ
+     , DTL_CL
+     , TYPE_CL
+     , PROD_CD
+     , CPNT_PROD_CD
+     , QTY
+     , NRL_QTY
+     , HLD_QTY
+     , DDCT_AMT
+     , DEL_YN
+     , UPD_CNT
+     , INS_DTM
+     , INS_USER_ID
+     , MOD_DTM
+     , MOD_USER_ID
+     , SKN_QTY
+     , '' PRCHS_MGMT_NO
+  FROM TCST_CONSULT_DTL
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#
+   AND DEL_YN = 'N']]>
+	</select>
+</sqlMap>

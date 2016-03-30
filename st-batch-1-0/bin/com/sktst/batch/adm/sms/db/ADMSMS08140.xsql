@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMSMS08140">
+	<select id="getSktChagAmt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[WITH T_ACC_AMT AS (SELECT	/* ADMSMS08140_getSktChagAmt_미정산채권금액 SMS 전송_전현주_전현주 */
+		    a.deal_co_cd
+		    , a.deal_co_nm
+		    , a.ukey_channel_cd as ukey_agency_cd
+		    , a.tel_no
+		    , a.pos_agency
+		    ,NVL((SELECT SUM(NVL(cash_pay_amt,0)) as cash_pay_amt
+		      FROM tacc_skt_chag_acc_d
+		      WHERE cls_mth = SUBSTR(TO_CHAR(ADD_MONTHS(TO_DATE(#ACC_DT#,'yyyymmdd'),-1),'YYYYMMDD'),1,6)
+		      AND del_yn = 'N'
+		      AND cash_dpst_fix_yn = 'N'
+		      AND stl_plc = a.deal_co_cd
+		     ),0) as pre_amt
+		    ,NVL((SELECT SUM(NVL(cash_pay_amt,0)) as cash_pay_amt
+		      FROM tsal_skt_charge
+		      WHERE substr(pay_dtm,0,8) between substr(#ACC_DT#,0,6) ||'01' and #ACC_DT#
+		      AND del_yn = 'N'
+		      AND cash_dpst_fix_yn = 'N'
+		      AND stl_plc = a.deal_co_cd
+		      ),0) as to_amt
+		    ,NVL((SELECT SUM(NVL(cash_pay_amt,0)) as cash_pay_amt
+		      FROM tsal_skt_charge
+		      WHERE substr(pay_dtm,0,8) between substr(#CHAG_DT#,0,6) ||'01' and substr(#CHAG_DT#,0,6) ||'25'
+		      AND del_yn = 'N'
+		      AND cash_dpst_fix_yn = 'N'
+		      AND stl_plc = a.deal_co_cd
+		      ),0) as setoff_amt
+		    , TO_CHAR(SYSDATE,'YYYYMMDD')|| NVL(b.reserv_time,'0000') ||'00' as snd_dttm
+		FROM 
+		tbas_deal_co_mgmt a
+		,(SELECT #CHAG_DT# as acc_dt,
+          pos_agency,
+          reserv_time
+          FROM tsal_sms_mgmt 
+          WHERE #CHAG_DT# between sms_send_sta_dt and sms_send_end_dt
+          AND    acc_sms_yn = 'Y'
+		  AND    del_yn = 'N'
+         ) b
+        , tbas_sales_day c
+		where 1=1
+		and  a.del_yn = 'N'
+		and  a.eff_end_dtm = '99991231235959'
+		and  a.deal_co_cl1 IN ('A3','B2','C1')
+		and  a.pos_agency = b.pos_agency
+	    and  b.acc_dt = c.tran_dt
+	    and  c.sales_day = '1'
+	    ) 
+		SELECT taa.deal_co_nm
+				, taa.ukey_agency_cd
+		        ,  TO_CHAR((taa.pre_amt + taa.to_amt),'999,999,999,999')  as chag_amt
+		        ,  TO_CHAR(taa.setoff_amt,'999,999,999,999')  as setoff_amt
+		        , tum_1.acc_sms1 as mbl_phon
+		        , taa.tel_no
+		        , taa.pos_agency
+		        , tum_1.user_nm as recv_user
+		        , tum_2.user_id as send_user
+		        , tum_2.user_nm as send_name
+		        , taa.snd_dttm
+		FROM T_ACC_AMT taa
+		, tbas_user_mgmt tum_1
+		, tbas_user_mgmt tum_2
+		WHERE taa.deal_co_cd = tum_1.org_area
+		AND   tum_1.acc_sms1 is not null
+		AND   taa.pos_agency = tum_2.pos_agency
+		AND   tum_2.user_grp      =  'D22'
+		AND   tum_2.user_id    like  'TP%'
+		AND   tum_1.eff_user_yn = 'Y'
+		AND   tum_2.eff_user_yn = 'Y'
+		AND   (taa.pre_amt + taa.to_amt) !=0
+		UNION ALL
+		SELECT 
+		         taa.deal_co_nm
+		        , taa.ukey_agency_cd
+		        ,  TO_CHAR((taa.pre_amt + taa.to_amt),'999,999,999,999') as chag_amt
+		        ,  TO_CHAR(taa.setoff_amt,'999,999,999,999')  as setoff_amt
+		        , tum_3.acc_sms2 as mbl_phon
+		        , taa.tel_no
+		        , taa.pos_agency
+		        , tum_3.user_nm as recv_user
+		        , tum_4.user_id as send_id
+		        , tum_4.user_nm as send_nm
+		        , taa.snd_dttm
+		FROM T_ACC_AMT taa
+		, tbas_user_mgmt tum_3
+		, tbas_user_mgmt tum_4
+		WHERE taa.deal_co_cd = tum_3.org_area
+		AND   tum_3.acc_sms2 is not null
+		AND   taa.pos_agency = tum_4.pos_agency
+		AND   tum_4.user_grp      =  'D22'
+		AND   tum_4.user_id    like  'TP%'
+		AND   tum_3.eff_user_yn = 'Y'
+		AND   tum_4.eff_user_yn = 'Y'
+		AND   (taa.pre_amt + taa.to_amt) !=0
+	]]>
+	</select>
+	<select id="getAdmSmsCmpMsgSeq" resultClass="hmap" fetchSize="50" >
+	<![CDATA[SELECT SADM_SMS_CMP_MSG_SEQ.nextval as sms_seq  FROM DUAL]]>
+	</select>
+	<select id="getAdmSmsTranCnt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[SELECT SADM_SMS_TRAN_SEQ.nextval    as tran_cnt FROM DUAL]]>
+	</select>
+	<insert id="addSmsTran" parameterClass="hmap">
+	<![CDATA[
+	INSERT INTO /*+ ADMSMS08140_addSmsTran_전현주_전현주 */
+	       TADM_SMS_TRAN
+                  ( tran_dt
+                  , tran_cnt
+                  , title
+                  , tran_user_id
+                  , rtn_tel_no
+                  , context
+                  , msg_ser_num
+                  , sms_job_cl
+                  , del_yn,  upd_cnt
+                  , ins_dtm, ins_user_id
+                  , mod_dtm, mod_user_id)
+           VALUES
+                  ( TO_CHAR(SYSDATE, 'YYYYMMDD')
+                  , #TRAN_SEQ#
+                  , substrb(#SMS_MSG#, 1, 40)
+                  , #SMS_USER#
+                  , #SMS_RECV_TEL#
+                  , #SMS_MSG#
+                  , 0
+                  , '04'
+                  , 'N', 1
+                  , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), 'psadm'
+                  , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), 'psadm')
+	]]>
+	</insert>
+	<insert id="addSmsTranDtl" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ ADMSMS08140_addSmsTranDtl_전현주_전현주 */
+	       TADM_SMS_TRAN_DTL
+                  ( tran_dt
+                  , tran_cnt
+                  , seq
+                  , name
+                  , tel_no
+                  , addr_cat
+                  , skt_yn
+                  , cmp_msg_id
+                  , del_yn, upd_cnt
+                  , ins_dtm, ins_user_id
+                  , mod_dtm, mod_user_id)
+           VALUES
+                  ( TO_CHAR(SYSDATE, 'YYYYMMDD')
+                  , #TRAN_SEQ#
+                  , (SELECT NVL(MAX(SEQ), 0) + 1
+		             FROM TADM_SMS_TRAN_DTL
+		             WHERE TRAN_DT   = TO_CHAR(SYSDATE, 'YYYYMMDD')
+		             AND TRAN_CNT  = #TRAN_SEQ#)
+                  , #USER_NAME#
+                  , #PHONE_NUM#
+                  , 'N'
+                  , 'N'
+                  , #SMS_SEQ#
+                  , 'N', 1
+                  , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), 'psadm'
+                  , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), 'psadm')
+	]]>
+	</insert>
+	<insert id="addTelinkSMS" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ ADMSMS08140_addTelinkSMS_전현주_전현주 */
+	       telink_sms
+                  ( cmp_msg_id
+                  , cmp_usr_id
+                  , odr_fg
+                  , sms_gb
+                  , used_cd
+                  , msg_gb
+                  , snd_dttm
+                  , snd_phn_id
+                  , rcv_phn_id
+                  , callback
+                  , snd_msg
+                  , expire_val
+                  , sms_st
+                  , rslt_val)
+           VALUES
+                  ( #SMS_SEQ#
+                  , '00000'
+                  , '2'
+                  , '1'
+                  , '00'
+                  , 'A'
+                  , #SND_DTTM#
+                  , #SEND_USER#
+                  , #PHONE_NUM#
+                  , #SMS_RECV_TEL#
+                  , substrb(#SMS_MSG#, 1, 80)
+                  , 0
+                  , '0'
+                  , 99)
+	]]>
+	</insert>
+</sqlMap>

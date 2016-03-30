@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="47" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="하단" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Image FillType="STRETCH" Height="21" Id="Image4" ImageID="btm_tab_bg" TabOrder="1" Top="2" Width="2048"></Image>
+		<Tab BKColor="#848e96" Border="Flat" BorderColor="#848e96" Color="#859099" Font="돋움,9" Height="23" Id="tab_openWindow" MouseOverColor="white" OnChanged="tab_openWindow_OnChanged" OnClick="tab_openWindow_OnClick" SelColor="#374049" SelectFont="돋움,9" TabOrder="2" Top="1" Width="944">
+			<Contents>
+				<TabPage Height="0" Id="winTab1" ImageID="btm_tab" Left="2" TabOrder="7" Text="홈" Top="21" Width="940"></TabPage>
+			</Contents>
+		</Tab>
+		<Div Height="48" Id="div_info" Left="-9" TabOrder="3" Text="Div0" Top="23" Width="2048">
+			<Contents>
+				<Image FillType="STRETCH" Height="25" Id="Image0" ImageID="btm_mssg_bg" Left="8" TabOrder="1" Width="2048"></Image>
+				<Image Align="Left" Color="white" Height="24" Id="img_sysMsg" ImageID="btm_mssg_bul" Left="275" LeftMargin="30" TabOrder="3" Transparent="TRUE" Width="791"></Image>
+				<Image Align="Left" Color="white" Height="24" Id="img_name" ImageID="btm_user_bul" Left="11" LeftMargin="27" TabOrder="4" Text="홍길동님" Transparent="TRUE" Width="133"></Image>
+				<Image Align="Left" Color="#babec1" FillType="STRETCH" Height="24" Id="img_depart" ImageID="btm_user_bg" Left="96" LeftMargin="5" TabOrder="2" Text="물류관리&#32;&gt;&#32;서울센터" Width="177"></Image>
+			</Contents>
+		</Div>
+		<Button Cursor="HAND" Height="16" Id="btn_closeAllWindows" ImageID="btm_btn_close_all" Left="974" OnClick="btn_closeAllWindows_OnClick" TabOrder="4" Text="Button1" Top="5" Width="43"></Button>
+		<Edit Height="10" Id="edt_tmp" Left="1857" TabOrder="5" Top="35" Visible="FALSE" Width="10"></Edit>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BtnFrame
+* 업무명      : 프레임 구성
+* 프로그램명  : 하단
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_INT_TAB_COUNT = 2; // 탭 번호
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	// 유저 정보 설정 부분
+	div_info.img_name.Text = gds_session.getColumn(0, "userNm");
+	div_info.img_depart.Text = gds_session.getColumn(0, "supOrgNm")+" > "+gds_session.getColumn(0, "orgNm");
+	
+	var sTitle = "홈";
+	var sMenuNum = "";
+	var sUrl = "main::homeForm";
+	var sTabId = "winTab1";
+	
+	//  Open 메뉴 리스트 추가 -- DATASET : gds_openMenu
+	gf_addOpenMenu(sTitle, sMenuNum, sUrl, sTabId, 0);
+
+	// MDI 윈도우 실행
+	var sArg  = "pFrmTitle=" + quote(sTitle);
+		sArg += " pFrmNum=" + quote(sMenuNum);
+		sArg += " pFrmUrl=" + quote(sUrl);
+		sArg += " pFrmWinId=" + quote(sTabId);
+
+	NewWindow("winTab1", "main::bodyFrame.xml", sArg, 830, 600, "OpenStyle=Max closeFlag=false", 0, 0);
+}
+
+/*******************************************************************************
+ * @description    : 창 탭 추가
+ * @param sTitle   : 메뉴 이름
+*******************************************************************************/
+function f_addNewWindow(sTitle)
+{
+	var tabIdIdx = FV_INT_TAB_COUNT;
+	if(sTitle.length() > 11)
+	{
+		sTitle = substr(sTitle, 0, 10) + "..";
+	}
+	var nTabIndex = tab_openWindow.InsertTab("winTab"+tabIdIdx, -1, "", sTitle, "btm_tab");
+	tab_openWindow.TabIndex = nTabIndex;
+	FV_INT_TAB_COUNT++;
+}
+
+/*******************************************************************************
+ * @description    : 창탭 선택 - 이벤트
+*******************************************************************************/
+function tab_openWindow_OnChanged(obj,nOldIndex,nNewindex)
+{
+	f_selectTab(nNewindex);
+}
+
+/*******************************************************************************
+ * @description       : 탭 선택에 따른 윈도우 포커스
+ * @param nNewindex   : 탭 인덱스
+*******************************************************************************/
+function f_selectTab(nTabIndex)
+{
+	var sTabId = tab_openWindow.GetItem(nTabIndex).id;
+	var oWinObj = AllWindows(sTabId);
+	var sMenuNum = gds_openMenu.LookUp("pageTabId",sTabId,"pageNum");
+	if(oWinObj[0] != null) 
+	{
+		oWinObj[0].SetFocus();
+		var nSelectedRow = gds_leftMenu.FindRow("menuNum", sMenuNum);
+		gds_leftMenu.row = nSelectedRow;
+		var sSize = gds_leftMenu.GetColumn(nSelectedRow, "screenSize");
+
+		if(sSize == "Y")
+		{
+			docLeft.f_showLeftMenu(false);
+		}
+		else
+		{
+			docLeft.f_showLeftMenu(true);
+		}
+		return;
+	}
+}
+
+/*******************************************************************************
+ * @description       : 선택창의 리셋 함수 호출
+ * @param sTabId      : 탭 ID
+		  sArg        : 파라메터
+*******************************************************************************/
+function f_tabReset(sTabId, sArg)
+{
+	var oWinObj = AllWindows(sTabId);
+
+	if(oWinObj[0] != null) 
+	{
+		oWinObj[0].div_body.df_reSet(sArg);
+		oWinObj[0].setFocus();
+		return;
+	}
+}
+
+
+/*******************************************************************************
+ * @description          : 선택창의 리셋 함수 호출
+ * @param sTabId         : 탭 ID
+		  sFunc          : 함수
+		  sParam         : 함수 인자
+*******************************************************************************/
+function f_tabReCall(sTabId, sFunc, sParam)
+{
+	var oWinObj = AllWindows(sTabId);
+
+	if(oWinObj[0] != null) 
+	{
+		if(sFunc != null)
+		{
+			if(oWinObj[0].div_body.IsExistFunc(sFunc))
+			{
+				var sArg = "";
+				if(sParam != null && sParam.length > 0)
+				{
+			
+					var arrParam = sParam.split(",", "webstyle");
+					var nParamCount = arrParam.length;
+					for(var i=0; i<nParamCount; i++)
+					{
+						sArg += ",'"+trim(arrParam[i])+"'";
+					}
+					
+					sArg = substr(sArg, 1);
+				}
+				
+				oWinObj[0].div_body.CallScript(sFunc + "("+sArg+")");
+			}
+
+		}
+		oWinObj[0].setFocus();
+		return;
+	}
+}
+
+/*******************************************************************************
+ * @description    : 현재 창 닫기 - 이벤트
+*******************************************************************************/
+function btn_closeWindow_OnClick(obj)
+{
+	var nNowTabIndex = tab_openWindow.TabIndex;
+
+	if(nNowTabIndex != 0)
+	{
+		if(confirm(MSG_00996) == true)
+		{
+			var sTabId = tab_openWindow.GetItem(nNowTabIndex).id;
+			var oWinObj = AllWindows(sTabId);
+			
+			if(oWinObj[0] != null) 
+			{
+				oWinObj[0].close();
+				return;
+			}
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : 모든 창 닫기 - 이벤트
+*******************************************************************************/
+function btn_closeAllWindows_OnClick(obj)
+{
+	if(tab_openWindow.TabCount > 1)
+	{
+		if(confirm(MSG_00997) == true)
+		{
+			var oWinObj, sTabId;
+			var nTabCount = Global.allwindows.count;
+			for ( var i = nTabCount-1; i >= 0; i -- )
+			{
+				oWinObj = global.Windows[i];
+				sTabId = oWinObj.ID;
+				//프레임 및 기본창을 제외한 창 닫기 
+				if ( (sTabId == "winTab1") || (sTabId == "docTop") || (sTabId == "docBottom") || (sTabId == "docLeft") )
+				{
+					continue;
+				}
+			
+				oWinObj.Close();
+			}
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : 홈 클릭 - 이벤트
+*******************************************************************************/
+function tab_openWindow_OnClick(obj,nButton,nX,nY)
+{
+	if(tab_openWindow.GetIndex(nX, nY) == 0){
+		gf_movenCall("","f_getMainInfo");
+	}
+}
+]]></Script>
+</Window>

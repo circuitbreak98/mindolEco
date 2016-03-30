@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSUI08600">
+	<select id="getGsIfList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+    select  /* SALSUI08600_getGsIfList_단말기상태정보추출_김연석_김연석 */
+               rpad(nvl(if_rec_typ, ' '),  2, ' ')                  /* 레코드구분 */
+         ||  rpad(nvl(ukey_agency_cd, ' '),  6, ' ')                /* U.Key 대리점코드 */
+         ||  rpad(nvl(ukey_sub_cd, ' '),  4, ' ')                   /* U.Key 대리점서브코드 */
+         ||  rpad(nvl(svc_mgmt_num1, ' '), 10, ' ')                 /* 서비스관리번호 */
+         ||  rpad(
+                  nvl(case
+                     when if_rec_typ in ('21','22','24','29','25','26','27','28','65','66')
+                     then proc_dt
+                     else (select proc_dt
+                                 from tsal_general_sale_if a
+                                 where a.svc_mgmt_num1 = svc_mgmt_num1
+                                   and a.eqp_mdl_cd = eqp_mdl_cd
+                                   and a.eqp_ser_num = eqp_ser_num
+                                   and a.sale_chg_hst_cl = '01'
+                                   and rownum = 1
+                          )
+                     end, ' ')
+             , 8, ' ')                                               /* 개통일자 */
+         ||  rpad(nvl(proc_dt, ' '), 8, ' ')                         /* 처리일자 */
+         ||  rpad(nvl(proc_tm, ' '), 6, ' ')                         /* 처리시간 */
+         ||  rpad(nvl(ukey_channel_cd, ' '), 6, ' ')                 /* 판매점코드 */
+         ||  rpad(nvl(ukey_channel_sub_cd, '0000'), 4, ' ')             /* 서브판매점코드 */
+         ||  rpad(nvl(eqp_mdl_cd, ' '), 5, ' ')                      /* 단말기모델코드 */
+         ||  rpad(nvl(fbas_get_prod_nm(eqp_mdl_cd), ' '), 20, ' ')   /* 단말기모델명 */
+         ||  rpad(nvl(eqp_ser_num, ' '), 15, ' ')                    /* 단말기일련번호 */
+         ||  rpad(nvl(color_cd, ' '), 2, ' ')                        /* 색상코드 */
+         ||  rpad(nvl(fbas_get_commcdnm_val('ZBAS_C_00040',color_cd), ' '), 20, ' ')      /* 색상명 */
+         ||  rpad(nvl(cust_nm, ' '), 50, ' ')                        /* 고객명 */
+         ||  rpad(nvl(cust_biz_num, ' '), 13, ' ')                   /* 주민등록번호 */
+         ||  rpad(nvl(svc_num, ' '), 20, ' ')                        /* 서비스번호 */
+         ||  rpad(nvl(proc_user_id, ' '), 15, ' ')                   /* 처리자ID */
+         ||  rpad(nvl(inden_num, ' '), 20, ' ')                      /* 계약서번호 */
+         ||  rpad(nvl(svc_cd, ' '), 1, ' ')                          /* 서비스코드 */
+         ||  rpad(nvl('TP', ' '), 2, ' ')                          /* TKEY,TKEY+ 구분 */
+         ||  rpad(
+                  nvl(case
+                     when if_rec_typ in ('21','22','24','29','25','26','27','28','65','66','55')
+                     then 'A'
+                     else 'U'
+                     end, ' ')
+             , 1, ' ')                                               /* 액션코드 */
+         ||  rpad(
+                  nvl(case
+                     when if_rec_typ in ('21','22','24','29','25','26','27','28','65','66') then ps_apnd_yn
+                     when if_rec_typ in ('55','56') then 'C'
+                     when if_rec_typ in ('75')      then 'H'
+                     when if_rec_typ in ('18')      then 'Y'
+                     else ' '
+                     end, ' ')
+             , 1, ' ')                                               /* 판매점처리상태 */
+             as MSG
+      from   tsal_general_sale_if
+     where   ukey_channel_cd like 'P%'
+       and   if_rec_typ in ('21','22','24','29','25','26','27','28','65','66')
+       and   mod_dtm between #SDTM# and #EDTM#
+union all
+    select  /* SALSUI08600_getGsIfList_단말기상태정보추출_김연석_김연석 */
+            rpad(b.if_rec_typ,  2, ' ')                  /* 레코드구분 */
+         ||  rpad(nvl(a.ukey_agency_cd, ' '),  6, ' ')                /* U.Key 대리점코드 */
+         ||  rpad(nvl(a.ukey_sub_cd, ' '),  4, ' ')                   /* U.Key 대리점서브코드 */
+         ||  rpad(nvl(a.svc_mgmt_num1, ' '), 10, ' ')                 /* 서비스관리번호 */
+         ||  rpad(nvl(b.proc_dt, ' '), 8, ' ')                                               /* 개통일자 */
+         ||  rpad(nvl(a.proc_dt, ' '), 8, ' ')                         /* 처리일자 */
+         ||  rpad(nvl(a.proc_tm, ' '), 6, ' ')                         /* 처리시간 */
+         ||  rpad(nvl(b.ukey_channel_cd, ' '), 6, ' ')                 /* 판매점코드 */
+         ||  rpad(nvl(b.ukey_channel_sub_cd, '0000'), 4, ' ')          /* 서브판매점코드 */
+         ||  rpad(nvl(a.eqp_mdl_cd, ' '), 5, ' ')                      /* 단말기모델코드 */
+         ||  rpad(nvl(fbas_get_prod_nm(a.eqp_mdl_cd), ' '), 20, ' ')   /* 단말기모델명 */
+         ||  rpad(nvl(a.eqp_ser_num, ' '), 15, ' ')                    /* 단말기일련번호 */
+         ||  rpad(nvl(b.color_cd, ' '), 2, ' ')                        /* 색상코드 */
+         ||  rpad(nvl(fbas_get_commcdnm_val('ZBAS_C_00040',b.color_cd), ' '), 20, ' ')      /* 색상명 */
+         ||  rpad(nvl(b.cust_nm, ' '), 50, ' ')                        /* 고객명 */
+         ||  rpad(nvl(b.cust_biz_num, ' '), 13, ' ')                   /* 주민등록번호 */
+         ||  rpad(nvl(b.svc_num, ' '), 20, ' ')                        /* 서비스번호 */
+         ||  rpad(nvl(a.proc_user_id, ' '), 15, ' ')                   /* 처리자ID */
+         ||  rpad(nvl(b.inden_num, ' '), 20, ' ')                      /* 계약서번호 */
+         ||  rpad(nvl(a.svc_cd, ' '), 1, ' ')                          /* 서비스코드 */
+         ||  rpad(nvl('TP', ' '), 2, ' ')                          /* TKEY,TKEY+ 구분 */
+         ||  rpad('U', 1, ' ')                                               /* 액션코드 */
+         ||  rpad(nvl(case
+                     when a.if_rec_typ in ('55','56') then 'C'
+                     when a.if_rec_typ in ('75')      then 'H'
+                     when a.if_rec_typ in ('18')      then 'Y'
+                     else ' '
+                     end, ' ')
+             , 1, ' ')                                             /* 판매점처리상태 */
+         as MSG
+      from ( select * from tsal_general_sale_if where sale_chg_hst_cl in ('02', '07') ) a
+         , ( select * from tsal_general_sale_if where sale_chg_hst_cl =   '01'  and ukey_channel_cd like 'P%'      ) b
+     where a.svc_mgmt_num1   =  b.svc_mgmt_num1
+       and a.eqp_mdl_cd      =  b.eqp_mdl_cd
+       and a.eqp_ser_num     =  b.eqp_ser_num
+       and a.mod_dtm   between #SDTM# and #EDTM#
+	]]>
+	</select>
+	<select id="getBatchInfo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select     /* SALSUI08600_getBatchInfo_단말기배치정보추출_김연석_김연석 */
+	       op_dt
+	     , prog_id
+	     , seq
+	     , op_rslt
+	     , fail_cnt
+	     , sta_dtm
+	     , end_dtm
+	     , rmks
+	     , del_yn
+	     , upd_cnt
+	     , ins_dtm
+	     , ins_user_id
+	     , mod_dtm
+	     , mod_user_id
+	     , obj_dt
+	from tbas_bat_log
+	WHERE 1=1
+	  and OP_DT       = '99999999999999'
+	  and PROG_ID     = 'SALSUI08600'
+	  and SEQ         = '1'
+	]]>
+	</select>
+	<update id="saveBatchInfo" parameterClass="map">
+	<![CDATA[
+    UPDATE tbas_bat_log    /* SALSUI08600_saveBatchInfo_단말기배치정보수정_김연석_김연석 */
+    SET
+       OP_DT       = '99999999999999'
+     , PROG_ID     = 'SALSUI08600'
+     , SEQ         = '1'
+     , OP_RSLT     = 'S'
+     , FAIL_CNT    = '0'
+     , STA_DTM     = ''
+     , END_DTM     = ''
+     , RMKS        = '정상수행'
+     , DEL_YN      = 'N'
+     , UPD_CNT     = 1
+     , INS_DTM     = '20100801000000'
+     , INS_USER_ID = 'SALSUI0860'
+     , MOD_DTM     = #EDTM#
+     , MOD_USER_ID = 'SALSUI0860'
+     , OBJ_DT      = ''
+    WHERE 1=1
+      and OP_DT       = '99999999999999'
+      and PROG_ID     = 'SALSUI08600'
+      and SEQ         = '1'
+	]]>
+	</update>
+
+</sqlMap>

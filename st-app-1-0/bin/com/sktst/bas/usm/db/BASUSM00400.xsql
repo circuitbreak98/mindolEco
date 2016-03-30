@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM00400">
+	<select id="getCheckPassWord" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00400_getCheckPassWord_원윤성_한병곤" */
+       user_id,
+       u_key_id,
+       user_cd,
+       user_nm,
+       pwd 
+  FROM tbas_user_mgmt
+ WHERE user_id = #onlineContext.userInfo.loginId#
+   AND pwd = #passWord#]]>
+	</select>
+	<update id="updatePassWord" parameterClass="map" ><![CDATA[UPDATE /*+ "BASUSM00400_updatePassWord_원윤성_한병곤" */
+	   tbas_user_mgmt
+   SET pwd         = #newPassWord#,
+       pwd_end_dt  = TO_CHAR(ADD_MONTHS(SYSDATE,3),'yyyyMMdd'),
+       mod_dtm     = to_char(sysdate,'yyyymmddhh24MIss'),
+       mod_user_id = #onlineContext.userInfo.loginId#   
+ WHERE user_id = #onlineContext.userInfo.loginId#   ]]>
+	</update>
+</sqlMap>

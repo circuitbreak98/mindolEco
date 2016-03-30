@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO01400">
+	<select id="getDealPop" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT							/*+ BASBCO01400_getDealPop_조민지_최승호 */
+	deal_co_nm,					/* 거래처 명 */
+	deal_co_cd,					/* 거래처 코드 */
+	deal_co_cd as ukey_agency_cd,				/* U-KEY 코드 - 대리점 코드 */
+	ukey_sub_cd,				/* U-KEY 코드 - 서브 코드 */
+	ukey_channel_cd,			/* U-KEY 코드 - 채널 코드 */
+	deal_co_cl1,				/* 거래처 구분 */
+	deal_co_cl2,					/* 거래처 구분 */
+	UKEY_AGENCY_CD || NVL(UKEY_SUB_CD,'A000') AS UKEY_CD
+FROM
+	tbas_deal_co_mgmt a
+WHERE
+	del_yn = 'N'
+AND 
+	deal_co_cl1 IN ( 'A1', $deal_co_cl1$ )
+   AND hseq_no = ( SELECT /*+ INDEX_DESC (x xbas_deal_co_mgmt_pk) */
+                            hseq_no
+                       FROM tbas_deal_co_mgmt x
+                      WHERE x.deal_co_cd = a.deal_co_cd
+                        AND x.eff_sta_dtm <= #eff_end_dtm#
+                        AND x.eff_end_dtm >= #eff_str_dtm#
+                        AND x.del_yn = 'N'
+                        AND rownum =1 
+                   )
+           
+]]><isEqual prepend="AND" property="total_yn" compareValue="N">        
+<![CDATA[   deal_end_dt > substr(#eff_end_dtm#,0,8)
+]]></isEqual>	
+<![CDATA[/* 거래처가 정산처 인 경우. */
+]]><isEqual prepend="AND" property="only_stl_plc" compareValue="Y">
+<![CDATA[	stl_plc = deal_co_cd
+]]></isEqual>	
+<![CDATA[	
+/* 거래 상태 1 */
+]]><isEqual prepend="AND" property="deal_status" compareValue="1">
+<![CDATA[	pay_stop_yn = 'N'
+]]></isEqual>
+<![CDATA[	
+/* 거래 상태 2 */
+]]><isEqual prepend="AND" property="deal_status" compareValue="2">
+<![CDATA[	out_stop_yn = 'N'
+]]></isEqual>
+<![CDATA[	
+/* 거래 상태 4 */	
+]]><isEqual prepend="AND" property="deal_status" compareValue="4">
+<![CDATA[	sale_stop_yn = 'N'
+]]></isEqual>
+<![CDATA[		
+/* 소속 조직 */	
+]]><isNotEmpty prepend="AND" property="org_id">
+<![CDATA[	org_id = #org_id#
+]]></isNotEmpty>
+<![CDATA[
+/* 소속 대리점 */
+]]><isNotEmpty prepend="AND" property="pos_agency">
+<![CDATA[	pos_agency = #pos_agency#
+]]></isNotEmpty>	
+<![CDATA[
+/* 영업 사원 */
+]]><isNotEmpty prepend="AND" property="chrgr_user_id">
+<![CDATA[	chrgr_user_id = #chrgr_user_id#
+]]></isNotEmpty>
+<![CDATA[
+/* 상위거래처 */
+]]><isNotEmpty prepend="AND" property="sup_deal">
+<![CDATA[	sup_deal = #sup_deal#
+]]></isNotEmpty>
+<![CDATA[
+/* 거래처유형 */
+]]><isNotEmpty prepend="AND" property="deal_co_cl2">
+<![CDATA[	nvl(deal_co_cl2,'0') IN ( $deal_co_cl2$ )
+]]></isNotEmpty>
+<![CDATA[
+/* 거래처명 */
+]]><isNotEmpty prepend="AND" property="deal_co_nm">
+<![CDATA[	upper(deal_co_nm) LIKE upper('%'||#deal_co_nm#||'%')
+]]></isNotEmpty>
+<![CDATA[
+/* 거래처코드 */
+]]><isNotEmpty prepend="AND" property="deal_co_cd">
+<![CDATA[	upper(deal_co_cd) LIKE upper('%'||#deal_co_cd#||'%')
+]]></isNotEmpty>
+<![CDATA[
+/* ukey 코드 */
+]]><isNotEmpty prepend="AND" property="ukey_agency_cd">
+<![CDATA[	upper(UKEY_AGENCY_CD || UKEY_SUB_CD) LIKE upper('%'||#ukey_agency_cd#||'%')
+]]></isNotEmpty>
+<![CDATA[
+/* 부모창 조회 조건 코드 */
+]]><isNotEmpty prepend="AND" property="search_condition">
+<![CDATA[	( upper(deal_co_nm) LIKE upper('%'||#search_condition#||'%') 
+	OR upper(ukey_agency_cd) LIKE upper(#search_condition#||'%') 
+	OR upper(ukey_sub_cd) LIKE upper(#search_condition#||'%') 
+	OR upper(ukey_channel_cd) LIKE upper(#search_condition#||'%') )
+]]></isNotEmpty>
+<![CDATA[
+ORDER BY deal_co_cl1, deal_co_nm]]>
+	</select>
+	<select id="getDealPopForMax" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT							/*+ BASBCO01400_getDealPopForMax_조민지_최승호 */
+	deal_co_nm,					/* 거래처 명 */
+	deal_co_cd,					/* 거래처 코드 */
+	deal_co_cd as ukey_agency_cd,				/* U-KEY 코드 - 대리점 코드 */
+	ukey_sub_cd,				/* U-KEY 코드 - 서브 코드 */
+	ukey_channel_cd,			/* U-KEY 코드 - 채널 코드 */
+	deal_co_cl1,				/* 거래처 구분 1 */
+	deal_co_cl2, 				/* 거래처 구분 2 */
+	UKEY_AGENCY_CD || NVL(UKEY_SUB_CD,'A000') AS UKEY_CD
+FROM tbas_deal_co_mgmt a
+WHERE 
+hseq_no = (
+SELECT max(hseq_no)
+FROM
+	tbas_deal_co_mgmt
+WHERE deal_co_cd = a.deal_co_cd
+AND
+	del_yn = 'N'
+GROUP BY deal_co_cd)
+AND 
+	deal_co_cl1 IN ( 'A1', $deal_co_cl1$ )	
+]]><isEqual prepend="AND" property="total_yn" compareValue="N"> 	
+<![CDATA[   a.deal_end_dt > to_char(sysdate,'YYYYMMDD')	
+]]></isEqual>	
+<![CDATA[/* 거래처가 정산처 인 경우. */
+]]><isEqual prepend="AND" property="only_stl_plc" compareValue="Y">
+<![CDATA[	stl_plc = deal_co_cd
+]]></isEqual>
+<![CDATA[	
+/* 거래 상태 1 */
+]]><isEqual prepend="AND" property="deal_status" compareValue="1">
+<![CDATA[	pay_stop_yn = 'N'
+]]></isEqual>
+<![CDATA[	
+/* 거래 상태 2 */
+]]><isEqual prepend="AND" property="deal_status" compareValue="2">
+<![CDATA[	out_stop_yn = 'N'
+]]></isEqual>
+<![CDATA[	
+/* 거래 상태 3 */	
+]]><isEqual prepend="AND" property="deal_status" compareValue="3">
+<![CDATA[	sale_stop_yn = 'N'
+]]></isEqual>
+<![CDATA[		
+/* 소속 조직 */	
+]]><isNotEmpty prepend="AND" property="org_id">
+<![CDATA[	org_id in (SELECT org_id 
+                 FROM tbas_org_mgmt
+                WHERE del_yn = 'N' 
+                  AND EFF_ORG_YN = 'Y'
+                START WITH org_id = #org_id#
+              CONNECT BY PRIOR org_id = sup_org)
+]]></isNotEmpty>
+<![CDATA[
+/* 소속 대리점 */
+]]><isNotEmpty prepend="AND" property="pos_agency">
+<![CDATA[	pos_agency = #pos_agency#
+]]></isNotEmpty>	
+<![CDATA[
+/* 영업 사원 */
+]]><isNotEmpty prepend="AND" property="chrgr_user_id">
+<![CDATA[	chrgr_user_id = #chrgr_user_id#
+]]></isNotEmpty>
+<![CDATA[
+/* 상위거래처 */
+]]><isNotEmpty prepend="AND" property="sup_deal">
+<![CDATA[	sup_deal = #sup_deal#
+]]></isNotEmpty>
+<![CDATA[
+/* 거래처유형 */
+]]><isNotEmpty prepend="AND" property="deal_co_cl2">
+<![CDATA[	nvl(deal_co_cl2,'0') IN ( $deal_co_cl2$ )
+]]></isNotEmpty>
+<![CDATA[
+/* 거래처명 */
+]]><isNotEmpty prepend="AND" property="deal_co_nm">
+<![CDATA[	upper(deal_co_nm) LIKE upper('%'||#deal_co_nm#||'%')
+]]></isNotEmpty>
+<![CDATA[
+/* 거래처코드 */
+]]><isNotEmpty prepend="AND" property="deal_co_cd">
+<![CDATA[	upper(deal_co_cd) LIKE upper('%'||#deal_co_cd#||'%')
+]]></isNotEmpty>
+<![CDATA[
+/* ukey 코드 */
+]]><isNotEmpty prepend="AND" property="ukey_agency_cd">
+<![CDATA[	upper(UKEY_AGENCY_CD || UKEY_SUB_CD) LIKE upper('%'||#ukey_agency_cd#||'%')
+]]></isNotEmpty>
+<![CDATA[
+/* 부모창 조회 조건 코드 */
+]]><isNotEmpty prepend="AND" property="search_condition">
+<![CDATA[	( upper(deal_co_nm) LIKE upper('%'||#search_condition#||'%') 
+   OR upper(ukey_agency_cd) LIKE upper(#search_condition#||'%') 
+   OR upper(ukey_sub_cd) LIKE upper(#search_condition#||'%') 
+   OR upper(ukey_channel_cd) LIKE upper(#search_condition#||'%') )
+]]></isNotEmpty>
+<![CDATA[
+ORDER BY deal_co_cl1, deal_co_nm]]>
+	</select>
+</sqlMap>

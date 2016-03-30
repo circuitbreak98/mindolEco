@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALBOS00100">
+	<insert id="saveOnlineSaleInsert" parameterClass="map" ><![CDATA[INSERT INTO tsal_gnrl_sale /*+ SALBOS00100_saveOnlineSaleInsert - 김만수 */
+(
+	gnrl_sale_no
+	, gnrl_sale_chg_seq
+	, sale_dtm
+	, sale_chgrg_id
+	, sale_chg_hst_cl
+    , sale_chg_dtm
+    , sale_mod_user_id
+	, cust_nm
+	, cust_biz_num
+	, cust_cl
+	, cust_tel_no
+	, cust_addr
+	, sale_plc
+	, ins_user_id
+	, ins_dtm
+	, sale_typ_cd
+	, sale_cncl_yn
+    , sale_cncl_dtm
+    , sale_cncl_cl
+	, rmks
+	, settl_cond
+	, upd_cnt
+	, del_yn
+	, inden_num
+) 
+VALUES 
+(
+	#gnrl_sale_no#
+	, #gnrl_sale_chg_seq#
+	, #sale_dtm#
+	, #onlineContext.userInfo.loginId#
+	, #sale_chg_hst_cl#
+    , #sale_chg_dtm#
+    , #sale_mod_user_id#
+	, #cust_nm#
+	, #cust_biz_num#
+	, #cust_cl#
+	, #cust_tel_no#
+	, #cust_addr#
+	, #sale_plc#
+	, #onlineContext.userInfo.loginId#
+	, TO_CHAR(SYSDATE, 'yyyyMMddHH24MISS')
+	, #sale_typ_cd#
+	, #sale_cncl_yn#
+    , #sale_cncl_dtm#
+    , #sale_cncl_cl#
+	, #rmks#
+	, #settl_cond#
+	, 0
+	, 'N'
+	, #inden_num#
+)]]>
+	</insert>
+	<select id="getSaleMgmtSeq" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALBOS00100_getSaleMgmtSeq-김만수 */
+       'S'||to_char(TSAL_S_SEQ.nextval,'FM0000000000') saleMgmtNo
+FROM   dual]]>
+	</select>
+	<insert id="saveOnlinePayInsert" parameterClass="map" ><![CDATA[INSERT INTO tsal_payment /*+ SALBOS00100_saveOnlinePayInsert - 김만수 */
+(
+	gnrl_sale_no
+	, gnrl_sale_chg_seq
+	, cash_pay_amt
+	, crdtcrd_corp1
+	, crdtcrd_pay_amt1
+	, crdtcrd_corp2
+	, crdtcrd_pay_amt2
+	, ins_user_id
+	, ins_dtm
+	, upd_cnt
+	, del_yn
+) 
+VALUES 
+(
+	#gnrl_sale_no#
+	, #gnrl_sale_chg_seq#
+	, #cash_pay_amt#
+	, #crdtcrd_corp1#
+	, #crdtcrd_pay_amt1#
+	, #crdtcrd_corp2#
+	, #crdtcrd_pay_amt2#
+	, #onlineContext.userInfo.loginId#
+	, TO_CHAR(SYSDATE, 'yyyyMMddHH24MISS')
+	, 0
+	, 'N'
+)]]>
+	</insert>
+	<insert id="saveOnlineCashInsert" parameterClass="map" ><![CDATA[INSERT INTO tsal_sale_amt /*+ SALBOS00100_saveOnlineCashInsert - 김만수 */
+(
+	gnrl_sale_no
+	, gnrl_sale_chg_seq
+	, sale_amt
+	, dis_amt
+	, mar_amt
+	, cmms_amt
+	, vat_amt
+	, ins_user_id
+	, ins_dtm
+	, upd_cnt
+	, del_yn
+) 
+VALUES 
+(
+	#gnrl_sale_no#
+	, #gnrl_sale_chg_seq#
+	, #sale_amt#
+	, #dis_amt#
+	, #mar_amt#
+	, #cmms_amt#
+	, #vat_amt#
+	, #onlineContext.userInfo.loginId#
+	, TO_CHAR(SYSDATE, 'yyyyMMddHH24MISS')
+	, 0
+	, 'N'
+)]]>
+	</insert>
+	<insert id="saveOnlineEquiInsert" parameterClass="map" ><![CDATA[INSERT INTO tsal_equipment_sale /*+ SALBOS00100_saveOnlineEquiInsert - 김만수 */
+(
+	
+	gnrl_sale_no
+	, gnrl_sale_chg_seq
+	, sale_seq
+	, prod_ser_num
+	, eqp_ser_num
+	, eqp_mdl_cd
+	, eqp_color_cd
+	, ins_user_id
+	, ins_dtm
+	, upd_cnt
+	, del_yn
+) 
+VALUES 
+(
+	
+	#gnrl_sale_no#
+	, #gnrl_sale_chg_seq#
+	, 1
+	, #prod_ser_num#
+	, #eqp_ser_num#
+	, #eqp_mdl_cd#
+	, #eqp_color_cd#
+	, #onlineContext.userInfo.loginId#
+	, TO_CHAR(SYSDATE, 'yyyyMMddHH24MISS')
+	, 0
+	, 'N'
+)]]>
+	</insert>
+	<select id="getlfOnlineSaleList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALBOS00100_getlfOnlineSaleList - 김만수 */
+  '' gnrl_sale_no                /* 일반판매번호 */
+  , '' gnrl_sale_chg_seq         /* 일반판매변경 순번 */
+  , '' prod_yn
+  , op_dt
+  , op_tm
+  , seq
+  , if_rec_typ
+  , proc_dt
+  , proc_tm
+  , proc_user_id
+  , proc_cl
+  , '' sale_dtm
+  , '' sale_chg_hst_cl
+  , '' sale_chg_dtm
+  , '' sale_mod_user_id
+  , inden_num
+  , cust_nm
+  , cust_biz_num
+  , cust_cl
+  , cust_tel_no
+  , cust_addr
+  , sale_plc
+  , prod_ser_num              /* 상품일련번호 */
+  , eqp_ser_num               /* 단말기일련번호 */
+  , eqp_mdl_cd                /* 단말기모델 */
+  , eqp_color_cd              /* 단말기색상 */
+  , sale_amt
+  , dis_amt
+  , cmms_amt
+  , mar_amt
+  , vat_amt
+  , settl_cond
+  , cash_pay_amt
+  , crdtcrd_corp1
+  , crdtcrd_pay_amt1
+  , crdtcrd_corp2
+  , crdtcrd_pay_amt2
+  , rmks
+  , err_msg
+FROM tsal_gnrl_sale_if
+WHERE proc_dt BETWEEN #proc_dt_from# AND #proc_dt_to#
+]]><isNotEmpty prepend="AND" property="proc_cl">                       
+<![CDATA[proc_cl = #proc_cl#
+]]></isNotEmpty> 
+<![CDATA[/*AND seq = (SELECT MAX(seq) FROM tsal_gnrl_sale_if A */
+/*			WHERE A.op_dt = op_dt AND A.op_tm = op_tm)*/]]>
+	</select>
+	<insert id="saveIfOnlineSaleInsert" parameterClass="map" ><![CDATA[INSERT INTO tsal_gnrl_sale_if
+(
+  op_dt
+  , op_tm
+  , seq
+  , if_rec_typ
+  , proc_dt
+  , proc_tm
+  , proc_user_id
+  , proc_cl
+  , sale_chg_hst_cl
+  , sale_chg_dtm
+  , sale_mod_user_id
+  , inden_num
+  , cust_nm
+  , cust_biz_num
+  , cust_cl
+  , cust_tel_no
+  , cust_addr
+  , sale_plc
+  , prod_ser_num              
+  , eqp_ser_num              
+  , eqp_mdl_cd               
+  , eqp_color_cd              
+  , sale_amt
+  , dis_amt
+  , cmms_amt
+  , mar_amt
+  , vat_amt
+  , settl_cond
+  , cash_pay_amt
+  , crdtcrd_corp1
+  , crdtcrd_pay_amt1
+  , crdtcrd_corp2
+  , crdtcrd_pay_amt2
+  , sale_cncl_yn
+  , sale_cncl_dtm
+  , sale_cncl_cl
+  , rmks
+  , err_msg
+  , del_yn
+  , upd_cnt
+  , ins_user_id
+  , ins_dtm
+) 
+VALUES
+(
+  #op_dt#
+  , #op_tm#
+  , #seq#
+  , #if_rec_typ#
+  , #proc_dt#
+  , #proc_tm#
+  , #proc_user_id#
+  , #proc_cl#
+  , #sale_chg_hst_cl#
+  , #sale_chg_dtm#
+  , #sale_mod_user_id#
+  , #inden_num#
+  , #cust_nm#
+  , #cust_biz_num#
+  , #cust_cl#
+  , #cust_tel_no#
+  , #cust_addr#
+  , #sale_plc#
+  , #prod_ser_num#             
+  , #eqp_ser_num#              
+  , #eqp_mdl_cd#               
+  , #eqp_color_cd#              
+  , #sale_amt#
+  , #dis_amt#
+  , #cmms_amt#
+  , #mar_amt#
+  , #vat_amt#
+  , #settl_cond#
+  , #cash_pay_amt#
+  , #crdtcrd_corp1#
+  , #crdtcrd_pay_amt1#
+  , #crdtcrd_corp2#
+  , #crdtcrd_pay_amt2#
+  , #sale_cncl_yn#
+  , #sale_cncl_dtm#
+  , #sale_cncl_cl#
+  , #rmks#
+  , #err_msg#
+  , 'N'
+  , 0
+  , #onlineContext.userInfo.loginId#
+  , TO_CHAR(SYSDATE, 'yyyyMMddHH24MISS')
+)]]>
+	</insert>
+	<select id="getMaxSeq" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT NVL(MAX(A.seq), 0) + 1 SEQ
+FROM tsal_gnrl_sale_if A 
+WHERE A.op_dt = #op_dt#
+AND A.op_tm = #op_tm#]]>
+	</select>
+	<select id="getOrderNum" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALBOS00100_getOrderNum - 김만수 */
+	A.GNRL_SALE_NO
+	, A.GNRL_SALE_CHG_SEQ
+	, A.SALE_DTM
+	, A.SALE_CHGRG_ID
+	, A.SALE_CHG_HST_CL
+	, A.ACC_CHG_HST_CL
+  	, A.SALE_CHG_DTM
+  	, A.SALE_MOD_USER_ID
+  	, A.STL_PLC 
+  	, A.DIS_HLD_PLC 
+  	, A.SALE_PLC 
+  	, A.SALE_CHG_PLC
+  	, A.CUST_CL 
+  	, A.CUST_NM 
+  	, A.CUST_BIZ_NUM  
+  	, A.SETTL_COND 
+  	, A.SALE_CMMS_FIX_YN
+  	, A.SALE_CNCL_YN
+  	, A.SALE_CNCL_DTM
+  	, A.SALE_CNCL_CL
+  	, A.DT_CLS_YN
+  	, A.RMKS
+  	, A.SALE_TYP_CD
+  	, A.CUST_TEL_NO
+  	, A.CUST_ADDR
+  	, A.INDEN_NUM
+  	, '' out_mgmt_no
+  	, '' ser_num
+  	, '' color_cd
+  	, '' prod_cd
+  	, '' prod_ser_num
+  	, '' eqp_color_cd
+  	, '' eqp_mdl_cd
+FROM tsal_gnrl_sale A 
+WHERE A.inden_num = #inden_num#
+AND A.GNRL_SALE_CHG_SEQ = 
+	(SELECT NVL(MAX(GNRL_SALE_CHG_SEQ), '0')
+		FROM tsal_gnrl_sale
+		WHERE inden_num = #inden_num#)]]>
+	</select>
+	<select id="getItemList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT   /*+ SALBOS00100_getItemList - 김만수 */
+  a.ser_num
+  , a.COLOR_CD
+  , a.PROD_CD
+  ,A.eqp_st 	/* 단말기 등급 */
+  , (SELECT SUM(AMT) FROM TDIS_PROD_UNIT_PRC WHERE 
+      ser_num = a.SER_NUM
+      AND color_cd = a.COLOR_CD
+      AND prod_cd = a.PROD_CD
+      AND del_yn = 'N') AS sale_unit_prc
+  , 1 sale_qty
+  , #sale_amt# sale_amt
+FROM tdis_prod_dis A
+WHERE ser_num = #prod_ser_num#
+AND color_cd = #eqp_color_cd#
+AND prod_cd = #eqp_mdl_cd#]]>
+	</select>
+	<insert id="saveEquiUpdate" parameterClass="map" ><![CDATA[INSERT INTO tsal_equipment_sale /*+ SALBOS00100_saveEquiUpdate_김만수 */
+(
+  gnrl_sale_no      
+  , gnrl_sale_chg_seq 
+  , sale_seq          
+  , eqp_ser_num       
+  , eqp_mdl_cd        
+  , eqp_color_cd      
+  , prod_ser_num      
+  , del_yn            
+  , upd_cnt           
+  , ins_user_id       
+  , ins_dtm                   
+)
+SELECT
+  gnrl_sale_no      
+  , gnrl_sale_chg_seq + 1
+  , sale_seq          
+  , eqp_ser_num       
+  , eqp_mdl_cd        
+  , eqp_color_cd      
+  , prod_ser_num      
+  , del_yn            
+  , decode('1', '1', NVL((SELECT MAX(upd_cnt) FROM tsal_equipment_sale WHERE gnrl_sale_no = #gnrl_sale_no#),1) + 1)     
+  , decode('1', '1', #onlineContext.userInfo.loginId#)
+  , decode('1', '1', to_char(sysdate,'YYYYMMDDHH24MISS'))
+FROM tsal_equipment_sale
+WHERE gnrl_sale_no = #gnrl_sale_no# 
+AND gnrl_sale_chg_seq = #gnrl_sale_chg_seq#]]>
+	</insert>
+	<insert id="saveSaleAmtUpdate" parameterClass="map" ><![CDATA[INSERT INTO tsal_sale_amt /*+ SALBOS00100_saveSaleAmtUpdate_김만수 */
+(
+  gnrl_sale_no         
+  , gnrl_sale_chg_seq  
+  , bf_dis_amt           
+  , bf_mar_amt           
+  , bf_cmms_amt          
+  , del_yn               
+  , upd_cnt              
+  , ins_user_id          
+  , ins_dtm              
+  , bf_vat_amt           
+  , bf_sale_amt          
+  , dis_amt              
+  , mar_amt              
+  , cmms_amt             
+  , vat_amt              
+  , sale_amt 
+)
+SELECT
+  gnrl_sale_no         
+  , gnrl_sale_chg_seq + 1
+  , dis_amt           
+  , mar_amt           
+  , cmms_amt          
+  , del_yn               
+  , decode('1', '1', NVL((SELECT MAX(upd_cnt) FROM tsal_sale_amt WHERE gnrl_sale_no = #gnrl_sale_no#),1) + 1)              
+  , decode('1', '1', #onlineContext.userInfo.loginId#)
+  , decode('1', '1', to_char(sysdate,'YYYYMMDDHH24MISS'))             
+  , vat_amt           
+  , sale_amt          
+  , (SELECT 0 - SUM(dis_amt) FROM tsal_sale_amt WHERE gnrl_sale_no = #gnrl_sale_no#) dis_amt             
+  , (SELECT 0 - SUM(mar_amt) FROM tsal_sale_amt WHERE gnrl_sale_no = #gnrl_sale_no#) mar_amt              
+  , (SELECT 0 - SUM(cmms_amt) FROM tsal_sale_amt WHERE gnrl_sale_no = #gnrl_sale_no#) cmms_amt             
+  , (SELECT 0 - SUM(vat_amt) FROM tsal_sale_amt WHERE gnrl_sale_no = #gnrl_sale_no#) vat_amt              
+  , (SELECT 0 - SUM(sale_amt) FROM tsal_sale_amt WHERE gnrl_sale_no = #gnrl_sale_no#) sale_amt
+FROM tsal_sale_amt
+WHERE gnrl_sale_no = #gnrl_sale_no# 
+AND gnrl_sale_chg_seq = #gnrl_sale_chg_seq#]]>
+	</insert>
+	<insert id="saveSalePaymentUpdate" parameterClass="map" ><![CDATA[INSERT INTO tsal_payment /*+ SALBOS00100_saveSalePaymentUpdate_김만수 */
+(
+  gnrl_sale_no
+  , gnrl_sale_chg_seq
+  , bf_cash_pay_amt            
+  , bf_crdtcrd_corp1           
+  , bf_crdtcrd_pay_amt1        
+  , bf_crdtcrd_dpst_acc_amt1   
+  , bf_crdtcrd_dpst_acc_cmms1  
+  , bf_crdtcrd_corp2           
+  , bf_crdtcrd_pay_amt2        
+  , bf_crdtcrd_dpst_acc_amt2   
+  , bf_crdtcrd_dpst_acc_cmms2  
+  , cash_pay_amt
+  , crdtcrd_corp1
+  , crdtcrd_pay_amt1
+  , crdtcrd_dpst_acc_amt1
+  , crdtcrd_dpst_acc_cmms1
+  , crdtcrd_pay_fix_yn1
+  , crdtcrd_pay_fix_dt1
+  , crdtcrd_corp2
+  , crdtcrd_pay_amt2
+  , crdtcrd_dpst_acc_amt2
+  , crdtcrd_dpst_acc_cmms2
+  , crdtcrd_pay_fix_yn2
+  , crdtcrd_pay_fix_dt2
+  , del_yn
+  , upd_cnt
+  , ins_user_id
+  , ins_dtm
+)
+SELECT
+  gnrl_sale_no
+  , gnrl_sale_chg_seq + 1
+  , cash_pay_amt
+  , crdtcrd_corp1
+  , crdtcrd_pay_amt1
+  , decode('1', '1', '')
+  , decode('1', '1', '')
+  , crdtcrd_corp2
+  , crdtcrd_pay_amt2
+  , decode('1', '1', '')
+  , decode('1', '1', '')
+  , decode('1', '1', (SELECT 0 - SUM(cash_pay_amt) FROM tsal_payment WHERE gnrl_sale_no = #gnrl_sale_no#))
+  , decode('1', '1', #crdtcrd_corp1#)
+  , decode('1', '1', (SELECT 0 - SUM(crdtcrd_pay_amt1) FROM tsal_payment WHERE gnrl_sale_no = #gnrl_sale_no#))
+  , decode('1', '1', '')
+  , decode('1', '1', '')
+  , decode('1', '1', '')
+  , decode('1', '1', '')
+  , decode('1', '1', #crdtcrd_corp2#)
+  , decode('1', '1', (SELECT 0 - SUM(crdtcrd_pay_amt2) FROM tsal_payment WHERE gnrl_sale_no = #gnrl_sale_no#))
+  , decode('1', '1', '')
+  , decode('1', '1', '')
+  , decode('1', '1', '')
+  , decode('1', '1', '')
+  , decode('1', '1', 'N')			/* 삭제여부*/
+  , decode('1', '1', NVL((SELECT MAX(upd_cnt) FROM tsal_payment WHERE gnrl_sale_no = #gnrl_sale_no#),1) + 1)
+  , decode('1', '1', #onlineContext.userInfo.loginId#)
+  , decode('1', '1', to_char(sysdate,'YYYYMMDDHH24MISS'))
+FROM tsal_payment
+WHERE gnrl_sale_no = #gnrl_sale_no# 
+AND gnrl_sale_chg_seq = #gnrl_sale_chg_seq#]]>
+	</insert>
+	<insert id="saveSaleRmksUpdate" parameterClass="map" ><![CDATA[INSERT INTO tsal_gnrl_sale /*+ SALBOS00100_saveSaleRmksUpdate_김만수 */
+(
+	gnrl_sale_no
+	, gnrl_sale_chg_seq
+	, sale_dtm
+	, sale_chgrg_id
+	, sale_chg_hst_cl
+	, acc_chg_hst_cl
+	, sale_chg_dtm
+	, sale_mod_user_id
+	, stl_plc
+	, dis_hld_plc
+	, sale_plc
+	, sale_chg_plc
+	, cust_cl
+	, cust_nm
+	, cust_biz_num
+	, cust_tel_no
+	, cust_addr
+	, settl_cond
+	, sale_cmms_fix_yn
+	, sale_cncl_yn
+	, sale_cncl_dtm
+	, sale_cncl_cl
+	, dt_cls_yn
+	, rmks 
+	, del_yn
+	, upd_cnt
+	, ins_user_id 
+	, ins_dtm
+	, sale_typ_cd
+	, inden_num
+)
+SELECT
+	gnrl_sale_no
+	, gnrl_sale_chg_seq + 1
+	, sale_dtm
+	, sale_chgrg_id
+	, '07' as sale_chg_hst_cl
+	, acc_chg_hst_cl
+	, sale_chg_dtm
+	, sale_mod_user_id
+	, stl_plc
+	, dis_hld_plc
+	, sale_plc
+	, sale_chg_plc
+	, cust_cl
+	, cust_nm
+	, cust_biz_num
+	, cust_tel_no
+	, cust_addr
+	, settl_cond
+	, sale_cmms_fix_yn
+	, decode('1', '1', #sale_cncl_yn#)
+	, decode('1', '1', #sale_cncl_dtm#)
+	, decode('1', '1', #sale_cncl_cl#)
+	, dt_cls_yn
+	, decode('1', '1', #rmks#)
+	, del_yn
+	, decode('1', '1', NVL((SELECT MAX(upd_cnt) FROM tsal_gnrl_sale WHERE gnrl_sale_no = #gnrl_sale_no#),1) + 1)
+	, decode('1', '1', #onlineContext.userInfo.loginId#)
+	, decode('1', '1', TO_CHAR(SYSDATE, 'yyyyMMddHH24MISS'))
+	, sale_typ_cd
+	, inden_num
+FROM tsal_gnrl_sale
+WHERE gnrl_sale_no = #gnrl_sale_no# 
+AND gnrl_sale_chg_seq = #gnrl_sale_chg_seq#]]>
+	</insert>
+	<select id="getOutMgmtNo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT   /*+ SALBOS00100_getOutMgmtNo - 김만수 */
+    MAX(out_mgmt_no) out_mgmt_no
+FROM TDIS_PROD_INOUT_HST A
+WHERE ser_num = #ser_num#
+AND color_cd = #color_cd#
+AND prod_cd = #prod_cd#]]>
+	</select>
+</sqlMap>

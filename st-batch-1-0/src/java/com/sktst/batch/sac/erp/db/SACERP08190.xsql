@@ -1,0 +1,837 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08190">
+	<select id="getAgency" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        select  /* SACERP08190_getAgency_대리점 조회_이강수 */
+				 a.org_id
+				,a.deal_co_cd as agency		/*대리점*/
+				,a.ukey_agency_cd
+                /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+                ,(select case when min(user_cd) is null and a.org_id = 'C10011' then '140034' else min(user_cd) end
+                    from tbas_user_mgmt
+                   where pos_agency = a.deal_co_cd
+                     and user_grp = 'D17'
+                     and del_yn = 'N'
+                     and eff_user_yn = 'Y'
+                     and attc_cat in ('1', '2')) as user_cd
+		  from	tbas_deal_co_mgmt a
+		 where  a.deal_co_cd 	= #AGENCY#
+           and  a.hseq_no       = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+                                           hseq_no 
+                                      FROM tbas_deal_co_mgmt
+                                     WHERE deal_co_cd = a.deal_co_cd AND rownum = 1
+                                  )
+        group by a.org_id, a.deal_co_cd, a.ukey_agency_cd
+	]]>
+	</select>
+
+	<select id="getMmTaxErpTrmsList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT  /* SACERP08190_getMmTaxErpTrmsList_월부가세전송목록조회_이강수 */
+				 yymm
+			   , agency
+			   , stl_plc  deal_co_cd
+			   , tax_cl
+			   , TO_CHAR(seq) seq
+			   , trms_req_yn
+			   , trms_req_dt
+			   , ukey_agency_cd
+			   , remark
+			   , trms_yn
+			   , trms_dt
+			   , req_user_id
+		  FROM	tsac_mm_tax_erp_trms
+		 WHERE	trms_req_yn = 'Y'
+		   AND	trms_yn     = 'S'
+	]]>
+	</select>
+
+	<select id="getCnsgDealSaleAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+				select  /* SACERP08190_getCnsgDealSaleAmtList_위탁거래매출금액조회_이강수 */
+						 a.acc_mth					/*정산월*/
+						,a.deal_co_cd as agency		/*대리점*/
+						,sum(nvl(a.fix_cash_sale, 0))					/*확정현금매출: 부가세관련 월배치 항목*/
+						 as sale_amt
+						,d.ukey_agency_cd
+				  from	(select  acc_mth, deal_co_cd, sum(nvl(fix_cash_sale, 0)) as fix_cash_sale
+                           from tacc_cmms_acc_m
+                          where sl_cl = '02'
+                         group by acc_mth, deal_co_cd  ) a,
+                        tbas_deal_co_mgmt d
+				 where  a.deal_co_cd	= d.deal_co_cd
+				   and  d.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+													hseq_no 
+											FROM	tbas_deal_co_mgmt
+											WHERE	deal_co_cd = d.deal_co_cd AND rownum = 1
+										  )
+				   and	a.acc_mth		= #YYMM#
+			       and  a.deal_co_cd	= #AGENCY#
+				group by a.acc_mth, a.deal_co_cd, d.ukey_agency_cd
+			 )
+		where sale_amt <> 0
+	]]>
+	</select>
+
+	<select id="getCnsgDealCmmsAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+				select  /* SACERP08190_getCnsgDealCmmsAmtList_위탁거래수수료조회_이강수 */
+						 a.acc_mth					/*정산월*/
+						,a.deal_co_cd as agency		/*대리점*/
+						,a.acc_plc					/*지급처*/
+						,sum(nvl(a.fix_cnsg_cmms, 0))	/*확정위탁수수료: 부가세관련 월배치 항목*/
+						 as cnsg_cmms
+						,b.ukey_agency_cd
+						,b.ukey_sub_cd
+						,b.deal_co_nm
+						,b.biz_num
+						,substrb(b.rep_user_nm, 0, 10) as rep_user_nm
+						,substrb(b.addr, 0, 70) as addr
+						,b.biz_con
+						,b.typ_of_biz
+				  from	tacc_cmms_acc_m a, tbas_deal_co_mgmt b
+				 where  a.acc_plc		= b.deal_co_cd
+				   and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+													hseq_no 
+											FROM	tbas_deal_co_mgmt
+											WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+										  )
+				   and	a.acc_mth		= #YYMM#
+			       and  a.deal_co_cd	= #AGENCY#
+			       and  a.acc_plc       = #DEAL_CO_CD#
+				   and	b.del_yn		= 'N'
+				group by a.acc_mth, a.deal_co_cd, a.acc_plc, b.ukey_agency_cd, b.ukey_sub_cd,
+						 b.biz_num, b.rep_user_nm, b.addr, b.biz_con, b.typ_of_biz, b.deal_co_nm
+			 )
+		where cnsg_cmms <> 0
+	]]>
+	</select>	
+
+	<select id="getDirBrDealAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select *
+		from (
+				select  /* SACERP08190_getDirBrDealAmtList_직영점거래금액조회_이강수 */
+						 a.yymm					/*입금년월*/
+						,a.agency				/*대리점*/
+						,a.deal_co_cd			/*거래처(직영점에 해당하는 거래처코드)*/
+						,sum(nvl(a.cash_sale_amt, 0))		/*현금매출*/
+						 + sum(nvl(b.fix_cash_sale, 0))		/*확정현금매출: 부가세관련 월배치 항목*/
+						 + sum(nvl(a.card_sale_amt, 0))		/*카드매출*/
+						 as sale_amt
+						,c.ukey_agency_cd
+						,c.ukey_sub_cd
+				  from	tsac_retail_sale_deal a,
+				  		(SELECT deal_co_cd, acc_mth, acc_plc, fix_cash_sale FROM tacc_cmms_acc_m WHERE del_yn = 'N') b,
+				   		tbas_deal_co_mgmt c
+				 where  a.agency		= b.deal_co_cd(+)
+				   and	a.yymm			= b.acc_mth(+)
+				   and	a.deal_co_cd	= b.acc_plc(+)
+				   and	a.deal_co_cd	= c.deal_co_cd(+)
+				   and  c.hseq_no		= (SELECT max(hseq_no) FROM tbas_deal_co_mgmt
+											WHERE deal_co_cd = c.deal_co_cd)
+                   and  c.deal_co_cl1  IN ('A2', 'B1')
+				   and	a.yymm			= #YYMM#
+				   and	a.agency		= #AGENCY#
+			       and  a.deal_co_cd	= #DEAL_CO_CD#
+				group by a.yymm, a.agency, a.deal_co_cd, c.ukey_agency_cd, c.ukey_sub_cd
+			 )
+		where sale_amt <> 0
+	]]>
+	</select>
+
+	<select id="getSktGrantList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT *
+          FROM (
+                SELECT  /* SACERP08190_getPrMnyCmmsAmtList_SKT장려금_조회_이강수 */
+                       a.agency   /*대리점코드*/
+                     , a.acc_mth          /*정산월*/
+                     , a.acc_plc          /*정산처*/
+                     , nvl(a.fix_sply_prc, 0)      as fix_sply_prc       /* 공급가 */
+                     , nvl(a.fix_vat, 0)           as fix_vat            /* 부가세 */
+                     , nvl(a.fix_amt, 0)           as fix_amt            /* 장려금금액 */
+                     , d.ukey_agency_cd
+                     , d.ukey_sub_cd
+                     , c.deal_co_nm
+                     , c.biz_num
+                     , substrb(c.rep_user_nm, 0, 10) as rep_user_nm
+                     , substrb(c.addr, 0, 70) as addr
+                     , c.biz_con
+                     , c.typ_of_biz
+                  FROM (
+                         select agency
+                              , acc_mth
+                              , acc_plc
+                              , sum(fix_sply_prc)      as fix_sply_prc
+                              , sum(fix_vat)           as fix_vat
+                              , sum(fix_amt)           as fix_amt
+                              , sum(cmms_fix_sply_prc) as cmms_fix_sply_prc
+                              , sum(cmms_fix_vat)      as cmms_fix_vat
+                              , sum(cmms_fix_amt)      as cmms_fix_amt
+                           from (
+                                 select  /*  장려금 조회 */
+                                        deal_co_cd as agency                              /* 대리점코드*/
+                                      , acc_mth                                           /* 정산월*/
+                                      , acc_plc                                           /* 정산처*/
+                                      , nvl(fix_sply_prc, 0) as fix_sply_prc              /* 공급가 */
+                                      , nvl(fix_vat, 0) as fix_vat                        /* 부가세 */
+                                      , nvl(fix_sply_prc, 0) + nvl(fix_vat, 0) as fix_amt /* 장려금금액 */
+                                      , 0 as cmms_fix_sply_prc                            /* 공급가 */
+                                      , 0 as cmms_fix_vat                                 /* 부가세 */
+                                      , 0 as cmms_fix_amt                                 /* 위탁수수료금액 */
+                                   from tacc_pr_mny_acc_m
+                                  where deal_co_cd    = #AGENCY#
+                                    and acc_mth       = #YYMM#
+                                    and acc_plc       = '10001'
+                                    AND del_yn      = 'N'            /*삭제여부*/
+                                )
+                          group by agency, acc_mth, acc_plc
+                         ) a
+                         , tbas_deal_co_mgmt c, tbas_deal_co_mgmt d
+                   where a.acc_plc      = c.deal_co_cd
+                     AND  c.hseq_no     = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                   hseq_no
+                                              FROM  tbas_deal_co_mgmt
+                                             WHERE deal_co_cd = c.deal_co_cd
+                                               AND rownum = 1
+                                        )
+                     AND  a.agency      = d.deal_co_cd
+                     AND  d.hseq_no     = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                   hseq_no
+                                              FROM  tbas_deal_co_mgmt
+                                             WHERE deal_co_cd = d.deal_co_cd
+                                               AND rownum = 1
+                                          )
+               )
+           WHERE fix_amt      <> 0
+	]]>
+	</select>
+
+	<select id="getSktCommiChargeList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT *
+          FROM (
+                SELECT  /* SACERP08190_getSktCommiChargeList_SKT위탁수수료_조회_이강수 */
+                       a.agency   /*대리점코드*/
+                     , a.acc_mth          /*정산월*/
+                     , a.acc_plc          /*정산처*/
+                     , nvl(a.cmms_fix_sply_prc, 0) as cmms_fix_sply_prc  /* 공급가 */
+                     , nvl(a.cmms_fix_vat, 0)      as cmms_fix_vat       /* 부가세 */
+                     , nvl(a.cmms_fix_amt, 0)      as cmms_fix_amt       /* 위탁수수료금액 */
+                     , d.ukey_agency_cd
+                     , d.ukey_sub_cd
+                     , c.deal_co_nm
+                     , c.biz_num
+                     , substrb(c.rep_user_nm, 0, 10) as rep_user_nm
+                     , substrb(c.addr, 0, 70) as addr
+                     , c.biz_con
+                     , c.typ_of_biz
+                  FROM (
+                         select agency
+                              , acc_mth
+                              , acc_plc
+                              , sum(fix_sply_prc)      as fix_sply_prc
+                              , sum(fix_vat)           as fix_vat
+                              , sum(fix_amt)           as fix_amt
+                              , sum(cmms_fix_sply_prc) as cmms_fix_sply_prc
+                              , sum(cmms_fix_vat)      as cmms_fix_vat
+                              , sum(cmms_fix_amt)      as cmms_fix_amt
+                           from (
+                                 select /*  위탁수수료 조회 */
+                                        deal_co_cd as agency                                  /* 대리점코드*/
+                                      , acc_mth                                               /* 정산월*/
+                                      , acc_plc                                               /* 정산처*/
+                                      , 0 as fix_sply_prc                                     /* 공급가 */
+                                      , 0 as fix_vat                                          /* 부가세 */
+                                      , 0 as fix_amt                                          /* 장려금금액 */
+                                      ,nvl(fix_sply_prc, 0) as cmms_fix_sply_prc              /* 공급가 */
+                                      ,nvl(fix_vat, 0) as cmms_fix_vat                        /* 부가세 */
+                                      ,nvl(fix_sply_prc, 0) + nvl(fix_vat, 0) as cmms_fix_amt /* 위탁수수료금액 */
+                                   from tacc_skt_cmms_m
+                                  where deal_co_cd    = #AGENCY#
+                                    and acc_mth       = #YYMM#
+                                    and acc_plc       = '10001'
+                                    AND del_yn        = 'N'            /*삭제여부*/
+                                )
+                          group by agency, acc_mth, acc_plc
+                         ) a
+                         , tbas_deal_co_mgmt c, tbas_deal_co_mgmt d
+                   where a.acc_plc      = c.deal_co_cd
+                     AND  c.hseq_no     = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                   hseq_no
+                                              FROM  tbas_deal_co_mgmt
+                                             WHERE deal_co_cd = c.deal_co_cd
+                                               AND rownum = 1
+                                        )
+                     AND  a.agency      = d.deal_co_cd
+                     AND  d.hseq_no     = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                                                   hseq_no
+                                              FROM  tbas_deal_co_mgmt
+                                             WHERE deal_co_cd = d.deal_co_cd
+                                               AND rownum = 1
+                                          )
+               )
+           WHERE cmms_fix_amt <> 0
+	]]>
+	</select>
+	
+	<select id="getPrMnyOthersList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT *
+		FROM (
+		        SELECT  /* SACERP08190_getPrMnyOthersList_제조업체장려금_조회_이강수 */
+		                 a.deal_co_cd as agency		/*대리점코드*/
+		                ,a.acc_mth					/*정산월*/
+		                ,a.acc_plc					/*정산처*/
+		                ,nvl(a.fix_sply_prc, 0) as fix_sply_prc			/* 공급가 */
+		                ,nvl(a.fix_vat, 0) as fix_vat					/* 부가세 */
+		                ,nvl(a.fix_sply_prc, 0) + nvl(a.fix_vat, 0) as fix_amt	/* 금액 */
+						,c.deal_co_nm
+						,c.biz_num
+						,substrb(c.rep_user_nm, 0, 10) as rep_user_nm
+						,substrb(c.addr, 0, 70) as addr
+						,c.biz_con
+						,c.typ_of_biz
+				  FROM	tacc_pr_mny_acc_m a, tbas_deal_co_mgmt c
+				 WHERE  a.acc_plc		= c.deal_co_cd
+		           AND  c.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+													hseq_no 
+											FROM	tbas_deal_co_mgmt
+											WHERE	deal_co_cd = c.deal_co_cd AND rownum = 1
+										  )
+			       and  a.deal_co_cd	= #AGENCY#
+				   AND  a.acc_mth       = #YYMM#
+				   AND  a.acc_plc       = #DEAL_CO_CD#
+				   AND	a.del_yn		= 'N'			/*삭제여부*/
+			 )
+		WHERE fix_amt <> 0
+	]]>
+	</select>
+	
+	<select id="getErpMcVatList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        select *
+            from (
+            select  /* SACERP08190_getErpMcVatList_M채널 부가세 월정산 */
+                 a.acc_mth    as yymm           /*정산월*/
+                ,a.deal_co_cd as agency         /*대리점*/
+                ,a.acc_plc    as deal_co_cd     /*지급처*/
+                ,sum(nvl(a.fix_cash_sale, 0) + nvl(a.card_sale_amt,0)) AS FIX_AMT /*확정현금매출*/
+                ,sum(nvl(a.fix_cash_sale, 0) + nvl(a.card_sale_amt,0)) - round(sum(nvl(a.fix_cash_sale, 0) + nvl(a.card_sale_amt,0))/1.1,0) AS vat
+                ,round(sum(nvl(a.fix_cash_sale, 0) + nvl(a.card_sale_amt,0))/1.1,0) AS sply_prc_amt
+                ,b.ukey_agency_cd
+                ,b.ukey_sub_cd
+                ,b.deal_co_nm
+                ,b.biz_num
+                ,substrb(b.rep_user_nm, 0, 10) as rep_user_nm
+                ,substrb(b.addr, 0, 70) as addr
+                ,b.biz_con
+                ,b.typ_of_biz
+              from  tacc_mc_cmms_acc_m a, tbas_deal_co_mgmt b
+             where  a.acc_plc   = b.deal_co_cd
+               and  b.hseq_no   = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                              hseq_no
+                          FROM  tbas_deal_co_mgmt
+                          WHERE deal_co_cd = b.deal_co_cd AND rownum = 1
+                          )
+               and  a.acc_mth     = #YYMM#
+               and  a.deal_co_cd  = #AGENCY#
+               and  a.acc_plc     = #DEAL_CO_CD#
+               and  b.del_yn      = 'N'
+            group by a.acc_mth, a.deal_co_cd, a.acc_plc, b.ukey_agency_cd, b.ukey_sub_cd,
+                 b.biz_num, b.rep_user_nm, b.addr, b.biz_con, b.typ_of_biz, b.deal_co_nm
+           )
+        where FIX_AMT <> 0
+        ORDER BY 1  
+	]]>
+	</select>
+	
+	<select id="getPrchsDebtSknList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT *
+		FROM (
+		        SELECT  /* SACERP08190_getPrchsDebtSknList_단말기매입Skn_조회_이강수 */
+		                 a.org_cd as agency			/*대리점코드*/
+		                ,a.acc_mth					/*정산월*/
+		                ,a.prchs_plc				/*매입처*/
+		                ,nvl(a.sply_prc_amt, 0) as sply_prc_amt				/* 공급가 */
+		                ,nvl(a.vat, 0) as vat								/* 부가세 */
+		                ,nvl(a.sply_prc_amt, 0) + nvl(a.vat, 0) as fix_amt	/* 금액 */
+		                ,d.ukey_agency_cd
+		                ,d.ukey_sub_cd
+						,c.deal_co_nm
+						,c.biz_num
+						,substrb(c.rep_user_nm, 0, 10) as rep_user_nm
+						,substrb(c.addr, 0, 70) as addr
+						,c.biz_con
+						,c.typ_of_biz
+				  FROM	tacc_prchs_debt_acc a, tbas_deal_co_mgmt c, tbas_deal_co_mgmt d
+				 WHERE  a.prchs_plc		= c.deal_co_cd
+		           AND  c.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+													hseq_no 
+											FROM	tbas_deal_co_mgmt
+											WHERE	deal_co_cd = c.deal_co_cd AND rownum = 1
+										  )
+				   AND	a.org_cd		= d.deal_co_cd
+		           AND  d.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+													hseq_no 
+											FROM	tbas_deal_co_mgmt
+											WHERE	deal_co_cd = d.deal_co_cd AND rownum = 1
+										  )
+			       and 	a.org_cd		= #AGENCY#
+				   AND  a.acc_mth       = #YYMM#
+				   AND  a.prchs_plc     = #DEAL_CO_CD#
+				   AND	a.del_yn		= 'N'			/*삭제여부*/
+			 )
+		WHERE fix_amt <> 0
+	]]>
+	</select>
+
+	<select id="getErpOsMobileList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	  select *
+        from (
+        		select  /* SACERP08190_getErpOsMobileList_온라인 결재 수수료 월정산 */
+        				 '1' AS type
+                        , a.acc_mth					/*정산월*/
+        				,a.deal_co_cd as agency		/*대리점*/
+        				,a.acc_plc					/*지급처*/
+        				,sum(nvl(a.fix_cash_sale, 0))	AS fix_amt /*확정현금매출*/
+                        ,sum(nvl(a.fix_cash_sale, 0)) - round(sum(nvl(a.fix_cash_sale, 0))/1.1,0) AS vat
+                        ,round(sum(nvl(a.fix_cash_sale, 0))/1.1,0) AS sply_prc_amt
+        				,b.ukey_agency_cd
+        				,b.ukey_sub_cd
+        				,b.deal_co_nm
+        				,b.biz_num
+						,substrb(b.rep_user_nm, 0, 10) as rep_user_nm
+        				,substrb(b.addr, 0, 70) as addr
+        				,b.biz_con
+        				,b.typ_of_biz
+        		  from	tacc_OTL_cmms_acc_m a, tbas_deal_co_mgmt b
+        		 where  a.acc_plc		= b.deal_co_cd
+        		   and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+        											hseq_no
+        									FROM	tbas_deal_co_mgmt
+        									WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+        								  )
+        		   and	a.acc_mth		= #YYMM#
+        	       and 	a.deal_co_cd	= #AGENCY#
+        	       and  a.acc_plc       = #DEAL_CO_CD#
+        		   and	b.del_yn		= 'N'
+        		group by a.acc_mth, a.deal_co_cd, a.acc_plc, b.ukey_agency_cd, b.ukey_sub_cd,
+        				 b.biz_num, b.rep_user_nm, b.addr, b.biz_con, b.typ_of_biz, b.deal_co_nm
+        	 )
+        where FIX_AMT <> 0
+        ORDER BY 1
+	]]>
+	</select>	
+
+	<select id="getErpOsChargeList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	  select *
+        from (
+        		select  /* SACERP08190_getErpOsChargeList_온라인 소매 수수료 월정산 */
+        				 '2' AS type
+        			    ,a.acc_mth					/*정산월*/
+        				,a.deal_co_cd as agency		/*대리점*/
+        				,a.acc_plc					/*지급처*/
+        				,sum(nvl(a.fix_cnsg_cmms, 0))	AS fix_amt /*확정판매수수료: 부가세관련 월배치 항목*/
+                        ,sum(nvl(a.fix_cnsg_cmms, 0)) - round(sum(nvl(a.fix_cnsg_cmms, 0))/1.1,0) AS vat
+                        ,round(sum(nvl(a.fix_cnsg_cmms, 0))/1.1,0) AS sply_prc_amt
+        				,b.ukey_agency_cd
+        				,b.ukey_sub_cd
+        				,b.deal_co_nm
+        				,b.biz_num
+						,substrb(b.rep_user_nm, 0, 10) as rep_user_nm
+        				,substrb(b.addr, 0, 70) as addr
+        				,b.biz_con
+        				,b.typ_of_biz
+        		  from	tacc_OS_cmms_acc_m a, tbas_deal_co_mgmt b
+        		 where  a.acc_plc		= b.deal_co_cd
+        		   and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+        											hseq_no
+        									FROM	tbas_deal_co_mgmt
+        									WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+        								  )
+        		   and	a.acc_mth		= #YYMM#
+        	       and 	a.deal_co_cd	= #AGENCY#
+        	       and  a.acc_plc       = #DEAL_CO_CD#
+        		   and	b.del_yn		= 'N'
+        		group by a.acc_mth, a.deal_co_cd, a.acc_plc, b.ukey_agency_cd, b.ukey_sub_cd,
+        				 b.biz_num, b.rep_user_nm, b.addr, b.biz_con, b.typ_of_biz, b.deal_co_nm
+        	 )
+        where FIX_AMT <> 0
+        ORDER BY 1
+	]]>
+	</select>	
+
+	<select id="getErpOsVitualAccountList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	  select *
+        from (
+        		select  /* SACERP08190_getErpOsVitualAccountList_온라인 결재 수수료 월정산*/
+        				 '3' AS type
+        		        ,a.acc_mth					/*정산월*/
+        				,a.deal_co_cd as agency		/*대리점*/
+        				,a.acc_plc					/*지급처*/
+        				,sum(nvl(a.fix_acc_trnsf_cmms, 0))	AS fix_amt /*확정계좌이체수수료*/
+                        ,sum(nvl(a.fix_acc_trnsf_cmms, 0)) - round(sum(nvl(a.fix_acc_trnsf_cmms, 0))/1.1,0) AS vat
+                        ,round(sum(nvl(a.fix_acc_trnsf_cmms, 0))/1.1,0) AS sply_prc_amt
+        				,b.ukey_agency_cd
+        				,b.ukey_sub_cd
+        				,b.deal_co_nm
+        				,b.biz_num
+						,substrb(b.rep_user_nm, 0, 10) as rep_user_nm
+        				,substrb(b.addr, 0, 70) as addr
+        				,b.biz_con
+        				,b.typ_of_biz
+        		  from	tacc_OTL_cmms_acc_m a, tbas_deal_co_mgmt b
+        		 where  a.acc_plc		= b.deal_co_cd
+        		   and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+        											hseq_no
+        									FROM	tbas_deal_co_mgmt
+        									WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+        								  )
+        		   and	a.acc_mth		= #YYMM#
+        	       and 	a.deal_co_cd	= #AGENCY#
+        	       and  a.acc_plc       = #DEAL_CO_CD#
+        		   and	b.del_yn		= 'N'
+        		group by a.acc_mth, a.deal_co_cd, a.acc_plc, b.ukey_agency_cd, b.ukey_sub_cd,
+        				 b.biz_num, b.rep_user_nm, b.addr, b.biz_con, b.typ_of_biz, b.deal_co_nm
+        	 )
+        where FIX_AMT <> 0
+        ORDER BY 1
+	]]>
+	</select>
+	
+	<select id="getErpOsAccountTransferList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	  select *
+        from (
+        		select  /* SACERP08190_getErpOsAccountTransferList_온라인 결재 수수료 월정산*/
+        				 '3' AS type
+        		        ,a.acc_mth					/*정산월*/
+        				,a.deal_co_cd as agency		/*대리점*/
+        				,a.acc_plc					/*지급처*/
+        				,sum(nvl(a.fix_virtl_acc_cmms, 0))	AS fix_amt /*확정가상계좌수수료*/
+                        ,sum(nvl(a.fix_virtl_acc_cmms, 0)) - round(sum(nvl(a.fix_virtl_acc_cmms, 0))/1.1,0) AS vat
+                        ,round(sum(nvl(a.fix_virtl_acc_cmms, 0))/1.1,0) AS sply_prc_amt
+        				,b.ukey_agency_cd
+        				,b.ukey_sub_cd
+        				,b.deal_co_nm
+        				,b.biz_num
+						,substrb(b.rep_user_nm, 0, 10) as rep_user_nm
+        				,substrb(b.addr, 0, 70) as addr
+        				,b.biz_con
+        				,b.typ_of_biz
+        		  from	tacc_OTL_cmms_acc_m a, tbas_deal_co_mgmt b
+        		 where  a.acc_plc		= b.deal_co_cd
+        		   and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+        											hseq_no
+        									FROM	tbas_deal_co_mgmt
+        									WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+        								  )
+        		   and	a.acc_mth		= #YYMM#
+        	       and 	a.deal_co_cd	= #AGENCY#
+        	       and  a.acc_plc       = #DEAL_CO_CD#
+        		   and	b.del_yn		= 'N'
+        		group by a.acc_mth, a.deal_co_cd, a.acc_plc, b.ukey_agency_cd, b.ukey_sub_cd,
+        				 b.biz_num, b.rep_user_nm, b.addr, b.biz_con, b.typ_of_biz, b.deal_co_nm
+        	 )
+        where FIX_AMT <> 0
+        ORDER BY 1
+	]]>
+	</select>			
+
+	<select id="getErpOsCardList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	  select *
+        from (
+        		select  /* SACERP08190_getErpOsCardList_온라인 결재 수수료 월정산 */
+        				 '4' AS type
+        		        ,a.acc_mth					/*정산월*/
+        				,a.deal_co_cd as agency		/*대리점*/
+        				,a.acc_plc					/*지급처*/
+        				,sum(nvl(a.fix_card_settle_cmms, 0))	AS fix_amt /*확정카드결제수수료*/
+                        ,sum(nvl(a.fix_card_settle_cmms, 0)) - round(sum(nvl(a.fix_card_settle_cmms, 0))/1.1,0) AS vat
+                        ,round(sum(nvl(a.fix_card_settle_cmms, 0))/1.1,0) AS sply_prc_amt
+        				,b.ukey_agency_cd
+        				,b.ukey_sub_cd
+        				,b.deal_co_nm
+        				,b.biz_num
+						,substrb(b.rep_user_nm, 0, 10) as rep_user_nm
+        				,substrb(b.addr, 0, 70) as addr
+        				,b.biz_con
+        				,b.typ_of_biz
+        		  from	tacc_OTL_cmms_acc_m a, tbas_deal_co_mgmt b
+        		 where  a.acc_plc		= b.deal_co_cd
+        		   and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+        											hseq_no
+        									FROM	tbas_deal_co_mgmt
+        									WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+        								  )
+        		   and	a.acc_mth		= #YYMM#
+        	       and 	a.deal_co_cd	= #AGENCY#
+        	       and  a.acc_plc       = #DEAL_CO_CD#
+        		   and	b.del_yn		= 'N'
+        		group by a.acc_mth, a.deal_co_cd, a.acc_plc, b.ukey_agency_cd, b.ukey_sub_cd,
+        				 b.biz_num, b.rep_user_nm, b.addr, b.biz_con, b.typ_of_biz, b.deal_co_nm
+        	 )
+        where FIX_AMT <> 0
+        ORDER BY 1
+	]]>
+	</select>			
+
+	<select id="getErpOaMobileList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	  select *
+        from (
+        		select  /* SACERP08190_getErpOaMobileList_온라인 결재 수수료 월정산 */
+        				 '1' AS type
+                        , a.acc_mth					/*정산월*/
+        				,a.deal_co_cd as agency		/*대리점*/
+        				,a.acc_plc					/*지급처*/
+        				,sum(nvl(a.fix_cash_sale, 0))	AS fix_amt /*확정현금매출*/
+                        ,sum(nvl(a.fix_cash_sale, 0)) - round(sum(nvl(a.fix_cash_sale, 0))/1.1,0) AS vat
+                        ,round(sum(nvl(a.fix_cash_sale, 0))/1.1,0) AS sply_prc_amt
+        				,b.ukey_agency_cd
+        				,b.ukey_sub_cd
+        				,b.deal_co_nm
+        				,b.biz_num
+						,substrb(b.rep_user_nm, 0, 10) as rep_user_nm
+        				,substrb(b.addr, 0, 70) as addr
+        				,b.biz_con
+        				,b.typ_of_biz
+        		  from	tacc_oa_cmms_acc_m a, tbas_deal_co_mgmt b
+        		 where  a.acc_plc		= b.deal_co_cd
+        		   and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+        											hseq_no
+        									FROM	tbas_deal_co_mgmt
+        									WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+        								  )
+        		   and	a.acc_mth		= #YYMM#
+        	       and 	a.deal_co_cd	= #AGENCY#
+        	       and  a.acc_plc       = #DEAL_CO_CD#
+        		   and	b.del_yn		= 'N'
+        		group by a.acc_mth, a.deal_co_cd, a.acc_plc, b.ukey_agency_cd, b.ukey_sub_cd,
+        				 b.biz_num, b.rep_user_nm, b.addr, b.biz_con, b.typ_of_biz, b.deal_co_nm
+        	 )
+        where FIX_AMT <> 0
+        ORDER BY 1
+	]]>
+	</select>	
+
+	<select id="getErpOaChargeList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	  select *
+        from (
+        		select  /* SACERP08190_getErpOaChargeList_온라인 결재 수수료 월정산*/
+        				 '2' AS type
+        		        ,a.acc_mth					/*정산월*/
+        				,a.deal_co_cd as agency		/*대리점*/
+        				,a.acc_plc					/*지급처*/
+        				,sum(nvl(a.fix_cnsg_cmms, 0))	AS fix_amt /*확정계좌이체수수료*/
+                        ,sum(nvl(a.fix_cnsg_cmms, 0)) - round(sum(nvl(a.fix_cnsg_cmms, 0))/1.1,0) AS vat
+                        ,round(sum(nvl(a.fix_cnsg_cmms, 0))/1.1,0) AS sply_prc_amt
+        				,b.ukey_agency_cd
+        				,b.ukey_sub_cd
+        				,b.deal_co_nm
+        				,b.biz_num
+						,substrb(b.rep_user_nm, 0, 10) as rep_user_nm
+        				,substrb(b.addr, 0, 70) as addr
+        				,b.biz_con
+        				,b.typ_of_biz
+        		  from	tacc_oa_cmms_acc_m a, tbas_deal_co_mgmt b
+        		 where  a.acc_plc		= b.deal_co_cd
+        		   and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+        											hseq_no
+        									FROM	tbas_deal_co_mgmt
+        									WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+        								  )
+        		   and	a.acc_mth		= #YYMM#
+        	       and 	a.deal_co_cd	= #AGENCY#
+        	       and  a.acc_plc       = #DEAL_CO_CD#
+        		   and	b.del_yn		= 'N'
+        		group by a.acc_mth, a.deal_co_cd, a.acc_plc, b.ukey_agency_cd, b.ukey_sub_cd,
+        				 b.biz_num, b.rep_user_nm, b.addr, b.biz_con, b.typ_of_biz, b.deal_co_nm
+        	 )
+        where FIX_AMT <> 0
+        ORDER BY 1
+	]]>
+	</select>	
+
+  <select id="getBondAmtList" resultClass="hmap" fetchSize="50" >
+  <![CDATA[
+    select *
+    from (
+        select  /* SACERP08190_getBondAmtList_할부채권_보조금조회_이강수 */
+              a.acc_mth          /*정산월*/
+            , a.deal_co_cd as agency   /*대리점*/
+            ,  sum(nvl(a.pay_new_allot_bond_pamt, 0))   /*신규할부채권매입금지급*/
+             + sum(nvl(a.pay_chg_allot_bond_pamt, 0))   /*기변할부채권매입금지급*/
+             + sum(nvl(a.rpay_new_allot_bond_pamt, 0))  /*신규할부채권매입금환수*/
+             + sum(nvl(a.rpay_chg_allot_bond_pamt, 0))  /*기변할부채권매입금환수*/
+             + sum(nvl(a.supl_pay_new_pamt, 0))         /*부가단말신규할부채권매입금지급*/
+             + sum(nvl(a.supl_pay_chg_pamt, 0))         /*부가단말기변할부채권매입금지급*/
+             + sum(nvl(a.supl_rpay_new_pamt, 0))        /*부가단말신규할부채권매입금환수*/
+             + sum(nvl(a.supl_rpay_chg_pamt, 0))        /*부가단말기변할부채권매입금환수*/
+             + sum(nvl(a.pay_usim_bond_pamt, 0))        /*USIM채권매입금지급*/
+             + sum(nvl(a.rpay_usim_bond_pamt, 0))       /*USIM채권매입금환수*/
+             as sale_amt
+            , c.ukey_agency_cd
+          from  tacc_allot_bond_acc_m a, tacc_pr_mny_acc_m b, tbas_deal_co_mgmt c
+         where  a.acc_mth     = b.acc_mth(+)
+           and  a.deal_co_cd  = b.deal_co_cd(+)
+           and  a.deal_co_cd  = c.deal_co_cd
+           and  c.hseq_no   = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                          hseq_no
+                      FROM  tbas_deal_co_mgmt
+                      WHERE deal_co_cd = c.deal_co_cd AND rownum = 1
+                      )
+           and  a.acc_mth   = #YYMM#
+      ]]>
+          <isNotEmpty prepend="AND" property="AGENCY">
+      <![CDATA[ a.deal_co_cd  = #AGENCY#    ]]>
+          </isNotEmpty>
+      <![CDATA[
+           and  a.del_yn    = 'N'
+           and  b.acc_plc(+)   = '10001'
+        group by a.acc_mth, a.deal_co_cd, c.ukey_agency_cd
+       )
+    where sale_amt <> 0
+  ]]>
+  </select>		
+ 
+   <select id="getBondInterestList" resultClass="hmap" fetchSize="50" >
+  <![CDATA[
+    select *
+    from (
+        select  /* SACERP08190_getBondInterestList_할부채권_보조금조회_이강수 */
+              a.acc_mth          /*정산월*/
+            , a.deal_co_cd as agency   /*대리점*/
+            ,  sum(nvl(a.agrmt_astamt, 0))  agrmt_amt   /*약정보조금*/
+            , c.ukey_agency_cd
+          from  tacc_pr_mny_acc_m a, tbas_deal_co_mgmt c
+         where  a.deal_co_cd  = c.deal_co_cd
+           and  c.hseq_no   = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                          hseq_no
+                      FROM  tbas_deal_co_mgmt
+                      WHERE deal_co_cd = c.deal_co_cd AND rownum = 1
+                      )
+           and  a.acc_mth   = #YYMM#
+      ]]>
+          <isNotEmpty prepend="AND" property="AGENCY">
+      <![CDATA[ a.deal_co_cd  = #AGENCY#    ]]>
+          </isNotEmpty>
+      <![CDATA[
+           and  a.del_yn    = 'N'
+           and  a.acc_plc   = '10001'
+        group by a.acc_mth, a.deal_co_cd, c.ukey_agency_cd
+       )
+    where agrmt_amt <> 0
+  ]]>
+  </select>	
+
+   <select id="getBondGrantList" resultClass="hmap" fetchSize="50" >
+  <![CDATA[
+    select *
+    from (
+        select  /* SACERP08190_getBondGrantList_할부채권_보조금조회_이강수 */
+              a.acc_mth          /*정산월*/
+            , a.deal_co_cd as agency   /*대리점*/
+            ,  sum(nvl(a.pay_new_allot_vat, 0))         /*신규할부이자부가세지급*/
+             + sum(nvl(a.pay_chg_allot_vat, 0))         /*기변할부이자부가세지급*/
+             + sum(nvl(a.rpay_new_allot_vat, 0))        /*신규할부이자부가세환수*/
+             + sum(nvl(a.rpay_chg_allot_vat, 0))        /*기변할부이자부가세환수*/
+             + sum(nvl(a.supl_pay_new_vat, 0))          /*부가단말신규할부이자부가세지급*/
+             + sum(nvl(a.supl_pay_chg_vat, 0))          /*부가단말기변할부이자부가세지급*/
+             + sum(nvl(a.supl_rpay_new_vat, 0))         /*부가단말신규할부이자부가세환수*/
+             + sum(nvl(a.supl_rpay_chg_vat, 0))         /*부가단말기변할부이자부가세환수*/
+             as allot_amt
+            , c.ukey_agency_cd
+          from  tacc_allot_bond_acc_m a, tacc_pr_mny_acc_m b, tbas_deal_co_mgmt c
+         where  a.acc_mth     = b.acc_mth(+)
+           and  a.deal_co_cd  = b.deal_co_cd(+)
+           and  a.deal_co_cd  = c.deal_co_cd
+           and  c.hseq_no   = ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+                          hseq_no
+                      FROM  tbas_deal_co_mgmt
+                      WHERE deal_co_cd = c.deal_co_cd AND rownum = 1
+                      )
+           and  a.acc_mth   = #YYMM#
+      ]]>
+          <isNotEmpty prepend="AND" property="AGENCY">
+      <![CDATA[ a.deal_co_cd  = #AGENCY#    ]]>
+          </isNotEmpty>
+      <![CDATA[
+           and  a.del_yn    = 'N'
+           and  b.acc_plc(+)   = '10001'
+        group by a.acc_mth, a.deal_co_cd, c.ukey_agency_cd
+       )
+    where allot_amt <> 0
+  ]]>
+  </select>	
+  
+  <select id="getTaxChangeList" resultClass="hmap" fetchSize="50" >
+  <![CDATA[
+		SELECT /* SACERP08190_getTaxChangeList_수정 전자세금계산서 조회_이강수 */
+		       yymm
+		     , agency
+		     , stl_plc
+		     , seq
+		     , ztaxdat
+		     , mwskz
+		     , zgcode
+		     , bupla
+		     , taxgu
+		     , name1
+		     , hwbas
+		     , hwste
+		     , ztotamt
+		     , stcd1
+		     , stcd2
+		     , j_1kfrepre
+		     , ort01
+		     , j_1kftbus
+		     , j_1kftind
+		     , zarktx1
+		     , ztaxcount
+		     , zrefer1
+		     , zrefer2
+		     , zrefer3
+		     , zrefer4
+		     , zrefer5
+		     , zconfirm
+		     , errlog
+		     , zdele
+		     , ztaxno
+		     , gjahr
+		     , deal_co_cd 
+		  FROM tsac_tax_reset
+		 WHERE yymm      = #YYMM#
+		   AND agency    = #AGENCY#
+		   AND stl_plc   = #DEAL_CO_CD#
+		   AND seq       = #SEQ#
+  ]]>
+  </select>		
+
+	<update id="updateTsacMmTaxErpTrms2" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08190_updateTsacMmTaxErpTrms2_월부가세전송정보변경-하창주 */
+				tsac_mm_tax_erp_trms
+		   SET	 trms_yn		= '9'
+		   		,remark			= #REMARK#
+		 WHERE	yymm			= #YYMM#
+		 AND	agency    	    = #AGENCY#
+		 AND	stl_plc    	    = #DEAL_CO_CD#
+		 AND	seq		        = #SEQ#
+	]]>
+	</update>	  
+		
+</sqlMap>

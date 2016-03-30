@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="300" Id="BASBCO01100" Left="8" OnLoadCompleted="BASBCO01100_OnLoadCompleted" PidAttrib="7" Title="센터조직트리" Top="8" Ver="1.0" Width="255" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_orgTree"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_filterOrg">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+		</Datasets>
+		<TreeView BindDataset="ds_orgTree" Border="Flat" Color="#262626" Font="돋움,9" Height="245" Id="tre_org" ImageID="left_menu_tree" InnerImageCount="3" Left="10" LevelColumn="org_cl" OnDblClick="tre_org_OnDblClick" Style="sty_ipt_form" TabOrder="1" TEXTColumn="org_nm" Top="10" Width="235"></TreeView>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_ok" ImageID="btn_c_2" Left="63" LeftMargin="5" OnClick="btn_ok_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="265" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="127" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="2" Text="닫기" Top="265" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BASBCO01100
+* 업무명      : 기준정보 - 공통
+* 프로그램명  : 조직트리
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.02.24
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_MODE = ""; // 조직 선택 가능 범위 구분 코드
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function BASBCO01100_OnLoadCompleted(obj)
+{
+	// 제목 설정
+	//img_title.Text = this.title;
+	
+	// 파라메터
+	if(IsExistVar("mode", true))
+	{
+		FV_STR_MODE = mode;
+	}
+	
+	// 조회 조건 설정
+	cf_setParam(ds_condition, "org_id", gds_session.GetColumn(0, "orgId"));
+
+	// 트랜잭션 설정
+	var sSvcID = "svcOrgTree";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_orgTree=output";
+	var sArg = "sktst.bas.BCO#getOrgTree";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcOrgTree")
+	{
+		//trace(ds_orgTree.SaveXML());
+	}	
+}	
+
+/*******************************************************************************
+ * @description    : 센터 조직 선택 - 이벤트
+*******************************************************************************/
+function tre_org_OnDblClick(obj,nRow)
+{
+	if(obj.IsLeaf(nRow))
+	{
+		var oTreDs = object(obj.BindDataset);
+		f_makeTreeDs(oTreDs);
+		this.Close(1);
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 하위 조직 포함 선택- 이벤트
+*******************************************************************************/
+function btn_ok_OnClick(obj)
+{
+	var oTreDs = object(tre_org.BindDataset);
+
+	if(FV_STR_MODE == "centerOnly")
+	{
+		if(tre_org.IsLeaf(oTreDs.currow))
+		{
+			f_makeTreeDs(oTreDs);
+			this.Close(1);
+		}
+	}
+	else
+	{
+		f_makeTreeDs(oTreDs);
+		this.Close(1);
+	}	
+}
+
+/*******************************************************************************
+ * @description    :  선택한 조직의 하위 영역까지 parent에 데이타셋 전달
+ * @param oTreDs   :  필터링 대상 데이타셋
+*******************************************************************************/
+function f_makeTreeDs(oTreDs)
+{
+
+	var nRow = oTreDs.currow;
+	var nStartOrgCl = oTreDs.getColumn(nRow, "org_cl");
+	var nEndRow;
+	for(var i=nRow, n=oTreDs.getRowCount(); i<n; i++)
+	{
+		if(i > nRow && oTreDs.getColumn(i, "org_cl") <=  nStartOrgCl)
+		{
+			nEndRow = i-1;
+			break;
+		}
+		
+		nEndRow = n-1;
+	}
+	
+	ds_filterOrg.Copy(ds_orgTree);
+	ds_filterOrg.Filter("org_cl == 3 && row >= "+nRow+" && row <= "+nEndRow);
+	
+	var oTargetDs = cf_isValid("ds_selectedOrg", parent);
+	if(oTargetDs == null)
+	{
+		parent.create("dataset", "ds_selectedOrg");
+		oTargetDs = parent.ds_selectedOrg;
+	}
+	
+	oTargetDs.copyF(ds_filterOrg);
+}
+
+
+/*******************************************************************************
+ * @description    : 닫기- 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+]]></Script>
+</Window>

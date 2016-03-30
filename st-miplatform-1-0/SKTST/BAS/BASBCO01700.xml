@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="536" Id="BASBCO01700" Left="8" OnLoadCompleted="BASBCO01700_OnLoadCompleted" PidAttrib="7" Title="Excel추출&#32;정보&#32;관리" Top="8" Ver="1.0" Width="880" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="excel_list">
+				<Contents>
+					<colinfo id="EXPORT_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="EXPORT_SCREEN" size="256" summ="default" type="STRING"/>
+					<colinfo id="EXPORT_USER" size="256" summ="default" type="STRING"/>
+					<colinfo id="EXPORT_COND" size="256" summ="default" type="STRING"/>
+					<colinfo id="USER_LOGIN_IP" size="256" summ="default" type="STRING"/>
+					<colinfo id="USER_ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="USER_AGENCY_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="USER_USER_GRP" size="256" summ="default" type="STRING"/>
+					<colinfo id="EXPORT_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEL_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="UPD_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_USER_ID" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="excel_title">
+				<Contents>
+					<colinfo id="EX_START_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="EX_END_DTM" size="256" summ="default" type="STRING"/>
+					<record>
+						<EX_END_DTM></EX_END_DTM>
+						<EX_START_DTM></EX_START_DTM>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="8" Style="sty_div_search" TabOrder="1" Text="Div0" Top="8" Width="856">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="782" LeftMargin="5" OnClick="div_search_btn_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="6" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static0" Left="22" Style="sty_lb_Search" TabOrder="2" Text="추출일자" Top="6" VAlign="Middle" Width="68"></Static>
+				<Image Height="20" Id="Image0" ImageID="bul_mand" Left="14" TabOrder="3" TabStop="FALSE" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_excelStart" Left="110" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" OnChanged="div_search_cal_dealStart_OnChanged" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="4" TodayColor="user26" Top="6" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="120"></Calendar>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_excelEnd" Left="262" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="5" TodayColor="user26" Top="6" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="120"></Calendar>
+				<Static Align="Right" Height="20" Id="Static1" Left="238" Style="sty_lb_info" TabOrder="6" Text="~" Top="6" VAlign="Middle" Width="12"></Static>
+			</Contents>
+		</Div>
+		<Grid AutoScrollBar="AlwaysHorz" BindDataset="excel_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="520" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="464" Id="grd_excelList" InputPanel="FALSE" Left="8" LineColor="user33" MultiSelect="TRUE" Right="864" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="56" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="856">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="140"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="400"/>
+						<col width="150"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="90"/>
+						<col width="80"/>
+						<col width="120"/>
+						<col width="140"/>
+						<col width="100"/>
+						<col width="140"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="추출일시"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="추출화면"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="추출사용자"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="추출조건"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="LOGIN_IP"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="조직_ID"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="대리점코드"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="사용자그룹"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="추출건수"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="삭제여부"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" text="UPDATE_COUNT"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" text="입력일시"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" text="입력자ID"/>
+						<cell bkcolor="user34" col="13" color="user35" display="text" text="수정일시"/>
+						<cell bkcolor="user34" col="14" color="user35" display="text" text="수정자ID"/>
+					</head>
+					<body>
+						<cell col="0" colid="EXPORT_DTM" display="text"/>
+						<cell col="1" colid="EXPORT_SCREEN" display="text"/>
+						<cell col="2" colid="EXPORT_USER" display="text"/>
+						<cell col="3" colid="EXPORT_COND" display="text"/>
+						<cell col="4" colid="USER_LOGIN_IP" display="text" Mask="expr:iif(length(PHON_NUM)==10,&apos;###-###-####&apos;,&apos;###-####-####&apos;)"/>
+						<cell col="5" colid="USER_ORG_CD" display="text"/>
+						<cell col="6" colid="USER_AGENCY_CD" display="text"/>
+						<cell col="7" colid="USER_USER_GRP" display="text"/>
+						<cell col="8" colid="EXPORT_CNT" display="text"/>
+						<cell col="9" colid="DEL_YN" display="text"/>
+						<cell col="10" colid="UPD_CNT" display="text"/>
+						<cell col="11" colid="INS_DTM" display="text"/>
+						<cell col="12" colid="INS_USER_ID" display="text"/>
+						<cell col="13" colid="MOD_DTM" display="text"/>
+						<cell col="14" colid="MOD_USER_ID" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BASBCO01700
+* 업무명      : 기준정보 - 공통
+* 프로그램명  : EXCEL 추출정보 관리
+--------------------------------------------------------------------------------
+* 작성자      : 김연석
+* 작성일      : 2010.06.03
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 권현호
+수정일    : 2011.12.01
+수정 내역 :  Excel 추출정보 조회[getExcelExportList] SQL문 추가
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function BASBCO01700_OnLoadCompleted(obj)
+{
+	f_init();
+}
+
+/*******************************************************************************
+ * @description    : 화면 로딩시 초기값 세팅 
+*******************************************************************************/
+function f_init()
+{
+	div_search.cal_excelStart.value = sf_getFirstDay();	// 월 첫째날
+	div_search.cal_excelEnd.value   = Today();			// 현재 날짜
+}
+
+/*******************************************************************************
+ * @description    :  검색전 날짜 유효성 검사
+ *******************************************************************************/
+function f_validSearch()
+{	
+	return sf_isValidDateFromTo(div_search.cal_excelStart, div_search.cal_excelEnd, 0, true);
+}
+
+/*******************************************************************************
+ * @description    : 조회 버튼 클릭 시 - 이벤트
+*******************************************************************************/
+function div_search_btn_OnClick(obj)
+{
+	if(!f_validSearch()) return;
+
+	cf_setParam(ds_condition, "EX_START_DTM", div_search.cal_excelStart.value);			// 추출일자1
+	cf_setParam(ds_condition, "EX_END_DTM", div_search.cal_excelEnd.value + "235959");	// 추출일자2
+	
+	// 트랜잭션 설정
+	var sSvcID = "getExcelExportList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "excel_list=excel_list";
+	var sArg   = "sktst.bas.BCO#getExcelExportList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+}
+
+/*******************************************************************************
+ * @description    :  콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	switch(sSvcID)
+	{
+		case 'getExcelExportList':
+			alert("조회가 완료되었습니다.");
+		break;
+	}
+}
+]]></Script>
+</Window>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASPDM00500">
+	<select id="selectProdMapList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASPDM00500_selectProdMapList_이정현_김중일 */
+       prod_map_cd,
+       prod_map_cl,
+       prod_cd,
+       fbas_get_prod_nm(prod_cd) prod_nm,
+       color_cd
+FROM   tbas_prod_info_map_mgmt
+WHERE  1=1
+]]><isNotEmpty prepend="AND" property="prod_map_cd">
+<![CDATA[       UPPER(prod_map_cd) LIKE '%' || UPPER(#prod_map_cd#) || '%'
+]]></isNotEmpty>
+<![CDATA[AND    del_yn = 'N']]>
+	</select>
+	<update id="saveProdMapInfo" parameterClass="map" ><![CDATA[MERGE INTO /*+ "BASPDM00500_saveProdMapInfo_이정현_김중일" */
+       tbas_prod_info_map_mgmt
+USING DUAL   
+       ON (prod_map_cd  = #prod_map_cd#)
+WHEN MATCHED THEN 
+       UPDATE SET
+           prod_map_cl = #prod_map_cl#,
+           prod_cd = #prod_cd#,
+           color_cd = #color_cd#,
+           del_yn = 'N',
+           upd_cnt = upd_cnt + 1,
+           mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+           mod_user_id = #onlineContext.userInfo.loginId#
+WHEN NOT MATCHED THEN
+       INSERT (
+                               prod_map_cd,
+                               prod_map_cl,
+                               prod_cd,
+                               color_cd,
+                               del_yn,
+                               upd_cnt,
+                               ins_dtm,
+                               ins_user_id,
+                               mod_dtm,
+                               mod_user_id
+       ) VALUES (
+                               #prod_map_cd#,
+                               #prod_map_cl#,
+                               #prod_cd#,
+                               #color_cd#,
+                               'N',
+                               1,
+                               TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+                               #onlineContext.userInfo.loginId#,
+                               TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+                               #onlineContext.userInfo.loginId#
+       )]]>
+	</update>
+	<delete id="deleteProdMapInfo" parameterClass="map" ><![CDATA[UPDATE /*+ BASPDM00500_deleteProdMapInfo_이정현_김중일 */
+       tbas_prod_info_map_mgmt
+SET
+           del_yn = 'Y',
+           upd_cnt = upd_cnt + 1,
+           mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+           mod_user_id = #onlineContext.userInfo.loginId#
+WHERE  prod_map_cd = #prod_map_cd#]]>
+	</delete>
+	<select id="selectProdMapCheck" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASPDM0050_selectProdMapCheck_이정현_김중일 */
+       COUNT(*) CNT
+FROM   tbas_prod_info_map_mgmt
+WHERE  prod_cd = #prod_cd#
+AND    color_cd = #color_cd#
+AND    del_yn = 'N']]>
+	</select>
+</sqlMap>

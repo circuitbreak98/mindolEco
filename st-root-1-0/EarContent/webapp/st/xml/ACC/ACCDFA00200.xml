@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCDFA00200" Left="8" OnLoadCompleted="ACCDFA00200_OnLoadCompleted" PidAttrib="7" Title="배송비&#32;정산&#32;등록" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dlvylist">
+				<Contents>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dlvfeelist">
+				<Contents>
+					<colinfo id="DLVY_TYP_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DLVY_UNIT_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNIT_PRC" size="256" summ="default" type="STRING"/>
+					<colinfo id="AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DLVY_TYP" size="256" summ="default" type="STRING"/>
+					<colinfo id="DLVY_UNIT" size="256" summ="default" type="STRING"/>
+					<colinfo id="QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SPLY_PRC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="VAT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dlvyfeelllllllll">
+				<Contents>
+					<colinfo id="ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="DLV_TYP" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNIT" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNIT_PRC" size="256" summ="default" type="STRING"/>
+					<colinfo id="QTY" size="256" summ="default" type="STRING"/>
+					<colinfo id="AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="FIX_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SPLY_PRC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="VAT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dlvyfee">
+				<Contents></Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_dlvfeelist" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="557" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="467" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="0" TabStop="true" Top="90" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="129"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="78"/>
+						<col width="120"/>
+						<col width="120"/>
+						<col width="120"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="배송유형"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="단위"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="단가"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="수량"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="금액"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="가감금액"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="정산금액"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="DLVY_TYP_NM" display="text"/>
+						<cell align="center" col="1" colid="DLVY_UNIT_NM" display="text"/>
+						<cell align="right" col="2" colid="UNIT_PRC" display="number"/>
+						<cell align="right" col="3" colid="QTY" display="number"/>
+						<cell align="right" col="4" colid="AMT" display="number" expr="UNIT_PRC&#32;*&#32;QTY"/>
+						<cell align="right" col="5" colid="ADD_SUB_AMT" display="number" edit="number"/>
+						<cell align="right" col="6" colid="ACC_AMT" display="number" expr="(UNIT_PRC&#32;*&#32;QTY)&#32;+&#32;ToNumber(&#32;ADD_SUB_AMT)"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" display="text" font="돋움,9,Bold" text="합계"/>
+						<cell bkcolor="user37" col="1" color="user38" display="text"/>
+						<cell bkcolor="user37" col="2" color="user38" display="text"/>
+						<cell bkcolor="user37" col="3" color="user38" display="text"/>
+						<cell bkcolor="user37" col="4" color="user38" display="number" expr='decode(sum(&quot;UNIT_PRC&#32;*&#32;QTY&quot;),0,&apos;&apos;,sum(&quot;UNIT_PRC&#32;*&#32;QTY&quot;))'/>
+						<cell bkcolor="user37" col="5" color="user38" display="number" expr='decode(sum(&quot;ADD_SUB_AMT&quot;),0,&apos;&apos;,sum(&quot;ADD_SUB_AMT&quot;))'/>
+						<cell bkcolor="user37" col="6" color="user38" display="number" expr='decode(sum(&quot;(UNIT_PRC&#32;*&#32;QTY)&#32;+&#32;ToNumber(&#32;ADD_SUB_AMT)&quot;),0,&apos;&apos;,sum(&quot;(UNIT_PRC&#32;*&#32;QTY)&#32;+&#32;ToNumber(&#32;ADD_SUB_AMT)&quot;))'/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button0" ImageID="btn_c_2" Left="760" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="2" Text="저장" Top="565" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="배송비&#32;정산" Top="10" Width="94"></Image>
+		<Div Border="RaisedEdge" Height="40" Id="Div2" Left="8" Style="sty_div_dataview" TabOrder="4" Text="Div0" Top="36" Width="810">
+			<Contents>
+				<MaskEdit Border="Flat" Enable="FALSE" Face3dColor="user10" Height="20" Hilight3dColor="user10" Id="edt_accmth" Left="301" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="9" Type="STRING" Width="121"></MaskEdit>
+				<Static Align="Right" Border="None" Height="20" Id="Static12" Left="9" Style="sty_lb_Basic" TabOrder="2" Text="배송사" Top="9" VAlign="Middle" Width="84"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="ed_dlv" Left="98" Readonly="TRUE" Style="sty_ipt_form" TabOrder="1" Top="9" Width="121"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static13" Left="212" Style="sty_lb_Basic" TabOrder="3" Text="정산월" Top="9" VAlign="Middle" Width="84"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static16" Left="415" Style="sty_lb_Basic" TabOrder="4" Text="영업월" Top="9" VAlign="Middle" Width="84"></Static>
+				<MaskEdit Border="Flat" Enable="FALSE" Face3dColor="user10" Height="20" Hilight3dColor="user10" Id="edt_paccmth" Left="501" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="9" Type="STRING" Width="121"></MaskEdit>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCDFA00100	
+* 업무명      : 정산 - 배송비 정산
+* 프로그램명  : 배송비정산
+--------------------------------------------------------------------------------
+* 작성자      : 이종혁
+* 작성일      : 2009.02.26
+*******************************************************************************/
+
+//==============================================================================
+// 전 처리기
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+//#include "lib::lib_commMsg_ex.js"
+#include "lib::lib_util.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_MENU_NO = ""; //메뉴번호 ()
+var FV_ORG_CD = "";// 조직코드
+var FV_ACC_MTH = "";//정산월
+var FV_P_ACC_MTH = "";//영업월
+var FV_DEAL_CO_CD = "";//거래처코드
+var FV_AMT = "";//금액
+var FV_FIX_AMT = "";//확정금액
+/*******************************************************************************
+* 함수명 : ACCDFA00100_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function ACCDFA00200_OnLoadCompleted(obj)
+{	
+	Div2.ed_dlv.Value = sDealnm;//거래처(배송사)
+	Div2.edt_accmth.Value = sMth;//정산월
+	Div2.edt_paccmth.Value = sPmth;//영업월
+	FV_ORG_CD = sOrgcd;
+	FV_ACC_MTH = sMth;
+	FV_DEAL_CO_CD = sDlvid;
+	FV_P_ACC_MTH = sPmth;
+	
+	cf_setParam(ds_condition, "P_ACC_MTH", FV_P_ACC_MTH);
+	cf_setParam(ds_condition, "DEAL_CO_CD", FV_DEAL_CO_CD );
+	cf_setParam(ds_condition, "ORG_ID", FV_ORG_CD );
+	
+	var sSvcID = "getQtyPrcList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_dlvfeelist=qtyPrcList";
+	var sArg   = "sktst.acc.DFA#getQtyPrcList";
+	
+	// 배송사의 내역조회 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	 
+
+}
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	
+	if(sSvcID == "getQtyPrcList")
+	{
+		if(ds_dlvfeelist.rowcount == 0)
+		{
+			alert(cf_getMessage(MSG_00067,""));//조회된 데이타가 없습니다.
+		}
+		
+	}
+	else if(sSvcID == "")
+	{
+		
+	}
+	
+}
+//==============================================================================
+// Event
+//==============================================================================
+/*******************************************************************************
+ * @description    : 저장버튼 클릭 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	//저장 전 VALIDATION
+	 if(ds_dlvfeelist.GetUpdate() == 0){
+		 alert(cf_getMessage(MSG_00028,"가감금액")); // 이(가)입력되지 않았습니다.
+		 return;
+	 }
+	 f_setAccList();
+	 alert(ds_dlvfeelist.SaveXML());alert(ds_dlvyfee.SaveXML());return;
+	 // 트랜잭션 설정
+	// var sSvcID = "updateFeed";
+	// var sInDs  = "fixYn=ds_feedList:U";
+	// var sOutDs = "";
+	// var sArg   = "sktst.acc.DFA#updateFeed";
+	
+	// 공통 트랜잭션 호출
+	//cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	
+}
+/*******************************************************************************
+ * @description    : 배송비 정산내역, 상세 정산내역 dataset 담기 
+*******************************************************************************/
+function f_setAccList(obj)
+{	
+	for(var i = 0; i<ds_dlvfeelist.GetRowCount(); i++)
+	{
+		var sUnitprc = ds_dlvfeelist.getcolumn(i, "UNIT_PRC");//단가
+		var sQty = ds_dlvfeelist.getcolumn(i, "QTY");//수량
+		var sAmt = sUnitprc * sQty;//금액
+		var sAddsub = ds_dlvfeelist.getcolumn(i, "ADD_SUB_AMT");//가감금액
+		var sFix = sAmt + ParseInt(sAddsub);//정산금액=확정금액
+		
+		ds_dlvfeelist.SetColumn(i, "QTY",sQty );//수량
+		ds_dlvfeelist.SetColumn(i, "AMT",sAmt );//금액
+		ds_dlvfeelist.SetColumn(i, "ADD_SUB_AMT",sAddsub );//가감금액
+		ds_dlvfeelist.SetColumn(i, "FIX_AMT", sFix);//정산,확정금액
+		
+	}
+	
+	var iAmt = ds_dlvfeelist.Sum("AMT");
+	var iAdd = ds_dlvfeelist.Sum("ADD_SUB_AMT");
+	var iFix = ds_dlvfeelist.Sum("FIX_AMT");
+	
+	//배송비 정산내역 table에 등록될 값들
+	var sSp = iFix/1.1;//공급가액
+	var sSpl = Round( sSp, 0 );//공급가액 소수점 첫번째에서 반올림
+	var sVat = iFix - sSpl;//부가세 (확정금액=정산금액 - 공급가액)
+	
+	cf_setParam(ds_dlvyfee, "ORG_CD", FV_ORG_CD);
+	cf_setParam(ds_dlvyfee, "ACC_MTH", FV_ACC_MTH);
+	cf_setParam(ds_dlvyfee, "DEAL_CO_CD", FV_DEAL_CO_CD);
+	cf_setParam(ds_dlvyfee, "SPLY_PRC_AMT", sSpl);
+	cf_setParam(ds_dlvyfee, "FIX_AMT", iFix);
+	cf_setParam(ds_dlvyfee, "VAT", sVat);
+	    
+}
+
+
+]]></Script>
+</Window>

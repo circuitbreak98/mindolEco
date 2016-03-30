@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="280" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="U.Key&#32;코드&#32;검색" Top="8" Ver="1.0" Width="328" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ukey"></Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_ukey" BkColor2="default" BoldHead="true" Border="Flat" Bottom="241" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="234" Id="grd_list" InputPanel="FALSE" Left="7" LineColor="user33" MinWidth="100" MultiSelect="TRUE" OnCellDBLClick="grd_list_OnCellDblClick" Right="317" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="7" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="310">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="95"/>
+						<col width="120"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="U.Key&#32;코드" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="U.Key&#32;코드&#32;명" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="center" bkcolor2="user36" col="0" colid="login_id" combotext="name" display="text"/>
+						<cell align="center" bkcolor2="user36" col="1" colid="ukey_id_nm" combotext="name" display="combo"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="259" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="2" Text="닫기" Top="247" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  BASUSM08100
+* 업무명      :  BAS - 유키코드 팝업
+* 프로그램명  :  유키코드 팝업
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.04.21
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 
+수정일    : 
+수정 내역 : 
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	// 조회 조건 설정
+	cf_setParam(ds_condition, "pos_agency", posAgency);
+	cf_setParam(ds_condition, "user_nm", userNm);
+	
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_ukey=output";
+	var sArg = "sktst.bas.CDM#getUkeyPop";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcList")
+	{
+		//trace(ds_ukey.SaveXML());
+	}
+	
+}	
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+
+/*******************************************************************************
+ * @description    : 조직 더블 클릭 선택- 이벤트
+*******************************************************************************/
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	var sResult = ds_ukey.GetColumn(nRow, "login_id")+"^"+ds_ukey.GetColumn(nRow, "ukey_id_nm");
+	   sResult += "^"+ds_ukey.GetColumn(nRow, "op_dt")+"^"+ds_ukey.GetColumn(nRow, "op_tm")+"^"+ds_ukey.GetColumn(nRow, "seq");
+	this.Close(sResult);
+}
+
+]]></Script>
+</Window>

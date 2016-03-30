@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="380" Id="SALPCM00510" Left="8" OnLoadCompleted="SALPCM00510_OnLoadCompleted" PidAttrib="7" Title="상품조회" Top="8" Ver="1.0" Width="450" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="CHK" size="256" summ="default" type="STRING"/>
+					<colinfo id="SUPL_SVC_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="SUPL_SVC_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="GUBUN" size="256" summ="default" type="STRING"/>
+					<colinfo id="SUPL_SVC_NM" size="256" summ="default" type="STRING"/>
+					<record>
+						<GUBUN></GUBUN>
+						<SUPL_SVC_NM></SUPL_SVC_NM>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_strdDt">
+				<Contents>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_STA_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRCHS_PLC" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_MTH>&#32;</ACC_MTH>
+						<APLY_STA_DTM></APLY_STA_DTM>
+						<ORG_CD></ORG_CD>
+						<PRCHS_PLC></PRCHS_PLC>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_preList">
+				<Contents>
+					<colinfo id="STRD_DT" size="256" summ="default" type="STRING"/>
+					<record>
+						<STRD_DT></STRD_DT>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="223" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="1" Text="닫기" Top="346" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_confirm" ImageID="btn_c_2" Left="157" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="2" Text="확인" Top="346" Width="60"></Button>
+		<Grid AutoFit="TRUE" BindDataset="ds_result" BkColor2="default" BoldHead="true" Border="Flat" Bottom="339" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="275" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellClick="grd_list_OnCellClick" Right="438" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="64" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="430">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="37"/>
+						<col width="164"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="선택" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="상품명" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="center" bkcolor2="user36" col="0" colid="CHK" display="checkbox" edit="checkbox"/>
+						<cell align="left" bkcolor2="user36" col="1" colid="SUPL_SVC_NM" color="user11" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="5" Text="Div0" Top="10" Width="430">
+			<Contents>
+				<Button ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="293" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="7" Width="60"></Button>
+				<Static Align="Right" Border="None" Height="20" Id="st_prodNm" Left="1" Style="sty_lb_Search" TabOrder="1" Text="요금제" Top="7" VAlign="Middle" Width="91"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_Fare" Left="102" LeftMargin="2" OnCharChanged="div_search_edt_prchsPlcNm_OnCharChanged" OnKeyDown="div_search_edt_prchsPlcNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="182"></Edit>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALPCM00510
+* 업무명      : 고객상담 - 요금제목록
+* 프로그램명  : 요금제목록
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.02.25
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 1. 전 처리기
+//==============================================================================
+#include "lib::lib_commF.js"
+
+var F_GUBUN;
+var F_GUBUN2;
+var F_N_ROW;
+
+function SALPCM00510_OnLoadCompleted(obj)
+{
+	// 그리드 체크박스 설정 및 정렬
+	cf_setGrdChecknSortEvent(grd_list,0);
+	
+	if(sGubun == "1"){
+		div_search.st_prodNm.Text = "요금제";
+	}else{
+		div_search.st_prodNm.Text = "부가서비스";
+	}
+	
+	if(sGubun != ""){
+		F_GUBUN2 = "("+sGubun+")";
+	}
+		
+	F_GUBUN = sGubun;
+	F_N_ROW = sCurrow;
+	
+	f_search();
+}
+
+
+function f_search(sButtonID)
+{
+btn_search_OnClick();
+}
+
+/***********************************************************************************
+ * @description    : 운영모델 단가표에서 매입가 차이가 있는 적용시작일시 갖고오기
+************************************************************************************/
+function btn_search_OnClick(obj)
+{
+	ds_condition.SetColumn(0,"GUBUN",F_GUBUN2);
+	ds_condition.SetColumn(0,"SUPL_SVC_NM",div_search.edt_Fare.Text);
+
+		
+	var sSvcID = "getFareProdList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_result=rs_list";
+	var sArg   = "sktst.sal.PCM#getFareProdList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    :  콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{		
+	if(sSvcID == "getFareProdList") {
+	return;
+	} 
+	
+}
+
+
+/*******************************************************************************
+ * @description    :  닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+function btn_confirm_OnClick(obj)
+{
+
+	if(ds_result.CaseCount("CHK==" + quote("1")) == 0){
+		alert("요금제를 선택해주십시오. ");
+		return false;
+	}
+	
+	var sPopSuprSvcCd = ds_result.GetColumn(ds_result.FindRow("chk","1"),"SUPL_SVC_CD");
+	
+	var sPopMsg = "";
+	
+	if(F_GUBUN == "1"){
+		sPopMsg = "요금제";
+	}else{
+		sPopMsg = "부가서비스";
+	}
+	
+	if(parent.ds_list.CaseCount("SUPL_SVC_CD==\""+ sPopSuprSvcCd + "\"") >0){
+		alert("동일한 "+sPopMsg+"가 있습니다. ");
+		return false;
+	}
+	
+	
+	parent.ds_list.SetColumn(F_N_ROW, "SUPL_SVC_CD", ds_result.GetColumn(ds_result.FindRow("chk","1"),"SUPL_SVC_CD"));
+	parent.ds_list.SetColumn(F_N_ROW, "SUPL_SVC_NM", ds_result.GetColumn(ds_result.FindRow("chk","1"),"SUPL_SVC_NM"));
+
+	this.close();
+	
+}
+
+
+
+
+function grd_list_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell ==0){
+				
+		if(ds_result.GetRowCount() >0){
+		
+			for(var i=0; i<ds_result.rowcount; i++){
+				
+				if(i != nRow && (ds_result.GetColumn(i,"CHK") == "1")){
+					ds_result.SetColumn(i,"CHK","0");
+				}
+			}
+		}
+	}
+}
+]]></Script>
+</Window>

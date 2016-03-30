@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="192" Id="ACCSAC01030" Left="8" OnLoadCompleted="ACCSAC01030_OnLoadCompleted" PidAttrib="7" Title="필터" Top="8" Ver="1.0" Width="448" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_filter">
+				<Contents>
+					<colinfo id="Colnm" size="256" type="STRING"/>
+					<colinfo id="condition" size="256" type="STRING"/>
+					<colinfo id="value" size="256" type="STRING"/>
+					<colinfo id="relation" size="256" type="STRING"/>
+					<colinfo id="code" size="256" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_item">
+				<Contents>
+					<colinfo id="nm" size="256" type="STRING"/>
+					<colinfo id="ColNm" size="256" type="STRING"/>
+					<colinfo id="display" size="256" type="STRING"/>
+					<colinfo id="valproc" size="256" type="STRING"/>
+					<colinfo id="seq" size="256" type="STRING"/>
+					<colinfo id="ComboDataSet" size="256" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="cd" size="256" type="STRING"/>
+					<colinfo id="nm" size="256" type="STRING"/>
+					<record>
+						<cd>==</cd>
+						<nm>=</nm>
+					</record>
+					<record>
+						<cd>&gt;</cd>
+						<nm>&gt;</nm>
+					</record>
+					<record>
+						<cd>&gt;=</cd>
+						<nm>&gt;=</nm>
+					</record>
+					<record>
+						<cd>&lt;</cd>
+						<nm>&lt;</nm>
+					</record>
+					<record>
+						<cd>&lt;=</cd>
+						<nm>&lt;=</nm>
+					</record>
+					<record>
+						<cd>&lt;&gt;</cd>
+						<nm>&lt;&gt;</nm>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_value">
+				<Contents>
+					<colinfo id="item" size="256" type="STRING"/>
+					<colinfo id="value" size="256" type="STRING"/>
+					<colinfo id="code" size="256" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_relation">
+				<Contents>
+					<colinfo id="cd" size="256" type="STRING"/>
+					<colinfo id="nm" size="256" type="STRING"/>
+					<record>
+						<cd>&amp;&amp;</cd>
+						<nm>AND</nm>
+					</record>
+					<record>
+						<cd>||</cd>
+						<nm>OR</nm>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_HeadInfo">
+				<Contents>
+					<colinfo id="row" size="3" type="INT"/>
+					<colinfo id="col" size="3" type="INT"/>
+					<colinfo id="Text" size="256" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_BodyInfo">
+				<Contents>
+					<colinfo id="col" size="3" type="INT"/>
+					<colinfo id="colid" size="256" type="STRING"/>
+					<colinfo id="display" size="256" type="STRING"/>
+					<colinfo id="ComboDataSet" size="256" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button Height="20" Id="btn_addRow" ImageID="btn_i_add_w" Left="397" OnClick="btn_addRow_OnClick" TabOrder="1" Text="Button7" Top="7" Width="20"></Button>
+		<Button Height="20" Id="btn_delRow" ImageID="btn_i_subtract_w" Left="419" OnClick="btn_delRow_OnClick" TabOrder="2" Text="Button7" Top="7" Width="20"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="379" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="159" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_cancel" ImageID="btn_d_2" Left="315" LeftMargin="5" OnClick="btn_cancel_OnClick" Style="sty_btn_d" TabOrder="4" Text="취소" Top="159" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_filter" ImageID="btn_d_2" Left="251" LeftMargin="5" OnClick="btn_filter_OnClick" Style="sty_btn_d" TabOrder="5" Text="필터" Top="160" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="6" Text="필터" Top="9" Width="56"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_filter" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="154" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="20" Height="121" Id="grFilter" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" Right="438" RowHeight="20" Style="sty_Grid" TabOrder="7" TabStop="true" Top="33" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="430">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="145"/>
+						<col width="51"/>
+						<col width="145"/>
+						<col width="45"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="선택항목"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="조건"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="값"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="관계"/>
+					</head>
+					<body>
+						<cell align="left" col="0" colid="Colnm" combocol="ColNm" combodataset="ds_item" combotext="nm" display="combo" edit="combo"/>
+						<cell align="center" col="1" colid="condition" combocol="cd" combodataset="ds_condition" combotext="nm" display="combo" edit="combo"/>
+						<cell col="2" colid="value" display="text" edit="normal" limit="12"/>
+						<cell align="center" col="3" colid="relation" combocol="cd" combodataset="ds_relation" combotext="nm" display="combo" edit="combo"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCSAC01030
+* 업무명      : 정산
+* 프로그램명  : 온라인도매 수수료 정산 필터
+--------------------------------------------------------------------------------
+* 작성자      : 전승호
+* 작성일      : 2009.03.09
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_LOGIN_ID;      	//사용자계정     
+var FV_ORG_ID;         	//조직코드    
+var FV_ORG_CL;         	//조직구분      
+var FV_SUP_ORG_ID;      //상위조직코드   
+var FV_USER_GRP;        //사용자그룹   
+var FV_ORG_AREA_ID; 	// 근무지 cd.
+var FV_ORG_AREA_NM; 	// 근무지 nm.       
+var FV_POS_AGENCY_ID;   // 소속 대리점ID 
+var FV_POS_AGENCY_NM;   // 소속 대리점명 
+var FV_POS_AGENCY_UKEY_ID; // 소속 대리점UKEY ID 
+
+/*******************************************************************************
+* 함수명 : ACCSAC01030_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function ACCSAC01030_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	f_setTotColumn();
+	
+	btn_addRow_OnClick();
+	
+}
+
+/*******************************************************************************
+* 함수명 : f_setTotColumn
+* 기능명 : 그리드의 컬럼 정보세팅
+*******************************************************************************/
+function f_setTotColumn() 
+{
+
+	var cntHead = object(strGrd).GetCellCount("head");
+	var cntBody = object(strGrd).GetCellCount("body");
+	var colSpan;
+	var rowSpan;
+	var colNo;
+	var rowPos;
+	
+	var rtnRow = f_getHeadRowCount();
+	
+	var subCellCnt = 0;
+	
+	if (object(strGrd).GetSubCellCount("head",0) == 2) subCellCnt = -1;
+	
+	ds_HeadInfo.DeleteAll();
+	rtnRow = 0;
+	//header info setting
+	for (i=0; i<=rtnRow; i++)
+	{	
+		for(j=0; j<cntHead; j++){
+			//헤더의 ColSpan 겹친것은 제외한다.
+			if(object(strGrd).GetCellProp("HEAD",j,"ColSpan") == 1)
+			{
+				colNo = object(strGrd).GetCellProp("head",j,"col");
+				var text = replace(replace(replace(object(strGrd).GetCellProp("head",j,"text"),'\n',''),'▼',''),'▲','');
+				rowPos = ds_HeadInfo.AddRow();
+				
+				ds_HeadInfo.SetColumn(rowPos,"row",i);
+				ds_HeadInfo.SetColumn(rowPos,"col",colNo);
+				ds_HeadInfo.SetColumn(rowPos,"text",text);
+				
+			}
+		}
+	}
+	
+	ds_BodyInfo.DeleteAll();
+	//body info setting
+	for (i=0; i<cntBody; i++)
+	{
+		colNo = object(strGrd).GetCellProp("body",i,"col");	
+		
+		rowPos = ds_BodyInfo.AddRow();
+		ds_BodyInfo.SetColumn(rowPos, "col", object(strGrd).GetCellProp("body",i,"col"));
+		ds_BodyInfo.SetColumn(rowPos, "colid", object(strGrd).GetCellProp("body",i,"colid"));
+		ds_BodyInfo.SetColumn(rowPos, "display", object(strGrd).GetCellProp("body",i,"display"));
+		ds_BodyInfo.SetColumn(rowPos, "ComboDataSet", object(strGrd).GetCellProp("body",i,"ComboDataSet"));
+	}
+	
+	var colID, col_disp, chkNo="";
+	
+	ds_item.fireEvent = false;
+	ds_value.fireEvent = false;
+	
+	//head info 와 body info mapping
+	for (i=0; i<ds_HeadInfo.RowCount(); i++)
+	{	
+		headCol = ds_HeadInfo.GetColumn(i, "col");
+		headText = ds_HeadInfo.GetColumn(i, "text");
+		
+		for(j=0;j<ds_BodyInfo.RowCount();j++)
+		{
+			bodyCol = ds_BodyInfo.GetColumn(j, "col");
+			bodyColID = ds_BodyInfo.GetColumn(j, "colid");
+			bodyDisplay = ds_BodyInfo.GetColumn(j, "display");
+			comboDataSet = ds_BodyInfo.GetColumn(j, "ComboDataSet");
+			
+			//find
+			if( headCol == bodyCol)	
+			{
+				//선택항목 -> 판매일시, 변경일시, 이력구분, 서비스관리번호만 한다.
+				if(bodyColID=="SALE_DTM" || bodyColID=="SVC_DTM" || bodyColID=="SALE_CHG_DTM" || 
+				   bodyColID=="SALE_CHG_HST_CL_NM" || bodyColID=="SVC_MGMT_NUM")
+				{
+					ds_item.AddRow();
+					ds_item.SetColumn(ds_item.row, "seq", ds_item.row);
+					ds_item.SetColumn(ds_item.row, "ColNm", bodyColID);
+					
+					ds_item.SetColumn(ds_item.row,"NM",headText);
+					ds_item.SetColumn(ds_item.row,"display",bodyDisplay);
+					
+					if(bodyDisplay == "combo")	{
+						ds_item.SetColumn(ds_item.row,"ComboDataSet",comboDataSet);
+					}
+					
+					//delete
+					ds_BodyInfo.DeleteRow(j);
+					
+					break;
+				}
+			}
+		}
+	}
+	
+	//head info를 타이틀 순서로 sort
+	ds_HeadInfo.Sort("col:A");
+	
+	//ds_item을 head info의 타이틀 순서로 sort
+	for (i=0; i<ds_HeadInfo.RowCount(); i++)
+	{
+		headText = ds_HeadInfo.GetColumn(i, "text");
+		
+		for(j=0;j<ds_item.RowCount();j++)	{
+			itemNm = ds_item.GetColumn(j,"NM");
+			if(headText == itemNm)	{
+				
+				tmp = "0";
+				if(i <10 )	tmp = tmp + i;
+				else		tmp = i;
+				
+				ds_item.SetColumn(j, "seq", tmp);
+			}
+		}
+	}
+	ds_item.Sort("seq:A");
+	
+	ds_item.row = 0;
+	ds_item.fireEvent = true;
+	
+}
+
+/*******************************************************************************
+* 함수명 : f_getHeadRowCount
+* 기능명 : 그리드의 헤더 정보세팅
+*******************************************************************************/
+function f_getHeadRowCount() 
+{
+	var cntHead = object(strGrd).GetCellCount("Head");
+	headRow = 0;
+	
+	for (i=0; i<cntHead; i++){
+		if (object(strGrd).GetCellProp("head",i,"row") > headRow) {
+			headRow = object(strGrd).GetCellProp("head",i,"row");
+		}
+	}
+	
+	return headRow;
+}
+
+/*******************************************************************************
+* 함수명 : btn_filter_OnClick
+* 기능명 :  필터 버튼 클릭시
+*******************************************************************************/
+function btn_filter_OnClick(obj)
+{
+	var strfilter = "";
+	var strColnm;
+	var strCond;
+	var strVal;
+	var strRel;
+	var objDs = object(object(strGrd).BindDataset);
+
+	for ( var i = 0 ; i < ds_filter.GetRowCount(); i++ )
+	{
+		strColnm = ds_filter.GetColumn(i,"ColNm");
+		strCond = ds_filter.GetColumn(i,"condition");
+		strVal = ds_filter.GetColumn(i,"value");
+		strCode = ds_filter.GetColumn(i,"code");
+		strRel = ds_filter.GetColumn(i,"relation");
+		
+		//판매일시, 변경일시 일경우에는 값 문자열에 데이타 길이만큼 0 을 붙친다.
+		if(strColnm == "SALE_DTM" || strColnm == "SVC_DTM" || strColnm == "SALE_CHG_DTM"){
+			strVal = rpad(uf_StripSpecialChar(strVal),"0", length(objDs.GetColumn(0,strColnm)));
+		}
+
+		if ( length(strColnm) > 0 && length(strVal) > 0  ) 
+		{
+			// Column의 Type이 숫자형이면 ' ' 없이 Filter한다
+			switch (toUpper(objDs.GetColType(strColnm)))
+			{
+				case "DECIMAL":
+				case "INT":
+					strfilter += strColnm + " " + strCond + " " + strVal + " " + strRel;
+					break;
+				default:
+					if(length(strCode) > 0 )	{
+						strfilter += strColnm + " " + strCond + " '" + strCode + "' " + strRel;
+					}else	{
+						strfilter += strColnm + " " + strCond + " '" + strVal + "' " + strRel;
+					}
+					
+					break;
+			}
+		
+		}
+	}
+
+	objDs.filter(strfilter.left(length(strfilter) - 2));
+	
+	if(objDs.GetRowCount() == 0 )
+	{
+		var objDs = object(object(strGrd).BindDataset);
+		objDs.UnFilter();
+		alert("필터대상의 선택항목 값이 없습니다.");
+	}else{
+		objDs.Sort(strColnm);
+		this.close();
+	}
+	
+	
+}
+
+/*******************************************************************************
+* 함수명 : btn_addRow_OnClick
+* 기능명 :  필터할 그리드의 row 추가
+*******************************************************************************/
+function btn_addRow_OnClick(obj)
+{
+	if( ds_filter.rowcount == 4 ){
+		btn_addRow.Enable = false;
+	}else{
+		btn_addRow.Enable = true;
+	}
+	
+	ds_filter.addRow();
+	ds_filter.SetColumn(ds_filter.row,"condition","==");
+	ds_filter.SetColumn(ds_filter.row,"relation","&&");
+	
+	f_set_gridFocus(grFilter, ds_filter.lastrow, 0);
+	
+}
+
+/*******************************************************************************
+* 함수명 : btn_delRow_OnClick
+* 기능명 :  필터할 그리드의 row 삭제
+*******************************************************************************/
+function btn_delRow_OnClick(obj)
+{
+	ds_filter.DeleteRow(ds_filter.row);
+	btn_addRow.Enable = true;
+}
+
+/*******************************************************************************
+* 함수명 : btn_cancel_OnClick
+* 기능명 :  취소버튼 : filtering 된 dataset 을 원래대로 되돌린다.
+*******************************************************************************/
+function btn_cancel_OnClick(obj)
+{
+	var objDs = object(object(strGrd).BindDataset);
+	objDs.UnFilter();
+}
+
+/*******************************************************************************
+* 함수명 : f_set_gridFocus
+* 기능명 : 그리드 포커스 이동
+*******************************************************************************/
+function f_set_gridFocus(gridObj, nRow, nCellIdx) 
+{	
+	var dataSetObj = object(gridObj.bindDataset);
+	dataSetObj.row = nRow;
+	gridObj.SetCellPos(nCellIdx);
+	gridObj.SetFocus();
+}
+
+/*******************************************************************************
+ * @description    : 닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.close();
+}
+
+
+]]></Script>
+</Window>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSUI08800">
+	<select id="getSalesResult" resultClass="hmap" fetchSize="50" ><![CDATA[select  /* SALSUI08800_getSalesResult_영업개통실적 추출_김연석_김연석 */
+	   x.sale_dt
+     , x.pos_agency
+     , x.user_id
+     , x.sale_plc
+     , sum(x.new_cnt * x.chk_value)  new_cnt
+     , sum(x.chg_cnt * x.chk_value)  chg_cnt
+  from ( select substr(a.sale_dtm, 1, 8)                         sale_dt
+              , b.pos_agency
+              , a.sale_plc
+              , b.chrgr_user_id                                  user_id
+              , decode(substr(a.sale_dtl_typ, 1, 2), 'S1', 1, 0) new_cnt     
+              , decode(substr(a.sale_dtl_typ, 1, 2), 'S2', 1, 0) chg_cnt
+              , decode(a.sale_cncl_yn, 'N', 1,
+                decode(a.sale_cncl_cl, '4', -1, 0))              chk_value
+           from tsal_general_sale a
+              , tbas_deal_co_mgmt b
+          where a.sale_plc        = b.deal_co_cd
+            and a.sale_dtm  between b.eff_sta_dtm and b.eff_end_dtm
+            and a.acc_chg_hst_cl in ('01', '02', '07')
+            and b.chrgr_user_id  is not null
+            and a.mod_dtm   between #PROC_DT# || '000000' and #PROC_DT# || '235959' ) x
+ group by x.sale_dt, x.pos_agency, x.user_id, x.sale_plc
+	]]>
+	</select>
+	<select id="getResultInfo" resultClass="hmap" fetchSize="50" ><![CDATA[select  /* SALSUI08800_getResultInfo_영업개통실적 집계유무 판단_김연석_김연석 */
+	   sale_dt
+     , pos_agency
+     , chrgr_user_id
+  from TSAL_DAILY_RESULT
+ where sale_dt       = #SALE_DT#
+   and pos_agency    = #POS_AGENCY#
+   and chrgr_user_id = #USER_ID#
+   and sale_plc      = #SALE_PLC#
+	]]>
+	</select>
+	<insert id="addDailyResult" parameterClass="map" >
+	<![CDATA[
+	INSERT INTO /*+ SALSUI08810_addDailyResult_일별 개통실적 추가 */
+           TSAL_DAILY_RESULT   ( SALE_DT
+                               , POS_AGENCY
+                               , CHRGR_USER_ID
+                               , SALE_PLC
+                               , RESULT_NEW
+                               , RESULT_CHG
+                               , DEL_YN
+                               , UPD_CNT
+                               , INS_USER_ID
+                               , INS_DTM
+                               , MOD_USER_ID
+                               , MOD_DTM
+            )  VALUES  ( 
+                                 #SALE_DT#
+                               , #POS_AGENCY#
+                               , #USER_ID#
+                               , #SALE_PLC#
+                               , #RESULT_NEW#
+                               , #RESULT_CHG#
+                               , 'N'
+                               , 1
+                               , 'SALSUI0880'
+                               , TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+                               , 'SALSUI0880'
+                               , TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+    )]]>
+	</insert>
+	<update id="updateDailyResult" parameterClass="map"><![CDATA[update /*+ SALSUI08810_updateDailyResult_일별 개통실적 변경 */
+       tsal_daily_result
+   set result_new    = result_new + #RESULT_NEW#
+     , result_chg    = result_chg + #RESULT_CHG#
+     , mod_user_id   = 'SALSUI0880'
+     , mod_dtm       = to_char(sysdate, 'yyyyMMddHH24miss')
+ where sale_dt       = #SALE_DT#
+   and pos_agency    = #POS_AGENCY#
+   and chrgr_user_id = #USER_ID#
+   and sale_plc      = #SALE_PLC#
+	]]>
+	</update>
+
+</sqlMap>

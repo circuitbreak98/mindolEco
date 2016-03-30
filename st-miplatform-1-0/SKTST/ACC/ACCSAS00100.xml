@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCSAS00100" Left="8" OnLoadCompleted="ACCSAS00100_OnLoadCompleted" PidAttrib="7" Title="재고보상금액조회" Top="8" Ver="1.0" Width="800" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="org_cd" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_aply_amt">
+				<Contents>
+					<colinfo id="org_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="aply_amt" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Height="92" Id="Div0" Left="46" TabOrder="1" Text="Div0" Top="26" Width="591">
+			<Contents>
+				<Static Height="29" Id="Static0" Left="47" TabOrder="1" Text="조직코드" Top="32" Width="108"></Static>
+				<Edit Height="31" Id="edt_org_cd" Left="173" TabOrder="2" Top="25" Width="156"></Edit>
+				<Button Height="36" Id="Button0" Left="346" OnClick="Div0_Button0_OnClick" TabOrder="3" Text="조회" Top="19" Width="98"></Button>
+			</Contents>
+		</Div>
+		<Grid BindDataset="ds_aply_amt" BoldHead="true" Bottom="414" Enable="true" EndLineColor="default" Height="258" Id="Grid0" InputPanel="FALSE" Left="121" LineColor="default" Right="521" TabOrder="2" TabStop="true" Top="156" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="default" WheelScrollRow="1" Width="400">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="80"/>
+						<col width="316"/>
+					</columns>
+					<head>
+						<cell col="0" display="text" text="조직"/>
+						<cell col="1" display="text" text="재고보상금액"/>
+					</head>
+					<body>
+						<cell col="0" colid="org_cd" display="text"/>
+						<cell col="1" colid="aply_amt" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : ACCRPL00300
+* 업무명      : 정산 - 소매손익현황
+* 프로그램명  : 소매판매손익현황
+--------------------------------------------------------------------------------
+* 작성자      : 조민지
+* 작성일      : 2009.03.20
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 전역변수선언
+//==============================================================================
+var FV_LOGIN_ID = gds_session.GetColumn(0, "loginId");		//사용자계정
+var FV_ORG_ID = gds_session.GetColumn(0, "orgId");			//조직코드
+var FV_ORG_CL = gds_session.GetColumn(0, "orgCl");			//조직구분
+var FV_SUP_ORG_ID = gds_session.GetColumn(0, "supOrgId");	//상위조직코드
+var FV_USER_GRP = gds_session.GetColumn(0, "userGrp");		//사용자그룹
+var FV_ORG_AREA = gds_session.GetColumn(0, "orgAreaId");	//근무지코드
+var FV_POS_AGENCY_ID = gds_session.GetColumn(0,"posAgencyId");         	// 소속 대리점ID
+var FV_POS_AGENCY_NM = gds_session.GetColumn(0,"posAgencyNm");       	// 소속 대리점명
+var FV_POS_AGENCY_UKEY_ID = gds_session.GetColumn(0,"posAgencyUkeyId"); // 소속 대리점UKEY ID
+
+
+function ACCSAS00100_OnLoadCompleted(obj)
+{
+	
+}
+
+function Div0_Button0_OnClick(obj)
+{
+	cf_setParam(ds_condition, "org_cd", Div0.edt_org_cd.Text);
+	
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_aply_amt=ds_aply_amt";
+	var sArg = "sktst.acc.SAS#getTotalAccountAmount";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+function f_callBack(sSvcID){
+
+	return;	
+}]]></Script>
+</Window>

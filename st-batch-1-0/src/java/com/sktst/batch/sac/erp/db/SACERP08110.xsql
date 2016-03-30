@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08110">
+	<select id="getAgencyList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        select  /* SACERP08110_getAgencyList_현금매출금대리점목록조회_하창주 */
+				 b.deal_co_cd	AGENCY			/*대리점*/
+                ,b.org_id
+				,b.ukey_agency_cd
+                /* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+                ,(select case when min(user_cd) is null and b.org_id = 'C10011' then '140034' else min(user_cd) end
+                    from tbas_user_mgmt
+                   where pos_agency = b.deal_co_cd
+                     and user_grp = 'D17'
+                     and del_yn = 'N'
+                     and eff_user_yn = 'Y'
+                     and attc_cat in ('1', '2')) as user_cd
+          from    tbas_deal_co_mgmt b
+         where    b.hseq_no     = (select max(hseq_no)
+                                     from tbas_deal_co_mgmt
+                                    where deal_co_cd = b.deal_co_cd)
+	       and 	  b.deal_co_cd  = #AGENCY#
+        group by b.org_id, b.deal_co_cd, b.ukey_agency_cd
+		order by b.deal_co_cd
+	]]>
+	</select>
+
+	<select id="getCashSaleAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT *
+		FROM (
+				SELECT
+                     yymm				/*입금년월*/
+                    ,agency				/*대리점*/
+                    ,deal_co_cd			/*거래처(직영점에 해당하는 거래처코드)*/
+                    ,sum(sale_amt)		/*현금매출*/
+                     as sale_amt
+                    ,ukey_agency_cd
+                    ,ukey_sub_cd      				
+				FROM (
+						SELECT  /* SACERP08110_getCashSaleAmtList_현금매출금액조회_하창주 */
+								 a.yymm						/*입금년월*/
+								,a.agency					/*대리점*/
+								,a.deal_co_cd				/*거래처(직영점에 해당하는 거래처코드)*/
+								,nvl(a.cash_sale_amt, 0)	/*현금매출*/
+								 as sale_amt
+								,a.ukey_agency_cd
+								,a.ukey_sub_cd
+						  FROM	tsac_retail_sale_deal a
+						 WHERE  a.yymm			= #YYMM#
+						   AND	a.agency		= #AGENCY#
+					]]>
+							<isNotEmpty prepend="AND" property="DEAL_CO_CD">
+					<![CDATA[	a.deal_co_cd	= #DEAL_CO_CD#		]]>
+							</isNotEmpty>
+					<![CDATA[
+					
+					UNION ALL
+					   /*  수수료 테이블  */
+						SELECT  /* SACERP08110_getCashSaleAmtList_현금매출금액조회_하창주 */
+								 a.acc_mth as yymm			/*입금년월*/
+								,a.deal_co_cd as agency		/*대리점*/
+								,a.acc_plc					/*거래처(직영점에 해당하는 거래처코드)*/
+								,nvl(a.fix_cash_sale, 0)	/*확정현금매출: 부가세관련 월배치 항목*/
+								 as sale_amt
+								,b.ukey_agency_cd
+								,b.ukey_sub_cd
+						  FROM	(SELECT deal_co_cd, acc_mth, acc_plc, fix_cash_sale FROM tacc_cmms_acc_m WHERE del_yn = 'N') a,
+						  		tbas_deal_co_mgmt b
+						 where  a.deal_co_cd	= b.deal_co_cd
+				           and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */  
+															hseq_no 
+													FROM	tbas_deal_co_mgmt
+													WHERE	deal_co_cd = a.deal_co_cd AND rownum = 1
+												  )
+						   and  a.acc_mth		= #YYMM#
+						   AND	a.deal_co_cd	= #AGENCY#
+					]]>
+							<isNotEmpty prepend="AND" property="DEAL_CO_CD">
+					<![CDATA[	a.acc_plc		= #DEAL_CO_CD#		]]>
+							</isNotEmpty>
+
+					<![CDATA[
+					UNION ALL
+					   /*  M채널 수수료 테이블  */
+						SELECT  /* SACERP08110_getCashSaleAmtList_현금매출금액조회_하창주 */
+								 a.acc_mth as yymm			/*입금년월*/
+								,a.deal_co_cd as agency		/*대리점*/
+								,a.acc_plc					/*거래처(직영점에 해당하는 거래처코드)*/
+								,nvl(a.fix_cash_sale, 0)	/*확정현금매출: 부가세관련 월배치 항목*/
+								 as sale_amt
+								,b.ukey_agency_cd
+								,b.ukey_sub_cd
+						  FROM	(SELECT deal_co_cd, acc_mth, acc_plc, fix_cash_sale FROM tacc_mc_cmms_acc_m WHERE del_yn = 'N') a,
+						  		tbas_deal_co_mgmt b
+						 where  a.deal_co_cd	= b.deal_co_cd
+				           and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+															hseq_no
+													FROM	tbas_deal_co_mgmt
+													WHERE	deal_co_cd = a.deal_co_cd AND rownum = 1
+												  )
+						   and  a.acc_mth		= #YYMM#
+						   AND	a.deal_co_cd	= #AGENCY#
+					]]>
+							<isNotEmpty prepend="AND" property="DEAL_CO_CD">
+					<![CDATA[	a.acc_plc		= #DEAL_CO_CD#		]]>
+							</isNotEmpty>
+					<![CDATA[
+
+					UNION ALL
+					   /*  온라인 도매 수수료 테이블  */
+						SELECT  /* SACERP08110_getCashSaleAmtList_현금매출금액조회_하창주 */
+								 a.acc_mth as yymm			/*입금년월*/
+								,a.deal_co_cd as agency		/*대리점*/
+								,a.acc_plc					/*거래처(직영점에 해당하는 거래처코드)*/
+								,nvl(a.fix_cash_sale, 0)	/*확정현금매출: 부가세관련 월배치 항목*/
+								 as sale_amt
+								,b.ukey_agency_cd
+								,b.ukey_sub_cd
+						  FROM	(SELECT deal_co_cd, acc_mth, acc_plc, fix_cash_sale FROM tacc_oa_cmms_acc_m WHERE del_yn = 'N') a,
+						  		tbas_deal_co_mgmt b
+						 where  a.deal_co_cd	= b.deal_co_cd
+				           and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+															hseq_no
+													FROM	tbas_deal_co_mgmt
+													WHERE	deal_co_cd = a.deal_co_cd AND rownum = 1
+												  )
+						   and  a.acc_mth		= #YYMM#
+						   AND	a.deal_co_cd	= #AGENCY#
+					]]>
+							<isNotEmpty prepend="AND" property="DEAL_CO_CD">
+					<![CDATA[	a.acc_plc		= #DEAL_CO_CD#		]]>
+							</isNotEmpty>
+					<![CDATA[
+
+					UNION ALL
+					   /*  온라인 결재 수수료 테이블  */
+						SELECT  /* SACERP08110_getCashSaleAmtList_현금매출금액조회_하창주 */
+								 a.acc_mth as yymm			/*입금년월*/
+								,a.deal_co_cd as agency		/*대리점*/
+								,a.acc_plc					/*거래처(직영점에 해당하는 거래처코드)*/
+								,nvl(a.fix_cash_sale, 0)	/*확정현금매출: 부가세관련 월배치 항목*/
+								 as sale_amt
+								,b.ukey_agency_cd
+								,b.ukey_sub_cd
+						  FROM	(SELECT deal_co_cd, acc_mth, acc_plc, fix_cash_sale FROM tacc_otl_cmms_acc_m WHERE del_yn = 'N') a,
+						  		tbas_deal_co_mgmt b
+						 where  a.deal_co_cd	= b.deal_co_cd
+				           and  b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+															hseq_no
+													FROM	tbas_deal_co_mgmt
+													WHERE	deal_co_cd = a.deal_co_cd AND rownum = 1
+												  )
+						   and  a.acc_mth		= #YYMM#
+						   AND	a.deal_co_cd	= #AGENCY#
+					]]>
+							<isNotEmpty prepend="AND" property="DEAL_CO_CD">
+					<![CDATA[	a.acc_plc		= #DEAL_CO_CD#		]]>
+							</isNotEmpty>
+
+					<![CDATA[
+					)
+				GROUP BY yymm, agency, deal_co_cd, ukey_agency_cd, ukey_sub_cd
+			 )
+		where sale_amt <> 0
+	]]>
+	</select>
+
+	<update id="updateSaleAmtSendInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08110_updateSaleAmtSendInfo_매출금전송정보변경-하창주 */
+				tsac_retail_sale_deal
+		   SET	 trms_dt	= #ZIFDATE#
+				,fix_yn		= #ZCONFIRM#
+		 WHERE	yymm		= #YYMM#
+		   AND	agency		= #AGENCY#
+	]]>
+	</update>
+
+	<update id="updateCmmsAccSendInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE /* SACERP08110_updateCmmsAccSendInfo_수수료월정산전송정보변경-하창주 */
+				tacc_cmms_acc_m
+		   SET  erp_trms_dtm	= #ZIFDATE#
+			 ,  erp_fix_yn		= #ZCONFIRM#
+		 WHERE	deal_co_cd	= #AGENCY#
+		   AND	acc_mth		= #YYMM#
+		   AND	del_yn		= 'N'	/* 삭제여부 */
+	]]>
+	</update>
+
+	<update id="updateMcCmmsAccSendInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE  /* SACERP08110_updateMcCmmsAccSendInfo_M채널수수료월정산전송정보변경-이강수 */
+				tacc_mc_cmms_acc_m
+		   SET	erp_trms_dtm  = #ZIFDATE#
+			 ,  erp_fix_yn    = #ZCONFIRM#
+		 WHERE	deal_co_cd    = #AGENCY#
+		   AND	acc_mth       = #YYMM#
+		   AND	del_yn        = 'N'	/* 삭제여부 */
+	]]>
+	</update>
+
+	<update id="updateOaCmmsAccSendInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE  /* SACERP08110_updateOaCmmsAccSendInfo_도매수수료월정산전송정보변경-이강수 */
+				tacc_oa_cmms_acc_m
+		   SET	erp_trms_dtm  = #ZIFDATE#
+			 ,  erp_fix_yn    = #ZCONFIRM#
+		 WHERE	deal_co_cd    = #AGENCY#
+		   AND	acc_mth       = #YYMM#
+		   AND	del_yn        = 'N'	/* 삭제여부 */
+	]]>
+	</update>
+
+	<update id="updateOtlCmmsAccSendInfo" parameterClass="map">
+	<![CDATA[
+		UPDATE  /* SACERP08110_updateOtlCmmsAccSendInfo_결제수수료월정산전송정보변경-이강수 */
+				tacc_otl_cmms_acc_m
+		   SET	erp_trms_dtm  = #ZIFDATE#
+			 ,  erp_fix_yn    = #ZCONFIRM#
+		 WHERE	deal_co_cd    = #AGENCY#
+		   AND	acc_mth       = #YYMM#
+		   AND	del_yn        = 'N'	/* 삭제여부 */
+	]]>
+	</update>
+	
+
+	<select id="getCardSaleAmtList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+      SELECT /* SACERP08110_getCardSaleAmtList_카드매출금액조회_하창주_이강수 */
+             yymm                    /*입금년월*/
+           , agency                  /*대리점*/
+           , card_co                 /*카드사*/
+           , '' as UKEY_SUB_CD       /*직영점 U.Key 코드 4자리 값  */
+           , sum(card_amt) card_amt  /*카드매출금*/
+        FROM (
+              /*  소매카드매출 테이블  */
+              SELECT  a.yymm
+                   ,  a.agency
+                   ,  a.card_co
+                   ,  nvl(a.card_amt, 0) as card_amt
+                FROM  tsac_retail_sale_card a
+               WHERE  a.yymm      = #YYMM#
+                 AND  a.agency    = #AGENCY#
+              UNION ALL
+              /*  M채널 카드매출 테이블  */
+              SELECT  a.acc_mth as yymm
+                   ,  a.deal_co_cd as agency
+                   ,  a.card_co
+                   ,  nvl(a.card_amt, 0) as card_amt
+                FROM  TACC_MC_SALE_CARD a
+               WHERE  a.acc_mth     = #YYMM#
+                 AND  a.deal_co_cd  = #AGENCY#
+                 AND  a.del_yn      = 'N'
+             )
+       WHERE card_amt <> 0
+       GROUP BY yymm, agency, card_co
+	]]>
+	</select>
+
+</sqlMap>

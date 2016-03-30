@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDSM08400">
+	<select id="getDisList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+                SELECT
+                       rpad(nvl(AGENCY_CD, ' ')       ,  10, ' ')
+                     ||rpad(nvl(AGENCY_NM, ' ')       ,  80, ' ')
+                     ||rpad(nvl(UKEY_AGENCY_CD, ' ')  ,  10, ' ')
+                     ||rpad(nvl(PLC_CD, ' ')          ,  10, ' ')
+                     ||rpad(nvl(PLC_NM, ' ')          ,  80, ' ')
+                     ||rpad(nvl(PROD_CD, ' ')         ,  10, ' ')
+                     ||rpad(nvl(PROD_NM, ' ')         ,  60, ' ')
+                     ||rpad(nvl(COLOR_CD, ' ')        ,  2 , ' ')
+                     ||rpad(nvl(COLOR_NM, ' ')        ,  50, ' ')
+                     ||rpad(nvl(TO_CHAR(CUR_CNT), ' '),  10, ' ')
+                     as MSG
+                FROM(
+                      SELECT
+                             TDCM2.DEAL_CO_CD     AGENCY_CD
+                           , TDCM2.DEAL_CO_NM     AGENCY_NM
+                           , TDCM2.UKEY_AGENCY_CD
+                           , PLC_ID               PLC_CD
+                           , TDCM.DEAL_CO_NM      PLC_NM
+                           , DIS.PROD_CD
+                           , TPM.PROD_NM
+                           , COLOR_CD
+                           , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040',COLOR_CD) COLOR_NM
+                           , SUM(DIS.BF_MTH_QTY)        BF_MTH_QTY
+                           , SUM(DIS.MON_IN_CNT)        MON_IN_CNT
+                           , SUM(DIS.CHG_IN_CNT)        CHG_IN_CNT
+                           , SUM(DIS.AGENCY_IN_CNT)     AGENCY_IN_CNT
+                           , SUM(DIS.SALE_E_IN_CNT)     SALE_E_IN_CNT
+                           , SUM(DIS.SALE_G_IN_CNT)     SALE_G_IN_CNT
+                           , SUM(DIS.MON_IN_CNT)     + SUM(DIS.CHG_IN_CNT)
+                                                     + SUM(DIS.SALE_E_IN_CNT)
+                                                     + SUM(DIS.SALE_G_IN_CNT)
+                             AS IN_SUM_CNT
+                           , SUM(DIS.MON_NEW_OUT_CNT)   MON_NEW_OUT_CNT
+                           , SUM(DIS.MON_MNP_OUT_CNT)   MON_MNP_OUT_CNT
+                           , SUM(DIS.MON_NEW_OUT_CNT)   + SUM(DIS.MON_MNP_OUT_CNT)   MON_OUT_CNT
+                           , SUM(DIS.SALE_E_OUT_CNT)    SALE_E_OUT_CNT
+                           , SUM(DIS.AGECNY_OUT_CNT)    AGECNY_OUT_CNT
+                           , SUM(DIS.CHG_OUT_CNT)       CHG_OUT_CNT
+                           , SUM(DIS.OUT_CNT)           OUT_CNT
+                           , SUM(DIS.MON_NEW_OUT_CNT) + SUM(DIS.MON_MNP_OUT_CNT) + SUM(DIS.SALE_E_OUT_CNT)
+                                                      + SUM(DIS.CHG_OUT_CNT)     + SUM(DIS.OUT_CNT)
+                             AS OUT_SUM_CNT
+                           , SUM(DIS.BF_MTH_QTY) + SUM(DIS.MON_IN_CNT)
+                                                 + SUM(DIS.AGENCY_IN_CNT)   + SUM(DIS.SALE_E_IN_CNT)
+                                                 + SUM(DIS.SALE_G_IN_CNT)   + SUM(DIS.CHG_IN_CNT)
+                                                 - SUM(DIS.MON_MNP_OUT_CNT) - SUM(DIS.SALE_E_OUT_CNT)
+                                                 - SUM(DIS.AGECNY_OUT_CNT)  - SUM(DIS.CHG_OUT_CNT)
+                                                 - SUM(DIS.OUT_CNT)         - SUM(DIS.MON_NEW_OUT_CNT)
+                             AS CUR_CNT
+                        FROM (
+                              SELECT /*  전월재고  */
+                                     /*+ index(a XDIS_MTH_DIS_01) */
+                                     PROD_CD
+                                   , COLOR_CD
+                                   , SER_NUM
+                                   , HLD_PLC_ID   PLC_ID
+                                   , 0 MON_IN_CNT
+                                   , 0 CHG_IN_CNT
+                                   , 0 AGENCY_IN_CNT
+                                   , 0 SALE_E_IN_CNT
+                                   , 0 SALE_G_IN_CNT
+                                   , 0 MON_NEW_OUT_CNT
+                                   , 0 MON_MNP_OUT_CNT
+                                   , 0 SALE_E_OUT_CNT
+                                   , 0 AGECNY_OUT_CNT
+                                   , 0 CHG_OUT_CNT
+                                   , 0 OUT_CNT
+                                   , 1 BF_MTH_QTY
+                                FROM TDIS_MTH_DIS    TMD
+                               WHERE TMD.STRD_YM       = TO_CHAR(ADD_MONTHS(SYSDATE, -1), 'YYYYMM')
+                                 AND TMD.DEL_YN        = 'N'
+                              UNION ALL
+                              SELECT PROD_CD
+                                   , COLOR_CD
+                                   , SER_NUM
+                                   , PLC_ID
+                                   , 1 MON_IN_CNT
+                                   , 0 CHG_IN_CNT
+                                   , 0 AGENCY_IN_CNT
+                                   , 0 SALE_E_IN_CNT
+                                   , 0 SALE_G_IN_CNT
+                                   , 0 MON_NEW_OUT_CNT
+                                   , 0 MON_MNP_OUT_CNT
+                                   , 0 SALE_E_OUT_CNT
+                                   , 0 AGECNY_OUT_CNT
+                                   , 0 CHG_OUT_CNT
+                                   , 0 OUT_CNT
+                                   , 0 BF_MTH_QTY
+                                FROM (
+                                      SELECT /* 구매입고 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.IN_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TPIH.IN_MGMT_NO
+                                           , TPIH.IN_SEQ
+                                           , ROW_NUMBER() OVER(PARTITION BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.IN_MGMT_NO
+                                                                          , TPIH.IN_SEQ
+                                                                   ORDER BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.IN_MGMT_NO
+                                                                          , TPIH.IN_SEQ
+                                             ) AS RNUM
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                       WHERE TPIH.INOUT_DT  BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL        = '100'
+                                         AND TPIH.INOUT_DTL_CL    = '101'
+                                      MINUS
+                                      SELECT /* 구매입고 취소 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.IN_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TPIH.IN_MGMT_NO
+                                           , TPIH.IN_SEQ
+                                           , ROW_NUMBER() OVER(PARTITION BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.IN_MGMT_NO
+                                                                          , TPIH.IN_SEQ
+                                                                   ORDER BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.IN_MGMT_NO
+                                                                          , TPIH.IN_SEQ
+                                             ) AS RNUM
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                       WHERE TPIH.INOUT_DT  BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL        = '100'
+                                         AND TPIH.INOUT_DTL_CL    = '106'
+                                     )
+                              UNION ALL
+                              SELECT PROD_CD
+                                   , COLOR_CD
+                                   , SER_NUM
+                                   , PLC_ID
+                                   , 0 MON_IN_CNT
+                                   , 1 CHG_IN_CNT
+                                   , 0 AGENCY_IN_CNT
+                                   , 0 SALE_E_IN_CNT
+                                   , 0 SALE_G_IN_CNT
+                                   , 0 MON_NEW_OUT_CNT
+                                   , 0 MON_MNP_OUT_CNT
+                                   , 0 SALE_E_OUT_CNT
+                                   , 0 AGECNY_OUT_CNT
+                                   , 0 CHG_OUT_CNT
+                                   , 0 OUT_CNT
+                                   , 0 BF_MTH_QTY
+                                FROM (
+                                      SELECT /* 교품입고 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.IN_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TPIH.IN_MGMT_NO
+                                           , TPIH.IN_SEQ
+                                           , ROW_NUMBER() OVER(PARTITION BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.IN_MGMT_NO
+                                                                          , TPIH.IN_SEQ
+                                                                   ORDER BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.IN_MGMT_NO
+                                                                          , TPIH.IN_SEQ
+                                             ) AS RNUM
+                                        FROM TDIS_PROD_INOUT_HST   TPIH
+                                           , TDIS_DIS_UNIT_CHG_HST TDUCH
+                                       WHERE TPIH.INOUT_DT  BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TDUCH.PROD_CD(+)  = TPIH.PROD_CD
+                                         AND TDUCH.COLOR_CD(+) = TPIH.COLOR_CD
+                                         AND TDUCH.SER_NUM(+)  = TPIH.SER_NUM
+                                         AND TDUCH.rgst_seq    = (SELECT MAX(rgst_seq) FROM TDIS_DIS_UNIT_CHG_HST
+                                                                   WHERE prod_cd  = TDUCH.prod_cd
+                                                                     AND color_cd = TDUCH.color_cd
+                                                                     AND ser_num  = TDUCH.ser_num
+                                                                     AND OCCR_CL IN ('01','03')
+                                                                     AND DEL_YN = 'N'
+                                                                     AND occr_dt <= TPIH.INOUT_DT)
+                                         AND TPIH.INOUT_CL        = '100'
+                                         AND TPIH.INOUT_DTL_CL    = '102'
+                                      MINUS
+                                      SELECT /* 교품입고 취소 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.IN_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TPIH.IN_MGMT_NO
+                                           , TPIH.IN_SEQ
+                                           , ROW_NUMBER() OVER(PARTITION BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.IN_MGMT_NO
+                                                                          , TPIH.IN_SEQ
+                                                                   ORDER BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.IN_MGMT_NO
+                                                                          , TPIH.IN_SEQ
+                                             ) AS RNUM
+                                        FROM TDIS_PROD_INOUT_HST   TPIH
+                                           , TDIS_DIS_UNIT_CHG_HST TDUCH
+                                       WHERE TPIH.INOUT_DT  BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TDUCH.PROD_CD(+)  = TPIH.PROD_CD
+                                         AND TDUCH.COLOR_CD(+) = TPIH.COLOR_CD
+                                         AND TDUCH.SER_NUM(+)  = TPIH.SER_NUM
+                                         AND TDUCH.rgst_seq    = (SELECT MAX(rgst_seq) FROM TDIS_DIS_UNIT_CHG_HST
+                                                                   WHERE prod_cd  = TDUCH.prod_cd
+                                                                     AND color_cd = TDUCH.color_cd
+                                                                     AND ser_num  = TDUCH.ser_num
+                                                                     AND OCCR_CL IN ('01','03')
+                                                                     AND DEL_YN = 'N'
+                                                                     AND occr_dt <= TPIH.INOUT_DT)
+                                         AND TPIH.INOUT_CL        = '100'
+                                         AND TPIH.INOUT_DTL_CL    = '107'
+                                     )
+                              UNION ALL
+                              SELECT PROD_CD
+                                   , COLOR_CD
+                                   , SER_NUM
+                                   , PLC_ID
+                                   , 0 MON_IN_CNT
+                                   , 0 CHG_IN_CNT
+                                   , 1 AGENCY_IN_CNT
+                                   , 0 SALE_E_IN_CNT
+                                   , 0 SALE_G_IN_CNT
+                                   , 0 MON_NEW_OUT_CNT
+                                   , 0 MON_MNP_OUT_CNT
+                                   , 0 SALE_E_OUT_CNT
+                                   , 1 AGECNY_OUT_CNT
+                                   , 0 CHG_OUT_CNT
+                                   , 0 OUT_CNT
+                                   , 0 BF_MTH_QTY
+                                FROM (
+                                      SELECT /* 대리점간 이동입고, 대리점간 이동출고 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.IN_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TPIH.OUT_MGMT_NO
+                                           , TPIH.OUT_SEQ
+                                           , ROW_NUMBER() OVER(PARTITION BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.OUT_MGMT_NO
+                                                                          , TPIH.OUT_SEQ
+                                                                   ORDER BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.OUT_MGMT_NO
+                                                                          , TPIH.OUT_SEQ
+                                             ) AS RNUM
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                           , TDIS_OUT_M          TOM
+                                       WHERE TPIH.OUT_MGMT_NO     = TOM.OUT_MGMT_NO
+                                         AND TPIH.INOUT_DT  BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL       = '300'
+                                         AND TPIH.INOUT_DTL_CL   = '301'
+                                         AND TOM.AGENCY_MOV_YN   = 'Y'
+                                      MINUS
+                                      SELECT /* 대리점간 이동입고 취소, 대리점간 이동출고 취소 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.IN_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TPIH.OUT_MGMT_NO
+                                           , TPIH.OUT_SEQ
+                                           , ROW_NUMBER() OVER(PARTITION BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.OUT_MGMT_NO
+                                                                          , TPIH.OUT_SEQ
+                                                                   ORDER BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.OUT_MGMT_NO
+                                                                          , TPIH.OUT_SEQ
+                                             ) AS RNUM
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                           , TDIS_OUT_M          TOM
+                                       WHERE TPIH.OUT_MGMT_NO     = TOM.OUT_MGMT_NO
+                                         AND TPIH.INOUT_DT  BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL       = '300'
+                                         AND TPIH.INOUT_DTL_CL   = '304'
+                                         AND TOM.AGENCY_MOV_YN   = 'Y'
+                                     )
+                              UNION ALL
+                              SELECT PROD_CD
+                                   , COLOR_CD
+                                   , SER_NUM
+                                   , PLC_ID
+                                   , 0 MON_IN_CNT
+                                   , 0 CHG_IN_CNT
+                                   , 0 AGENCY_IN_CNT
+                                   , 1 SALE_E_IN_CNT
+                                   , 0 SALE_G_IN_CNT
+                                   , 0 MON_NEW_OUT_CNT
+                                   , 0 MON_MNP_OUT_CNT
+                                   , 0 SALE_E_OUT_CNT
+                                   , 0 AGECNY_OUT_CNT
+                                   , 0 CHG_OUT_CNT
+                                   , 0 OUT_CNT
+                                   , 0 BF_MTH_QTY
+                                FROM (
+                                      SELECT /* 공기기 매출취소(E) */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.IN_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TIM.GNRL_SALE_NO
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                           , TDIS_IN_M           TIM
+                                       WHERE TPIH.IN_MGMT_NO     = TIM.IN_MGMT_NO
+                                         AND TPIH.INOUT_DT BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL       = '100'
+                                         AND TPIH.INOUT_DTL_CL   = '105'
+                                         AND SUBSTR(TIM.GNRL_SALE_NO, 2,1) = 'E'
+                                     )
+                              UNION ALL
+                              SELECT PROD_CD
+                                   , COLOR_CD
+                                   , SER_NUM
+                                   , PLC_ID
+                                   , 0 MON_IN_CNT
+                                   , 0 CHG_IN_CNT
+                                   , 0 AGENCY_IN_CNT
+                                   , 0 SALE_E_IN_CNT
+                                   , DECODE(SALE_DTL_TYP, 'S1', 1, 'S2', 1, 'S3', 0) SALE_G_IN_CNT
+                                   , 0 MON_NEW_OUT_CNT
+                                   , 0 MON_MNP_OUT_CNT
+                                   , 0 SALE_E_OUT_CNT
+                                   , 0 AGECNY_OUT_CNT
+                                   , 0 CHG_OUT_CNT
+                                   , 0 OUT_CNT
+                                   , 0 BF_MTH_QTY
+                                FROM (
+                                      SELECT /* 매출취소(G) */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.IN_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TIM.GNRL_SALE_NO
+                                           , NVL(SUBSTR(TGS.SALE_DTL_TYP,1,2), 'S3') SALE_DTL_TYP
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                           , TDIS_IN_M           TIM
+                                           , TSAL_GENERAL_SALE   TGS
+                                       WHERE TPIH.IN_MGMT_NO     = TIM.IN_MGMT_NO
+                                         AND TIM.GNRL_SALE_NO      = TGS.GNRL_SALE_NO
+                                         AND TIM.GNRL_SALE_CHG_SEQ = TGS.GNRL_SALE_CHG_SEQ
+                                         AND TPIH.INOUT_DT BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL       = '100'
+                                         AND TPIH.INOUT_DTL_CL   = '105'
+                                         AND SUBSTR(TIM.GNRL_SALE_NO, 2,1) = 'G'
+                                     )
+                              UNION ALL
+                              SELECT PROD_CD
+                                   , COLOR_CD
+                                   , SER_NUM
+                                   , PLC_ID
+                                   , 0 MON_IN_CNT
+                                   , 0 CHG_IN_CNT
+                                   , 0 AGENCY_IN_CNT
+                                   , 0 SALE_E_IN_CNT
+                                   , 0 SALE_G_IN_CNT
+                                   , 0 MON_NEW_OUT_CNT
+                                   , 0 MON_MNP_OUT_CNT
+                                   , 1 SALE_E_OUT_CNT
+                                   , 0 AGECNY_OUT_CNT
+                                   , 0 CHG_OUT_CNT
+                                   , 0 OUT_CNT
+                                   , 0 BF_MTH_QTY
+                                FROM (
+                                      SELECT /* 공기기 매출(E) */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.OUT_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                           , TDIS_OUT_M          TOM
+                                       WHERE TPIH.OUT_MGMT_NO     = TOM.OUT_MGMT_NO
+                                         AND TPIH.INOUT_DT BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL       = '200'
+                                         AND TPIH.INOUT_DTL_CL   = '205'
+                                         AND SUBSTR(TOM.GNRL_SALE_NO, 2,1) = 'E'
+                                     )
+                              UNION ALL
+                              SELECT PROD_CD
+                                   , COLOR_CD
+                                   , SER_NUM
+                                   , PLC_ID
+                                   , 0 MON_IN_CNT
+                                   , 0 CHG_IN_CNT
+                                   , 0 AGENCY_IN_CNT
+                                   , 0 SALE_E_IN_CNT
+                                   , 0 SALE_G_IN_CNT
+                                   , DECODE(SALE_DTL_TYP, 'S1', 1, 0) MON_NEW_OUT_CNT
+                                   , DECODE(SALE_DTL_TYP, 'S2', 1, 0) MON_MNP_OUT_CNT
+                                   , 0 SALE_E_OUT_CNT
+                                   , 0 AGECNY_OUT_CNT
+                                   , 0 CHG_OUT_CNT
+                                   , 0 OUT_CNT
+                                   , 0 BF_MTH_QTY
+                                FROM (
+                                      SELECT /* 매출(G) S1 : 신규, S2 : 기변 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.OUT_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TOM.GNRL_SALE_NO
+                                           , SUBSTR(TGS.SALE_DTL_TYP,1,2) SALE_DTL_TYP
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                           , TDIS_OUT_M          TOM
+                                           , TSAL_GENERAL_SALE   TGS
+                                       WHERE TPIH.OUT_MGMT_NO      = TOM.OUT_MGMT_NO
+                                         AND TOM.GNRL_SALE_NO      = TGS.GNRL_SALE_NO
+                                         AND TOM.GNRL_SALE_CHG_SEQ = TGS.GNRL_SALE_CHG_SEQ
+                                         AND TPIH.INOUT_DT   BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL         = '200'
+                                         AND TPIH.INOUT_DTL_CL     = '205'
+                                         AND SUBSTR(TOM.GNRL_SALE_NO, 2,1) = 'G'
+                                     )
+                              UNION ALL
+                              SELECT PROD_CD
+                                   , COLOR_CD
+                                   , SER_NUM
+                                   , PLC_ID
+                                   , 0 MON_IN_CNT
+                                   , 0 CHG_IN_CNT
+                                   , 0 AGENCY_IN_CNT
+                                   , 0 SALE_E_IN_CNT
+                                   , 0 SALE_G_IN_CNT
+                                   , 0 MON_NEW_OUT_CNT
+                                   , 0 MON_MNP_OUT_CNT
+                                   , 0 SALE_E_OUT_CNT
+                                   , 0 AGECNY_OUT_CNT
+                                   , 1 CHG_OUT_CNT
+                                   , 0 OUT_CNT
+                                   , 0 BF_MTH_QTY
+                                FROM (
+                                      SELECT /* 교품반품출고 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.OUT_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , ROW_NUMBER() OVER(PARTITION BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                   ORDER BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                             ) AS RNUM
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                       WHERE TPIH.INOUT_DT  BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL        = '200'
+                                         AND TPIH.INOUT_DTL_CL    = '206'
+                                      MINUS
+                                      SELECT /* 교품반품출고 취소 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.OUT_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , ROW_NUMBER() OVER(PARTITION BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                   ORDER BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                             ) AS RNUM
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                       WHERE TPIH.INOUT_DT  BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL        = '200'
+                                         AND TPIH.INOUT_DTL_CL    = '210'
+                                     )
+                              UNION ALL
+                              SELECT PROD_CD
+                                   , COLOR_CD
+                                   , SER_NUM
+                                   , PLC_ID
+                                   , 0 MON_IN_CNT
+                                   , 0 CHG_IN_CNT
+                                   , 0 AGENCY_IN_CNT
+                                   , 0 SALE_E_IN_CNT
+                                   , 0 SALE_G_IN_CNT
+                                   , 0 MON_NEW_OUT_CNT
+                                   , 0 MON_MNP_OUT_CNT
+                                   , 0 SALE_E_OUT_CNT
+                                   , 0 AGECNY_OUT_CNT
+                                   , 0 CHG_OUT_CNT
+                                   , 1 OUT_CNT
+                                   , 0 BF_MTH_QTY
+                                FROM (
+                                      SELECT /* 반품출고 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.OUT_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TPIH.OUT_MGMT_NO
+                                           , TPIH.OUT_SEQ
+                                           , ROW_NUMBER() OVER(PARTITION BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.OUT_MGMT_NO
+                                                                          , TPIH.OUT_SEQ
+                                                                   ORDER BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.OUT_MGMT_NO
+                                                                          , TPIH.OUT_SEQ
+                                             ) AS RNUM
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                       WHERE TPIH.INOUT_DT  BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL        = '200'
+                                         AND TPIH.INOUT_DTL_CL    = '201'
+                                      MINUS
+                                      SELECT /* 반품출고 취소 */
+                                             TPIH.PROD_CD
+                                           , TPIH.COLOR_CD
+                                           , TPIH.SER_NUM
+                                           , TPIH.OUT_PLC_ID  AS PLC_ID
+                                           , TPIH.INOUT_DT
+                                           , TPIH.OUT_MGMT_NO
+                                           , TPIH.OUT_SEQ
+                                           , ROW_NUMBER() OVER(PARTITION BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.OUT_MGMT_NO
+                                                                          , TPIH.OUT_SEQ
+                                                                   ORDER BY TPIH.PROD_CD
+                                                                          , TPIH.COLOR_CD
+                                                                          , TPIH.SER_NUM
+                                                                          , TPIH.OUT_PLC_ID
+                                                                          , TPIH.INOUT_DT
+                                                                          , TPIH.OUT_MGMT_NO
+                                                                          , TPIH.OUT_SEQ
+                                             ) AS RNUM
+                                        FROM TDIS_PROD_INOUT_HST TPIH
+                                       WHERE TPIH.INOUT_DT  BETWEEN SUBSTR(TO_CHAR(SYSDATE, 'YYYYMMDD'), 1, 6) || '01' AND TO_CHAR(SYSDATE, 'YYYYMMDD')
+                                         AND TPIH.INOUT_CL        = '200'
+                                         AND TPIH.INOUT_DTL_CL    = '207'
+                                     )
+                             ) DIS
+                             , TBAS_PROD_MGMT    TPM
+                             , TBAS_DEAL_CO_MGMT TDCM
+                             , TBAS_DEAL_CO_MGMT TDCM2
+                         WHERE DIS.PLC_ID      = TDCM.DEAL_CO_CD
+                           AND TDCM.HSEQ_NO    = (SELECT MAX(HSEQ_NO)
+                                                    FROM TBAS_DEAL_CO_MGMT
+                                                   WHERE DEAL_CO_CD  = TDCM.DEAL_CO_CD
+                                                 )
+                           AND TDCM2.DEAL_CO_CD = TDCM.POS_AGENCY
+                           AND TDCM2.HSEQ_NO    = (SELECT MAX(HSEQ_NO)
+                                                    FROM TBAS_DEAL_CO_MGMT
+                                                   WHERE DEAL_CO_CD  = TDCM2.DEAL_CO_CD
+                                                 )
+                           AND DIS.PROD_CD     = TPM.PROD_CD
+                           AND TDCM2.ORG_ID = 'C10011'
+                         GROUP BY TDCM2.DEAL_CO_CD
+                                , TDCM2.DEAL_CO_NM
+                                , TDCM2.UKEY_AGENCY_CD
+                                , PLC_ID
+                                , TDCM.DEAL_CO_NM
+                                , DIS.PROD_CD
+                                , TPM.PROD_NM
+                                , COLOR_CD
+                     )
+	]]>
+	</select>
+
+</sqlMap>	

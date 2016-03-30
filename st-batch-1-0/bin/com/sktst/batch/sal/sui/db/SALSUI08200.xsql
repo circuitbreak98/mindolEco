@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSUI08200">
+	<select id="getCondition" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT /* SALSUI08200_getCondition_부가상품 유지확인 요청 조건 취득_김연석_김연석 */
+	       IF_REQ_DT  
+         , IF_REQ_SEQ
+         , IF_REQ_CHGRG_ID
+         , SUPL_JOIN_STA_DT 
+         , SUPL_JOIN_END_DT 
+         , AGENCY_CD 
+         , SUPL_PROD_CD
+      FROM TSAL_SUPLPROD_REQ
+     WHERE IF_REQ_DT    = #IF_REQ_DT#
+       AND DEL_YN       = 'N'
+	]]>
+	</select>
+	<select id="getTgtSuplSvcList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[select /* SALSUI08200_getTgtSuplSvcList_부가상품 유지확인 요청대상 목록 추출_김연석_김연석 */
+                   '33'
+                 || d.ukey_agency_cd
+                 || d.ukey_sub_cd
+                 || rpad(b.svc_sta_dt,  14, ' ')
+                 || a.svc_mgmt_num
+                 || rpad(c.eqp_mdl_cd,   5, ' ')
+                 || rpad(c.eqp_ser_num, 15, ' ')
+                 || a.gnrl_sale_no
+                 || rpad(b.supl_svc_cd, 100, ' ')
+                 || #IF_REQ_DT#
+                 || lpad(#IF_REQ_SEQ#, 5, '0')    as MSG
+               from tsal_general_sale    a
+                  , tsal_suplservice     b
+                  , tsal_equipment_sale  c
+                  , tbas_deal_co_mgmt    d
+              where a.gnrl_sale_no      = b.gnrl_sale_no
+                and a.gnrl_sale_no      = c.gnrl_sale_no
+                and a.gnrl_sale_chg_seq = c.gnrl_sale_chg_seq
+                and a.svc_plc           = d.deal_co_cd
+                and a.sale_dtm    between  d.eff_sta_dtm          and d.eff_end_dtm
+                and a.acc_chg_hst_cl   in ('01', '02')
+                and a.sale_cncl_yn      =  'N'
+                and b.svc_end_dt  is null
+                and a.sale_dtm    between #SALE_DT_FR# || '000000' and #SALE_DT_TO# || '240000'
+                and d.pos_agency        = #DEAL_CO_CD#
+                and b.supl_svc_cd       = #SUPL_SVC_CD#
+	]]>
+	</select>
+	<update id="saveReqCount" parameterClass="map">
+	<![CDATA[
+    UPDATE /* SALSUI08200_saveReqCount_부가상품 유지확인 요청대상 목록 추출 건수 Update_김연석_김연석 */
+           TSAL_SUPLPROD_REQ
+	   SET REQ_CNT         = #REQ_CNT#
+	     , mod_dtm         = TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+	     , mod_user_id     = 'SALSUI0820'
+     WHERE IF_REQ_DT       = #IF_REQ_DT#
+       AND IF_REQ_SEQ      = #IF_REQ_SEQ#
+       AND IF_REQ_CHGRG_ID = #IF_REQ_CHGRG_ID#
+	]]>
+	</update>
+	<insert id="addSuplProdRslt" parameterClass="map" ><![CDATA[
+	INSERT INTO /*+ SALSUI08200_addSuplProdRslt_부가상품유지요청결과 생성 */
+           TSAL_SUPLPROD_RSLT( 
+                              IF_REQ_DT
+                           ,  IF_REQ_SEQ
+                           ,  IF_RSLT_SEQ
+                           ,  UKEY_AGENCY_CD
+                           ,  UKEY_SUB_CD
+                           ,  SCRB_DT
+                           ,  SCRB_TM
+                           ,  SVC_MGMT_NUM
+                           ,  EQP_MDL_CD
+                           ,  EQP_SER_NUM
+                           ,  GNRL_SALE_NO
+                           ,  SUPL_PROD_CD
+                           ,  SCRB_TERM_CL
+                           ,  SCRB_DT1
+                           ,  TERM_DT1
+                           ,  SCRB_DT2
+                           ,  TERM_DT2
+                           ,  PS_APND_YN
+                           ,  RMKS
+                           ,  DEL_YN
+                           ,  UPD_CNT
+                           ,  INS_USER_ID
+                           ,  INS_DTM
+                           ,  MOD_USER_ID
+                           ,  MOD_DTM) 
+                      VALUES (
+                              #IF_REQ_DT#
+                           ,  #IF_REQ_SEQ#
+                           , (select nvl(max(IF_RSLT_SEQ), 0) + 1
+                                from TSAL_SUPLPROD_RSLT
+                               where IF_REQ_DT  = #IF_REQ_DT#
+                                 and IF_REQ_SEQ = #IF_REQ_SEQ#)
+                           ,  #UKEY_AGENCY_CD#
+                           ,  #UKEY_SUB_CD#
+                           ,  #SCRB_DT#
+                           ,  ''
+                           ,  #SVC_MGMT_NUM#
+                           ,  #EQP_MDL_CD#
+                           ,  #EQP_SER_NUM#
+                           ,  #GNRL_SALE_NO#
+                           ,  #SUPL_PROD_CD#
+                           , ''
+                           , ''
+                           , ''
+                           , ''
+                           , ''
+                           , 'S'
+                           , ''
+                           , 'N'
+                           ,  0
+                           ,  #USER_ID#
+                           ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+                           ,  #USER_ID#
+                           ,  TO_CHAR(sysdate, 'yyyyMMddHH24miss'))
+    ]]>
+	</insert>
+</sqlMap>

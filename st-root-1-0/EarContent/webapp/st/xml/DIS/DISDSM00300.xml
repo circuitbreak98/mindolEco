@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="616" Id="DISDSM00300" Left="8" OnLoadCompleted="DISDSM00300_OnLoadCompleted" PidAttrib="7" Title="재고현황상세" Top="8" Ver="1.0" Width="900" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_mfact"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_eqpSt">
+				<Contents>
+					<colinfo id="COMM_CD_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_in"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list" OnColumnChanged="ds_prodDisList_OnColumnChanged">
+				<Contents>
+					<colinfo id="HLD_PLC_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="SER_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="OLD_SER_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="LAST_INOUT_DTL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="COLOR_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CHRTIC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="OPER_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="UNIT_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRCHS_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="IN_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DIS_DAYS" size="256" summ="default" type="STRING"/>
+					<colinfo id="LAST_MOV_IN_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_DAYS" size="256" summ="default" type="STRING"/>
+					<colinfo id="DIS_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_cond"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodCpntList">
+				<Contents>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="ser_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="seq" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="cpnt_prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="cpnt_prod_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="cpnt_color_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="cpnt_ser_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="cpnt_prod_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="cpnt_prod_cl_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="cpnt_etc_seq" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_saleYn">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="value" size="256" summ="default" type="STRING"/>
+					<record>
+						<code>Y</code>
+						<value>YES</value>
+					</record>
+					<record>
+						<code>N</code>
+						<value>NO</value>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="576" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="544" Id="grd_prodDisList" InputPanel="FALSE" Left="10" LineColor="user33" Right="890" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="32" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="880">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="40"/>
+						<col width="120"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="120"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="보유처"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="제조사"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="상품일련번호"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="단가"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="매입처"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="입고처"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="재고기간"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" text="이동일자"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" text="보유기간"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" text="재고상태"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="currow+1"/>
+						<cell align="left" col="1" colid="DEAL_CO_NM" display="text"/>
+						<cell align="left" col="2" colid="OPER_NM" display="text"/>
+						<cell align="left" col="3" colid="PROD_NM" display="text"/>
+						<cell align="left" col="4" colid="COLOR_NM" display="text"/>
+						<cell align="center" col="5" colid="SER_NUM" display="text"/>
+						<cell align="right" col="6" colid="UNIT_AMT" display="number"/>
+						<cell align="left" col="7" colid="PRCHS_PLC_NM" display="text"/>
+						<cell align="left" col="8" colid="IN_PLC_NM" display="text"/>
+						<cell align="right" col="9" colid="DIS_DAYS" display="text"/>
+						<cell align="center" col="10" colid="LAST_MOV_IN_DT" display="date"/>
+						<cell align="right" col="11" colid="PROD_DAYS" display="text"/>
+						<cell align="left" col="12" colid="DIS_NM" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="btn_excelDown" ImageID="btn_i_exceldown_w" Left="872" OnClick="btn_excelDown_OnClick" TabOrder="2" Text="Button1" ToolTipText="Excel&#32;Download" Top="6" Width="19"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="830" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="581" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : DISDSM00300
+* 업무명     : 재고관리-재고현황관리
+* 프로그램명 : 재고현황상세
+--------------------------------------------------------------------------------
+* 작성자     : 김만수
+* 작성일     : 2011. 11. 02
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+//expr:decode(rowType,'update','combo',decode(sale_yn,'Y','none','combo'))
+//expr:decode(rowType,'update',decode(sale_yn,'Y','number','none'),decode(sale_yn,'Y','none','none'))
+//expr:decode(rowType,'update',decode(sale_yn,'Y','date','none'),decode(sale_yn,'Y','none','none'))
+
+
+//expr:decode(last_inout_cl,'200','none','combo')
+//expr:decode(last_inout_cl,'200','none',decode(sale_yn,'Y','number','none'))
+//expr:decode(last_inout_cl,'200','none',decode(sale_yn,'Y','date','none'))
+
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+// 글로벌 세션정보
+var FV_USER_ID;					// 사용자ID
+var FV_USER_NM;					// 사용자명
+
+var	FV_ORG_ID;					// 소속 
+var	FV_ORG_NM;					// 소속명
+var	FV_ORG_CL;					// 소속구분
+var FV_DATASET;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function DISDSM00300_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);	
+    f_getSession();	
+
+	FV_DATASET = Object("parent.ds_condition");
+		
+	lf_getDisDsm300List();
+}
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function f_getSession()
+{
+	FV_USER_ID        = gds_session.GetColumn(0, "loginid");						// 사용자ID
+	FV_USER_NM        = gds_session.GetColumn(0, "usernm");							// 사용자명
+
+	FV_ORG_ID         = gds_session.GetColumn(0, "orgid");							// 소속 
+	FV_ORG_CL         = gds_session.GetColumn(0, "orgcl");							// 소속구분
+}
+
+/*******************************************************************************
+ * @description    : 상품재고 리스트 조회
+*******************************************************************************/
+function lf_getDisDsm300List()
+{
+	if(FV_DATASET == null)
+	{
+		alert('정보가 부족합니다.');
+		this.Close();
+		return;
+	}
+	
+    // 입력 파라메터 셋팅
+    ds_list.Clear();
+
+	cf_setParam(ds_cond, "last_inout_sdt"	, FV_DATASET.GetColumn(0, "last_inout_sdt"));
+	cf_setParam(ds_cond, "last_inout_edt"	, FV_DATASET.GetColumn(0, "last_inout_edt"));
+	cf_setParam(ds_cond, "pos_agency"		, FV_DATASET.GetColumn(0, "pos_agency"));
+	cf_setParam(ds_cond, "strd_ym"			, FV_DATASET.GetColumn(0, "strd_ym"));	
+	cf_setParam(ds_cond, "hld_plc_id"		, FV_DATASET.GetColumn(0, "hld_plc_id"));
+	cf_setParam(ds_cond, "prod_cd"			, FV_DATASET.GetColumn(0, "prod_cd"));
+	cf_setParam(ds_cond, "oper_id"			, FV_DATASET.GetColumn(0, "oper_id"));
+	cf_setParam(ds_cond, "color_cd"			, FV_DATASET.GetColumn(0, "color_cd"));	
+    
+	// 트랜잭션 설정
+	var sSvcID = "svcDisDsmList";
+	var sInDs  = "nc_input_fieldDs=ds_cond";
+	var sOutDs = "ds_list=List";
+	var sArg   = "sktst.dis.DSM#getDisDsm300";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+
+}
+
+/*******************************************************************************
+ 공통 스크립트 영역 끝
+*******************************************************************************/
+
+//==============================================================================
+// 기타 업무 메소드들
+//==============================================================================
+/*******************************************************************************
+ * @description    : 엑셀 다운로드
+*******************************************************************************/
+function btn_excelDown_OnClick(obj)
+{
+	cf_exportExcel(grd_prodDisList, 1);
+}
+
+/*******************************************************************************
+ * @description    : 창닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+]]></Script>
+</Window>

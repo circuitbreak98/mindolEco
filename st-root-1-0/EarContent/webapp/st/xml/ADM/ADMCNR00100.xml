@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="592" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="접속통계" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_dayCl">
+				<Contents>
+					<colinfo id="comm_cd_val" size="256" summ="default" type="STRING"/>
+					<colinfo id="comm_cd_val_nm" size="256" summ="default" type="STRING"/>
+					<record>
+						<comm_cd_val></comm_cd_val>
+						<comm_cd_val_nm>전체</comm_cd_val_nm>
+					</record>
+					<record>
+						<comm_cd_val>1</comm_cd_val>
+						<comm_cd_val_nm>월</comm_cd_val_nm>
+					</record>
+					<record>
+						<comm_cd_val>2</comm_cd_val>
+						<comm_cd_val_nm>화</comm_cd_val_nm>
+					</record>
+					<record>
+						<comm_cd_val>3</comm_cd_val>
+						<comm_cd_val_nm>수</comm_cd_val_nm>
+					</record>
+					<record>
+						<comm_cd_val>4</comm_cd_val>
+						<comm_cd_val_nm>목</comm_cd_val_nm>
+					</record>
+					<record>
+						<comm_cd_val>5</comm_cd_val>
+						<comm_cd_val_nm>금</comm_cd_val_nm>
+					</record>
+					<record>
+						<comm_cd_val>6</comm_cd_val>
+						<comm_cd_val_nm>토</comm_cd_val_nm>
+					</record>
+					<record>
+						<comm_cd_val>7</comm_cd_val>
+						<comm_cd_val_nm>일</comm_cd_val_nm>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_menuGrp">
+				<Contents>
+					<colinfo id="comm_cd_val" size="256" summ="default" type="STRING"/>
+					<colinfo id="comm_cd_val_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="MENU_NUM" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="METHOD_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="MENU_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="MENU_GROUP" size="255" summ="default" type="STRING"/>
+					<colinfo id="TOT_RUN_CNT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="AVGRUNTM" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="UND2_CNT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="UND2_RAT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="OVR2_CNT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="OVR2_RAT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="OVR3_CNT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="OVR3_RAT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="OVR10_CNT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="OVR10_RAT" size="15" summ="default" type="DECIMAL"/>
+					<colinfo id="method_id" size="255" summ="default" type="STRING"/>
+					<colinfo id="menu_group_nm" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="8" Text="접속통계" Top="75" Width="86"></Image>
+		<Div Border="Raised" Height="62" Id="div_search" Left="10" Style="sty_div_search" TabOrder="17" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_search" ImageID="btn_a_2" Left="742" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="31" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static0" Left="16" Style="sty_lb_Search" TabOrder="2" Text="조직" Top="30" VAlign="Middle" Width="60"></Static>
+				<Static Align="Right" Height="20" Id="Static4" Left="495" Style="sty_lb_Search" TabOrder="3" Text="요일구분" Top="55" VAlign="Middle" Visible="FALSE" Width="90"></Static>
+				<Combo Border="Flat" CodeColumn="comm_cd_val" DataColumn="comm_cd_val_nm" Height="20" Id="cmb_dayCl" InnerDataset="ds_dayCl" Left="589" ResetIndex="FIRST" Style="sty_ipt_form" TabOrder="4" Top="54" Visible="FALSE" Width="85"></Combo>
+				<Image Height="20" Id="Image0" ImageID="bul_mand" Left="13" TabOrder="9" TabStop="FALSE" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static5" Left="8" Style="sty_lb_Search" TabOrder="7" Text="조회기간" Top="7" VAlign="Middle" Width="68"></Static>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_runDtmFrom" Left="80" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="5" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Static Align="Center" Height="20" Id="Static9" Left="169" TabOrder="8" Text="~" Top="7" VAlign="Middle" Width="20"></Static>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_runDtmTo" Left="188" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="6" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Static Align="Right" Height="20" Id="Static2" Left="464" Style="sty_lb_Search" TabOrder="10" Text="메뉴그룹" Top="7" VAlign="Middle" Width="60"></Static>
+				<Combo Border="Flat" Height="20" Id="cmb_menuGrp" Left="527" OnChanged="div_search_cmb_menuGrp_OnChanged" ResetIndex="FIRST" Style="sty_ipt_form" TabOrder="11" Top="6" Width="90"></Combo>
+				<Static Align="Right" Height="20" Id="Static3" Left="598" Style="sty_lb_Search" TabOrder="12" Text="화면" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_menuNm" Left="662" LeftMargin="2" OnCharChanged="div_search_edt_menuNm_OnCharChanged" OnKeyDown="div_search_edt_menuNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="7" Width="121"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_menu" ImageID="btn_i_detail" Left="782" OnClick="div_search_btn_menu_OnClick" TabOrder="13" Text="Button0" Top="7" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_menuId" Left="801" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="14" Top="7" Visible="FALSE" Width="10"></Edit>
+				<Static Align="Right" Height="20" Id="Static6" Left="275" Style="sty_lb_Search" TabOrder="16" Text="사용자" Top="31" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_userNm" Left="337" LeftMargin="2" OnCharChanged="div_search_edt_userNm_OnCharChanged" OnKeyDown="div_search_edt_userNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="16" Top="31" Width="90"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_user" ImageID="btn_i_detail" Left="426" OnClick="div_search_btn_user_OnClick" OnKeyDown="div_search_btn_user_OnKeyDown" TabOrder="17" Text="Button0" Top="31" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_UserId" Left="446" LeftMargin="2" OnChanged="div_search_edt_UserId_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="18" Top="31" Visible="FALSE" Width="10"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_orgId" Left="224" LeftMargin="2" OnCharChanged="div_search_edt_orgId_OnCharChanged" OnKeyDown="div_search_edt_orgId_OnKeyDown" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="20" Top="31" Width="54"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_orgTree" ImageID="btn_i_detail" Left="204" OnClick="div_search_btn_orgTree_OnClick" TabOrder="21" Text="Button0" Top="31" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_orgNm" Left="80" LeftMargin="2" OnCharChanged="div_search_edt_orgNm_OnCharChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="22" Top="31" Width="125"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_lvl" Left="279" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="22" Top="31" Visible="FALSE" Width="10"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="275" Style="sty_lb_Search" TabOrder="24" Text="근무지" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_orgAreaNm" Left="337" LeftMargin="2" OnKeyDown="div_search_edt_orgAreaNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="25" Top="7" Width="90"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_orgArea" ImageID="btn_i_detail" Left="426" OnClick="div_search_btn_orgArea_OnClick" TabOrder="26" Text="Button0" Top="7" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_OrgAreaId" Left="446" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="27" Top="7" Visible="FALSE" Width="10"></Edit>
+				<Static Align="Right" Height="20" Id="Static7" Left="444" Style="sty_lb_Search" TabOrder="28" Text="사용자그룹" Top="31" VAlign="Middle" Width="80"></Static>
+				<Combo Border="Flat" DisplayRowCnt="40" Height="20" Id="cmb_userGrp" Left="527" OnChanged="div_search_cmb_menuGrp_OnChanged" ResetIndex="FIRST" Style="sty_ipt_form" TabOrder="29" Top="30" Width="90"></Combo>
+			</Contents>
+		</Div>
+		<Grid BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="576" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="30" Height="480" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" OnCellDBLClick="grd_list_OnCellDblClick" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="96" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="120"/>
+						<col width="123"/>
+						<col width="106"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="55"/>
+						<col width="183"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="메뉴그룹" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="화면명" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="메소드명" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="처리&#32;건수" Valign="Center" wordwrap="word"/>
+						<cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="처리&#32;시간" Valign="Center" wordwrap="word"/>
+						<cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="2초이상&#32;실행횟수" Valign="Center" wordwrap="word"/>
+						<cell align="center" bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" text="2초이상&#32;비율(%)" Valign="Center" wordwrap="word"/>
+						<cell align="center" bkcolor="user34" col="7" color="user35" display="text" font="돋움,9,Bold" text="3초이상&#32;실행횟수" Valign="Center" wordwrap="word"/>
+						<cell align="center" bkcolor="user34" col="8" color="user35" display="text" font="돋움,9,Bold" text="3초이상&#32;비율(%)" Valign="Center" wordwrap="word"/>
+						<cell align="center" bkcolor="user34" col="9" color="user35" display="text" font="돋움,9,Bold" text="10초이상&#32;실행횟수" Valign="Center" wordwrap="word"/>
+						<cell align="center" bkcolor="user34" col="10" color="user35" display="text" font="돋움,9,Bold" text="10초이상&#32;비율(%)" Valign="Center" wordwrap="word"/>
+						<cell align="center" bkcolor="user34" col="11" color="user35" display="text" font="돋움,9,Bold" text="메소드ID" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="center" bkcolor2="user36" col="0" colid="menu_group_nm" display="normal" expr="f_getGroupNm(menu_group_nm,&#32;method_id)"/>
+						<cell align="left" bkcolor2="user36" col="1" colid="MENU_NM" display="text"/>
+						<cell align="left" bkcolor2="user36" col="2" colid="METHOD_NM" display="combo"/>
+						<cell bkcolor2="user36" col="3" colid="TOT_RUN_CNT" display="number"/>
+						<cell bkcolor2="user36" col="4" colid="AVGRUNTM" display="number" Mask="##,##0"/>
+						<cell bkcolor2="user36" col="5" colid="OVR2_CNT" display="number"/>
+						<cell bkcolor2="user36" col="6" colid="OVR2_RAT" display="number" Mask="##,##0"/>
+						<cell bkcolor2="user36" col="7" colid="OVR3_CNT" display="number"/>
+						<cell bkcolor2="user36" col="8" colid="OVR3_RAT" display="number" Mask="##,##0"/>
+						<cell bkcolor2="user36" col="9" colid="OVR10_CNT" display="number"/>
+						<cell bkcolor2="user36" col="10" colid="OVR10_RAT" display="number" Mask="##,##0"/>
+						<cell align="left" bkcolor2="user36" col="11" colid="method_id" display="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="799" OnClick="btn_excel_OnClick" TabOrder="4" Text="Button1" ToolTipText="Excel&#32;Download" Top="74" Width="19"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID 	: BASUSM00100
+* 업무명      	: 기준정보관리 - 사용자관리 - 사용자조회
+* 프로그램명  	: 사용자조회
+--------------------------------------------------------------------------------
+* 작성자      	: 이영진(leeyoungjin)
+* 작성일      	: 2009.01.20
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 최승호
+수정일    : 2009.03.23
+수정 내역 : 리스트 출력 항목 추가, 엔터키 이벤트 설정 
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_list);
+
+	f_init();
+	f_setCombo();
+}
+
+
+function f_init()
+{
+	div_search.cal_runDtmFrom.Value = toDay();
+	div_search.cal_runDtmTo.Value = toDay();
+}
+
+/*******************************************************************************
+ * @description    : 콤보 설정
+*******************************************************************************/
+function f_setCombo()
+{
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("div_search.cmb_menuGrp" , "ZADM_C_00010", "전체");	        //  메뉴그룹
+	cf_setCommonCode("div_search.cmb_userGrp" , "ZBAS_C_00250", "전체");	        //  사용자그룹
+
+	cf_checkCommonCode(); 
+}
+
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	
+	switch(sSvcID)
+	{
+	case "svcList":
+		//trace(ds_list.saveXML());
+		break;		
+		
+	default:
+		break;
+	}
+}
+
+
+
+function f_isValidSearch()
+{
+	if(sf_isValidDateFromTo(div_search.cal_runDtmFrom, div_search.cal_runDtmTo, 7, false) == false) return false;
+	return true;
+}
+
+/*******************************************************************************
+ * @description    :  검색 버튼 - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	if(f_isValidSearch() == false) return;
+
+	ds_condition.Clear();
+
+	// 넘길 파라메터 설정
+	cf_setParam(ds_condition, "runDtmFrom", div_search.cal_runDtmFrom.Value); 
+	cf_setParam(ds_condition, "runDtmTo"  , div_search.cal_runDtmTo.Value); 
+	cf_setParam(ds_condition, "org_id"    , div_search.edt_orgId.Text); 
+	cf_setParam(ds_condition, "org_area"  , div_search.edt_OrgAreaId.Text); 
+	cf_setParam(ds_condition, "day_cl"    , div_search.cmb_dayCl.Value); 
+	cf_setParam(ds_condition, "menu_num"  , div_search.edt_menuId.Text); 
+	cf_setParam(ds_condition, "menu_group", div_search.cmb_menuGrp.Value); 
+	cf_setParam(ds_condition, "user_id"   , div_search.edt_UserId.Text); 
+	cf_setParam(ds_condition, "user_group", div_search.cmb_userGrp.Value); 
+
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=list";
+	var sArg   = "sktst.adm.CNR#getMethodRunTimeList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	
+}
+
+function f_setOrgArea()
+{
+	var sArg  = "deal_co_cl1="+quote(sf_getDealCoCl1(true)); // 필수 - 대리점
+
+	if(div_search.edt_lvl.value == "4"){
+		sArg += " pos_agency="+quote(div_search.edt_orgId.Text); // 옵션 - 소속대리점
+	}else{
+		sArg += " org_id="+quote(div_search.edt_orgId.Text); // 옵션 - 소속조직
+	}	
+	
+	cf_callDealPop(sArg, div_search, "edt_OrgAreaNm,edt_OrgAreaId");	
+}
+
+/*******************************************************************************
+ * @description    :  조직 팝업 버튼- 이벤트
+*******************************************************************************/
+function div_search_btn_orgTree_OnClick(obj)
+{
+	cf_callOrgTree2("div_search.edt_orgId", "div_search.edt_orgNm",""); 
+	
+	div_search.edt_orgAreaNm.Text = "";
+	div_search.edt_OrgAreaId.Text = "";
+	
+	div_search.edt_userNm.Text = "";
+	div_search.edt_UserId.Text = "";	
+}
+
+/*******************************************************************************
+ * @description    :  근무지 팝업 버튼- 이벤트
+*******************************************************************************/
+function div_search_btn_orgArea_OnClick(obj)
+{
+	f_setOrgArea();
+	
+	div_search.edt_userNm.Text = "";
+	div_search.edt_UserId.Text = "";
+}
+
+
+/*******************************************************************************
+ * @description    :  근무지 팝업 - 키 이벤트
+*******************************************************************************/
+function div_search_edt_orgAreaNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		f_setOrgArea();
+		div_search.edt_userNm.Text = "";
+		div_search.edt_UserId.Text = "";		
+	}
+}
+
+
+function div_search_edt_userNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	div_search.edt_userId.Text = "";
+}
+
+function div_search_edt_userNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		var sArg  = " code=" + quote("div_search.edt_UserId");
+			sArg += " text=" + quote("div_search.edt_userNm");
+	
+		Dialog("ADM::ADMCNR00300.xml", sArg,490, 338);		
+	}
+}
+
+/*******************************************************************************
+ * @description    :  근무지 팝업 - 문자변경 이벤트
+*******************************************************************************/
+function div_search_edt_orgAreaNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	div_search.edt_OrgAreaId.Text = "";
+}
+
+
+/*******************************************************************************
+ * @description    :  화면검색 팝업 - 이벤트
+*******************************************************************************/
+function div_search_btn_menu_OnClick(obj)
+{
+	f_setMenuNm();
+}
+
+function f_setMenuNm()
+{
+	var sArg  = " code=" + quote("div_search.edt_menuId");
+		sArg += " text=" + quote("div_search.edt_menuNm");
+		sArg += " menu_grp=" + quote("div_search.cmb_menuGrp");
+		
+	Dialog("ADM::ADMCNR00200.xml", sArg,490, 338);
+}
+
+function f_setUserNm()
+{
+	var sArg  = " code="    + quote("div_search.edt_UserId");
+		sArg += " text="    + quote("div_search.edt_userNm");
+		sArg += " orgid="   + quote("div_search.edt_orgId");
+		sArg += " orgnm="   + quote("div_search.edt_orgNm");
+		sArg += " orglvl="  + quote("div_search.edt_lvl");
+		sArg += " orgareaId=" + quote("div_search.edt_OrgAreaId");
+		sArg += " orgareaNm=" + quote("div_search.edt_orgAreaNm");
+
+	Dialog("ADM::ADMCNR00300.xml", sArg,490, 338);
+}
+
+/*******************************************************************************
+ * @description    :  화면명 키 - 이벤트
+*******************************************************************************/
+function div_search_btn_user_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,nLLParam,nHLParam)
+{
+	if(nChar == 13)
+	{
+		f_setUserNm();
+	}
+}
+
+
+/*******************************************************************************
+ * @description    :  사용자검색 팝업 - 이벤트
+*******************************************************************************/
+function div_search_btn_user_OnClick(obj)
+{
+	f_setUserNm();
+}
+
+/*******************************************************************************
+ * @description    :  화면명 키 - 이벤트
+*******************************************************************************/
+function div_search_edt_menuNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	div_search.edt_menuId.Text = "";
+}
+
+/*******************************************************************************
+ * @description    :  화면명 키 - 이벤트
+*******************************************************************************/
+function div_search_edt_menuNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		f_setMenuNm();
+	}
+}
+
+function div_search_edt_orgNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	div_search.edt_lvl.Text = "";
+	div_search.edt_orgId.Text = "";	
+}
+
+function btn_excel_OnClick(obj)
+{
+	cf_exportExcel(grd_list);
+}
+
+function div_search_cmb_menuGrp_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	div_search.edt_menuNm.Text = "";
+	div_search.edt_menuId.Text = "";
+}
+
+
+function f_getGroupNm(sGroupNm, sMethodId)
+{
+	var retValue = sGroupNm;
+	
+	if(uf_IsNull(sGroupNm) == true)
+	{
+		var sPreFix = sMethodId.substr(0,9);
+
+		switch(sPreFix)
+		{
+		case "sktst.acc":
+			retValue = "정산관리";
+			break;
+			
+		case "sktst.adm":
+			retValue = "Admin";
+			break;			
+			
+		case "sktst.bas":
+			retValue = "기준정보";
+			break;			
+			
+		case "sktst.dis":
+			retValue = "재고관리";
+			break;		
+				
+		case "sktst.mgt":
+			retValue = "경영관리";
+			break;
+			
+		case "sktst.pol":
+			retValue = "정책관리";
+			break;			
+			
+		case "sktst.sac":
+			retValue = "판매회계";
+			break;			
+			
+		case "sktst.sal":
+			retValue = "영업관리";
+			break;						
+		}		
+	}
+	
+	
+	return retValue;
+}]]></Script>
+</Window>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISATR01000">
+	<select id="getProvMov" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT M.OUT_MGMT_NO, 
+       B.POS_AGENCY, 
+       FBAS_GET_DEAL_NM(B.POS_AGENCY,'') AS POS_AGENCY_NM, 
+       M.OUT_PLC_ID, 
+       FBAS_GET_DEAL_NM(M.OUT_PLC_ID,'') AS OUT_PLC_NM, 
+       M.IN_PLC_ID, 
+       FBAS_GET_DEAL_NM(M.IN_PLC_ID,'') AS IN_PLC_NM, 
+       M.OUT_FIX_DT,
+       FBAS_GET_USER_NM(M.INS_USER_ID) AS INS_USER,
+       NVL(SUM(D.OUT_QTY),0) TOT_OUT_QTY, 
+       NVL(SUM(D.SALE_AMT),0) AS SALE_AMT ,
+       H.IN_MGMT_NO
+  FROM TDIS_PROD_OUT_M M, 
+       TDIS_PROD_MOV_OUT_DTL_D D, 
+       TBAS_DEAL_CO_MGMT B ,
+       (SELECT * FROM TDIS_PROD_INOUT_HST WHERE INOUT_DTL_CL = '302') H
+ WHERE M.OUT_MGMT_NO = D.OUT_MGMT_NO 
+   AND M.OUT_PLC_ID = B.DEAL_CO_CD 
+   AND B.HSEQ_NO = 
+       (SELECT MAX(HSEQ_NO) 
+         FROM TBAS_DEAL_CO_MGMT 
+        WHERE DEAL_CO_CD = M.OUT_PLC_ID 
+       ) 
+   AND D.OUT_MGMT_NO = H.OUT_MGMT_NO
+   AND D.OUT_SEQ = H.OUT_SEQ
+   AND D.PROD_CD = H.PROD_CD
+   AND D.SER_NUM = H.SER_NUM
+   AND D.COLOR_CD = H.COLOR_CD
+   AND INOUT_SEQ = (SELECT MAX(INOUT_SEQ) 
+         FROM TDIS_PROD_INOUT_HST 
+        WHERE PROD_CD = D.PROD_CD 
+        AND COLOR_CD = D.COLOR_CD
+              AND SER_NUM = D.SER_NUM
+              AND INOUT_DTL_CL != '205')
+   AND M.DEL_YN = 'N' 
+   AND D.DEL_YN = 'N' 
+   AND B.DEL_YN = 'N' 
+   AND M.OUT_FIX_DT >= #from_out_schd_dt#
+   AND M.OUT_FIX_DT <= #to_out_schd_dt#
+]]>   <isNotEmpty prepend="AND" property="out_plc_id">
+<![CDATA[       M.OUT_PLC_ID = #out_plc_id#
+]]>   </isNotEmpty>
+<![CDATA[]]>   <isNotEmpty prepend="AND" property="in_plc_id">
+<![CDATA[       M.IN_PLC_ID = #in_plc_id#
+]]>   </isNotEmpty>
+<![CDATA[]]>   <isNotEmpty prepend="AND" property="pos_outPosAgency_id">
+<![CDATA[	M.OUT_PLC_ID IN (SELECT DEAL_CO_CD 
+					   FROM TBAS_DEAL_CO_MGMT 
+					  WHERE EFF_STA_DTM <= M.OUT_FIX_DT||'235959'
+					    AND EFF_END_DTM >= M.OUT_FIX_DT||'235959' 
+					    AND DEL_YN = 'N' 
+					    AND POS_AGENCY = #pos_outPosAgency_id#)
+]]>   </isNotEmpty> 
+<![CDATA[ GROUP BY M.OUT_MGMT_NO, B.POS_AGENCY, M.OUT_PLC_ID, M.IN_PLC_ID, M.OUT_FIX_DT, M.INS_USER_ID, H.IN_MGMT_NO
+ ORDER BY M.OUT_FIX_DT DESC]]>
+	</select>
+</sqlMap>

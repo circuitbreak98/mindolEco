@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISATR00400">
+	<select id="selectOutFixList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR00400_selectOutFixList_이정현_김중일 */
+       FBAS_GET_AGENCY_NM(a.out_plc_id, a.out_schd_dt) as pos_outPosAgency_nm,
+       FBAS_GET_AGENCY_NM(a.in_plc_id, a.out_schd_dt) as pos_inPosAgency_nm,
+       a.out_mgmt_no,
+       a.out_plc_id,
+       fbas_get_deal_nm(a.out_plc_id, #to_out_dt#) out_plc_nm,
+       a.in_plc_id,
+       fbas_get_deal_nm(a.in_plc_id, #to_out_dt#) in_plc_nm,
+       a.out_schd_dt,
+       b.mov_out_qty,
+       a.out_fix_dt,
+       a.out_fix_yn
+FROM   tdis_out_m a,
+       (
+         SELECT 
+                ba.out_mgmt_no,
+                SUM(bb.out_qty) mov_out_qty
+         FROM   tdis_prod_out_m ba,
+                tdis_prod_mov_out_dtl_d bb
+         WHERE  bb.out_mgmt_no = ba.out_mgmt_no
+]]>         <isNotEmpty prepend="AND" property="out_plc_id">
+<![CDATA[                ba.out_plc_id = #out_plc_id#
+]]>         </isNotEmpty>
+<![CDATA[]]>         <isNotEmpty prepend="AND" property="in_plc_id">
+<![CDATA[                ba.in_plc_id = #in_plc_id#
+]]>         </isNotEmpty>
+<![CDATA[]]>         <isNotEmpty prepend="AND" property="out_fix_yn">
+<![CDATA[                nvl(ba.out_fix_yn,'N') = #out_fix_yn#
+]]>         </isNotEmpty>
+<![CDATA[         AND    ba.out_schd_dt >= #from_out_dt#
+         AND    ba.out_schd_dt <= #to_out_dt#
+         /*
+         AND    ba.agency_mov_yn = 'Y' 
+         AND    ba.dis_stl_mov_yn <> 'Z'
+         */
+         AND    ba.out_cl = '301'
+         AND    ba.del_yn = 'N'
+         AND    bb.del_yn = 'N'
+         GROUP BY
+                ba.out_mgmt_no
+       ) b
+WHERE  a.out_mgmt_no = b.out_mgmt_no
+/*
+AND    a.agency_mov_yn = 'Y' 
+AND    a.dis_stl_mov_yn <> 'Z'
+*/
+AND    a.out_plc_id IN (SELECT deal_co_cd 
+                       FROM   tbas_deal_co_mgmt
+                       WHERE  del_yn = 'N'
+                       AND    deal_end_yn != 'Y'
+                       AND    deal_co_cl1 = 'Z1'
+                       AND    out_stop_yn = 'N'
+                       AND    pos_agency = #pos_outPosAgency_id#
+                       AND    eff_end_dtm = '99991231235959')
+]]><isNotEmpty prepend="AND" property="pos_inPosAgency_id">                       
+<![CDATA[    a.in_plc_id IN (SELECT deal_co_cd 
+                       FROM   tbas_deal_co_mgmt
+                       WHERE  del_yn = 'N'
+                       AND    deal_end_yn != 'Y'
+                       AND    deal_co_cl1 = 'Z1'
+                       AND    out_stop_yn = 'N'
+                       AND    pos_agency = #pos_inPosAgency_id#
+                       AND    eff_end_dtm = '99991231235959')
+]]></isNotEmpty>  
+	</select>
+	<select id="selectDealDesc" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISATR00400_selectDealDesc_이문규_이문규 */
+       a.out_mgmt_no,
+       a.prod_cd,
+       a.out_fix_qty,
+       b.prod_nm,
+       a.color_cd,
+       fbas_get_commcdnm_val('ZBAS_C_00040', a.color_cd) color_nm,
+       a.ser_num
+FROM   tdis_mov_out_dtl_d a,
+       tbas_prod_mgmt b 
+WHERE  a.out_mgmt_no = #out_mgmt_no#
+AND    a.out_fix_yn = 'Y'
+AND    a.del_yn = 'N'
+/* AND    a.cncl_yn = 'N'*/
+AND    a.prod_cd = b.prod_cd]]>
+	</select>
+	<select id="selectDealCoInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISATR00400_selectDealCoInfo_이문규_이문규" index_desc ( deal xbas_deal_co_mgmt_pk) */
+       #out_mgmt_no# out_mgmt_no,
+       TO_CHAR(SYSDATE, 'YYYY.MM.DD') cur_dt,
+       SUBSTR(a.biz_num, 1, 3) || '-' || SUBSTR(a.biz_num, 4, 2) || '-' || SUBSTR(a.biz_num, 6, 5) biz_num,
+       a.deal_co_nm||'-'||FBAS_GET_AGENCY_NM(a.deal_co_cd, '') as deal_co_nm,
+       a.rep_user_nm, 
+       REPLACE(a.addr, '@', '＠') || ' ' || REPLACE(a.dtl_addr, '@', '＠') addr,
+       a.biz_con,
+       a.typ_of_biz
+FROM   tbas_deal_co_mgmt a
+WHERE  a.deal_co_cd = #deal_co_cd#
+AND    a.eff_end_dtm = '99991231235959'
+AND    a.del_yn = 'N'
+AND    rownum = 1]]>
+	</select>
+</sqlMap>

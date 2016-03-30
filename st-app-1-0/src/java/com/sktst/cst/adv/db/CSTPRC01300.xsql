@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTPRC01300">
+	<select id="getAsianaMilList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT prchs.PRCHS_MGMT_NO
+	 , prchs.CON_MGMT_NO
+	 , prchs.PROD_CD
+	 , prchs.SER_NUM
+	 , prchs.CON_DT
+     , prchs.CUST_DT
+     , prchs.COLOR_CD
+     , FBAS_GET_DEAL_NM(prchs.CON_PLC_CD,prchs.CON_DT) CON_PLC_NM
+     , prchs.CON_PLC_CD
+     , FBAS_GET_PROD_NM(prchs.PROD_CD) PROD_NM
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', prchs.COLOR_CD) COLOR_NM
+     , prchs.PRCHS_AMT
+     , prchs.ASIANA_CARD_NO
+     , prchs.CUST_NM
+     , NVL(prchs.ASIA_MIL_OP_YN,'N') ASIA_MIL_OP_YN
+     , prchs.ASIA_MIL_OP_DT
+     , prchs.EQP_ST
+     , prchs.EQP_ST_DTL
+     , mgmt.POS_AGENCY     
+     , '0' PRC_CHECK
+     , NVL(prchs.FIRST_DC_YN,'N') FIRST_DC_YN
+     , NVL(FBAS_GET_RESERVE_AMT(prchs.CON_MGMT_NO),0) UBO_AMT
+     , prchs.PRCHS_AMT + NVL(FBAS_GET_RESERVE_AMT(prchs.CON_MGMT_NO),0) TOT_AMT   
+  FROM TCST_PRCHS_MGMT prchs
+  	 , TBAS_DEAL_CO_MGMT mgmt
+ WHERE prchs.CON_PLC_CD = mgmt.DEAL_CO_CD
+   AND mgmt.EFF_STA_DTM <= prchs.CON_DT||'235959'
+   AND mgmt.EFF_END_DTM >= prchs.CON_DT||'235959'
+   AND prchs.DEL_YN = 'N'
+   AND prchs.CUST_YN = 'Y'
+   AND prchs.BUY_CL = 'Y'
+   AND prchs.ASIANA_CARD_NO IS NOT NULL
+   AND prchs.SKN_YN = 'N'   
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[	     mgmt.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[       prchs.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">      
+<![CDATA[       prchs.SER_NUM = #SER_NUM#
+]]></isNotEmpty>	         
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       prchs.PROD_CD = #PROD_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[       prchs.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       prchs.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="BOX_NO">   
+<![CDATA[       prchs.BOX_NO = #BOX_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isEmpty prepend="AND" property="BOX_NO">   
+<![CDATA[]]><isEqual property="DT_GB" compareValue="1"> 
+<![CDATA[       prchs.CUST_DT BETWEEN #PRC_FROM_DT# AND #PRC_TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isNotEqual property="DT_GB" compareValue="1"> 
+<![CDATA[       prchs.ASIA_MIL_OP_DT BETWEEN #PRC_FROM_DT# AND #PRC_TO_DT#
+   AND prchs.ASIA_MIL_OP_DT = 'Y'              
+]]></isNotEqual>
+<![CDATA[]]></isEmpty>
+	</select>
+	<select id="getAsianaMilDtlList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT a.PRCHS_MGMT_NO
+	 , ''               chk
+	 , ''               prod_cl_nm
+	 , ''               mfact_id
+	 , ''               color_nm
+	 , ''               edt_flg
+	 , ''               prod_cd_org
+	 , ''               dis_st
+	 , '99'             color_cd
+	 , ''               color_cd_org
+	 , ''               mod_dtm
+	 , ''               dum_yn
+	 , ''               prod_cd_color_cd
+	 , ''               prod_nm
+	 , ''               bad_yn
+	 , ''               mfact_nm
+	 , ''               nc_rec_status
+	 , ''               fix_yn
+	 , ''               prod_cd_ser_num
+	 , ''               bar_cd_typ
+	 , ''               ser_num
+	 , ''               eqp_st	 	 	 
+     , c.CPNT_PROD_CD   prod_cd
+     , d.PROD_CL        prod_cl
+     , c.HLD_QTY        in_qty
+     , c.UNIT_PRC       in_amt
+  FROM TCST_PRCHS_MGMT a   
+  	 , TBAS_DEAL_CO_MGMT b
+     , TCST_PRCHS_DTL c
+     , TBAS_PROD_MGMT d
+ WHERE a.CON_PLC_CD = b.DEAL_CO_CD
+   AND a.PRCHS_MGMT_NO = c.PRCHS_MGMT_NO
+   AND c.CPNT_PROD_CD = d.PROD_CD(+)
+   AND b.EFF_STA_DTM <= a.CON_DT||'235959'
+   AND b.EFF_END_DTM >= a.CON_DT||'235959'
+   AND a.BUY_CL = 'Y'
+   AND a.CUST_YN = 'Y'
+   AND c.HLD_QTY > 0 
+   AND a.DEL_YN = 'N'
+   AND b.DEL_YN = 'N'
+   AND c.DEL_YN = 'N'
+   AND d.DEL_YN(+) = 'N'
+   AND a.ASIANA_CARD_NO IS NOT NULL
+   AND a.POL_YN <> '1'
+   AND a.CUST_YN = 'Y'
+   AND a.SKN_YN = 'N'
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[	     b.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[       a.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">      
+<![CDATA[       a.SER_NUM = #SER_NUM#
+]]></isNotEmpty>	         
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       a.PROD_CD = #PROD_CD#
+]]></isNotEmpty>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[       a.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       a.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="BOX_NO">   
+<![CDATA[       a.BOX_NO = #BOX_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isEmpty prepend="AND" property="BOX_NO">   
+<![CDATA[]]><isEqual property="DT_GB" compareValue="1"> 
+<![CDATA[       a.CUST_DT BETWEEN #PRC_FROM_DT# AND #PRC_TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isNotEqual property="DT_GB" compareValue="1"> 
+<![CDATA[       a.ASIA_MIL_OP_DT BETWEEN #PRC_FROM_DT# AND #PRC_TO_DT#
+   AND a.ASIA_MIL_OP_DT = 'Y'       
+]]></isNotEqual>        
+<![CDATA[]]></isEmpty>
+	</select>
+	<update id="updatePrchsAsiaMilOp" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET ASIA_MIL_OP_YN = DECODE(ASIA_MIL_OP_YN,'Y','N','Y')
+   	  ,ASIA_MIL_OP_DT = DECODE(ASIA_MIL_OP_YN,'Y','',#ASIA_MIL_OP_DT#)
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#
+      ,PRC_ST = DECODE(ASIA_MIL_OP_YN,'Y','21','36')
+ WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#]]>
+	</update>
+</sqlMap>

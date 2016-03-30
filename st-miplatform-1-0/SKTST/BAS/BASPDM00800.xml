@@ -1,0 +1,624 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="584" Id="BASPDM00800" Left="8" OnLoadCompleted="BASPDM00800_OnLoadCompleted" PidAttrib="7" Title="등급별&#32;가격설정" Top="8" Ver="1.0" Width="896" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition" OnColumnChanged="ds_condition_OnColumnChanged">
+				<Contents>
+					<colinfo id="CHK_MTH" size="256" summ="default" type="STRING"/>
+					<record>
+						<CHK_MTH></CHK_MTH>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_grade">
+				<Contents>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="TYPE_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="GRADE_GB" size="256" summ="default" type="STRING"/>
+					<colinfo id="GRADE" size="256" summ="default" type="STRING"/>
+					<colinfo id="FROM_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TO_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RATE" size="256" summ="default" type="STRING"/>
+					<colinfo id="MIN_PRICE" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prefer">
+				<Contents>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="TYPE_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="GRADE_GB" size="256" summ="default" type="STRING"/>
+					<colinfo id="GRADE" size="256" summ="default" type="STRING"/>
+					<colinfo id="FROM_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TO_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RATE" size="256" summ="default" type="STRING"/>
+					<colinfo id="MIN_PRICE" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_addAmt" OnColumnChanged="ds_addAmt_OnColumnChanged">
+				<Contents>
+					<colinfo id="AMT_FROM" size="256" summ="default" type="STRING"/>
+					<colinfo id="AMT_TO" size="256" summ="default" type="STRING"/>
+					<colinfo id="AMT_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="AMT_RATE" size="256" summ="default" type="STRING"/>
+					<colinfo id="AMT_LIMIT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_rateSaleCl">
+				<Contents>
+					<colinfo id="name" size="256" summ="default" type="STRING"/>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<record>
+						<code>매출</code>
+						<name>1</name>
+					</record>
+					<record>
+						<code>매입</code>
+						<name>2</name>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_rateCl">
+				<Contents>
+					<colinfo id="name" size="256" summ="default" type="STRING"/>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<record>
+						<code>비율</code>
+						<name>1</name>
+					</record>
+					<record>
+						<code>금액</code>
+						<name>2</name>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Tab Border="Flat" Height="453" Id="tab_prod" Left="11" MouseOverColor="user12" SelColor="user11" SelectFont="돋움,9,Bold" Style="sty_tab" TabOrder="1" Top="50" Width="789">
+			<Contents>
+				<TabPage BorderColor="black" Height="424" Id="tab_suppInfo" ImageID="tab_blue" Left="2" TabOrder="19" Text="등급별" Top="27" Width="785">
+					<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_grade" BkColor2="user36" BoldHead="true" Border="Flat" Bottom="417" CellMoving="TRUE" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="382" Id="grd_grade" InputPanel="FALSE" Left="11" LineColor="user33" MinWidth="100" MultiSelect="TRUE" OnCellClick="tab_prod_tab_suppInfo_grd_grade_OnCellClick" Right="773" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="FALSE" Top="35" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="762">
+						<contents>
+							<format id="Default">
+								<columns>
+									<col width="32"/>
+									<col width="230"/>
+									<col width="165"/>
+									<col width="110"/>
+									<col width="110"/>
+								</columns>
+								<head>
+									<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="No" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="등급" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="비율(%)" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="시작일" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="종료일" Valign="Center"/>
+								</head>
+								<body>
+									<cell align="center" col="0" display="text" expr="row+1"/>
+									<cell align="left" col="1" colid="GRADE" display="combo" edit="combo" expandimage="btn_combo" expandshow="true"/>
+									<cell align="right" col="2" colid="RATE" display="number" edit="number"/>
+									<cell align="center" col="3" colid="FROM_DT" display="date" edit="date" expandimage="btn_i_calendar" expandshow="true"/>
+									<cell align="center" col="4" colid="TO_DT" display="date" edit="date" expandimage="btn_i_calendar" expandshow="true"/>
+								</body>
+							</format>
+						</contents>
+					</Grid>
+					<Button Cursor="HAND" Height="21" Id="btn_add" ImageID="btn_i_add_w" Left="727" OnClick="btn_addRow_OnClick" TabOrder="2" Text="Button1" ToolTipText="행추가" Top="7" Width="19"></Button>
+					<Button Cursor="HAND" Height="21" Id="btn_del" ImageID="btn_i_subtract_w" Left="750" OnClick="btn_delRow_OnClick" TabOrder="3" Text="Button1" ToolTipText="추가된&#32;행삭제" Top="7" Width="19"></Button>
+					<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="18" LeftMargin="15" Style="sty_img_tit" TabOrder="4" TabStop="FALSE" Text="주변기기&#32;등록" Top="-65" Width="192"></Image>
+					<Combo Border="Flat" Height="20" Id="cbo_gradeGb" INDEX="0" Left="9" OnChanged="tab_prod_tab_suppInfo_cbo_gradeGb_OnChanged" Style="sty_ipt_form" TabOrder="5" Top="7" Width="116"></Combo>
+				</TabPage>
+				<TabPage BorderColor="black" Height="424" Id="tab_textInfo" ImageID="tab_blue" Left="2" TabOrder="19" Text="선호도별" Top="27" Width="785">
+					<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_prefer" BkColor2="user36" BoldHead="true" Border="Flat" Bottom="417" CellMoving="TRUE" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="382" Id="grd_prefer" InputPanel="FALSE" Left="11" LineColor="user33" MinWidth="100" OnCellClick="tab_prod_tab_textInfo_grd_prefer_OnCellClick" Right="773" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="FALSE" Top="35" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="762">
+						<contents>
+							<format id="Default">
+								<columns>
+									<col width="30"/>
+									<col width="230"/>
+									<col width="133"/>
+									<col width="16"/>
+									<col width="171"/>
+									<col width="80"/>
+									<col width="80"/>
+								</columns>
+								<head>
+									<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="No" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="등급" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="2" color="user35" colspan="2" display="text" font="돋움,9,Bold" rowspan="2" text="비율(Rate)" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="하한가" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="시작일" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="6" color="user35" display="text" font="돋움,9,Bold" rowspan="2" text="종료일" Valign="Center"/>
+								</head>
+								<body>
+									<cell align="center" col="0" display="text" expr="row+1"/>
+									<cell align="left" col="1" colid="GRADE" display="combo" edit="combo" expandimage="btn_combo" expandshow="true"/>
+									<cell align="right" col="2" colid="RATE" display="number" edit="number"/>
+									<cell align="right" col="3" display="text" font="돋움,9,Bold" text="%"/>
+									<cell align="right" col="4" colid="MIN_PRICE" display="number" edit="number"/>
+									<cell align="center" col="5" colid="FROM_DT" display="date" edit="date" expandimage="btn_i_calendar" expandshow="true"/>
+									<cell align="center" col="6" colid="TO_DT" display="date" edit="date" expandimage="btn_i_calendar" expandshow="true"/>
+								</body>
+							</format>
+						</contents>
+					</Grid>
+					<Button Cursor="HAND" Height="21" Id="btn_add" ImageID="btn_i_add_w" Left="807" OnClick="btn_addRow_OnClick" TabOrder="2" Text="Button1" ToolTipText="행추가" Top="7" Width="19"></Button>
+					<Button Cursor="HAND" Height="21" Id="btn_del" ImageID="btn_i_subtract_w" Left="830" OnClick="btn_delRow_OnClick" TabOrder="2" Text="Button1" ToolTipText="추가된&#32;행삭제" Top="7" Width="19"></Button>
+				</TabPage>
+				<TabPage BorderColor="black" Height="424" Id="tab_addAmt" ImageID="tab_blue" Left="2" TabOrder="1" Text="비율" Top="27" Width="785">
+					<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_addAmt" BkColor2="user36" BoldHead="true" Border="Flat" Bottom="417" CellMoving="TRUE" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="382" Id="grd_addAmt" InputPanel="FALSE" Left="11" LineColor="user33" MinWidth="100" MultiSelect="TRUE" Right="773" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="FALSE" Top="35" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="762">
+						<contents>
+							<format id="Default">
+								<columns>
+									<col width="30"/>
+									<col width="142"/>
+									<col width="143"/>
+									<col width="138"/>
+									<col width="108"/>
+									<col width="151"/>
+								</columns>
+								<head>
+									<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="No" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="금액&#32;From" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="금액&#32;To" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="구분" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="비율" Valign="Center"/>
+									<cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="금액" Valign="Center"/>
+								</head>
+								<body>
+									<cell align="center" col="0" display="text" expr="row+1"/>
+									<cell align="left" col="1" colid="AMT_FROM" display="number" edit="number"/>
+									<cell col="2" colid="AMT_TO" display="number" edit="number"/>
+									<cell align="left" col="3" colid="AMT_CL" combocol="name" combodataset="ds_rateCl" combotext="code" display="combo" edit="combo" expandimage="btn_combo" expandshow="true"/>
+									<cell align="left" col="4" colid="AMT_RATE" display="number" edit="expr:iif(AMT_CL&#32;=&#32;1,&#32;&apos;number&apos;,&#32;&apos;none&apos;)"/>
+									<cell align="center" col="5" colid="AMT_LIMIT" display="number" edit="expr:iif(AMT_CL&#32;=&#32;2,&#32;&apos;number&apos;,&#32;&apos;none&apos;)"/>
+								</body>
+							</format>
+						</contents>
+					</Grid>
+					<Button Cursor="HAND" Height="21" Id="btn_add" ImageID="btn_i_add_w" Left="727" OnClick="btn_addRow_OnClick" TabOrder="2" Text="Button1" ToolTipText="행추가" Top="7" Width="19"></Button>
+					<Button Cursor="HAND" Height="21" Id="btn_del" ImageID="btn_i_subtract_w" Left="750" OnClick="btn_delRow_OnClick" TabOrder="3" Text="Button1" ToolTipText="추가된&#32;행삭제" Top="7" Width="19"></Button>
+					<Combo Border="Flat" CodeColumn="name" DataColumn="code" Height="20" Id="cbo_rateCl" INDEX="0" InnerDataset="ds_rateCl" Left="9" OnChanged="tab_prod_tab_suppInfo_cbo_gradeGb_OnChanged" Style="sty_ipt_form" TabOrder="5" Top="7" Width="116"></Combo>
+				</TabPage>
+			</Contents>
+		</Tab>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="16" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="비율관리" Top="16" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="673" LeftMargin="5" OnClick="btn_save_onClick" Style="sty_btn_c" TabOrder="3" Text="저장" Top="517" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="739" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="4" Text="닫기" Top="517" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BASPDM00800
+* 업무명      : 기준코드관리 - 가격설정
+* 프로그램명  : 가격설정
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2011.07.06
+--------------------------------------------------------------------------------
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function BASPDM00800_OnLoadCompleted(obj)
+{	
+	// 권한 설정
+	
+	cf_setAuth(pFrmNum);
+	
+	//div_search.cal_accYm.Value = substr(cf_getDate(),0,6);
+	
+	cf_setCommonCodeDsEnv();
+	
+	
+	cf_setCommonCode("tab_prod.tab_suppInfo.cbo_gradeGb", "ZBAS_P_00090", null, null, false);
+	
+	tab_prod.tab_suppInfo.cbo_gradeGb.Index = 1;
+	//cf_setCommonCode("tab_prod.tab_suppInfo.grd_grade", "ZBAS_P_00090",null,1);
+	cf_setCommonCode("tab_prod.tab_suppInfo.grd_grade", "ZBAS_P_00060",null,1);
+    cf_setCommonCode("tab_prod.tab_textInfo.grd_prefer", "ZBAS_P_00070",null,1);
+    
+	cf_checkCommonCode();
+	
+	
+	f_search();
+	
+}
+
+
+/*******************************************************************************
+* 함수명 : f_initCondtion
+* 기능명 : 검색조건의 선택 Dataset 추가
+*******************************************************************************/
+function f_search()
+{
+	
+	//ds_condition.SetColumn(0,"CHK_MTH",div_search.cal_accYm.Value);
+	
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_grade=ds_grade ds_prefer=ds_prefer ds_addAmt=ds_addAmt";
+	//var sOutDs = "ds_prod_mgmt=nc_output_fieldDs";
+	var sArg = "sktst.bas.PDM#getPriceRateList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function df_close(sButtonID)
+{
+	this.close();
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcUpdate")
+	{
+		alert(cf_getMessage(MSG_00006, "저장이"));
+		
+		
+		f_search();
+	
+	}
+	else if(sSvcID == "svcList")
+	{
+		tab_prod.tab_suppInfo.cbo_gradeGb.Index = 0;
+		var sInGradeGb = tab_prod.tab_suppInfo.cbo_gradeGb.Value ;
+		ds_grade.UnFilter();
+		ds_grade.Filter("TYPE_CL=='1'&&GRADE_GB="+sInGradeGb);
+	}
+}
+
+
+
+
+/*******************************************************************************
+ * @description    : 그리드저장 버튼 클릭시 이벤트 
+*******************************************************************************/
+function btn_save_onClick(obj)
+{
+	
+	f_save();
+}
+
+function f_save(){
+	
+	var dupCnt = 0;
+	var dupCnt1 = 0;
+	
+	if(ds_grade.rowcount > 0) {
+	
+		for(var nRow = ds_grade.rowCount-1; nRow>=0; nRow--) {	
+			
+			var sInGrade = ds_grade.GetColumn(nRow,"GRADE");
+			var sInGradeGb = ds_grade.GetColumn(nRow,"GRADE_GB");
+			var sInGradeRate = ds_grade.GetColumn(nRow,"RATE");
+			
+			dupCnt = ds_grade.CaseCount("GRADE_GB=="+ quote(sInGradeGb) +"&&GRADE==" + quote(sInGrade));
+			
+			if(dupCnt > 1 ){ 
+				
+				alert((toNumber(nRow)+1)+"열에 중복된 등급코드가 있습니다.");				
+				return false;
+			}
+			
+			if(length(trim(sInGrade)) ==0){
+				alert((toNumber(nRow)+1)+"열의 등급을 선택하십시오.");				
+				return false;
+			}
+			
+			if(length(trim(sInGradeRate)) ==0){
+				alert((toNumber(nRow)+1)+"열의 비율을 등록하십시오.");				
+				return false;
+			}
+			
+			if(toNumber(sInGradeRate) <0 || toNumber(sInGradeRate) > 100){
+				alert((toNumber(nRow)+1)+"열의 비율을 정확히 등록하십시오.");				
+				return false;
+			}
+		}
+	}
+
+	if(ds_prefer.rowcount > 0) {
+	
+		for(var nRow = ds_prefer.rowCount-1; nRow>=0; nRow--) {	
+			
+			var sInPrefer = ds_prefer.GetColumn(nRow,"GRADE");
+			var sInPreferRate = ds_prefer.GetColumn(nRow,"RATE");
+			
+			dupCnt1 = ds_prefer.CaseCount("GRADE==" + quote(sInPrefer));
+			
+			if(dupCnt1 > 1 ){ 
+				
+				alert((toNumber(nRow)+1)+"열에 중복된 등급코드가 있습니다.");				
+				return false;
+			}
+			
+			if(length(trim(sInPrefer)) ==0){
+				alert((toNumber(nRow)+1)+"열의 선호도별 등급을 선택하십시오.");				
+				return false;
+			}
+			
+			if(length(trim(sInPreferRate)) ==0){
+				alert((toNumber(nRow)+1)+"열의 선호도별 비율을 등록하십시오.");				
+				return false;
+			}
+			
+			if(toNumber(sInPreferRate) <0 || toNumber(sInPreferRate) > 100){
+				alert((toNumber(nRow)+1)+"열의 선호도별 비율을 정확히 등록하십시오.");				
+				return false;
+			}
+		}
+	}
+	
+	if(ds_addAmt.rowcount > 0) {
+		for(var nRow = ds_addAmt.rowCount-1; nRow>=0; nRow--) {	
+			var sAmtFrom = ds_addAmt.GetColumn(nRow,"AMT_FROM");
+			var sAmtTo = ds_addAmt.GetColumn(nRow,"AMT_TO");
+			var sAmt_Cl = ds_addAmt.GetColumn(nRow,"AMT_CL");
+			var sAmtRate = ds_addAmt.GetColumn(nRow,"AMT_RATE");
+			var SAmtLimit = ds_addAmt.GetColumn(nRow,"AMT_LIMIT");
+			
+			if(length(trim(sAmtFrom)) ==0){
+				alert((toNumber(nRow)+1)+"열의 금액 From을 등록하십시오.");				
+				return false;
+			}
+			
+			if(length(trim(sAmtTo)) ==0){
+				alert((toNumber(nRow)+1)+"열의 금액 To를 등록하십시오.");				
+				return false;
+			}
+			
+			if(length(trim(sAmt_Cl)) ==0){
+				alert((toNumber(nRow)+1)+"열의 구분을 선택 하십시오.");				
+				return false;
+			}
+			
+			if(length(trim(sAmtRate)) ==0 && length(trim(SAmtLimit)) ==0){
+				alert((toNumber(nRow)+1)+"열의 비율과 금액 중 하나를 등록하십시오.");				
+				return false;
+			}
+			
+		}
+	}
+
+	
+	if(Confirm("저장하시겠습니까?") == true) {
+
+		var sSvcID = "svcUpdate";
+		var sInDs = "ds_grade=ds_grade:U ds_prefer=ds_prefer:U ds_addAmt=ds_addAmt:U";
+		var sOutDs = "";
+		var sArg = "sktst.bas.PDM#savePriceRateList";
+		
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	
+	}
+	
+
+}
+
+/*******************************************************************************
+ * @description    : 창 닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.close();
+}
+
+
+
+function btn_search_onClick(obj)
+{
+	f_search();
+}
+
+function btn_addRow_OnClick(obj)
+{
+
+	if(tab_prod.TabIndex ==0){
+		ds_grade.AddRow();
+			
+		//ds_grade.SetColumn(ds_grade.lastrow, "CHK_MTH",div_search.cal_accYm.Value);
+		ds_grade.SetColumn(ds_grade.lastrow, "TYPE_CL","1");
+		ds_grade.SetColumn(ds_grade.lastrow, "GRADE_GB", tab_prod.tab_suppInfo.cbo_gradeGb.Value);
+		ds_grade.SetColumn(ds_grade.lastrow, "GRADE","N");
+		ds_grade.SetColumn(ds_grade.lastrow, "TO_DT","99991231");
+				
+		f_set_gridFocus(tab_prod.tab_suppInfo.grd_grade, ds_grade.lastrow, 1);
+		
+		ds_grade.FireEvent = true;
+		
+	}else if(tab_prod.TabIndex ==1){
+	
+		ds_prefer.AddRow();
+			
+		//ds_prefer.SetColumn(ds_prefer.lastrow, "CHK_MTH",div_search.cal_accYm.Value);
+		ds_prefer.SetColumn(ds_prefer.lastrow, "TYPE_CL","2");
+		ds_prefer.SetColumn(ds_prefer.lastrow, "GRADE","1");
+				
+		f_set_gridFocus(tab_prod.tab_textInfo.grd_prefer, ds_prefer.lastrow, 1);
+		
+		ds_prefer.FireEvent = true;
+	}else if(tab_prod.TabIndex ==2){
+	
+		ds_addAmt.AddRow();
+				
+		f_set_gridFocus(tab_prod.tab_addAmt.grd_addAmt, ds_addAmt.lastrow, 1);
+		
+		ds_addAmt.FireEvent = true;
+	}
+
+}
+
+
+/*******************************************************************************
+* 함수명 : btn_delRow_OnClick 
+* 기능명 : 우 삭제
+*******************************************************************************/
+function btn_delRow_OnClick(obj)
+{
+
+	if(tab_prod.TabIndex ==0){
+		 ds_grade.DeleteRow(ds_grade.row);
+		
+		 ds_grade.FireEvent = true;
+		
+	}else if(tab_prod.TabIndex ==1){
+	
+		 ds_prefer.DeleteRow(ds_prefer.row);
+		
+		 ds_prefer.FireEvent = true;
+	}else if(tab_prod.TabIndex ==2){
+	
+		 ds_addAmt.DeleteRow(ds_addAmt.row);
+		
+		 ds_addAmt.FireEvent = true;
+	}
+}
+
+
+/*******************************************************************************
+* 함수명 : f_set_gridFocus
+* 기능명 : 그리드 포커스 이동
+*******************************************************************************/
+function f_set_gridFocus(gridObj, nRow, nCellIdx) 
+{	
+	var dataSetObj = object(gridObj.bindDataset);
+	dataSetObj.row = nRow;
+	gridObj.SetCellPos(nCellIdx);
+	gridObj.SetFocus();
+}
+
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_accYm);
+}
+
+
+function tab_prod_tab_textInfo_grd_prefer_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	var oGrdDs = object(obj.BindDataset); // 바인드된 데이타셋 
+	
+		if(nCell == 4 )
+		{
+			cf_setGrdCalendar(obj, nRow, nCell);
+		}
+		
+		if(nCell == 5)
+		{
+			if(!uf_CheckDate(ds_prefer.GetColumn(nRow,"FROM_DT"), "YYYYMMDD")){
+				ds_prefer.SetColumn(nRow,"FROM_DT",null);
+				alert("시작일을 선택해주십시오.");			
+				return false;
+			}else{
+				cf_setGrdCalendar(obj, nRow, nCell);
+			}
+		}
+	}
+}
+
+
+function tab_prod_tab_suppInfo_grd_grade_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	var oGrdDs = object(obj.BindDataset); // 바인드된 데이타셋 
+	
+		if(nCell == 3 )
+		{
+			cf_setGrdCalendar(obj, nRow, nCell);
+		}
+		
+		if(nCell == 4)
+		{
+			if(!uf_CheckDate(ds_grade.GetColumn(nRow,"FROM_DT"), "YYYYMMDD")){
+				ds_grade.SetColumn(nRow,"FROM_DT",null);
+				alert("시작일을 선택해주십시오.");			
+				return false;
+			}else{
+				cf_setGrdCalendar(obj, nRow, nCell);
+			}
+		}
+	}
+}
+
+function tab_prod_tab_suppInfo_cbo_gradeGb_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	
+	if(ds_grade.GetUpdate() == true)
+	{
+		if(Confirm("변경된 내용이 존재합니다.\r\변경된 내용을 저장하시겠습니까?") == true) {
+			f_save();
+		}else{
+			ds_grade.UnFilter();
+			ds_grade.Filter("TYPE_CL=='1'&&GRADE_GB="+strCode);
+		}
+	}else{	
+		
+		ds_grade.UnFilter();
+		ds_grade.Filter("TYPE_CL=='1'&&GRADE_GB="+strCode);
+	}
+}
+
+
+function ds_addAmt_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue)
+{
+	var tmpFlag = 0;
+	if(strColumnID == "AMT_FROM" )
+	{
+		var cnt = ds_addAmt.rowCount;
+		
+		
+		if(varNewValue != ''){
+			for (i=0;i<cnt;i++){
+				
+				if(i != nRow){
+					var tmpAmt = ds_addAmt.GetColumn(i,"AMT_TO");
+					if(ToNumber(varNewValue) < ToNumber(tmpAmt)){
+						alert(varNewValue +"="+tmpAmt);
+						tmpFlag ++;
+					}
+				}
+				
+			}
+		}		
+		
+		if(tmpFlag > 0){
+			alert("기존에 등록 되어있는 범위 내의 금액 입니다.");
+			ds_addAmt.SetColumn(nRow,"AMT_FROM",null);
+		}
+	} else if(strColumnID == "AMT_TO"){
+		var tmpFromAmt = ds_addAmt.GetColumn(nRow,"AMT_FROM");
+		var tmpToAmt = ds_addAmt.GetColumn(nRow,"AMT_TO");
+		
+		
+		if(tmpFromAmt > tmpToAmt){
+			alert("To금액이 From보다 클 수 없습니다.");
+			ds_addAmt.SetColumn(nRow,"AMT_TO",null);
+		}
+	}
+	
+	
+}]]></Script>
+</Window>

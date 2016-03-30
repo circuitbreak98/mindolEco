@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ADMFAQ00100" Left="8" OnLoadCompleted="ADMFAQ00100_OnLoadCompleted" PidAttrib="7" Title="FAQ&#32;관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="QUE_CTT" size="256" summ="default" type="STRING"/>
+					<colinfo id="FAQ_CAT" size="256" summ="default" type="STRING"/>
+					<record>
+						<FAQ_CAT></FAQ_CAT>
+						<QUE_CTT></QUE_CTT>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="FAQ_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="QUE_CTT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ANS_CTT" size="256" summ="default" type="STRING"/>
+					<colinfo id="STR_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="END_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEL_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="UPD_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHK" size="256" summ="default" type="STRING"/>
+					<colinfo id="FAQ_CAT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_tmp">
+				<Contents>
+					<colinfo id="QUE_CTT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ANS_CTT" size="256" summ="default" type="STRING"/>
+					<colinfo id="STR_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="END_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="FAQ_CAT" size="256" summ="default" type="STRING"/>
+					<record>
+						<ANS_CTT></ANS_CTT>
+						<END_DT></END_DT>
+						<FAQ_CAT></FAQ_CAT>
+						<QUE_CTT></QUE_CTT>
+						<STR_DT></STR_DT>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="21" Style="sty_lb_Search" TabOrder="4" Text="질의내용" Top="7" VAlign="Middle" Width="76"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="535" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="3" Text="조회" Top="7" Visible="FALSE" Width="60"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="QUE_CTT" Height="20" Id="edt_queCtt" Left="100" LeftMargin="2" OnKeyDown="div_search_edt_queCtt_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Width="225"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static1" Left="336" Style="sty_lb_Search" TabOrder="5" Text="FAQ&#32;분류" Top="7" VAlign="Middle" Width="84"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" Column="FAQ_CAT" Height="20" Id="cmb_faqCat" ImeMode="none" INDEX="0" Left="424" Style="sty_ipt_form" TabOrder="2" Top="6" Width="100"></Combo>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="FAQ&#32;목록" Top="60" Width="192"></Image>
+		<Div Border="Raised" Height="181" Id="div_process" Left="8" Style="sty_div_input" TabOrder="4" Text="Div0" Top="374" Width="810">
+			<Contents>
+				<Calendar BindDataset="ds_result" Border="Flat" ButtonImageID="btn_i_calendar" Column="STR_DT" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_strDt" Left="102" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="1" TodayColor="user26" Top="8" UserData="게시시작일" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="121"></Calendar>
+				<Static Align="Right" Height="20" Id="Static3" Left="31" Style="sty_lb_Basic" TabOrder="6" Text="게시시작일" Top="7" VAlign="Middle" Width="68"></Static>
+				<Static Align="Right" Height="20" Id="Static8" Left="23" Style="sty_lb_Basic" TabOrder="7" Text="질의내용" Top="30" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static0" Left="301" Style="sty_lb_Basic" TabOrder="8" Text="게시종료일" Top="7" VAlign="Middle" Width="68"></Static>
+				<Calendar BindDataset="ds_result" Border="Flat" ButtonImageID="btn_i_calendar" Column="END_DT" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_endDt" Left="372" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="2" TodayColor="user26" Top="7" UserData="게시종료일" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="121"></Calendar>
+				<Static Align="Right" Height="20" Id="Static1" Left="23" Style="sty_lb_Basic" TabOrder="9" Text="답변내용" Top="53" VAlign="Middle" Width="76"></Static>
+				<Edit BindDataset="ds_result" Border="Flat" Column="QUE_CTT" Height="20" Id="edt_queCtt" ImeMode="native" Left="102" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="30" UserData="질의내용" Width="695"></Edit>
+				<TextArea BindDataset="ds_result" Border="Flat" Column="ANS_CTT" Height="115" Id="txa_ansCtt" Left="102" Style="sty_ipt_form" TabOrder="5" Top="53" UserData="답변내용" VScroll="TRUE" Width="695"></TextArea>
+				<Image Height="21" Id="Image3" ImageID="bul_mand" Left="21" TabOrder="10" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="34" TabOrder="11" Top="28" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="34" TabOrder="12" Top="52" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image2" ImageID="bul_mand" Left="292" TabOrder="13" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Border="None" Height="20" Id="Static2" Left="536" Style="sty_lb_Basic" TabOrder="14" Text="FAQ&#32;분류" Top="7" VAlign="Middle" Width="84"></Static>
+				<Combo BindDataset="ds_result" Border="Flat" Column="FAQ_CAT" Height="20" Id="cmb_faqCat" ImeMode="none" INDEX="0" Left="624" Style="sty_ipt_form" TabOrder="3" Top="7" Width="100"></Combo>
+				<Image Height="21" Id="Image4" ImageID="bul_mand" Left="550" TabOrder="15" Top="6" Transparent="TRUE" Width="20"></Image>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="8" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="상세정보" Top="349" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_new" ImageID="btn_e_4" Left="8" LeftMargin="15" OnClick="btn_new_OnClick" Style="sty_btn_e" TabOrder="6" Text="신규등록" Top="568" Visible="FALSE" Width="85"></Button>
+		<Grid AutoFit="TRUE" BindDataset="ds_result" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="335" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="255" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellClick="grd_list_OnCellClick" OnHeadClick="grd_list_OnHeadClick" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="80" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="30"/>
+						<col width="61"/>
+						<col width="79"/>
+						<col width="449"/>
+						<col width="91"/>
+						<col width="91"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="checkbox"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="FAQ&#32;분류"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="제목"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="작성자"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="작성일"/>
+					</head>
+					<body>
+						<cell col="0" colid="chk" display="checkbox" edit='expr:iif(end_dt&gt;=today()&amp;&amp;str_dt&lt;=today()&amp;&amp;gds_session.getColumn(0,&quot;loginId&quot;)==ins_user_id,&apos;checkbox&apos;,&apos;none&apos;)'/>
+						<cell align="center" col="1" display="text" expr="currow+1"/>
+						<cell align="center" col="2" colid="FAQ_CAT" display="combo"/>
+						<cell col="3" colid="QUE_CTT" display="text"/>
+						<cell align="center" col="4" colid="INS_USER_ID" display="text"/>
+						<cell col="5" colid="INS_DTM" display="date"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_delete" ImageID="btn_d_2" Left="760" LeftMargin="5" OnClick="btn_del_OnClick" Style="sty_btn_d" TabOrder="7" Text="삭제" Top="565" Visible="FALSE" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="696" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="8" Text="저장" Top="565" Visible="FALSE" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  ADMFAQ00100
+* 업무명      :  Admin-FAQ 관리 
+* 프로그램명  :  FAQ 관리 
+--------------------------------------------------------------------------------
+* 작성자      : shimyunjung 
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ADMFAQ00100_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);	
+	
+	// 공통 코드 설정
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("div_search.cmb_faqCat", "ZADM_C_00100", "전체"); // FAQ분류	
+	cf_setCommonCode("div_process.cmb_faqCat", "ZADM_C_00100","선택"); // FAQ분류
+	cf_setCommonCode("grd_list", "ZADM_C_00100", null, 2, false);  // FAQ분류 
+	cf_checkCommonCode();	
+
+	// 기본 조회
+	f_search();
+}
+
+/*******************************************************************************
+ * @description    : 조회
+*******************************************************************************/
+function f_search()
+{
+	var sSvcID	= "getFaqList";
+	var sInDs 	= "nc_input_fieldDs=ds_condition";
+	var sOutDs	= "ds_result=ds_result";
+	var sArg 	= "sktst.adm.FAQ#getFaqList";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 조회 버튼 클릭 - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	cf_initGrdHeader(grd_list);
+	f_search();
+}
+		
+/*******************************************************************************
+ * @description    : 저장 함수
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{    
+    if(Length(ds_tmp.GetColumn(0, "que_ctt")) > 0
+       || Length(ds_tmp.GetColumn(0, "ans_ctt")) > 0
+       || Length(ds_tmp.GetColumn(0, "str_dt")) > 0
+       || Length(ds_tmp.GetColumn(0, "end_dt")) > 0
+       || Length(ds_tmp.GetColumn(0, "faq_cat")) > 0)
+    {
+		if(f_inputCheck())
+		{
+			ds_result.AddRow();
+			ds_result.SetColumn(ds_result.rowcount-1, "que_ctt", ds_tmp.GetColumn(0, "que_ctt"));
+			ds_result.SetColumn(ds_result.rowcount-1, "ans_ctt", ds_tmp.GetColumn(0, "ans_ctt"));
+			ds_result.SetColumn(ds_result.rowcount-1, "str_dt", ds_tmp.GetColumn(0, "str_dt"));
+			ds_result.SetColumn(ds_result.rowcount-1, "end_dt", ds_tmp.GetColumn(0, "end_dt"));
+			ds_result.SetColumn(ds_result.rowcount-1, "faq_cat", ds_tmp.GetColumn(0, "faq_cat"));
+			cf_setParam(ds_tmp, "que_ctt", "");
+			cf_setParam(ds_tmp, "ans_ctt", "");
+			cf_setParam(ds_tmp, "str_dt", );
+			cf_setParam(ds_tmp, "end_dt", "");
+			cf_setParam(ds_tmp, "faq_cat", "");
+		}
+		else
+		{
+			return false;
+		}
+    }
+	
+	var sSvcID	= "saveFaqList";
+	var sInDs 	= "nc_input_fieldDs=ds_condition ds_result=ds_result:U";
+	var sOutDs	= "ds_result=ds_result";
+	var sArg 	= "sktst.adm.FAQ#saveFaqList";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if (sSvcID == "getFaqList") 
+	{
+	    ds_result.Sort("faq_num:D");
+        if(!f_defaultCheck())
+        {
+            //div_process.Enable = false;
+            f_enableProcess(false);
+        }
+	}
+	
+	if (sSvcID == "saveFaqList") 
+	{
+	    ds_result.Sort("faq_num:D");
+		div_process.cal_strDt.BindDataset = "ds_result";
+		div_process.cal_endDt.BindDataset = "ds_result";
+		div_process.edt_queCtt.BindDataset = "ds_result";
+		div_process.txa_ansCtt.BindDataset = "ds_result";
+		div_process.cmb_faqCat.BindDataset = "ds_result";
+		
+		cf_setOrgDs(ds_result);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 기본값 체크
+*******************************************************************************/
+function f_defaultCheck() 
+{
+	if (ds_result.GetColumn(ds_result.currow, "END_DT") < today() 
+	    || ds_result.GetColumn(ds_result.currow, "STR_DT") > today()) 
+	{
+        return false;
+	}
+	
+	if (ds_result.GetColumn(ds_result.currow, "INS_USER_ID") != gds_session.GetColumn(0, "loginId")) 
+	{
+	    return false;
+	}
+	
+	return true;
+}
+
+/*******************************************************************************
+ * @description    : 입력 체크
+*******************************************************************************/
+function f_inputCheck() 
+{
+	if (Length(ds_tmp.GetColumn(0, "STR_DT")) < 1) 
+	{
+	    alert(cf_getMessage(MSG_00083, "게시시작일"));
+	    div_process.cal_strDt.SetFocus();
+        return false;
+	}
+	
+	if (Length(ds_tmp.GetColumn(0, "END_DT")) < 1) 
+	{
+	    alert(cf_getMessage(MSG_00083, "게시종료일"));
+	    div_process.cal_endDt.SetFocus();
+        return false;
+	}
+	
+	if (Length(ds_tmp.GetColumn(0, "FAQ_CAT")) < 1) 
+	{
+	    alert(cf_getMessage(MSG_00083, "FAQ 분류"));
+	    div_process.cmb_faqCat.SetFocus();
+        return false;
+	}	
+	
+	if (Length(ds_tmp.GetColumn(0, "QUE_CTT")) < 1) 
+	{
+	    alert(cf_getMessage(MSG_00083, "질의내용"));
+	    div_process.edt_queCtt.SetFocus();
+        return false;
+	}
+	
+	if (Length(ds_tmp.GetColumn(0, "ANS_CTT")) < 1) 
+	{
+	    alert(cf_getMessage(MSG_00083, "답변내용"));
+	    div_process.txa_ansCtt.SetFocus();
+        return false;
+	}	
+		
+	return true;
+}
+
+/*******************************************************************************
+ * @description    : enter key 조회
+*******************************************************************************/
+function div_search_edt_queCtt_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if (nChar==13) 
+	{
+		applyData();
+		f_search();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 그리드 헤더 클릭- 이벤트
+*******************************************************************************/
+function grd_list_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell < 1)
+	{
+		var nChekValue = obj.getCellProp("head", 0, "text");
+
+		if(nChekValue == "0" || nChekValue == "")
+		{
+			nChekValue = 1;
+		}
+		else
+		{
+			nChekValue = 0;
+		}
+		
+		obj.setCellProp("head", 0, "text", nChekValue);
+		var nRow =ds_result.rowcount;
+		for (var i=0; i<nRow; i++) 
+		{
+			if (ds_result.GetColumn(i, "END_DT") >= today() 
+			    && ds_result.GetColumn(i, "STR_DT") <= today()
+			    && ds_result.GetColumn(i, "INS_USER_ID") == gds_session.GetColumn(0, "loginId"))
+			{
+				ds_result.SetColumn(i,"chk", nChekValue);
+			}
+		}
+	}
+	else
+	{
+		cf_markGridSort(obj,nCell,nX,nY,nPivotIndex);
+	}
+}
+ 
+/*******************************************************************************
+ * @description    : 삭제버튼 클릭 
+*******************************************************************************/
+function btn_del_OnClick(obj)
+{
+	var nRow =ds_result.rowcount;
+	var nchk = 0;
+	for (var i=0; i<nRow; i++) 
+	{
+		if (ds_result.GetColumn(i, "chk") ==1) 
+		{
+			nchk++;
+		}
+	}
+	
+	if (nRow==0) 
+	{
+		return false;
+	} 
+	else if (nchk==0)
+	{
+		alert(cf_getMessage(MSG_00047, "삭제할 항목을"));  //"삭제할 항목을 선택하십시오.
+		return false;
+	} 
+	else if(Confirm(cf_getMessage(MSG_00102,"")) == true) 
+	{
+		for (var i = nRow-1; i>=0; i--) 
+		{
+		 	if (ds_result.GetColumn(i, "chk") ==1) 
+		 	{
+				ds_result.DeleteRow(i);	
+			}
+		}
+		
+		var sSvcID	= "saveFaqList";
+		var sInDs 	= "nc_input_fieldDs=ds_condition ds_result=ds_result:u";
+		var sOutDs	= "ds_result=ds_result";
+		var sArg 	= "sktst.adm.FAQ#saveFaqList";
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 신규 등록 - 이벤트
+*******************************************************************************/
+function btn_new_OnClick(obj)
+{
+	div_process.Enable = true;
+	
+	if(ds_tmp.rowcount == 0)
+	{
+	    ds_tmp.AddRow();
+	}
+    div_process.cal_strDt.BindDataset = "ds_tmp";
+    div_process.cal_strDt.Value = today();
+    div_process.cal_endDt.BindDataset = "ds_tmp";
+    div_process.cal_endDt.Value = "99991231";
+    div_process.edt_queCtt.BindDataset = "ds_tmp";
+    div_process.edt_queCtt.Value = "";
+    div_process.txa_ansCtt.BindDataset = "ds_tmp";
+    div_process.txa_ansCtt.Value = "";
+    div_process.cmb_faqCat.BindDataset = "ds_tmp";
+    div_process.cmb_faqCat.Value = "";    
+    
+
+	div_process.edt_queCtt.SetFocus();
+}
+
+/*******************************************************************************
+ * @description    :  상세 내용 보기 - 이벤트
+*******************************************************************************/
+function grd_list_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+    div_process.cal_strDt.BindDataset = "ds_result";
+    div_process.cal_endDt.BindDataset = "ds_result";
+    div_process.edt_queCtt.BindDataset = "ds_result";
+    div_process.txa_ansCtt.BindDataset = "ds_result";
+    div_process.cmb_faqCat.BindDataset = "ds_result";    
+    
+	if (ds_result.GetColumn(nRow, "END_DT") >= today() 
+	    && ds_result.GetColumn(nRow, "STR_DT") <= today()
+	    && ds_result.GetColumn(nRow, "INS_USER_ID") == gds_session.GetColumn(0, "loginId")) 
+	{
+		//div_process.Enable = true;
+		f_enableProcess(true);
+		div_process.edt_queCtt.SetFocus();
+	} 
+	else 
+	{
+		//div_process.Enable = true;
+		f_enableProcess(false);
+	}
+}
+
+
+function f_enableProcess(bEnable)
+{
+	div_process.cal_strDt.Enable=bEnable;
+	div_process.cal_endDt.Enable=bEnable;
+	div_process.cmb_faqCat.Enable=bEnable;
+	div_process.edt_queCtt.Readonly= !bEnable;
+	div_process.txa_ansCtt.Readonly= !bEnable;
+	f_enabledProcColor(bEnable);
+}
+
+function f_enabledProcColor(bEnable)
+{
+	if(bEnable)
+	{
+		div_process.edt_queCtt.BKColor = 'user38';
+		div_process.txa_ansCtt.BKColor = 'user38';		
+	}
+	else
+	{
+		div_process.edt_queCtt.BKColor = 'user13';
+		div_process.txa_ansCtt.BKColor = 'user13';
+
+	}
+}
+]]></Script>
+</Window>

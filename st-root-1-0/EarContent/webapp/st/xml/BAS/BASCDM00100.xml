@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="363" Id="BASCDM00100" Left="8" OnLoadCompleted="BASCDM00100_OnLoadCompleted" PidAttrib="7" Title="공통코드검색" Top="8" Ver="1.0" Width="330" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_popCondition">
+				<Contents>
+					<colinfo id="value" size="256" summ="default" type="STRING"/>
+					<colinfo id="condition" size="256" summ="default" type="STRING"/>
+					<record>
+						<condition></condition>
+						<value></value>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_comm_cd_list">
+				<Contents>
+					<colinfo id="chk" size="256" summ="default" type="STRING"/>
+					<colinfo id="comm_cd_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="comm_cd_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_combo">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="combo" size="256" summ="default" type="STRING"/>
+					<record>
+						<code>1</code>
+						<combo>공통코드ID</combo>
+					</record>
+					<record>
+						<code>2</code>
+						<combo>공통코드</combo>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="Div1" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="310">
+			<Contents>
+				<Combo Border="Flat" CodeColumn="code" DataColumn="combo" Height="20" Id="cbo_CommonCodeSelType" InnerDataset="ds_combo" Left="9" OnKeyDown="Div1_cbo_CommonCodeSelType_OnKeyDown" Style="sty_ipt_form" TabOrder="1" Top="6" Width="108"></Combo>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="236" LeftMargin="5" OnClick="Div1_btn_search_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="7" Width="60"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_search" Left="117" LeftMargin="2" OnKeyDown="Div1_edt_search_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" UpperOnly="TRUE" Width="110"></Edit>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="검색결과" Top="60" Width="192"></Image>
+		<Grid AutoFit="TRUE" BindDataset="ds_comm_cd_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="318" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="233" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellClick="grd_list_OnCellClick" OnCellDBLClick="grd_list_OnCellDblClick" Right="320" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="85" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="310">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="0"/>
+						<col width="30"/>
+						<col width="96"/>
+						<col width="179"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="선택"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="공통코드ID"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="공통코드"/>
+					</head>
+					<body>
+						<cell col="0" display="text"/>
+						<cell align="center" col="1" colid="chk" display="checkbox" edit="checkbox"/>
+						<cell align="left" col="2" colid="comm_cd_id" display="text"/>
+						<cell align="left" col="3" colid="comm_cd_nm" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button0" ImageID="btn_c_2" Left="103" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="4" Text="확인" Top="328" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button1" ImageID="btn_d_2" Left="167" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="5" Text="닫기" Top="328" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BASCDM00100
+* 업무명      : 기준정보관리-코드관리
+* 프로그램명  : 공통코드검색팝업
+--------------------------------------------------------------------------------
+* 작성자      : 조민지
+* 작성일      : 2009.01.23
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 최승호
+수정일    : 2009.04.09
+수정 내역 : 리스트 내역 공통코드ID로 정렬
+*******************************************************************************/
+
+//==============================================================================
+// 1. 전 처리기
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+
+var sInObjId;
+var param1 = '';
+var param2 = '';
+var param3 = '';
+var param4 = '';
+var Flag1;
+var Flag2;
+var Flag3;
+var Flag4;
+var Flag5;
+
+function BASCDM00100_OnLoadCompleted(obj)
+{
+
+	Div1.cbo_CommonCodeSelType.SetFocus();
+		// 그리드 체크박스 설정 및 정렬
+	cf_setGrdChecknSortEvent(grd_list,0);
+
+	if(Flag2 =='2'){
+		Div1.cbo_CommonCodeSelType.Value = 2;
+		Div1.edt_search.Text = param2;
+	}
+	else if(Flag1 =='1'){
+		Div1.cbo_CommonCodeSelType.Value = 1;
+		Div1.edt_search.Text = param1;
+	}
+	else if(Flag4 =='4'){
+		Div1.cbo_CommonCodeSelType.Value = 2;
+		Div1.edt_search.Text = param4;
+	}
+	else if(Flag3 =='3'){
+		Div1.cbo_CommonCodeSelType.Value = 1;
+		Div1.edt_search.Text = param3;
+	}
+	else{
+		Div1.cbo_CommonCodeSelType.Value = 1;
+	}
+	Div1_btn_search_OnClick();
+}
+
+
+
+//==============================================================================
+//콜백
+//==============================================================================
+function f_callBack(sSvcID)
+{
+ //cf_debug("ds_comm_cd_list");
+ 
+	// ds_comm_cd_list.AddColumn("chk");
+
+	if(ds_comm_cd_list.GetRowCount() = 1){
+		ds_comm_cd_list.SetColumn(0,"chk","1");
+		btn_confirm_OnClick();
+	}
+
+	
+}
+
+//==============================================================================
+//닫기버튼
+//==============================================================================
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+//==============================================================================
+//확인버튼
+//==============================================================================
+function btn_confirm_OnClick(obj)
+{
+
+	if(parent.ds_ParentCDM.GetRowCount() < 1)
+	{
+		parent.ds_ParentCDM.addRow();
+	}
+	if(Flag1 =='1'||Flag2 =='2'){
+		parent.ds_ParentCDM.SetColumn(0,"comm_cd_id",ds_comm_cd_list.GetColumn(ds_comm_cd_list.currow,"COMM_CD_ID"));
+		parent.ds_ParentCDM.SetColumn(0,"comm_cd_nm",ds_comm_cd_list.GetColumn(ds_comm_cd_list.currow,"COMM_CD_NM"));
+	}
+	else if(Flag3 =='3'||Flag4 =='4'){
+		parent.ds_ParentCDM.SetColumn(0,"sup_comm_cd_id",ds_comm_cd_list.GetColumn(ds_comm_cd_list.currow,"COMM_CD_ID"));
+		parent.ds_ParentCDM.SetColumn(0,"sup_comm_cd_nm",ds_comm_cd_list.GetColumn(ds_comm_cd_list.currow,"COMM_CD_NM"));
+	}
+	else if(Flag5 =='5')
+	{
+		//parent.ds_ParentCDM.SetColumn(0,"sub_comm_cd_id",ds_comm_cd_list.GetColumn(ds_comm_cd_list.currow,"COMM_CD_ID"));
+		this.close(ds_comm_cd_list.GetColumn(ds_comm_cd_list.currow,"COMM_CD_ID"));
+	}		
+
+	// parent.Div0_btn_searchList_OnClick();
+	this.close(1);
+
+}
+//==============================================================================
+//선택버튼
+//==============================================================================
+
+function grd_list_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+
+	for(var i=0; i<ds_comm_cd_list.rowcount; i++)
+    {
+		ds_comm_cd_list.SetColumn(i, "chk", "0");
+    }
+    
+	ds_comm_cd_list.SetColumn(nRow, "chk", "1");	
+}
+
+//==============================================================================
+//조회
+//==============================================================================
+function Div1_btn_search_OnClick(obj)
+{
+   	cf_setParam(ds_popCondition, "value", Div1.edt_search.Text);
+   	cf_setParam(ds_popCondition, "condition", Div1.cbo_CommonCodeSelType.Value);
+
+
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_popCondition";
+	var sOutDs = "ds_comm_cd_list=ds_comm_cd_list";
+	var sArg = "sktst.bas.CDM#getCommonCodeList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+//==============================================================================
+//공통함수
+//==============================================================================
+function Div1_cbo_CommonCodeSelType_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,LLParam,HLParam)
+{
+	if(nChar==13){
+		Div1_btn_search_OnClick();
+	}
+}
+
+function Div1_edt_search_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if (nChar==13) {
+		Div1_btn_search_OnClick();
+	}
+}
+
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	btn_confirm_OnClick();
+}
+]]></Script>
+</Window>

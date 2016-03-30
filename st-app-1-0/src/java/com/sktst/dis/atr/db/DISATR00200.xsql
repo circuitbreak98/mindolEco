@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISATR00200">
+	<select id="selectRmksInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISATR00200_selectRmksInfo_이문규" */
+       rmks
+FROM   tdis_out_m
+WHERE  out_mgmt_no = #out_mgmt_no#
+AND    del_yn = 'N']]>
+	</select>
+	<update id="updateRmksInfo" parameterClass="map" ><![CDATA[UPDATE /*+ DISATR00200_updateRmksInfo_이문규 */
+       tdis_prod_out_m
+SET    rmks = #rmks#,
+       upd_cnt = upd_cnt + 1,
+       mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+       mod_user_id = #onlineContext.userInfo.loginId#
+WHERE  out_mgmt_no = #out_mgmt_no#]]>
+	</update>
+	<select id="selectSalReg" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISATR00200_selectSalRegList_이정현_김중일 */
+       COUNT(*) CNT
+FROM TSAL_GNRL_SALE tgs
+	, TSAL_EQUIPMENT_SALE tes
+WHERE tgs.gnrl_sale_no = tes.gnrl_sale_no
+    AND tgs.gnrl_sale_chg_seq = (SELECT MAX(tgs1.gnrl_sale_chg_seq)
+    									 FROM TSAL_GNRL_SALE tgs1
+                                         WHERE tgs1.gnrl_sale_no = tgs.gnrl_sale_no)
+    AND tgs.gnrl_sale_chg_seq = tes.gnrl_sale_chg_seq
+    AND tgs.sale_dtm < RPAD(#out_schd_dt#, 14, '9')
+    AND tgs.sale_cncl_yn = 'N'
+    AND tes.eqp_mdl_cd = #prod_cd#
+    AND tes.eqp_color_cd = #color_cd#
+    AND tes.prod_ser_num = #ser_num#
+]]>
+	</select>
+	<insert id="addProdOut" parameterClass="map" ><![CDATA[INSERT INTO TDIS_PROD_OUT_M (
+	OUT_MGMT_NO, 
+  OUT_CL, 
+  OUT_SCHD_DT, 
+  OUT_PLC_ID, 
+  IN_PLC_ID, 
+  OUT_FIX_DT, 
+  OUT_FIX_YN, 
+  RMKS, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_DTM, 
+  INS_USER_ID, 
+  MOD_DTM, 
+  MOD_USER_ID    
+) VALUES (
+  #out_mgmt_no#
+  ,#out_cl#
+  ,#out_schd_dt#
+  ,#out_plc_id#
+  ,#in_plc_id#
+  ,to_char(sysdate,'YYYYMMDD')
+  ,'Y'
+  ,#rmks#
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+)  ]]>
+	</insert>
+	<insert id="addProdMovOutDtl" parameterClass="map" ><![CDATA[INSERT INTO TDIS_PROD_MOV_OUT_DTL_D (
+	OUT_MGMT_NO, 
+  OUT_SEQ, 
+  PROD_CD, 
+  COLOR_CD, 
+  EQP_ST, 
+  DIS_ST, 
+  SER_NUM, 
+  OUT_QTY, 
+  SETTL_COND_CD, 
+  UNIT_PRC, 
+  AMT, 
+  CNCL_YN, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_DTM, 
+  INS_USER_ID, 
+  MOD_DTM, 
+  MOD_USER_ID    
+) (SELECT
+  #out_mgmt_no#
+  ,nvl((SELECT max(out_seq) out_seq
+      	FROM TDIS_PROD_MOV_OUT_DTL_D
+          WHERE out_mgmt_no = #out_mgmt_no#), 0)+1 out_seq 
+  ,#prod_cd#
+  ,#color_cd#
+  ,tpd.eqp_st
+  ,#dis_st#
+  ,#ser_num#
+  ,1
+  ,''
+  ,tpup.amt
+  ,tpup.amt
+  ,''
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+FROM TDIS_PROD_DIS tpd
+    ,(SELECT prod_cd
+    		, color_cd
+            , ser_num
+            , amt
+            , MAX(prc_seq) prc_seq
+    	FROM TDIS_PROD_UNIT_PRC
+        WHERE PROD_CD = #prod_cd#
+            AND COLOR_CD = #color_cd#
+            AND SER_NUM = #ser_num#
+        GROUP BY prod_cd, color_cd, ser_num, amt) tpup
+WHERE tpd.PROD_CD = #prod_cd#
+  AND tpd.COLOR_CD = #color_cd#
+  AND tpd.SER_NUM = #ser_num#
+  AND tpd.PROD_CD = tpup.PROD_CD
+  AND tpd.COLOR_CD = tpup.COLOR_CD
+  AND tpd.SER_NUM = tpup.SER_NUM)  ]]>
+	</insert> 
+	<insert id="addProdInOutHst" parameterClass="map" ><![CDATA[INSERT INTO TDIS_PROD_INOUT_HST (
+  PROD_CD, 
+  COLOR_CD, 
+  SER_NUM, 
+  INOUT_SEQ, 
+  OUT_MGMT_NO, 
+  OUT_SEQ, 
+  INOUT_DT, 
+  INOUT_CL, 
+  INOUT_DTL_CL, 
+  OUT_PLC_ID, 
+  IN_PLC_ID, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_DTM, 
+  INS_USER_ID, 
+  MOD_DTM, 
+  MOD_USER_ID
+) (SELECT
+  #prod_cd# prod_cd
+  ,#color_cd# color_cd
+  ,#ser_num# ser_num
+  ,NVL((SELECT max(inout_seq)
+      	FROM TDIS_PROD_INOUT_HST
+          WHERE prod_cd = #prod_cd#
+              AND color_cd = #color_cd#
+              AND ser_num = #ser_num#), 0)+1 inout_seq 
+  ,#out_mgmt_no# out_mgmt_no
+  ,case when #mov_seq# = '0' then (SELECT max(out_seq) out_seq
+      								FROM TDIS_PROD_MOV_OUT_DTL_D
+          							WHERE out_mgmt_no = #out_mgmt_no#) 
+        else #mov_seq#
+        end out_seq
+  ,to_char(sysdate,'YYYYMMDD') inout_dt
+  ,#inout_cl# inout_cl
+  ,#inout_dtl_cl# inout_dtl_cl
+  ,#out_plc_id# out_plc_id
+  ,#in_plc_id# in_plc_id
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+from dual
+)  ]]>
+	</insert>
+	<update id="updateProdOutDel" parameterClass="map" ><![CDATA[UPDATE TDIS_PROD_OUT_M
+   SET OUT_CL = #out_cl#
+   	  ,OUT_FIX_YN = 'N'
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#   
+ WHERE OUT_MGMT_NO = #OUT_MGMT_NO#]]>
+	</update>
+	<update id="updateProdMovOutDtlCncl" parameterClass="map" ><![CDATA[UPDATE TDIS_PROD_MOV_OUT_DTL_D
+   SET CNCL_YN = 'Y'
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#   
+ WHERE OUT_MGMT_NO = #out_mgmt_no#
+ 	AND OUT_SEQ = #mov_seq#]]>
+	</update>
+	<update id="updateProdMovOutDtlDel" parameterClass="map" ><![CDATA[UPDATE TDIS_PROD_MOV_OUT_DTL_D
+   SET DIS_ST = #dis_st#
+   	  ,CNCL_YN = 'Y'
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#   
+ WHERE OUT_MGMT_NO = #out_mgmt_no#
+ 	AND OUT_SEQ = #mov_seq#]]>
+	</update>
+	<update id="updateProdInOutHstDel" parameterClass="map" ><![CDATA[UPDATE TDIS_PROD_INOUT_HST
+   SET INOUT_CL = #inout_cl#
+   	  ,INOUT_DTL_CL = #inout_dtl_cl#
+   	  ,DEL_YN = 'Y'
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#   
+ WHERE PROD_CD = #prod_cd#
+ 	AND COLOR_CD = #color_cd#
+ 	AND SER_NUM = #ser_num#
+ 	AND OUT_MGMT_NO = #out_mgmt_no#
+ 	AND OUT_SEQ = #mov_seq#]]>
+	</update>
+	<update id="updateProdDis" parameterClass="map" ><![CDATA[UPDATE TDIS_PROD_DIS
+   SET DIS_ST = #dis_st#
+   	  ,HLD_PLC_ID = #hld_plc_id#
+   	  ,LAST_INOUT_DT = #inout_dt#
+   	  ,LAST_INOUT_CL = #inout_cl#
+   	  ,LAST_INOUT_DTL_CL = #inout_dtl_cl#
+      ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#   
+ WHERE PROD_CD = #prod_cd#
+ 	AND COLOR_CD = #color_cd#
+ 	AND SER_NUM = #ser_num#]]>
+	</update>
+	<select id="selectMovReg" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISATR00200_selectMovReg_전희경" */
+       tpmod.out_mgmt_no
+	  , tpmod.prod_cd
+	  , tpm.prod_nm
+	  , tpmod.color_cd
+      , tpmod.ser_num
+      , tpmod.out_seq mov_seq
+      , tpm.mfact_id
+      , tpm.prod_cl
+      , '1' cur_cnt
+      , '1' mov_cnt
+      , '0' mov_chk
+      , tpih.in_mgmt_no
+      , CASE WHEN in_mgmt_no IS NULL THEN 'N'
+      		ELSE (select NVL(in_fix_yn, 'N') 
+        			FROM TDIS_IN_PROD_DTL_D
+                	WHERE in_mgmt_no =  tpih.in_mgmt_no
+                		AND in_seq = tpih.in_seq)
+        	END in_fix_yn
+      , tpom.out_cl
+      , tpom.out_schd_dt
+      , tpom.out_fix_yn
+      , tpom.rmks
+      , tpmod.upd_cnt  
+FROM TDIS_PROD_OUT_M tpom
+	,TDIS_PROD_MOV_OUT_DTL_D tpmod 
+	,TDIS_PROD_INOUT_HST tpih
+	,TBAS_PROD_MGMT tpm
+WHERE tpom.out_mgmt_no = #out_mgmt_no#
+	AND tpom.out_mgmt_no = tpmod.out_mgmt_no
+	AND tpom.del_yn = 'N'
+    AND NVL(tpmod.cncl_yn, 'N') = 'N'
+    AND tpmod.del_yn = 'N'
+	AND tpmod.prod_cd = tpm.prod_cd
+	AND tpmod.prod_cd = tpih.prod_cd
+    AND tpmod.color_cd = tpih.color_cd
+    AND tpmod.ser_num = tpih.ser_num
+    AND tpih.inout_seq = (select MAX(inout_seq)
+							FROM TDIS_PROD_INOUT_HST c
+				            WHERE c.prod_cd = tpmod.prod_cd
+				            	AND c.color_cd = tpmod.color_cd
+				                AND c.ser_num = tpmod.ser_num
+				                AND c.del_yn = 'N')
+   	AND tpom.out_mgmt_no = tpih.out_mgmt_no]]>
+	</select>
+	<select id="selectLastInOutCl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISATR00200_selectLastInOutCl_전희경" */
+       inout_dt
+		,inout_cl
+        ,inout_dtl_cl
+	FROM TDIS_PROD_INOUT_HST
+	WHERE prod_cd = #prod_cd#
+	    AND color_cd = #color_cd#
+	    AND ser_num = #ser_num#
+		AND inout_seq = (SELECT max(inout_seq)
+	                      FROM TDIS_PROD_INOUT_HST
+	                      WHERE inout_cl <> '300'
+	                          AND prod_cd = #prod_cd#
+	                          AND color_cd = #color_cd#
+	                          AND ser_num = #ser_num#
+	                          AND del_yn = 'N')
+]]>
+	</select>
+	<update id="updateTdisInProdM" parameterClass="map" ><![CDATA[UPDATE tdis_in_prod_m /*+ DISATR00200_updateTdisInProdM_전희경 */ 
+		  SET 
+			in_fix_dt 		= to_char(sysdate,'yyyymmdd')
+			,in_st			= '03'
+			,upd_cnt		= upd_cnt + 1
+			,mod_dtm 		= to_char(sysdate,'yyyymmddhh24miss')
+			,mod_user_id 	= #onlineContext.userInfo.loginId#		     
+		WHERE in_mgmt_no 	= #in_mgmt_no#
+        	AND 'Y' = (SELECT DECODE(a.outCnt, b.inCnt, 'Y', 'N')
+                    FROM 
+                    (SELECT COUNT(tpmd.out_seq) outCnt
+                    FROM TDIS_PROD_MOV_OUT_DTL_D tpmd
+                    WHERE tpmd.out_mgmt_no = #out_mgmt_no#
+                        AND NVL(tpmd.cncl_yn, 'N') = 'N'
+                        AND tpmd.del_yn = 'N') a
+                    ,(SELECT COUNT(tipd.in_seq) inCnt
+                    FROM TDIS_IN_PROD_DTL_D tipd   
+                    WHERE tipd.in_mgmt_no = #in_mgmt_no#
+                        AND tipd.in_fix_yn = 'Y'
+                        AND tipd.DEL_YN = 'N') b)
+		  ]]>
+	</update>
+	<procedure id="selectOutMgmtNo" parameterClass="map" ><![CDATA[{ call SP_DIS_DCO_MGMT_NO ( 
+	#errcode,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#errmsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#mgmt_no_cd,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#user_id,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#mgmt_no,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+) }]]>
+	</procedure>
+</sqlMap>

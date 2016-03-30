@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM01000">
+	<select id="getPortalIDUserList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM01000_getPortalIDUserList_조민지_이영진" */
+    '0'                                                                     CHK
+    , fbas_get_org_nm(a.org_id)                                             org_nm
+     , fbas_get_deal_nm(a.pos_agency, to_char(sysdate, 'yyyymmddHH24MISS')) pos_agency
+     , fbas_get_deal_nm(a.org_area,   to_char(sysdate, 'yyyymmddHH24MISS')) org_area
+     , fbas_get_commcdnm_val('ZBAS_C_00250', a.user_grp)                    user_grp
+     , a.portal_user_id
+     , a.user_id
+     , a.user_nm
+     /* 판매점포탈 SSO와 I/F하기 위한 항목 */
+     , a.portal_user_id                                   ptl_login_id
+     , a.user_id                                          ptl_sys_job_id
+     , b.post_org_id                                      ptl_org_id
+     , decode(a.user_grp, 'D14', c.org_id, b.post_org_id) ptl_rel_org_id
+     , a.user_grp                                         ptl_user_typ_cd
+     , '30'                                               ptl_hnd_sts_cd
+     , to_char(sysdate, 'yyyymmdd')                       ptl_eff_sta_dt
+     , to_char(sysdate, 'yyyymmdd')                       ptl_eff_end_dt
+     , ''                                                 ptl_audit_user_id
+     , to_char(sysdate, 'yyyymmddHH24MISS')               ptl_audit_dtm
+     , to_char(sysdate, 'yyyymmddHH24MISS')               ptl_trans_dtm
+     , 'TP'                                               ptl_sys_cl
+  from tbas_user_mgmt   a
+     , tbas_portal_user b
+  ,  ( select distinct a.deal_co_cd, b.org_id
+         from tbas_deal_co_mgmt a
+            , tbas_portal_org   b
+        where a.ukey_channel_cd = b.org_cd
+          and to_char(sysdate, 'yyyymmddHH24MISS') between a.eff_sta_dtm and a.eff_end_dtm
+          and a.deal_end_yn = 'N') c
+ where 1=1
+   and a.portal_user_id = b.login_id(+)
+   and a.org_area       = c.deal_co_cd(+)
+   and a.portal_user_id is not null
+   and a.del_yn         = 'N'
+   and a.eff_user_yn    = 'Y'
+]]>   <isNotEmpty prepend="AND" property="user_grp">
+<![CDATA[       a.user_grp       = #user_grp#
+]]>   </isNotEmpty>
+<![CDATA[]]>   <isEmpty prepend="AND" property="user_grp">
+<![CDATA[       a.user_grp      != 'D14'
+]]>   </isEmpty>
+<![CDATA[]]>   <isNotEmpty prepend="AND" property="org_area">
+<![CDATA[       a.org_area       = #org_area#
+]]>   </isNotEmpty>
+<![CDATA[]]>   <isNotEmpty prepend="AND" property="pos_agency">
+<![CDATA[       a.pos_agency     = #pos_agency#
+]]>   </isNotEmpty>
+<![CDATA[ ORDER BY 1, 2, 3]]>
+	</select>
+	<update id="saveMappingUser" parameterClass="map" ><![CDATA[UPDATE TBAS_USER_MGMT  /*+ "BASUSM01000_saveMappingUser_김연석_김연석" */
+   set portal_user_id = null
+     , mod_dtm        = to_char(sysdate, 'yyyymmddhh24miss')
+     , mod_user_id    = #onlineContext.userInfo.loginId#
+ where user_id        = #USER_ID#]]>
+	</update>
+</sqlMap>

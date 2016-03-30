@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="560" Id="BASPDM00930" Left="8" OnLoadCompleted="BASPDM00930_OnLoadCompleted" PidAttrib="7" Title="단말기별단가조회" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="STRD_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CD" size="256" summ="default" type="STRING"/>
+					<record>
+						<PROD_CD></PROD_CD>
+						<STRD_DT></STRD_DT>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_price">
+				<Contents>
+					<colinfo id="PROD_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="N_GRADE" size="256" summ="default" type="STRING"/>
+					<colinfo id="A_GRADE" size="256" summ="default" type="STRING"/>
+					<colinfo id="B_GRADE" size="256" summ="default" type="STRING"/>
+					<colinfo id="C_GRADE" size="256" summ="default" type="STRING"/>
+					<colinfo id="D_GRADE" size="256" summ="default" type="STRING"/>
+					<colinfo id="E_GRADE" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="38" Id="div_search" Left="9" Style="sty_div_search" TabOrder="1" TabStop="FALSE" Text="Div0" Top="9" Width="811">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="741" LeftMargin="5" OnClick="f_search" Style="sty_btn_a" TabOrder="1" TabStop="FALSE" Text="조회" Top="5" Width="60"></Button>
+				<Image Height="20" Id="Image0" ImageID="bul_mand" Left="29" TabOrder="2" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Calendar BindDataset="ds_condition" Border="Flat" ButtonImageID="btn_i_calendar" Column="STRD_DT" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_strdDt" Left="95" LeftMargin="2" MonthPickerFormat="yyyy" MonthPopupBorder="RAISED" NullValue="&#32;" OnChanged="div_Search_cal_stDtm_OnChanged" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="3" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="93"></Calendar>
+				<Static Align="Right" Height="20" Id="Static3" Left="31" Style="sty_lb_Basic" TabOrder="3" Text="기준일자" Top="7" VAlign="Middle" Width="60"></Static>
+				<Static Align="Right" Height="20" Id="Static5" Left="192" Style="sty_lb_Search" TabOrder="7" Text="모델" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="prod_cd" Height="20" Id="edt_ProdCd" Left="264" LeftMargin="2" MaxLength="10" OnCharChanged="div_search_edt_ProdCd_OnCharChanged" OnKeyDown="div_search_edt_ProdCd_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Width="70"></Edit>
+				<Button Height="21" Id="btn_ProdCd" ImageID="btn_i_detail" Left="332" OnClick="div_search_btn_ProdCd_OnClick" TabOrder="6" Text="Button0" Top="7" Width="19"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Enable="FALSE" Height="20" Id="edt_ProdNm" Left="351" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="7" Width="80"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_price" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="528" CellMoving="TRUE" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="446" Id="grd_inProdList" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_inProdList_OnCellDblClick" OnHeadClick="grd_inProdList_OnHeadClick" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="82" UseDBuff="true" UseExprCache="Row" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="70"/>
+						<col width="100"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="상품코드"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="상품명"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="N등급"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="A등급"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="B등급"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="E등급"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="시작일"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="종료일"/>
+					</head>
+					<body>
+						<cell align="left" col="0" colid="PROD_CD" display="text"/>
+						<cell align="left" col="1" colid="PROD_NM" display="text"/>
+						<cell align="right" col="2" colid="N_GRADE" display="number"/>
+						<cell align="right" col="3" colid="A_GRADE" display="number"/>
+						<cell align="right" col="4" colid="B_GRADE" display="number"/>
+						<cell align="right" col="5" colid="E_GRADE" display="number"/>
+						<cell align="right" col="6" colid="ST_DT" display="date"/>
+						<cell align="right" col="7" colid="ED_DT" display="date"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="btn_excelDown" ImageID="btn_i_exceldown_w" Left="798" OnClick="div_page_btn_excelDown_OnClick" TabOrder="3" Text="Button1" ToolTipText="Excel&#32;Download" Top="55" Width="19"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID 	: BASPDM00930
+* 업무명      	: 기준정보 - 상품관리 - 단말기별단가조회
+* 프로그램명  	: 단말기별단가조회
+--------------------------------------------------------------------------------
+* 작성자      	: 민동운
+* 작성일      	: 2013.04.03
+--------------------------------------------------------------------------------
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function BASPDM00930_OnLoadCompleted(obj)
+{
+	f_getSession();
+	f_init();
+	
+	cf_setGrdChecknSortEvent(grd_list);
+}
+
+function f_init()
+{
+	div_search.cal_strdDt.Value = Left(cf_getDate(), 8);
+}
+
+/*******************************************************************************
+ * @description    : 가격표 조회
+*******************************************************************************/
+function f_search(){
+
+	
+	ds_price.ClearData();
+	
+	// 트랜잭션 설정
+	var sSvcID = "svcPriceList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_price=ds_price";
+	var sArg   = "sktst.bas.PDM#getPriceList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcPriceList")
+	{
+		
+	}
+}
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	Close();
+}
+
+/*******************************************************************************
+ * @description    : 모델 OnKeyDown 이벤트
+*******************************************************************************/
+function div_search_edt_ProdCd_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if (nChar == 13)
+	{
+		cf_commPopProd("div_search.edt_ProdCd", "div_search.edt_ProdNm", nChar, '1');
+	}			
+}
+
+/*******************************************************************************
+ * @description    : 모델 click 이벤트
+*******************************************************************************/
+function div_search_btn_ProdCd_OnClick(obj)
+{
+	cf_commPopProd("div_search.edt_ProdCd", "div_search.edt_ProdNm", 13, '1') ;
+}
+
+function div_search_edt_ProdCd_OnCharChanged(obj,strPreText,strPostText)
+{
+	if(strPreText != strPostText){
+	    div_search.edt_ProdNm.Text = "";
+	}
+}
+
+
+function div_page_btn_excelDown_OnClick(obj)
+{
+	cf_exportExcel(grd_inProdList, 1);
+}
+
+function grd_inProdList_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	var sArg  = "sStrdDt="+quote(div_search.cal_strdDt.Value);
+	sArg = sArg + " sProdCd="+quote(ds_price.GetColumn(nRow, "PROD_CD"));
+	sArg = sArg + " sProdNm="+quote(ds_price.GetColumn(nRow, "PROD_NM"));
+
+	cf_openAuthPop("100001036", sArg , 600, 450);
+}
+]]></Script>
+</Window>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTPRC00400">
+	<select id="getConsultMgmt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 'C' PRC_GB
+	 , CON_MGMT_NO
+	 , '' PRCHS_MGMT_NO
+     , FBAS_GET_DEAL_NM((SELECT MFACT_ID 
+                           FROM TBAS_PROD_MGMT 
+                          WHERE PROD_CD = con.PROD_CD),'') MFACT_NM
+     , PROD_CD
+     , FBAS_GET_PROD_NM(PROD_CD) PROD_NM
+     , SER_NUM
+     , CON_DT PRCHS_DT
+     , CON_PLC_CD
+     , COLOR_CD
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', COLOR_CD) COLOR_NM
+     , CON_AMT PRCHS_AMT
+     , '0' MOV_CHK
+     , '1' MOV_CNT
+  FROM TCST_CONSULT_MGMT con   
+ WHERE NVL(OUT_YN,'N') = 'N'
+   AND CON_PLC_CD = #CONPLC_CD# 
+   AND DEL_YN = 'N' 
+]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       PROD_CD = #PROD_CD#
+]]></isNotEmpty>	  
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">   
+<![CDATA[       SER_NUM = #SER_NUM#
+]]></isNotEmpty>
+	</select>
+</sqlMap>

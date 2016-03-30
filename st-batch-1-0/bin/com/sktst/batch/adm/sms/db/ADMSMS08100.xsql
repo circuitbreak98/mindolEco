@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMSMS08100">
+	<select id="getSmsTranInfo" resultClass="hmap" fetchSize="50">
+	<![CDATA[
+        SELECT                                                                   
+            tran_dt, tran_cnt
+        FROM                                                                     
+        tadm_sms_tran                                                            
+        WHERE                                                                    
+        msg_ser_num = #MSG_SER_NUM#
+	]]>
+	</select>
+	
+	<insert id="addSmsResult" parameterClass="hmap">
+	<![CDATA[
+        INSERT INTO /*+ ADMSMS08100_addSmsResult_원윤성_원종윤 */                                     
+	    tadm_sms_result                                                                  
+	    (                                                                                
+	        TRAN_DT           /* 전송일 */                                               
+	        , TRAN_CNT        /* 전송차수 */                                             
+	        , RCV_PHON_NUM    /* 수신전화번호 */                                         
+	        , LTXT_SER_NUM    /* 80byte이상의 전문발송시 분할된 전문에 대한 일련번호 */  
+	        , TRAN_RSLT_CD    /* 전송결과('S':성공, 'F':실패) */                         
+	        , ERR_CD          /* 전송결과가 실패인경우 에러코드 */                       
+	        , TRAN_RSLT_DTM   /* 단말기에 전송한 일시, 실패 시 실패한 일시 */ 
+	    )                                                                                
+	    VALUES                                                                           
+	    (                                                                                
+	        #TRAN_DT#                                                               
+	        , #TRAN_CNT#
+	        , TRIM(SUBSTRB(#RESULT_MSG#,   101,  15))                                     
+	        , TRIM(SUBSTRB(#RESULT_MSG#,   138,  15))                                     
+	        , TRIM(SUBSTRB(#RESULT_MSG#,   153,  1))                                      
+	        , TRIM(SUBSTRB(#RESULT_MSG#,   154,  4))                                      
+	        , TRIM(SUBSTRB(#RESULT_MSG#,   172,  14))                          
+	    )       
+	]]>
+	</insert>
+
+</sqlMap>

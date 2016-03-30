@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMQNA00100">
+	<select id="getQna" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ ADMQNA00100_getQna_원윤성_심연정 */ 
+         a.qna_num
+        ,a.title
+        ,a.que_ctt
+        ,a.type_cd
+        ,a.ans_ctt
+        ,NVL(a.ans_yn,'N') AS ans_yn
+        ,a.doc_id
+        ,a.write_user_id 
+        ,b.user_nm as write_user_nm
+        ,b.org_id as write_org_id
+        ,c.org_nm as write_org_nm
+        ,a.write_dt
+        ,a.answer_user_id  
+        ,d.user_nm as  answer_user_nm
+        ,d.org_id AS answer_org_id     
+        ,e.org_nm AS answer_org_nm
+        ,a.answer_dt
+        ,a.del_yn
+        ,a.upd_cnt
+        ,a.ins_dtm
+        ,a.ins_user_id
+        ,a.mod_dtm
+        ,a.mod_user_id
+FROM    tadm_qna a,     
+        tbas_user_mgmt b, 
+        tbas_org_mgmt c,
+        tbas_user_mgmt d, 
+        tbas_org_mgmt e     
+WHERE   a.del_yn = 'N' 
+AND     a.write_user_id = b.user_id
+AND     b.org_id = c.org_id
+AND     a.answer_user_id = d.user_id(+)
+AND     d.org_id = e.org_id(+)
+]]><isNotEmpty prepend="AND" property="title">
+<![CDATA[        a.title LIKE '%$title$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="que_ctt">
+<![CDATA[        a.que_ctt LIKE '%$que_ctt$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="write_user_nm">
+<![CDATA[        b.user_nm LIKE '%$write_user_nm$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="ans_yn">
+<![CDATA[        a.ans_yn = #ans_yn#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="qna_num">
+<![CDATA[        a.qna_num = #qna_num#
+]]></isNotEmpty>
+<![CDATA[ORDER BY a.ins_dtm desc]]>
+	</select>
+	<update id="updateAnswer" parameterClass="map" ><![CDATA[UPDATE /*+ ADMFAQ00100_updateAnswer_원윤성_심연정 */ tadm_qna
+	SET	
+	ans_yn = 'Y',
+	ans_ctt = #ans_ctt#,
+	answer_user_id = #onlineContext.userInfo.loginId#,
+	answer_dt = to_char(sysdate,'yyyymmdd'),
+	upd_cnt = upd_cnt+1,
+	mod_dtm = to_char(sysdate,'YYYYMMDDHH24MISS'),
+	mod_user_id = #onlineContext.userInfo.loginId#
+WHERE
+    qna_num = #qna_num#]]>
+	</update>
+	<update id="deleteQnaBySelect" parameterClass="map" ><![CDATA[UPDATE /*+ ADMFAQ00100_deleteQnaBySelect_원윤성_한병곤*/ 
+       tadm_qna
+   SET del_yn = 'Y',
+	   upd_cnt = upd_cnt+1,
+	   mod_dtm = to_char(sysdate,'YYYYMMDDHH24MISS'),
+	   mod_user_id = #onlineContext.userInfo.loginId#
+ WHERE qna_num = #qna_num#]]>
+	</update>
+</sqlMap>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASTMP00100">
+	<insert id="addUKeyLog" ><![CDATA[INSERT INTO /*+ BASTMP00100_addUKey_원종윤_원종윤 */ 
+tbas_ukey_if_log
+(
+	  op_dt
+	, op_tm
+	, seq
+	, if_cl
+	, if_ctt
+	, ins_dtm 
+)
+VALUES
+(
+	  #OP_DT#
+	, #OP_TM# 
+    , #SEQ#
+    , #IF_CL#
+	, #IF_CTT#
+    , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+)]]>
+	</insert>
+	<insert id="addUKeyMQ" ><![CDATA[INSERT INTO /*+ BASTMP00100_addUKey_원종윤_원종윤 */ 
+tbas_ukey_if_mq
+(
+	  op_dt
+	, op_tm
+	, seq
+	, if_cl
+	, if_ctt
+)
+VALUES
+(
+	  #OP_DT#
+	, #OP_TM# 
+    , #SEQ#
+    , #IF_CL#
+    , #IF_CTT#
+)]]>
+	</insert>
+	<select id="getUKeyIFSeq" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASTMP00100_getUKeyIFSeq_원종윤_원종윤 */ 
+	NVL(MAX(seq), 0)+1 seq
+FROM tbas_ukey_if_mq
+WHERE 1=1                             
+AND op_dt = #OP_DT#
+AND op_tm = #OP_TM#]]>
+	</select>
+	<procedure id="callUkeyIFProcedure" resultClass="hmap" ><![CDATA[{ call SP_UKEY_IF_MQ /*+ BASTMP00100_callUkeyIFProcedure_원종윤_원종윤 */
+	(
+	#OP_DT,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#OP_TM,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#SEQ,javaType=java.lang.Integer,jdbcType=NUMBER,mode=IN#,
+	#IF_CL,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#IF_CTT,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#
+) }]]>
+	</procedure>
+</sqlMap>

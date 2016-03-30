@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://150.2.236.145/sql-map-2.dtd">
+<sqlMap namespace="BASUSM00900">
+	<select id="getPsMappingUser" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select 
+      '0'                                    CHK
+     , a.login_id                            LOGIN_ID
+     , a.user_id                             UKEY_ID
+     , a.han_nm                              HAN_NM
+     , a.pwd                                 PWD
+     , decode(b.ORG_ID, '1000039080', '본사 사용자',
+       decode(nvl(c.org_id, 'N'), 'C10011', '성장채널 사용자',
+       decode(substr(b.ORG_TYP_CD, 1, 1), '4', '시스템 운영자',
+                                          '5', '대리점 사용자'
+                                             , 'SKT 직원'))) USER_GBN
+     , fbas_get_masking(a.mbl_phon_num, 'T') MBL_PHON
+     , a.mbl_phon_num                        MBL_PHON_NUM
+     , a.email_addr                          EMAIL_ADDR
+     , a.post_org_id                         ORG_ID
+     , b.org_nm                              ORG_NM
+     , a.post_org_id                         REL_ORG_ID
+     , ''                                    USER_TYPE_CD
+     , '10'                                  HND_STS_CD
+     , ''                                    EFF_STA_DT
+     , ''                                    EFF_END_DT
+     , ''                                    AUDIT_USER_ID
+     , ''                                    AUDIT_DTM
+     , ''                                    TRANS_DTM
+     , 'TP'                                  SYS_CL
+     , c.org_id                              TP_ORG
+     , fbas_get_org_nm(c.org_id)             TP_ORG_NM
+  from TBAS_PORTAL_USER   a  /* 사용자정보 */
+     , TBAS_PORTAL_ORG    b  /* 조직정보 */
+     , (select * from TBAS_DEAL_CO_MGMT a
+         where hseq_no = (select max(hseq_no) from tbas_deal_co_mgmt
+                           where deal_co_cd = a.deal_co_cd)) c
+ where a.POST_ORG_ID = b.ORG_ID
+   and b.ORG_CD         = c.UKEY_AGENCY_CD(+)
+   and 'A1'             = c.DEAL_CO_CL1(+)
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">
+<![CDATA[       b.org_cd      = #POS_AGENCY#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="HAN_NM">
+<![CDATA[       a.han_nm   like #HAN_NM# || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="LOGIN_ID">
+<![CDATA[       a.LOGIN_ID    = #LOGIN_ID#
+]]></isNotEmpty>
+<![CDATA[   and (( b.ORG_TYP_CD >= '500' AND
+          b.ORG_TYP_CD <= '541' )
+    or    b.ORG_TYP_CD  = '450'
+    or    b.ORG_TYP_CD  = '120'
+    or    b.ORG_TYP_CD  = '200'
+    or    b.ORG_TYP_CD  = '300')
+   and a.SYS_CL     = 'TP'
+ order by 1 desc, 2 desc]]>
+	</select>
+</sqlMap>

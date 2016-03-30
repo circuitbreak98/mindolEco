@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="264" Id="SALSCP00800" Left="8" OnLoadCompleted="SALSCP00800_OnLoadCompleted" PidAttrib="7" Title="예수금수납정보(M채널)&#32;입력" Top="8" Ver="1.0" Width="531" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_payment">
+				<Contents>
+					<colinfo id="pay_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="cash_pay_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="phone_safe_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="crdtcrd_corp1" size="256" summ="default" type="STRING"/>
+					<colinfo id="crdtcrd_pay_amt1" size="256" summ="default" type="STRING"/>
+					<colinfo id="crdtcrd_corp2" size="256" summ="default" type="STRING"/>
+					<colinfo id="crdtcrd_pay_amt2" size="256" summ="default" type="STRING"/>
+					<colinfo id="pay_sum_amt" size="256" summ="default" type="STRING"/>
+					<record>
+						<cash_pay_amt></cash_pay_amt>
+						<phone_safe_amt></phone_safe_amt>
+						<crdtcrd_corp1></crdtcrd_corp1>
+						<crdtcrd_corp2></crdtcrd_corp2>
+						<crdtcrd_pay_amt1></crdtcrd_pay_amt1>
+						<crdtcrd_pay_amt2></crdtcrd_pay_amt2>
+						<pay_amt></pay_amt>
+						<pay_sum_amt></pay_sum_amt>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_sktPayment">
+				<Contents>
+					<colinfo id="skt_pay_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="skt_prprc_cash_pay_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="skt_prprc_prxpay_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="skt_pay_sum_amt" size="256" summ="default" type="STRING"/>
+					<record>
+						<skt_pay_amt></skt_pay_amt>
+						<skt_pay_sum_amt></skt_pay_sum_amt>
+						<skt_prprc_cash_pay_amt></skt_prprc_cash_pay_amt>
+						<skt_prprc_prxpay_amt></skt_prprc_prxpay_amt>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_input"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_crdtcrdCorp">
+				<Contents>
+					<colinfo id="deal_co_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Image Align="Left" Height="25" Id="Image3" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="판매" Top="8" Width="192"></Image>
+		<Div Border="Raised" Height="87" Id="div_payment" Left="10" Style="sty_div_input" TabOrder="1" Text="Div0" Top="33" Width="510">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static5" Left="206" Style="sty_lb_dataview" TabOrder="5" Text="카드수납2" Top="53" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="22" Style="sty_lb_dataview" TabOrder="1" Text="수납대상" Top="7" VAlign="Middle" Width="68"></Static>
+				<Static Align="Right" Height="20" Id="Static3" Left="206" Style="sty_lb_dataview" TabOrder="2" Text="카드수납1" Top="30" VAlign="Middle" Width="76"></Static>
+				<Combo BindDataset="ds_payment" Border="Flat" CodeColumn="deal_co_cd" Column="crdtcrd_corp2" DataColumn="deal_co_nm" Height="20" Id="cmb_crdtcrdcorp2" InnerDataset="ds_crdtcrdCorp" Left="286" OnChanged="div_payment_cmb_crdtcrdcorp2_OnChanged" Style="sty_ipt_form" TabOrder="3" Top="52" Width="72"></Combo>
+				<Combo BindDataset="ds_payment" Border="Flat" CodeColumn="deal_co_cd" Column="crdtcrd_corp1" DataColumn="deal_co_nm" Height="20" Id="cmb_crdtcrdcorp1" InnerDataset="ds_crdtcrdCorp" Left="286" OnChanged="div_payment_cmb_crdtcrdcorp1_OnChanged" Style="sty_ipt_form" TabOrder="4" Top="29" Width="72"></Combo>
+				<MaskEdit BindDataset="ds_payment" Border="Flat" Column="pay_amt" Enable="FALSE" Height="20" Id="msk_payAmt" Left="94" LeftMargin="2" Mask="#,###,###,###" MaxLength="10" NullValue="0" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Value="0" Width="89"></MaskEdit>
+				<MaskEdit BindDataset="ds_payment" Border="Flat" Column="crdtcrd_pay_amt1" Enable="FALSE" Height="20" Id="msk_crdtcrdPayAmt1" Left="358" LeftMargin="2" MaxLength="10" NullValue="0" OnChanged="div_payment_msk_crdtcrdPayAmt1_OnChanged" OnChar="div_payment_msk_crdtcrdPayAmt1_OnChar" OnKeyDown="div_payment_msk_crdtcrdPayAmt1_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="30" Value="0" Width="89"></MaskEdit>
+				<MaskEdit BindDataset="ds_payment" Border="Flat" Column="crdtcrd_pay_amt2" Enable="FALSE" Height="20" Id="msk_crdtcrdPayAmt2" Left="358" LeftMargin="2" MaxLength="10" NullValue="0" OnChanged="div_payment_msk_crdtcrdPayAmt2_OnChanged" OnChar="div_payment_msk_crdtcrdPayAmt2_OnChar" OnKeyDown="div_payment_msk_crdtcrdPayAmt2_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="53" Value="0" Width="89"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static8" Left="4" Style="sty_lb_dataview" TabOrder="9" Text="미정산금액" Top="30" VAlign="Middle" Width="86"></Static>
+				<MaskEdit BindDataset="ds_payment" Border="Flat" Column="cash_pay_amt" Height="20" Id="msk_cashPayAmt" Left="94" LeftMargin="2" Mask="#,###,###,###" MaxLength="10" NullValue="0" OnChanged="div_payment_msk_cashPayAmt_OnChanged" OnKeyDown="div_payment_msk_cashPayAmt_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="30" Value="0" Width="89"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static4" Left="214" Style="sty_lb_dataview" TabOrder="11" Text="수납합계" Top="7" VAlign="Middle" Width="68"></Static>
+				<MaskEdit BindDataset="ds_payment" Border="Flat" Column="pay_sum_amt" Enable="FALSE" Height="20" Id="msk_paySumAmt" Left="287" LeftMargin="2" Mask="#,###,###,###" MaxLength="10" NullValue="0" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="7" Value="0" Width="160"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static11" Left="6" Style="sty_lb_dataview" TabOrder="14" Text="폰세이프금액" Top="53" VAlign="Middle" Width="84"></Static>
+				<MaskEdit BindDataset="ds_payment" Border="Flat" Column="phone_safe_amt" Enable="FALSE" Height="20" Id="msk_PhoneSafeAmt" Left="94" LeftMargin="2" MaxLength="10" NullValue="0" OnChanged="div_onlinePayment_msk_crdtcrdPayAmt1_OnChanged" OnKeyDown="div_onlinePayment_msk_crdtcrdPayAmt1_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="13" Top="53" Value="0" Width="89"></MaskEdit>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image4" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="SKT&#32;예수금" Top="130" Width="192"></Image>
+		<Div Border="Raised" Height="61" Id="div_sktPrprc" Left="10" Style="sty_div_input" TabOrder="3" Text="Div0" Top="155" Width="510">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static3" Left="14" Style="sty_lb_dataview" TabOrder="2" Text="현금수납" Top="30" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static5" Left="205" Style="sty_lb_dataview" TabOrder="3" Text="대납" Top="30" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="22" Style="sty_lb_dataview" TabOrder="1" Text="수납대상" Top="7" VAlign="Middle" Width="68"></Static>
+				<MaskEdit BindDataset="ds_sktPayment" Border="Flat" Column="skt_pay_amt" Enable="FALSE" Height="20" Id="msk_payAmt" Left="94" LeftMargin="2" Mask="#,###,###,###" MaxLength="10" NullValue="0" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" Value="0" Width="89"></MaskEdit>
+				<MaskEdit BindDataset="ds_sktPayment" Border="Flat" Column="skt_prprc_cash_pay_amt" Height="20" Id="msk_cashPayAmt" Left="94" LeftMargin="2" Mask="#,###,###,###" MaxLength="10" NullValue="0" OnChanged="div_SktPrprc_msk_cashPayAmt_OnChanged" OnKeyDown="div_SktPrprc_msk_cashPayAmt_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="30" Value="0" Width="89"></MaskEdit>
+				<MaskEdit BindDataset="ds_sktPayment" Border="Flat" Column="skt_prprc_prxpay_amt" Height="20" Id="msk_prxpayAmt" Left="286" LeftMargin="2" Mask="#,###,###,###" MaxLength="10" NullValue="0" OnChanged="div_SktPrprc_msk_prxpayAmt_OnChanged" OnKeyDown="div_SktPrprc_msk_prxpayAmt_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="30" Value="0" Width="89"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static6" Left="214" Style="sty_lb_dataview" TabOrder="7" Text="수납합계" Top="7" VAlign="Middle" Width="68"></Static>
+				<MaskEdit BindDataset="ds_sktPayment" Border="Flat" Column="skt_pay_sum_amt" Enable="FALSE" Height="20" Id="msk_paySumAmt" Left="287" LeftMargin="2" Mask="#,###,###,###" MaxLength="10" NullValue="0" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="7" Value="0" Width="89"></MaskEdit>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="270" LeftMargin="5" OnClick="btn_close_OnClick" OnKeyDown="btn_close_OnKeyDown" Style="sty_btn_d" TabOrder="5" Text="닫기" Top="228" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="206" LeftMargin="5" OnClick="btn_save_OnClick" OnKeyDown="btn_save_OnKeyDown" Style="sty_btn_c" TabOrder="6" Text="저장" Top="228" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALSCP00800
+* 업무명      : 예수금수납정보(M채널) 입력
+* 프로그램명  : 팝업
+--------------------------------------------------------------------------------
+* 작성자      : 이문규
+* 작성일      : 2009.11.10
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_NAME; // 사용자 이름
+var param1;      //판매변경 이력구분
+var excuteMethod;  //popup 종료시 실행할 parent 메소드
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SALSCP00800_OnLoadCompleted(obj)
+{
+	cf_setAuth(pFrmNum);	// 권한 공통
+	
+	lf_combomInit();
+	lf_formInit();  
+}
+
+/*******************************************************************************
+ * @description         : 콤보박스 초기화
+*******************************************************************************/
+function lf_combomInit()
+{
+    http.Sync = true;
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+
+    //수납 카드사 정보
+    sf_getCardCorpList("ds_input", "ds_crdtcrdCorp", p_saleDtm );
+
+	//수납정보 - 판매 - 신용카드1
+	//cf_setCommonCode("div_payment.cmb_crdtcrdcorp1"  , "ZBAS_C_00050" , "선택");	
+	//수납정보 - 판매 - 신용카드2
+	//cf_setCommonCode("div_payment.cmb_crdtcrdcorp2"  , "ZBAS_C_00050" , "선택");
+
+	// 설정된 코드를 기반으로 공통 코드를 추가 및 데이타 바인딩
+	cf_checkCommonCode();
+	http.Sync.false;
+	
+    ds_crdtcrdCorp.InsertRow(0);
+    ds_crdtcrdCorp.SetColumn(0, "deal_co_cd", "");
+    ds_crdtcrdCorp.SetColumn(0, "deal_co_nm", "선택");
+}
+
+/*******************************************************************************
+ * @description         : 폼 초기화
+*******************************************************************************/
+function lf_formInit()
+{
+	
+    //ds_payment.CopyRow(0, "parent.ds_param",0);
+    //ds_sktPayment.CopyRow(0, "parent.ds_param",0);
+    //ds_payment.ClearData();
+	cf_setParam(ds_payment, "pay_amt"                , parent.ds_param.GetColumn(0,"pay_amt"));
+	cf_setParam(ds_payment, "cash_pay_amt"           , parent.ds_param.GetColumn(0,"cash_pay_amt") );
+	cf_setParam(ds_payment, "phone_safe_amt"         , parent.ds_param.GetColumn(0,"phone_safe_amt") );
+	cf_setParam(ds_payment, "crdtcrd_corp1"          , parent.ds_param.GetColumn(0,"crdtcrd_corp1") );
+	cf_setParam(ds_payment, "crdtcrd_pay_amt1"       , parent.ds_param.GetColumn(0,"crdtcrd_pay_amt1") );
+	cf_setParam(ds_payment, "crdtcrd_corp2"          , parent.ds_param.GetColumn(0,"crdtcrd_corp2") );
+	cf_setParam(ds_payment, "crdtcrd_pay_amt2"       , parent.ds_param.GetColumn(0,"crdtcrd_pay_amt2") );
+    
+//	var iSktPayamt = 0;//ParseInt( ds_sktPrprc.GetColumn(0,"scrb_fee") );
+//    iSktPayamt = ParseInt(div_sktPrprc.msk_scrbFee.Value) + ParseInt(div_sktPrprc.msk_mnpCmms.Value) + ParseInt(div_sktPrprc.msk_tuScrbFee.Value);
+
+    //ds_sktPayment.ClearData();
+	cf_setParam(ds_sktPayment, "skt_pay_amt"            , parent.ds_param.GetColumn(0,"skt_pay_amt"));
+	cf_setParam(ds_sktPayment, "skt_prprc_cash_pay_amt" , parent.ds_param.GetColumn(0,"skt_prprc_cash_pay_amt") );
+	cf_setParam(ds_sktPayment, "skt_prprc_prxpay_amt"   , parent.ds_param.GetColumn(0,"skt_prprc_prxpay_amt") );
+
+	lf_sumPayment();	
+	lf_sktSumPayment();	
+
+    f_divEnable(param1);
+
+}
+
+/*******************************************************************************
+ * @description    : 수납합계 - 판매
+ ******************************************************************************/
+function lf_sumPayment()
+{
+	var iCashPayAmt     = 0;
+	var iCrdtcrdPayAmt1 = 0;
+	var iCrdtcrdPayAmt2 = 0;
+	var iPaySumAmt      = 0;
+	
+	iCashPayAmt     = ParseInt(div_payment.msk_cashPayAmt.Value );
+	iCrdtcrdPayAmt1 = ParseInt(div_payment.msk_crdtcrdPayAmt1.Value );
+	iCrdtcrdPayAmt2 = ParseInt(div_payment.msk_crdtcrdPayAmt2.Value );
+		
+	iPaySumAmt = iCashPayAmt + iCrdtcrdPayAmt1 + iCrdtcrdPayAmt2;
+	
+	div_payment.msk_paySumAmt.Value = iPaySumAmt;
+}
+
+/*******************************************************************************
+ * @description    : 수납합계 - SKT예수금
+ ******************************************************************************/
+function lf_sktSumPayment()
+{
+	var iCashPayAmt  = 0;
+	var iPrxpayAmt   = 0;
+	var iPaySumAmt   = 0;
+	
+	iCashPayAmt      = ParseInt(div_sktPrprc.msk_cashPayAmt.Value );
+	iPrxpayAmt       = ParseInt(div_sktPrprc.msk_prxpayAmt.Value );
+		
+	iPaySumAmt = iCashPayAmt + iPrxpayAmt;
+	
+	div_sktPrprc.msk_paySumAmt.Value = iPaySumAmt;
+}
+
+/*******************************************************************************
+ * @description    : 저장 - 이벤트 : 부모창에 중고단말기 정보 셋팅
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+    //parent.ds_param.CopyToRow(0, "ds_payment"   ,0);
+    //parent.ds_param.CopyToRow(0, "ds_sktPayment",0);
+    if (div_payment.msk_payAmt.Value !=  div_payment.msk_paySumAmt.Value )
+    {
+        alert("수납합계 금액을 확인해주십시요."); 
+        return;
+    } 
+
+    if (div_sktPrprc.msk_payAmt.Value !=  div_sktPrprc.msk_paySumAmt.Value )
+    {
+        alert("SKT수납합계 금액을 확인해주십시요."); 
+        return;
+    } 
+    
+	cf_setParam(parent.ds_param, "pay_amt"                , ds_payment.GetColumn(0,"pay_amt"));
+	cf_setParam(parent.ds_param, "pay_sum_amt"            , ds_payment.GetColumn(0,"pay_sum_amt"));
+	cf_setParam(parent.ds_param, "cash_pay_amt"           , ds_payment.GetColumn(0,"cash_pay_amt") );
+	cf_setParam(parent.ds_param, "phone_safe_amt"         , ds_payment.GetColumn(0,"phone_safe_amt") );
+	cf_setParam(parent.ds_param, "crdtcrd_corp1"          , ds_payment.GetColumn(0,"crdtcrd_corp1") );
+	cf_setParam(parent.ds_param, "crdtcrd_pay_amt1"       , ds_payment.GetColumn(0,"crdtcrd_pay_amt1") );
+	cf_setParam(parent.ds_param, "crdtcrd_corp2"          , ds_payment.GetColumn(0,"crdtcrd_corp2") );
+	cf_setParam(parent.ds_param, "crdtcrd_pay_amt2"       , ds_payment.GetColumn(0,"crdtcrd_pay_amt2") );
+
+//	var iSktPayamt = 0;//ParseInt( ds_sktPrprc.GetColumn(0,"scrb_fee") );
+//    iSktPayamt = ParseInt(div_sktPrprc.msk_scrbFee.Value) + ParseInt(div_sktPrprc.msk_mnpCmms.Value) + ParseInt(div_sktPrprc.msk_tuScrbFee.Value);
+
+	cf_setParam(parent.ds_param, "skt_pay_amt"            , ds_sktPayment.GetColumn(0,"skt_pay_amt"));
+	cf_setParam(parent.ds_param, "skt_pay_sum_amt"        , ds_sktPayment.GetColumn(0,"skt_pay_sum_amt"));
+	cf_setParam(parent.ds_param, "skt_prprc_cash_pay_amt" , ds_sktPayment.GetColumn(0,"skt_prprc_cash_pay_amt") );
+	cf_setParam(parent.ds_param, "skt_prprc_prxpay_amt"   , ds_sktPayment.GetColumn(0,"skt_prprc_prxpay_amt") );
+	// 인수로 전달 받은 부모창의 함수를 실행하고 창을 종료한다
+/*******************************************************************************
+ * @description         : 인수로 넘겨 받은 명의 함수를 실행학소 창을 종료
+ * @param sMethodName   : 메소드 명 
+		  sParam   		: 메소드 인자
+*******************************************************************************/
+	cf_callnClose(excuteMethod, "");
+}
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+    this.close(); 
+}
+
+/*******************************************************************************
+ * @description    : 저장버튼에서 enter key 눌렸을때
+*******************************************************************************/
+function btn_save_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,nLLParam,nHLParam)
+{
+	if ( nChar == 13 )
+	{
+	    btn_save_OnClick(obj);
+	}	
+}
+
+/*******************************************************************************
+ * @description    : 닫기버튼에서 enter key 눌렸을때
+*******************************************************************************/
+function btn_close_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,nLLParam,nHLParam)
+{
+	if ( nChar == 13 )
+	{
+	    btn_close_OnClick(obj);
+	}	
+}
+
+/*******************************************************************************
+ * @description    : 수납정보-판매 - 신용카드1 변경 시 처리 
+*******************************************************************************/
+function div_payment_cmb_crdtcrdcorp1_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+    //선택 = "" , 기타 .... 
+	if ( strCode == "")
+	{
+	    div_payment.msk_crdtcrdPayAmt1.Value = 0;
+	    div_payment.msk_crdtcrdPayAmt1.Enable = false;
+	}
+	else
+	{
+	    div_payment.msk_crdtcrdPayAmt1.Enable = true;
+	    div_payment.msk_crdtcrdPayAmt1.SetFocus();
+	    //div_payment.msk_crdtcrdPayAmt1.SetSel(0, length(div_payment.msk_crdtcrdPayAmt1.value));
+	}		
+}
+
+/*******************************************************************************
+ * @description    : 수납정보-판매 - 신용카드2 변경 시 처리 
+*******************************************************************************/
+function div_payment_cmb_crdtcrdcorp2_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+    //선택 = "" , 기타 .... 
+	if ( strCode == "")
+	{
+	    div_payment.msk_crdtcrdPayAmt2.Value = 0;
+	    div_payment.msk_crdtcrdPayAmt2.Enable = false;
+	}
+	else
+	{
+	    div_payment.msk_crdtcrdPayAmt2.Enable = true;
+	    div_payment.msk_crdtcrdPayAmt2.SetFocus();
+	    //div_payment.msk_crdtcrdPayAmt2.SetSel(0, length(div_payment.msk_crdtcrdPayAmt2.value));
+	}		
+}
+
+/*******************************************************************************
+ * @description    : 변경구분에 따른 div 초기화
+*******************************************************************************/
+function f_divEnable(sSaleChgHstCl)
+{
+    f_enablePayment(sSaleChgHstCl);
+    f_enableSktPrprc(sSaleChgHstCl);
+}
+
+/*******************************************************************************
+ * @description    : 판매수납 - 변경구분에 따른 div 초기화
+*******************************************************************************/
+function f_enablePayment(sSaleChgHstCl)
+{
+    switch (sSaleChgHstCl)
+    {
+        case "01" :  //01 : 판매
+        case "06" :  //06 : 부가서비스변경
+        case "07" :  //07 : 판매취소
+        case "08" :  //08 : 판매삭제
+            div_payment.msk_payAmt.Enable = false;
+            div_payment.msk_paySumAmt.Enable = false;
+
+            div_payment.msk_cashPayAmt.Enable = false;
+            div_payment.cmb_crdtcrdcorp1.Enable = false;
+            div_payment.msk_crdtcrdPayAmt1.Enable = false;
+            div_payment.cmb_crdtcrdcorp2.Enable = false;
+            div_payment.msk_crdtcrdPayAmt2.Enable = false;
+
+            break;
+        case "02" :  //02 : 기기변경
+        case "03" :  //03 : 할부추가
+        case "04" :  //04 : 할부취소
+        case "05" :  //05 : 판매가변경
+        case "09" :  //09 : 판매수정  
+            div_payment.msk_payAmt.Enable = false;
+            div_payment.msk_paySumAmt.Enable = false;
+
+            div_payment.msk_cashPayAmt.Enable = true;
+            
+            div_payment.cmb_crdtcrdcorp1.Enable = true;
+            lf_enableObjectOfTarget(div_payment.cmb_crdtcrdcorp1, div_payment.msk_crdtcrdPayAmt1);
+            
+            div_payment.cmb_crdtcrdcorp2.Enable = true;
+            lf_enableObjectOfTarget(div_payment.cmb_crdtcrdcorp2, div_payment.msk_crdtcrdPayAmt2);
+
+            break;
+        default:
+            break;
+    } 
+}
+
+function lf_enableObjectOfTarget(oObject,oTarget)
+{
+    if ( uf_IsNull(oObject.value) )
+    {
+        oTarget.Enable = false;
+    }
+    else
+    {
+        oTarget.Enable = true;
+    }
+    return;
+}
+
+/*******************************************************************************
+ * @description    : SKT예수금 수납 - 변경구분에 따른 div 초기화
+*******************************************************************************/
+function f_enableSktPrprc(sSaleChgHstCl)
+{
+    switch (sSaleChgHstCl)
+    {
+        case "01" :  //01 : 판매
+        case "02" :  //02 : 기기변경
+        case "06" :  //06 : 부가서비스변경
+        case "07" :  //07 : 판매취소
+        case "08" :  //08 : 판매삭제
+            div_sktPrprc.msk_payAmt.Enable = false;
+            div_sktPrprc.msk_paySumAmt.Enable = false;
+
+            div_sktPrprc.msk_cashPayAmt.Enable = false;
+            div_sktPrprc.msk_prxpayAmt.Enable = false;
+
+            break;
+        case "03" :  //03 : 할부추가
+        case "04" :  //04 : 할부취소
+        case "05" :  //05 : 판매가변경
+        case "09" :  //09 : 판매수정  
+            div_sktPrprc.msk_payAmt.Enable = false;
+            div_sktPrprc.msk_paySumAmt.Enable = false;
+
+            div_sktPrprc.msk_cashPayAmt.Enable = true;
+            div_sktPrprc.msk_prxpayAmt.Enable = true;
+
+            break;
+        default:
+            break;
+    } 
+}
+
+function div_payment_msk_cashPayAmt_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,nLLParam,nHLParam)
+{
+	if ( nChar == 13 )
+	{
+	    lf_sumPayment();
+	    div_payment.cmb_crdtcrdcorp1.SetFocus();
+	}
+}
+
+
+function div_payment_msk_crdtcrdPayAmt1_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,nLLParam,nHLParam)
+{
+	if ( nChar == 13 )
+	{
+	    lf_sumPayment();
+	    div_payment.cmb_crdtcrdcorp2.SetFocus();
+	}
+}
+
+function div_payment_msk_crdtcrdPayAmt2_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,nLLParam,nHLParam)
+{
+	if ( nChar == 13 )
+	{
+	    lf_sumPayment();
+	    div_sktPrprc.msk_cashPayAmt.SetFocus();
+	}
+}
+
+function div_SktPrprc_msk_cashPayAmt_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,nLLParam,nHLParam)
+{
+	if ( nChar == 13 )
+	{
+	    lf_sktSumPayment();
+	    div_sktPrprc.msk_bamtCashRfnd.SetFocus();
+	}
+}
+
+function div_SktPrprc_msk_prxpayAmt_OnKeyDown(obj,nChar,bShift,bCtrl,bAlt,nLLParam,nHLParam)
+{
+	if ( nChar == 13 )
+	{
+	    lf_sktSumPayment();
+	    //div_sktPrprc.msk_merBondPayAmt.SetFocus();
+	}
+}
+
+
+function div_payment_msk_cashPayAmt_OnChanged(obj,strText)
+{
+	lf_sumPayment();
+}
+
+function div_payment_msk_crdtcrdPayAmt1_OnChanged(obj,strText)
+{
+	lf_sumPayment();
+}
+
+function div_payment_msk_crdtcrdPayAmt2_OnChanged(obj,strText)
+{
+	lf_sumPayment();
+}
+
+
+
+function div_SktPrprc_msk_cashPayAmt_OnChanged(obj,strText)
+{
+	lf_sktSumPayment();
+}
+
+function div_SktPrprc_msk_prxpayAmt_OnChanged(obj,strText)
+{
+	lf_sktSumPayment();
+}
+
+function div_payment_msk_crdtcrdPayAmt2_OnChar(obj,strPreText,nChar,strPostText,nLLParam,nHLParam)
+{
+	if(nChar == "45")
+	{
+		return false;
+	}
+}
+
+function div_payment_msk_crdtcrdPayAmt1_OnChar(obj,strPreText,nChar,strPostText,nLLParam,nHLParam)
+{
+	if(nChar == "45")
+	{
+		return false;
+	}
+}
+]]></Script>
+</Window>

@@ -1,0 +1,750 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="490" Id="ACCACO00200" Left="8" OnLoadCompleted="ACCACO00200_OnLoadCompleted" PidAttrib="7" Title="온라인결제&#32;수수료&#32;가감&#32;엑셀업로드" Top="8" Ver="1.0" Width="850" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="POS_AGENCY" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_UKEY" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="CMMS_ADD_SUB_TYP" size="256" summ="default" type="STRING"/>
+					<colinfo id="ERP_FIX_YN" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_DTM></ACC_DTM>
+						<DEAL_NM></DEAL_NM>
+						<DEAL_UKEY></DEAL_UKEY>
+						<POS_AGENCY></POS_AGENCY>
+						<SL_NET_CD></SL_NET_CD>
+						<STL_PLC></STL_PLC>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_cmmsAddSubDExcelList">
+				<Contents>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="CMMS_ADD_SUB_TYP" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CMMS_ADD_SUB_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="CMMS_ADD_SUB_ITM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CMMS_ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_tempExcelList">
+				<Contents>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="CMMS_ADD_SUB_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="CMMS_ADD_SUB_ITM" size="256" summ="default" type="STRING"/>
+					<colinfo id="CMMS_ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_errorExcelList">
+				<Contents>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="CMMS_ADD_SUB_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_addSubCl"></Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="774" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="4" Text="닫기" Top="333" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="수수료&#32;가감&#32;엑셀업로드" Top="60" Width="165"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_cmmsAddSubDExcelList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="324" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="237" Id="grd_cmmsAddSubDExcelList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="840" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="87" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="830">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="120"/>
+						<col width="70"/>
+						<col width="100"/>
+						<col width="250"/>
+						<col width="80"/>
+						<col width="200"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="정산처" Valign="Center"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="정산처코드" Valign="Center"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="가감구분"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="항목설명"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="가감금액" Valign="Center"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="비고" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="left" bkcolor2="user36" col="0" colid="DEAL_CO_NM" display="text"/>
+						<cell align="center" bkcolor2="user36" col="1" colid="ACC_PLC" display="text"/>
+						<cell align="center" col="2" colid="CMMS_ADD_SUB_CL" combocol="COMM_CD_VAL" combodataset="ds_addSubCl" combotext="COMM_CD_VAL_NM" display="combo" edit="combo" expandimage="btn_combo" expandshow="true" expandsize="19"/>
+						<cell align="left" bkcolor="user25" col="3" colid="CMMS_ADD_SUB_ITM" display="text" edit="normal"/>
+						<cell align="right" bkcolor="user25" col="4" colid="CMMS_ADD_SUB_AMT" display="number" edit="integer" limit="9"/>
+						<cell align="left" bkcolor2="user32" col="5" colid="RMKS" display="text" edit="normal"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" colspan="4" display="text" text="합계"/>
+						<cell align="right" bkcolor="user37" col="4" color="user38" display="number" expr='sum(&quot;CMMS_ADD_SUB_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="5" color="user38" display="number"/>
+					</summary>
+				</format>
+				<format id="ExcelGrd">
+					<columns>
+						<col width="120"/>
+						<col width="70"/>
+						<col width="100"/>
+						<col width="250"/>
+						<col width="80"/>
+						<col width="200"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="정산처" Valign="Center"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="정산처코드" Valign="Center"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="가감구분"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="항목설명"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="가감금액" Valign="Center"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="비고" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="left" bkcolor2="user36" col="0" colid="DEAL_CO_NM" display="text"/>
+						<cell align="center" bkcolor2="user36" col="1" colid="ACC_PLC" display="text"/>
+						<cell align="center" col="2" colid="CMMS_ADD_SUB_CL" combocol="COMM_CD_VAL" combodataset="ds_addSubCl" combotext="COMM_CD_VAL_NM" display="combo" edit="combo" expandimage="btn_combo" expandshow="true" expandsize="19"/>
+						<cell align="left" col="3" colid="CMMS_ADD_SUB_ITM" display="text" edit="normal"/>
+						<cell align="right" bkcolor="user25" col="4" colid="CMMS_ADD_SUB_AMT" display="number" edit="integer" limit="9"/>
+						<cell align="left" bkcolor2="user32" col="5" colid="RMKS" display="text" edit="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="710" LeftMargin="5" OnClick="btn_save_onClick" Style="sty_btn_c" TabOrder="3" Text="저장" Top="333" Width="60"></Button>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="5" Text="Div0" Top="10" Width="830">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="3" Style="sty_lb_Search" TabOrder="1" Text="대리점" Top="8" VAlign="Middle" Width="45"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCdNm" Left="52" LeftMargin="2" OnKeyDown="div_search_edt_agencyCdNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" UserData="발주처" Width="80"></Edit>
+				<Button Cursor="HAND" Height="20" Id="btn_agency" ImageID="btn_i_detail" Left="132" OnClick="div_search_btn_agency_OnClick" TabOrder="3" Text="Button0" Top="7" Width="20"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="150" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="80"></Edit>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="POS_AGENCY" Enable="FALSE" Height="20" Id="edt_agencyCd" Left="230" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Visible="FALSE" Width="10"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="244" Style="sty_lb_dataview" TabOrder="6" Text="정산월" Top="8" VAlign="Middle" Width="60"></Static>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="ACC_MTH" Height="20" Id="cal_accMth" Left="307" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="8" Type="STRING" Width="77"></MaskEdit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="384" OnClick="btn_monthCalendar_OnClick" TabOrder="8" TabStop="FALSE" Text="Button3" Top="8" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Button Cursor="HAND" Height="21" Id="btn_upload" ImageID="btn_i_excelup_w" Left="789" OnClick="btn_upload_OnClick" TabOrder="7" Text="Button1" ToolTipText="Excel&#32;Download" Top="60" Width="19"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="816" OnClick="btn_export_OnClick" TabOrder="6" Text="Button1" ToolTipText="Excel&#32;Download" Top="60" Width="19"></Button>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="8" Text="오류데이터" Top="348" Width="90"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_errorExcelList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="461" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="86" Id="grd_errorExcelList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="840" RowHeight="21" Style="sty_Grid" TabOrder="8" TabStop="true" Top="375" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="830">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="180"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="400"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="정산처" Valign="Center"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="정산처코드" Valign="Center"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="가감금액" Valign="Center"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="오류내역" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="left" bkcolor2="user36" col="0" colid="DEAL_CO_NM" display="text"/>
+						<cell align="center" bkcolor2="user36" col="1" colid="ACC_PLC" display="text"/>
+						<cell align="right" bkcolor2="user36" col="2" colid="CMMS_ADD_SUB_AMT" display="text"/>
+						<cell align="left" bkcolor2="user32" col="3" colid="RMKS" display="text" edit="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Static Align="Right" Height="13" Id="st_errorTotCount" Left="86" Style="sty_lb_info" TabOrder="10" Text="0&#32;건" Top="355" Width="40"></Static>
+		<Button Cursor="HAND" Height="21" Id="btn_errorExcel" ImageID="btn_i_exceldown_w" Left="135" OnClick="btn_errorExport_OnClick" TabOrder="11" Text="Button1" ToolTipText="Excel&#32;Download" Top="349" Width="19"></Button>
+		<Image Align="Left" Height="20" Id="img_polChg" ImageID="bul_caution" Left="180" LeftMargin="20" Style="sty_lb_info" TabOrder="12" Text="항목설명:100자&#32;이하,&#32;비고:200자&#32;이하&#32;작성!" Top="62" Width="250"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCACO00200
+* 업무명      : 정산 - 판매점정산관리
+* 프로그램명  : 수수료가감 엑셀업로드
+--------------------------------------------------------------------------------
+* 작성자      : 전승호
+* 작성일      : 2009.03.09
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_LOGIN_ID;      	//사용자계정
+var FV_ORG_ID;         	//조직코드
+var FV_ORG_CL;         	//조직구분
+var FV_SUP_ORG_ID;      //상위조직코드
+var FV_USER_GRP;        //사용자그룹
+var FV_ORG_AREA_ID; 	// 근무지 cd.
+var FV_ORG_AREA_NM; 	// 근무지 nm.
+var FV_POS_AGENCY_ID;   // 소속 대리점ID
+var FV_POS_AGENCY_NM;   // 소속 대리점명
+var FV_POS_AGENCY_UKEY_ID; 	// 소속 대리점UKEY ID
+var CMMS_ADD_SUB_TYP;		// 수수료가감유형
+var objDsNm;				// 부모 데이터소스
+
+
+/*******************************************************************************
+* 함수명 : ACCSAC00200_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function ACCACO00200_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_cmmsAddSubDExcelList);	// 그리드 정렬
+	cf_setGrdChecknSortEvent(grd_errorExcelList);	// 그리드 정렬
+
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+
+	http.Sync = true;
+	grd_cmmsAddSubDExcelList.Redraw = false;
+
+	btn_save.Visible = false;
+
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("ds_addSubCl", "ZACC_C_00160");  //가감구분
+	cf_checkCommonCode();
+
+	//alert("POP_ADD_SUB_DTL_YN:"+POP_ADD_SUB_DTL_YN);
+	if(CMMS_ADD_SUB_TYP == "1"){ // 계좌이체 수수료가감
+
+		objDsNm = parent.ds_cmmsAddSubD;
+
+	}else if(CMMS_ADD_SUB_TYP == "2"){ // 가상계좌 수수료가감
+
+		objDsNm = parent.ds_cmmsAddSubD2;
+
+	}else if(CMMS_ADD_SUB_TYP == "3"){ // 카드결제 수수료가감
+
+		objDsNm = parent.ds_cmmsAddSubD3;
+
+	}
+
+	f_initSearchSet();
+
+	grd_cmmsAddSubDExcelList.Format = "Default";
+
+	var objNm = object("parent."+PARENT_GRDDS);
+
+	for( var nRow=0; nRow<objNm.rowcount; nRow++ ){
+		if(SL_CL == "05"){ // M채널일 경우
+			if( objNm.GetColumn(nRow,"VIRTUAL_FLAG") == "N"){ // 2차점의 거래내역이 없는 데이터 제외한다.
+				ds_cmmsAddSubDExcelList.AddRow();
+				ds_cmmsAddSubDExcelList.SetColumn(nRow,"ACC_MTH",objNm.GetColumn(nRow,"ACC_MTH"));
+				ds_cmmsAddSubDExcelList.SetColumn(nRow,"ACC_PLC",objNm.GetColumn(nRow,"ACC_PLC"));
+				ds_cmmsAddSubDExcelList.SetColumn(nRow,"DEAL_CO_NM",objNm.GetColumn(nRow,"DEAL_CO_NM"));
+				ds_cmmsAddSubDExcelList.SetColumn(nRow,"SL_CL",objNm.GetColumn(nRow,"SL_CL"));
+				ds_cmmsAddSubDExcelList.SetColumn(nRow,"CMMS_ADD_SUB_AMT","0");
+				ds_cmmsAddSubDExcelList.SetColumn(nRow,"CMMS_ADD_SUB_TYP",CMMS_ADD_SUB_TYP);
+			}
+		}else{
+			ds_cmmsAddSubDExcelList.AddRow();
+			ds_cmmsAddSubDExcelList.SetColumn(nRow,"ACC_MTH",objNm.GetColumn(nRow,"ACC_MTH"));
+			ds_cmmsAddSubDExcelList.SetColumn(nRow,"ACC_PLC",objNm.GetColumn(nRow,"ACC_PLC"));
+			ds_cmmsAddSubDExcelList.SetColumn(nRow,"DEAL_CO_NM",objNm.GetColumn(nRow,"DEAL_CO_NM"));
+			ds_cmmsAddSubDExcelList.SetColumn(nRow,"SL_CL",objNm.GetColumn(nRow,"SL_CL"));
+			ds_cmmsAddSubDExcelList.SetColumn(nRow,"CMMS_ADD_SUB_AMT","0");
+			ds_cmmsAddSubDExcelList.SetColumn(nRow,"CMMS_ADD_SUB_TYP",CMMS_ADD_SUB_TYP);
+		}
+	}
+
+	ds_cmmsAddSubDExcelList.Sort("DEAL_CO_NM");
+
+	grd_cmmsAddSubDExcelList.Redraw = true;
+	http.Sync = false;
+
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack
+* 기능명 : 트랜잭션 콜백
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+
+}
+
+/*******************************************************************************
+* 함수명 : f_initSearchSet
+* 기능명 : 수수료가감 검색조건 세팅
+*******************************************************************************/
+function f_initSearchSet()
+{
+	cf_setParam(ds_condition,"ACC_MTH"   	   ,ACC_MTH);			//정산월
+	cf_setParam(ds_condition,"SL_CL"   	   	   ,SL_CL);				//영업구분
+	cf_setParam(ds_condition,"CMMS_ADD_SUB_TYP",CMMS_ADD_SUB_TYP);	//수수료가감유형
+	cf_setParam(ds_condition,"POS_AGENCY"      ,POS_AGENCY);		//대리점
+	div_search.edt_agencyCdNm.Text = POS_AGENCY_NM;					//대리점명
+	div_search.edt_agencyUkeyCd.Text = POS_AGENCY;					//대리점코드
+
+	uf_ObjComponentEnable(div_search,false);
+
+}
+
+/*******************************************************************************
+* 함수명 : f_pre_save
+* 기능명 : 저장버튼 전 체크함수
+*******************************************************************************/
+function f_pre_save()
+{
+    return true;
+}
+
+/*******************************************************************************
+ * @description    : 저장
+*******************************************************************************/
+function btn_save_onClick(obj)
+{
+	if (!(f_pre_save())) return;
+
+	var ACC_PLC = "0000";
+	var PRE_ACC_PLC = "0000";
+	var ACC_MTH = "";
+	var SL_CL = "";
+	var ERP_FIX_YN = "";
+	var SALE_CMMS_FIX_YN = "";
+	var dupCnt = 0;
+	var objNm = object("parent."+PARENT_GRDDS);
+
+	ds_cmmsAddSubDExcelList.sort("ACC_PLC");
+
+	for( var nRow=0; nRow<ds_cmmsAddSubDExcelList.rowcount; nRow++ ){
+
+		ACC_PLC = ds_cmmsAddSubDExcelList.GetColumn(nRow,"ACC_PLC");
+		ACC_MTH = ds_cmmsAddSubDExcelList.GetColumn(nRow,"ACC_MTH");
+		SL_CL   = ds_cmmsAddSubDExcelList.GetColumn(nRow,"SL_CL");
+		
+		if( objNm.GetColumn(objNm.FindRow("ACC_PLC",ACC_PLC),"ERP_FIX_YN") != "Y" &&
+		    objNm.GetColumn(objNm.FindRow("ACC_PLC",ACC_PLC),"SALE_CMMS_FIX_YN") = "Y" )
+		{
+
+			dupCnt = objDsNm.CaseCount("ACC_PLC==" + quote(ACC_PLC) +
+												     " && ACC_MTH==" + quote(ACC_MTH)+
+											         " && SL_CL==" + quote(SL_CL));
+		    if(dupCnt > 0 ){
+
+				for(var idx = 0; idx < dupCnt; idx++){
+
+					var findRow = objDsNm.SearchRow("ACC_PLC==" + quote(ACC_PLC) +
+																  " && ACC_MTH==" + quote(ACC_MTH) +
+																  " && SL_CL==" + quote(SL_CL));
+					if(findRow != -1){
+						objDsNm.DeleteRow(findRow);
+					}
+				}
+			}
+			//부모데이터의 수수료가감 금액 입력
+			//수수료 가감은 같은 정산처의  다수이기에 최초일경우에만 부모데이터에 넣는다.
+			if(ACC_PLC != PRE_ACC_PLC){
+				var PARENT_CURROW = objNm.SearchRow("ACC_PLC==" + quote(ACC_PLC) +
+													" && ACC_MTH==" + quote(ACC_MTH) +
+													" && SL_CL==" + quote(SL_CL));
+
+				//부모데이터의 원데이터 조회
+				var findOrginRow = parent.ds_copyMonthClsList.SearchRow("ACC_PLC==" + quote(ACC_PLC) +
+																        " && ACC_MTH==" + quote(ACC_MTH) +
+																        " && SL_CL==" + quote(SL_CL));
+				var ORG_CMMS_ADD_SUB_AMT = 0;
+
+					if(CMMS_ADD_SUB_TYP == "1"){ // 계좌이체 수수료가감
+
+						if(findOrginRow != -1){
+							ORG_CMMS_ADD_SUB_AMT = parent.ds_copyMonthClsList.getColumn(findOrginRow,"ACC_TRNSF_CMMS_ADD_SUB_AMT");
+						}
+
+						objNm.setColumn(PARENT_CURROW,"ACC_TRNSF_CMMS_ADD_SUB_AMT",toNumber(ds_cmmsAddSubDExcelList.sum("decode(ACC_PLC,'"+ACC_PLC+"',CMMS_ADD_SUB_AMT,0)")) +
+																		 toNumber(ORG_CMMS_ADD_SUB_AMT));
+
+						objNm.setColumn(PARENT_CURROW,"ADD_SUB_DTL_YN","Y");
+						objNm.setColumn(PARENT_CURROW,"CHK","1");
+
+					}else if(CMMS_ADD_SUB_TYP == "2"){ // 가상계좌 수수료가감
+
+						if(findOrginRow != -1){
+							ORG_CMMS_ADD_SUB_AMT = parent.ds_copyMonthClsList.getColumn(findOrginRow,"VIRTL_ACC_CMMS_ADD_SUB_AMT");
+						}
+
+						objNm.setColumn(PARENT_CURROW,"VIRTL_ACC_CMMS_ADD_SUB_AMT",toNumber(ds_cmmsAddSubDExcelList.sum("decode(ACC_PLC,'"+ACC_PLC+"',CMMS_ADD_SUB_AMT,0)")) +
+																		 toNumber(ORG_CMMS_ADD_SUB_AMT));
+
+						objNm.setColumn(PARENT_CURROW,"ADD_SUB_DTL_YN2","Y");
+						objNm.setColumn(PARENT_CURROW,"CHK","1");
+
+					}else if(CMMS_ADD_SUB_TYP == "3"){ // 카드결제 수수료가감
+
+						if(findOrginRow != -1){
+							ORG_CMMS_ADD_SUB_AMT = parent.ds_copyMonthClsList.getColumn(findOrginRow,"CARD_SETTLE_CMMS_ADD_SUB_AMT");
+						}
+
+						objNm.setColumn(PARENT_CURROW,"CARD_SETTLE_CMMS_ADD_SUB_AMT",toNumber(ds_cmmsAddSubDExcelList.sum("decode(ACC_PLC,'"+ACC_PLC+"',CMMS_ADD_SUB_AMT,0)")) +
+																		 toNumber(ORG_CMMS_ADD_SUB_AMT));
+
+						objNm.setColumn(PARENT_CURROW,"ADD_SUB_DTL_YN3","Y");
+						objNm.setColumn(PARENT_CURROW,"CHK","1");
+
+					}
+
+//				if(findOrginRow != -1){
+//					ORG_CMMS_ADD_SUB_AMT = parent.ds_copyMonthClsList.getColumn(findOrginRow,"CMMS_ADD_SUB_AMT");
+//				}
+//
+//				objNm.setColumn(PARENT_CURROW,"CMMS_ADD_SUB_AMT",toNumber(ds_cmmsAddSubDExcelList.sum("decode(ACC_PLC,'"+ACC_PLC+"',CMMS_ADD_SUB_AMT,0)")) +
+//																 toNumber(ORG_CMMS_ADD_SUB_AMT));
+//
+//				objNm.setColumn(PARENT_CURROW,"ADD_SUB_DTL_YN","Y");
+//				objNm.setColumn(PARENT_CURROW,"CHK","1");
+			}
+		}
+
+		PRE_ACC_PLC = ACC_PLC;
+	}
+
+	for( var nRow=0; nRow<ds_cmmsAddSubDExcelList.rowcount; nRow++ ){
+		ds_cmmsAddSubDExcelList.SetColumn(nRow,"CMMS_ADD_SUB_TYP",CMMS_ADD_SUB_TYP);
+	}
+	//부모데이트의 수수료가감 Data 이관
+	//추가할 Dataset과 기존의 Dataset의 Column 정보는 일치해야 합니다.
+	//ACCACO00600.XML 의 데이터 셋과 동일하게 맞쳐줘야한다.
+	objDsNm.AppendDataSet(ds_cmmsAddSubDExcelList);
+
+	cmmsAddSubD = "Y";
+	this.close("1");
+}
+
+/*******************************************************************************
+* 함수명 : btn_export_OnClick
+* 기능명 :  엑셀 export
+*******************************************************************************/
+function btn_export_OnClick(obj)
+{
+	grd_cmmsAddSubDExcelList.Format = "ExcelGrd";
+
+	f_exportExcel(grd_cmmsAddSubDExcelList);
+
+}
+
+/*******************************************************************************
+* 함수명 : btn_errorExport_OnClick
+* 기능명 :  엑셀 export
+*******************************************************************************/
+function btn_errorExport_OnClick(obj)
+{
+	cf_exportExcel(grd_errorExcelList);
+}
+
+/*******************************************************************************
+* 함수명 : btn_upload_OnClick
+* 기능명 :  엑셀 inport
+*******************************************************************************/
+function btn_upload_OnClick(obj)
+{
+	grd_cmmsAddSubDExcelList.Redraw = false;
+	grd_errorExcelList.Redraw = false;
+
+	var CMMS_ADD_SUB_ITM = "";
+	var CMMS_ADD_SUB_AMT = "";
+	var RMKS = "";
+	var ERP_FIX_YN = "N";
+	var nLimit;
+	var dupCnt = 0;
+
+	ds_tempExcelList.clearData();
+	ds_errorExcelList.clearData();
+
+	f_importExcel("ds_tempExcelList");
+
+	if(ds_tempExcelList.rowCount >0) {
+
+		ds_cmmsAddSubDExcelList.ClearData();
+		cf_copyDataset(ds_cmmsAddSubDExcelList, ds_tempExcelList, null, true);
+
+		for(var nRow = ds_cmmsAddSubDExcelList.rowCount-1; nRow>=0; nRow--) {
+
+			var ACC_PLC = ds_cmmsAddSubDExcelList.GetColumn(nRow,"ACC_PLC");
+
+			var findRow = parent.ds_monthClsList.SearchRow("ACC_PLC==" + quote(ACC_PLC));
+
+			nLimit = grd_cmmsAddSubDExcelList.GetCellProp('body',4,'Limit');
+
+			CMMS_ADD_SUB_AMT = trim(ds_cmmsAddSubDExcelList.GetColumn(nRow,"CMMS_ADD_SUB_AMT"));
+			CMMS_ADD_SUB_ITM = trim(ds_cmmsAddSubDExcelList.GetColumn(nRow,"CMMS_ADD_SUB_ITM"));
+
+			if(uf_isNull(CMMS_ADD_SUB_AMT) == true){
+
+				CMMS_ADD_SUB_AMT = 0;
+			}
+
+			if(findRow < 0 ){
+				ds_errorExcelList.AddRow();
+				ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_cmmsAddSubDExcelList",nRow);
+				ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","존재하지 않은 정산처 코드 입니다.");
+				ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"CMMS_ADD_SUB_ITM","");
+				ds_cmmsAddSubDExcelList.DeleteRow(nRow);
+				continue;
+			}
+
+			if(uf_isNull(trim(CMMS_ADD_SUB_ITM)) == true){
+				ds_errorExcelList.AddRow();
+				ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_cmmsAddSubDExcelList",nRow);
+				ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","항목설명은 필수 사항입니다.");
+				ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"CMMS_ADD_SUB_ITM","");
+				ds_cmmsAddSubDExcelList.DeleteRow(nRow);
+				continue;
+			}
+
+			if( f_isNumber(CMMS_ADD_SUB_AMT) == true &&
+				length(trim(CMMS_ADD_SUB_AMT)) !=0 &&
+				CMMS_ADD_SUB_AMT !=0 )
+			{
+				if(nLimit != "0")
+				{
+					if( length(CMMS_ADD_SUB_AMT) > toNumber(nLimit)){
+
+						ds_errorExcelList.AddRow();
+						ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_cmmsAddSubDExcelList",nRow);
+						ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","가감금액이 한도초과하였습니다.");
+						ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"CMMS_ADD_SUB_AMT",CMMS_ADD_SUB_AMT);
+						ds_cmmsAddSubDExcelList.DeleteRow(nRow);
+
+					}else{
+						if( parent.ds_monthClsList.GetColumn(parent.ds_monthClsList.FindRow("ACC_PLC",ACC_PLC),"ERP_FIX_YN") == "Y"){
+
+							ds_errorExcelList.AddRow();
+							ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_cmmsAddSubDExcelList",nRow);
+							ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","정산완료된 정산처 입니다.");
+							ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"CMMS_ADD_SUB_AMT",CMMS_ADD_SUB_AMT);
+							ds_cmmsAddSubDExcelList.DeleteRow(nRow);
+
+						}else if( parent.ds_monthClsList.GetColumn(parent.ds_monthClsList.FindRow("ACC_PLC",ACC_PLC),"SALE_CMMS_FIX_YN") != "Y"){
+
+							ds_errorExcelList.AddRow();
+							ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_cmmsAddSubDExcelList",nRow);
+							ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","수수료가감 미완료된 정산처 입니다.");
+							ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"CMMS_ADD_SUB_AMT",CMMS_ADD_SUB_AMT);
+							ds_cmmsAddSubDExcelList.DeleteRow(nRow);
+
+						}else{
+
+							ds_cmmsAddSubDExcelList.SetColumn(nRow,"ACC_MTH",ACC_MTH);
+							ds_cmmsAddSubDExcelList.SetColumn(nRow,"SL_CL",SL_CL);
+
+							if(toNumber(ds_cmmsAddSubDExcelList.GetColumn(nRow,"CMMS_ADD_SUB_AMT")) > 0){
+								ds_cmmsAddSubDExcelList.SetColumn(nRow,"CMMS_ADD_SUB_CL","01");
+							}else if(toNumber(ds_cmmsAddSubDExcelList.GetColumn(nRow,"CMMS_ADD_SUB_AMT")) < 0){
+								ds_cmmsAddSubDExcelList.SetColumn(nRow,"CMMS_ADD_SUB_CL","02");
+							}else{
+								ds_cmmsAddSubDExcelList.SetColumn(nRow,"CMMS_ADD_SUB_CL","");
+							}
+
+						}
+					}
+				}
+
+			}else{
+
+				ds_errorExcelList.AddRow();
+				ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_cmmsAddSubDExcelList",nRow);
+				ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","가감금액 0 이아닌 숫자만을 입력하십시오.");
+				ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"CMMS_ADD_SUB_AMT",CMMS_ADD_SUB_AMT);
+				ds_cmmsAddSubDExcelList.DeleteRow(nRow);
+
+			}
+
+			//채널일 경우만 해당된다.
+			if(SL_CL == "05"){ // M채널일 경우
+
+				if(findRow != -1 ){
+					if( parent.ds_monthClsList.GetColumn(findRow,"VIRTUAL_FLAG") != "N"){ // 2차점의 거래내역이 없는 데이터 제외한다.
+
+						ds_errorExcelList.AddRow();
+						ds_errorExcelList.CopyRow(ds_errorExcelList.lastrow,"ds_cmmsAddSubDExcelList",nRow);
+						ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"RMKS","2차점의 거래내역이 없는 정산처 입니다.");
+						ds_errorExcelList.SetColumn(ds_errorExcelList.lastrow,"CMMS_ADD_SUB_AMT",CMMS_ADD_SUB_AMT);
+						ds_cmmsAddSubDExcelList.DeleteRow(nRow);
+
+					}
+				}
+
+			}
+
+		}
+
+		btn_save.Visible = true;
+
+	}
+
+	grd_cmmsAddSubDExcelList.Format = "Default";
+
+	f_setTotalCount(ds_errorExcelList.RowCount());
+
+	ds_cmmsAddSubDExcelList.Sort("DEAL_CO_NM");
+
+	ds_errorExcelList.Sort("DEAL_CO_NM");
+
+	grd_errorExcelList.Redraw = true;
+	grd_cmmsAddSubDExcelList.Redraw = true;
+
+}
+
+/*******************************************************************************
+ * @description         : 그리드의 데이터를 엑셀화로 출력
+ * @param oGrd   		: 그리드 객체
+		  nMode   		: 엑셀 저장 모드 - 1 or null : 엑셀로드 , 2 : 파일 저장
+*******************************************************************************/
+function f_exportExcel(oGrd, nMode)
+{
+	var sFilePath = "";
+	var sFileName = "";
+	var sSavedName = "";
+	var sSheetName = "수수료가감";
+	var stmp;
+
+	var oGrdDs = object(oGrd.BindDataset);
+
+	if (oGrdDs.GetRowCount() < 1)
+	{
+		alert(MSG_00983);
+		return;
+	}
+
+	if(nMode != null && nMode == 2)
+	{
+		if( fld_excel.Open( "C:\\" ) )
+		{
+			sFilePath = fld_excel.FilePath;
+			sFileName = fld_excel.FileName;
+			sTmp = substr(sFileName, length(sFileName) - 3, length(sFileName));
+			if (sTmp != "xls")
+			{
+			   sFileName = sFileName + ".xls";
+			}
+			sSavedName = sFilePath + "\\" + sFileName;
+			oGrd.SaveExcel(sSavedName, sSheetName);
+		}
+		else
+		{
+			alert(MSG_00982);
+		}
+	}
+	else
+	{
+		oGrd.ExportExcelEx(sSheetName, "A1", false, true);
+	}
+
+	grd_cmmsAddSubDExcelList.Format = "ExcelGrd";
+
+}
+
+/*******************************************************************************
+ * @description             : 엑셀 파일을 읽어 지정하는 데이타셋에 로드
+ * @param sDsName   		: 데이타셋 아이디
+		  nUseDsInfo   		: 데이타셋 칼럼 정보 사용 유무 - 1: 사용, 0: 무시
+		  nStartIndex   	: 엑셀을 읽을 시작 행 위치
+ * @return	                : 선택한 엑셀파일의 풀패스
+ * @etc                     : DS 칼럼 정보 사용시 엑셀의 셀 순서와 DS 칼럼 순서가 같아야 함!
+*******************************************************************************/
+function f_importExcel(sDsName, nUseDsInfo, nStartIndex, nSheetIndex)
+{
+	fld_excel.Type = "OPEN";
+	var bResult = fld_excel.Open();
+
+	if ( bResult )
+	{
+		var sFullPath = fld_excel.FilePath + '\\' + fld_excel.FileName;
+
+		if(nUseDsInfo == null)
+		{
+			nUseDsInfo = 1;
+		}
+
+		if(nStartIndex == null)
+		{
+			nStartIndex = 1;
+		}
+
+		if(nSheetIndex == null)
+		{
+			nSheetIndex = 0;
+		}
+
+		var nResult = ext_ExcelImportByIndex(sFullPath, nSheetIndex, sDsName, nUseDsInfo, 0, 0, nStartIndex);
+
+		if(ds_tempExcelList.colcount != grd_cmmsAddSubDExcelList.GetCellCount("Head")){
+
+			alert("EXCEL CELL 의 갯수가 일치하지 않습니다. \r\n 파일을 다시 한번 확인해주세요.");
+			return false;
+		}
+
+		ds_tempExcelList.DeleteRow(0); //엑셀의 헤드첫행 삭제
+
+		if (ds_tempExcelList.count == 0){
+			alert("업로드할 자료가 없습니다.");
+			return false;
+		}
+
+		if(nResult == 0)
+		{
+			return sFullPath;
+		}
+
+	}
+
+}
+
+/*******************************************************************************
+* 함수명 : f_isNumber
+* 기능명 :  숫자인지 check
+*******************************************************************************/
+function f_isNumber(sNumber)
+{
+	var i;
+
+	var digit = replace(sNumber,'-',''); //-은 제외
+	//숫자인지 check
+	for(i=0; i<length(digit); i++) {
+		if(asc(CharAt(digit, i)) < 48
+		   || asc(CharAt(digit, i)) > 57) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/*******************************************************************************
+* 함수명 : f_setTotalCount
+* 기능명 :  오류데이터 건수 Display
+*******************************************************************************/
+function f_setTotalCount(stErrorTotCount) {
+	st_errorTotCount.Text = stErrorTotCount + " 건";
+}
+
+/*******************************************************************************
+ * @description    : 닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+]]></Script>
+</Window>

@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="DISINN01100">
+	<select id="getPrchsInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISINN01100_getPrchsInfo_이문규 */
+         a.prchs_mgmt_no
+       , a.prod_cd
+       , b.prod_nm
+       , a.ser_num
+       , a.color_cd
+	   , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', a.color_cd) AS color_nm       
+       , a.prchs_dt
+       , b.mktg_dt          /* 출시일자 */
+       , a.svc_dt           /* 개통일자 */
+       , a.eqp_st           /* 단말기 상태 */
+       , a.useprd_ddct_amt  /* 사용기간차감금 */
+       , a.corrosion_yn     /* 내부부식여부 */
+       , a.power_yn         /* 전원시스템 */
+       , a.call_yn          /* 통화품질테스트 */
+       , a.data_yn          /* DATA성능 */
+       , a.disp_yn          /* 화면여부 */ 
+       , a.function_yn      /* 기능테스트 */
+       , a.lost_yn          /* 분실단말기여부 */
+       , a.return_yn        /* 보상반납대상여부 */
+       , a.lease_yn         /* 임대폰여부 */
+       , a.flood_yn         /* 침수여부 */
+       , a.usim_yn          /* USIM기변여부 */
+       , a.other_yn         /* 타사/해외단말기여부 */
+FROM     tcst_prchs_mgmt a
+       , tbas_prod_mgmt  b
+WHERE  a.del_yn   = 'N'
+AND    a.prchs_mgmt_no = #prchs_mgmt_no#
+AND    a.prod_cd  = b.prod_cd
+AND    b.prod_cl  = '1'         /* 상품구분 : 1 단말기 */
+AND    b.del_yn   = 'N']]>
+	</select>
+	<select id="getPrchsCpntList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISINN01100_getPrchsCpntList_이문규 */
+         a.in_mgmt_no
+       , a.in_seq
+       , a.prod_cd
+       , b.prod_nm
+       , a.color_cd
+       , a.ser_num
+       , b.prod_cl
+       , a.in_qty
+FROM     tdis_in_cpnt a
+       , tbas_prod_mgmt b 
+WHERE  1 = 1
+AND    a.in_mgmt_no = #in_mgmt_no# 
+AND    a.in_seq     = #in_seq#
+AND    a.del_yn     = 'N'
+AND    a.prod_cd    = b.prod_cd
+AND    b.del_yn     = 'N']]>
+	</select>
+	<select id="getCpntDisDtl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISINN01100_getCpntDisDtl_이문규 */ 
+       A.PROD_CD , 
+       B.PROD_NM , 
+       A.COLOR_CD , 
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', A.COLOR_CD) AS COLOR_NM , 
+       A.SER_NUM , 
+       A.HLD_PLC_ID , 
+       FBAS_GET_DEAL_NM(A.HLD_PLC_ID, A.LAST_INOUT_DT) AS HLD_PLC_NM , 
+       A.POS_AGENCY , 
+       FBAS_GET_DEAL_NM(A.POS_AGENCY, A.LAST_INOUT_DT) AS POS_AGENCY_NM , 
+       A.DIS_ST , 
+       A.EQP_ST , 
+       A.DIS_AMT , 
+       NVL(FBAS_GET_RESERVE_AMT(E.CON_MGMT_NO),0) AS RESERVE_AMT ,
+       B.MKTG_DT , 
+       FST_PRCHS_PLC_ID AS PRCHS_PLC_ID , 
+       FST_PRCHS_PLC_ID , 
+       A.UPD_CNT , 
+       E.CON_MGMT_NO 
+  FROM 
+      (SELECT XX.PROD_CD ,
+              XX.COLOR_CD ,
+              XX.SER_NUM ,
+              XX.HLD_PLC_ID ,
+              XX.DIS_ST ,
+              XX.EQP_ST ,
+              XX.DIS_AMT ,
+              XX.FST_PRCHS_PLC_ID ,
+              XX.LAST_INOUT_DT ,
+              XX.LAST_INOUT_DTL_CL ,
+              XX.LAST_INOUT_CL ,
+              (SELECT /*+ INDEX_DESC (XBAS_DEAL_CO_MGMT_PK) */ 
+                      POS_AGENCY 
+                 FROM TBAS_DEAL_CO_MGMT 
+                WHERE DEAL_CO_CD = XX.HLD_PLC_ID 
+                      AND EFF_STA_DTM <= XX.LAST_INOUT_DT 
+                      AND EFF_END_DTM >= XX.LAST_INOUT_DT 
+                      AND DEL_YN = 'N' 
+              ) AS POS_AGENCY ,
+              XX.UPD_CNT 
+         FROM TDIS_DIS XX 
+        WHERE XX.DEL_YN = 'N' 
+              AND XX.PROD_CD = #prod_cd# 
+              AND XX.SER_NUM= #ser_num# 
+              AND XX.COLOR_CD = #color_cd#
+       ) A , 
+       TBAS_PROD_MGMT B , 
+      (SELECT X.PROD_CD ,
+              X.COLOR_CD ,
+              X.SER_NUM ,
+              X.INOUT_SEQ ,
+              X.INOUT_CL ,
+              X.INOUT_DTL_CL ,
+              X.INOUT_DT ,
+              X.IN_MGMT_NO ,
+              X.IN_SEQ 
+         FROM TDIS_DIS_INOUT_HST X 
+        WHERE ( X.PROD_CD, X.COLOR_CD, X.SER_NUM, X.INOUT_SEQ)
+              IN 
+             (SELECT PROD_CD,
+                     COLOR_CD,
+                     SER_NUM,
+                     MAX(INOUT_SEQ) 
+                FROM TDIS_DIS_INOUT_HST 
+               WHERE INOUT_CL = '100' 
+                     AND INOUT_DTL_CL IN ('101','114','113') 
+                     AND DEL_YN = 'N' 
+               GROUP BY PROD_CD, 
+                     COLOR_CD, 
+                     SER_NUM
+              ) 
+       ) C , 
+       TDIS_IN_DTL_D D , 
+       TCST_PRCHS_MGMT E 
+ WHERE A.PROD_CD = B.PROD_CD 
+   AND A.PROD_CD = C.PROD_CD 
+   AND A.COLOR_CD = C.COLOR_CD 
+   AND A.SER_NUM = C.SER_NUM 
+   AND A.LAST_INOUT_CL = C.INOUT_CL 
+   AND A.LAST_INOUT_DTL_CL = C.INOUT_DTL_CL 
+   AND A.LAST_INOUT_DT = C.INOUT_DT 
+   AND C.IN_MGMT_NO = D.IN_MGMT_NO 
+   AND C.IN_SEQ = D.IN_SEQ 
+   AND D.DEL_YN = 'N' 
+   AND D.PRCHS_MGMT_NO = E.PRCHS_MGMT_NO]]>
+	</select>
+	<select id="getCpntEtcDisDtl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISINN01100_getProdCpntList_이문규 */ 
+       a.prod_cd
+      ,a.prod_nm 
+      ,b.cmp_prod_cd    AS cpnt_prod_cd
+      ,d.prod_nm        AS cpnt_prod_nm
+      ,c.color_cd       AS cpnt_color_cd
+	  , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', c.color_cd) AS cpnt_color_nm    
+      ,c.ser_num        AS cpnt_ser_num   
+      ,''               AS cpnt_etc_seq
+      ,d.prod_cl
+      ,FBAS_GET_COMMCDNM_VAL('ZBAS_C_00010', d.prod_cl) AS prod_cl_nm
+      ,b.dtl_cl
+      ,FBAS_GET_COMMCDNM_VAL('ZBAS_P_00030', b.dtl_cl) AS dtl_cl_nm      
+      ,b.qty                AS base_qty
+      ,NVL(c.in_qty, 0)     AS prchs_qty
+      ,0                    AS add_qty
+      ,NVL(b.sale_price, 0) AS sale_price
+      ,NVL(c.unit_prc, 0)   AS prchs_prc
+      ,''                   AS prchs_plc_id
+FROM    TBAS_PROD_MGMT a
+       ,TBAS_PROD_DTL  b
+       ,(SELECT  A.in_mgmt_no
+                ,in_seq
+                ,seq
+                ,prod_cd
+                ,color_cd
+                ,ser_num
+                ,in_qty
+                ,unit_prc
+                ,dtl_cl
+                ,B.IN_FIX_DT
+         FROM   TDIS_IN_CPNT A, TDIS_IN_M B
+         WHERE  A.in_mgmt_no = #in_mgmt_no#
+         AND    A.in_mgmt_no = B.in_mgmt_no
+         AND    in_seq     = #in_seq#
+         AND    A.del_yn     = 'N'
+         AND    B.DEL_YN     = 'N'
+         )   c
+        ,TBAS_PROD_MGMT d
+WHERE   a.prod_cd     = #prod_cd#
+AND     a.del_yn      = 'N'
+AND     a.prod_cd     = b.prod_cd
+AND     b.del_yn      = 'N'
+AND     b.cmp_prod_cd = c.prod_cd(+)
+AND     b.dtl_cl      = c.dtl_cl(+)
+AND     b.cmp_prod_cd = d.prod_cd
+AND     d.del_yn      = 'N'
+AND     NVL(IN_FIX_DT,TO_CHAR(SYSDATE,'YYYYMMDD')) BETWEEN B.ST_DT AND B.ED_DT]]>
+	</select>
+	<procedure id="getMgmtNo" parameterClass="map" ><![CDATA[call SP_DIS_DCO_MGMT_NO ( 
+	#errcode,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#errmsg,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#mgmt_no_cd,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#user_id,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#mgmt_no,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#
+)]]>
+	</procedure>
+	<insert id="addOutM" parameterClass="map" ><![CDATA[INSERT INTO tdis_out_m /*+ DISINN01100_addOutM_이문규 */
+	  ( out_mgmt_no 
+	  , out_cl
+	  , out_schd_dt
+	  , out_plc_id
+	  , in_plc_id
+	  , out_fix_dt
+	  , out_fix_yn
+	  , rmks
+	  , del_yn 
+	  , upd_cnt 
+	  , ins_dtm 
+	  , ins_user_id 
+	  , mod_dtm 
+	  , mod_user_id)
+VALUES
+	  ( #out_mgmt_no#
+	  , #out_cl#
+	  , TO_CHAR(SYSDATE, 'yyyymmdd') 
+	  , #out_plc_id#
+	  , #in_plc_id#
+	  , TO_CHAR(SYSDATE, 'yyyymmdd') 
+	  , #out_fix_yn#
+	  , #rmks#
+	  , 'N'
+	  , 0
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  )]]>
+	</insert>
+	<insert id="addOutDtl" parameterClass="map" ><![CDATA[INSERT INTO tdis_out_dtl_d /*+ DISINN01100_addOutDtl_이문규 */
+	  ( out_mgmt_no 
+	  , out_seq
+	  , prod_cd
+	  , color_cd
+	  , eqp_st
+	  , dis_st
+	  , ser_num
+	  , out_qty
+	  , unit_prc
+	  , amt
+	  , del_yn 
+	  , upd_cnt 
+	  , ins_dtm 
+	  , ins_user_id 
+	  , mod_dtm 
+	  , mod_user_id)
+VALUES
+	  ( #out_mgmt_no#
+	  , (select nvl(max(out_seq),0) + 1
+	     from   tdis_out_dtl_d
+	     where  out_mgmt_no = #out_mgmt_no#)
+	  , #prod_cd#
+	  , #color_cd#
+	  , #eqp_st#
+	  , #dis_st#
+	  , #ser_num#
+	  , nvl(#out_qty# , 0) 
+	  , nvl(#unit_prc#, 0)
+	  , nvl(#amt#     , 0)
+	  , 'N'
+	  , 0
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  )]]>
+	</insert>
+	<select id="getOutSeq" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISINN01100_getOutSeq_이문규 */
+       NVL(MAX(out_seq), 0) + 1  AS out_seq
+FROM   TDIS_OUT_DTL_D
+WHERE  out_mgmt_no = #out_mgmt_no#]]>
+	</select>
+	<insert id="addDisInOutHst" parameterClass="map" ><![CDATA[INSERT INTO tdis_dis_inout_hst /*+ DISINN01100_addDisInOutHst_이문규 */
+	  ( prod_cd 
+	  , color_cd
+	  , ser_num
+	  , inout_seq
+	  , in_mgmt_no
+	  , out_mgmt_no
+	  , out_seq
+	  , inout_dt
+	  , inout_cl
+	  , inout_dtl_cl
+	  , prchs_plc_id
+	  , out_plc_id
+	  , in_plc_id
+	  , del_yn 
+	  , upd_cnt 
+	  , ins_dtm 
+	  , ins_user_id 
+	  , mod_dtm 
+	  , mod_user_id
+	  )
+VALUES
+	  ( #prod_cd#
+	  , #color_cd#
+	  , #ser_num#
+	  , (SELECT nvl(max(inout_seq),0) + 1
+	     FROM   tdis_dis_inout_hst
+	     WHERE  prod_cd  = #prod_cd#
+	     AND    color_cd = #color_cd#
+	     AND    ser_num  = #ser_num#
+	     )
+	  , #in_mgmt_no#
+	  , #out_mgmt_no#
+	  , #out_seq#
+	  , #inout_dt#
+	  , #inout_cl#
+	  , #inout_dtl_cl#
+	  , #prchs_plc_id#
+	  , #out_plc_id#
+	  , #in_plc_id#
+	  , 'N'
+	  , 0
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  )]]>
+	</insert>
+	<insert id="addEtcDisInOutHst" parameterClass="map" ><![CDATA[INSERT INTO tdis_etc_dis_inout_hst /*+ DISINN01100_addEtcDisInOutHst_이문규 */
+	  ( prod_cd 
+	  , color_cd
+	  , ser_num
+	  , inout_seq
+	  , etc_seq
+	  , in_mgmt_no
+	  , in_seq
+	  , out_mgmt_no
+	  , out_seq
+	  , inout_dt
+	  , inout_cl
+	  , inout_dtl_cl
+	  , prchs_plc_id
+	  , out_plc_id
+	  , in_plc_id
+	  , inout_qty
+	  , del_yn 
+	  , upd_cnt 
+	  , ins_dtm 
+	  , ins_user_id 
+	  , mod_dtm 
+	  , mod_user_id)
+VALUES
+	  ( #cpnt_prod_cd#
+	  , #cpnt_color_cd#
+	  , #cpnt_ser_num#
+	  , (SELECT nvl(max(inout_seq),0) + 1
+	     FROM   tdis_etc_dis_inout_hst
+	     WHERE  prod_cd  = #cpnt_prod_cd#
+	     AND    color_cd = #cpnt_color_cd#
+	     AND    ser_num  = #cpnt_ser_num#
+	     )
+	  , #etc_seq#
+	  , #in_mgmt_no#
+	  , #in_seq#
+	  , #out_mgmt_no#
+	  , #out_seq#
+	  , #inout_dt#
+	  , #inout_cl#
+	  , #inout_dtl_cl#
+	  , #prchs_plc_id#
+	  , #out_plc_id#
+	  , #in_plc_id#
+	  , #inout_qty#
+	  , 'N'
+	  , 0
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  )]]>
+	</insert>
+	<update id="updateDisLastInOut" parameterClass="map" ><![CDATA[UPDATE /*+ DISINN01100_updateDisLastInOut_이문규 */ 
+	tdis_dis
+SET
+	 last_inout_dt     = TO_CHAR(SYSDATE, 'yyyymmdd') /* 최종입출고일자 */ 
+	,last_inout_cl     = #last_inout_cl#              /* 최종입출고구분 */
+	,last_inout_dtl_cl = #last_inout_dtl_cl#          /* 최종입출고상세구분 */
+	,upd_cnt           = upd_cnt+1 				      /* UPDATE COUNT */
+	,mod_dtm           = TO_CHAR(SYSDATE, 'yyyymmddhh24miss')
+	,mod_user_id       = #onlineContext.userInfo.loginId#	
+WHERE del_yn   = 'N'
+AND   prod_cd  = #prod_cd#
+AND   color_cd = #color_cd#
+AND   ser_num   = #ser_num#]]>
+	</update>
+	<insert id="addProdDis" parameterClass="map" ><![CDATA[INSERT INTO tdis_prod_dis /*+ DISINN01100_addProdDis_이문규 */
+	  ( prod_cd 
+	  , color_cd
+	  , ser_num
+	  , old_ser_num
+	  , hld_plc_id
+	  , dis_st
+	  , eqp_st
+      , last_inout_dt
+      , last_inout_cl
+      , last_inout_dtl_cl
+      , fst_in_fix_dt
+      , fst_in_plc_id
+      , fst_prchs_plc_id
+      , last_mov_in_dt
+      , fix_sale_amt
+	  , dis_amt
+	  , fix_sale_dt
+	  , sale_yn
+	  , rmks
+	  , del_yn 
+	  , upd_cnt 
+	  , ins_dtm 
+	  , ins_user_id 
+	  , mod_dtm 
+	  , mod_user_id
+	  , con_mgmt_no
+	  , reserve_amt)
+VALUES
+	  ( #prod_cd#
+	  , #color_cd#
+	  , #ser_num#
+	  , #old_ser_num#
+	  , #hld_plc_id#
+	  , #dis_st#
+	  , #eqp_st#
+      , #last_inout_dt#
+      , #last_inout_cl#
+      , #last_inout_dtl_cl#
+      , #fst_in_fix_dt#
+      , #fst_in_plc_id#
+      , #fst_prchs_plc_id#
+      , #last_mov_in_dt#
+      , #fix_sale_amt#+NVL(fbas_get_reserve_amt(#con_mgmt_no#),0)
+	  , #dis_amt#
+	  , #fix_sale_dt#
+	  , #sale_yn#
+	  , #rmks#
+	  , 'N'
+	  , 0
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , #con_mgmt_no#
+	  , NVL(fbas_get_reserve_amt(#con_mgmt_no#),0)
+	  )]]>
+	</insert>
+	<insert id="addProdUnitPrc" parameterClass="map" ><![CDATA[INSERT INTO tdis_prod_unit_prc /*+ DISINN01100_addProdUnitPrc_이문규 */
+	  ( 
+	    prod_cd 
+	  , color_cd
+	  , ser_num
+	  , prc_seq
+	  , occr_cl
+	  , occr_dt
+	  , amt
+	  , del_yn 
+	  , upd_cnt 
+	  , ins_dtm 
+	  , ins_user_id 
+	  , mod_dtm 
+	  , mod_user_id
+	  , rmks)
+VALUES
+	  ( #prod_cd#
+	  , #color_cd#
+	  , #ser_num#
+	  , (SELECT nvl(max(seq),0) + 1
+	     FROM   tdis_prod_cpnt
+	     WHERE  prod_cd  = #prod_cd#
+	     AND    color_cd = #color_cd#
+	     AND    ser_num  = #ser_num#
+	     )
+	  , #occr_cl#
+	  , #occr_dt#
+	  , #amt#
+	  , 'N'
+	  , 0
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')||';'||#onlineContext.userInfo.loginId#||'DISINN01100.addProdUnitPrc'||';'||';'||#amt#
+	  )]]>
+	</insert>
+	<insert id="addProdCpnt" parameterClass="map" ><![CDATA[INSERT INTO tdis_prod_cpnt /*+ DISINN01100_addProdCpnt_이문규 */
+	  ( 
+	    prod_cd 
+	  , color_cd
+	  , ser_num
+	  , seq
+	  , in_qty
+	  , cncl_yn
+	  , cpnt_prod_cd
+	  , cpnt_color_cd
+	  , cpnt_ser_num
+	  , cpnt_etc_seq
+	  , del_yn 
+	  , upd_cnt 
+	  , ins_dtm 
+	  , ins_user_id 
+	  , mod_dtm 
+	  , mod_user_id
+	  , amt
+	  )
+VALUES
+	  ( #prod_cd#
+	  , #color_cd#
+	  , #ser_num#
+	  , (SELECT nvl(max(seq),0) + 1
+	     FROM   tdis_prod_cpnt
+	     WHERE  prod_cd  = #prod_cd#
+	     AND    color_cd = #color_cd#
+	     AND    ser_num  = #ser_num#
+	     )
+	  , #in_qty#
+	  , #cncl_yn#
+	  , #cpnt_prod_cd#
+	  , #cpnt_color_cd#
+	  , #cpnt_ser_num#  
+	  , #cpnt_etc_seq#  
+	  , 'N'
+	  , 0
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , #amt#
+	  )]]>
+	</insert>
+	<insert id="addProdInoutHst" parameterClass="map" ><![CDATA[INSERT INTO tdis_prod_inout_hst /*+ DISINN01100_addProdInoutHst_이문규 */
+	  ( prod_cd 
+	  , color_cd
+	  , ser_num
+	  , inout_seq
+	  , in_mgmt_no
+	  , in_seq
+	  , out_mgmt_no
+	  , out_seq
+	  , inout_dt
+	  , inout_cl
+	  , inout_dtl_cl
+	  , prchs_plc_id
+	  , out_plc_id
+	  , in_plc_id
+	  , del_yn 
+	  , upd_cnt 
+	  , ins_dtm 
+	  , ins_user_id 
+	  , mod_dtm 
+	  , mod_user_id)
+VALUES
+	  ( #prod_cd#
+	  , #color_cd#
+	  , #ser_num#
+	  , (SELECT nvl(max(inout_seq),0) + 1
+	     FROM   tdis_etc_dis_inout_hst
+	     WHERE  prod_cd  = #prod_cd#
+	     AND    color_cd = #color_cd#
+	     AND    ser_num  = #ser_num#
+	     )
+	  , #in_mgmt_no#
+	  , #in_seq#
+	  , #out_mgmt_no#
+	  , #out_seq#
+	  , #inout_dt#
+	  , #inout_cl#
+	  , #inout_dtl_cl#
+	  , #prchs_plc_id#
+	  , #out_plc_id#
+	  , #in_plc_id#
+	  , 'N'
+	  , 0
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  , TO_CHAR(SYSDATE, 'yyyymmddhh24miss') 
+	  , #onlineContext.userInfo.loginId#
+	  )]]>
+	</insert>
+	<select id="getEtcDisList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISINN01100_getEtcDisList_이문규 */
+       b.prod_cl
+	  , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00010', b.prod_cl) AS prod_cl_nm 
+      , b.mfact_id
+      , (select b.deal_co_nm from tbas_deal_co_mgmt b
+        where  b.deal_co_cd = b.mfact_id and b.deal_co_cl1 = '20' and rownum = 1) as mfact_nm
+      , a.prod_cd
+      , b.prod_nm
+      , a.color_cd
+	  , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', a.color_cd) AS color_nm         
+      , a.ser_num    AS ser_num
+      , a.etc_seq
+      , nvl(a.qty,0) - nvl(a.un_use_qty,0) AS qty
+      , (SELECT price  FROM TBAS_PROD_DTL 
+         WHERE prod_cd   = #prod_cd#
+         AND cmp_prod_cd = #cpnt_prod_cd#) AS dis_amt
+      , a.upd_cnt  
+FROM   TDIS_ETC_DIS   a
+      ,TBAS_PROD_MGMT b
+WHERE  a.prod_cd     = #cpnt_prod_cd#
+AND    a.prod_cd     = b.prod_cd
+AND    b.prod_cl     = #cpnt_prod_cl#
+	 ]]>
+	</select>
+	<update id="updateEtcDis" parameterClass="map" ><![CDATA[UPDATE  TDIS_ETC_DIS /*+ DISINN01100_updateEtcDis_이문규 */
+SET     un_use_qty  = nvl(un_use_qty,0) + #out_qty#
+       ,upd_cnt     = upd_cnt + 1
+       ,mod_dtm     = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+       ,mod_user_id = #onlineContext.userInfo.loginId#
+WHERE  prod_cd  = #cpnt_prod_cd#
+AND    color_cd = #cpnt_color_cd#
+AND    ser_num  = #cpnt_ser_num#
+AND    etc_seq  = #cpnt_etc_seq#  ]]>
+	</update>
+	<select id="getChkDisCnt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ DISINN01100_getChkDisCnt_이문규 */
+        nvl(a.upd_cnt,0) as upd_cnt
+FROM    TDIS_DIS a
+WHERE   a.prod_cd  = #prod_cd#
+AND     a.color_cd = #color_cd#
+AND     a.ser_num  = #ser_num#]]>
+	</select>
+	<insert id="addDisHst" parameterClass="map" ><![CDATA[INSERT INTO TDIS_DIS_HST /*+ DISINN01100_insertDisHst_이문규 */
+(
+  prod_cd
+ ,color_cd
+ ,ser_num
+ ,inout_mgmt_no
+ ,hld_plc_id
+ ,dis_st
+ ,eqp_st
+ ,last_inout_dt
+ ,last_inout_cl
+ ,last_inout_dtl_cl
+ ,fst_in_fix_dt
+ ,fst_in_plc_id
+ ,fst_prchs_plc_id
+ ,last_mov_in_dt
+ ,dis_amt
+ ,del_yn
+ ,upd_cnt
+ ,ins_dtm
+ ,ins_user_id
+ ,mod_dtm
+ ,mod_user_id
+)
+SELECT  a.prod_cd
+       ,a.color_cd
+       ,a.ser_num
+       ,#out_mgmt_no#
+       ,a.hld_plc_id
+       ,a.dis_st
+       ,a.eqp_st
+       ,a.last_inout_dt
+       ,a.last_inout_cl
+       ,a.last_inout_dtl_cl
+       ,a.fst_in_fix_dt
+       ,a.fst_in_plc_id
+       ,a.fst_prchs_plc_id
+       ,a.last_mov_in_dt
+       ,a.dis_amt
+       ,'N'            /* del_yn   */
+       ,0              /* upd_cnt  */
+       ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+       ,#onlineContext.userInfo.loginId#
+       ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+       ,#onlineContext.userInfo.loginId#
+FROM   tdis_dis a
+WHERE  a.prod_cd  = #prod_cd#
+AND    a.color_cd = #color_cd#
+AND    a.ser_num  = #ser_num#
+   ]]>
+	</insert>
+</sqlMap>

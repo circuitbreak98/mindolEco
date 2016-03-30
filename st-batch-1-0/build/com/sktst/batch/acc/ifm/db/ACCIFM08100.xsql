@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ACCIFM08100">
+	<insert id="saveCommCdIf" parameterClass="hmap">
+	<![CDATA[
+        INSERT INTO tacc_deal_dtl_output_if
+            (
+                seq,
+                org_cd,
+                deal_dt,
+                rec_typ,
+				sub_org_cd,
+				svc_cd,
+				crncy_cd,
+				cash_dpst_cl_cd,
+				pday_bal_bamt,
+				tday_pay_amt,
+				tday_rfnd_amt,
+				inr_deal_amt,
+				unrmt_dedt_amt,
+				hq_rmt_amt,
+				erp_rmt_amt,
+				tday_bal_amt,
+				del_yn,
+				upd_cnt,
+				ins_dtm,
+				ins_user_id,
+				mod_dtm,
+				mod_user_id
+            )
+            VALUES
+            (				
+              (SELECT nvl(MAX(seq), 0) +1 
+                 FROM tacc_deal_dtl_output_if 
+                WHERE org_cd  = #ORG_CD#
+                  AND deal_dt = #DEAL_DT#)
+            , #ORG_CD#
+            , #DEAL_DT#
+            , #REC_TYP#
+            , #SUB_ORG_CD#
+            , #SVC_CD#
+            , #CRNCY_CD#
+            , #CASH_DPST_CL_CD#
+            , #PDAY_BAL_BAMT#
+            , #TDAY_PAY_AMT#
+            , #TDAY_RFND_AMT#
+            , #INR_DEAL_AMT#
+            , #UNRMT_DEDT_AMT#
+            , #HQ_RMT_AMT#
+            , #ERP_RMT_AMT#
+            , #TDAY_BAL_AMT#
+            , 'N'
+            , 0
+            , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            , 'ACCIFM0810'
+            , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+            , 'ACCIFM0810'
+			)
+	]]>
+	</insert>
+	<insert id="saveERP">
+	<![CDATA[
+		insert into TSAC_DD_ERP_TRMS
+		(
+			YYMMDD,
+			AGENCY,
+			TRMS_ITEM,
+			TRMS_REQ_YN,
+			TRMS_REQ_DT,
+		    TRMS_YN,
+			REQ_USER_ID,
+			UKEY_AGENCY_CD,
+			AMT
+		)
+		select
+		deal_dt
+		,agency
+		,trms_item
+		,trms_req_yn
+		,trms_req_dt
+		,trms_yn
+		,req_user_id
+		,org_cd
+		,erp_rmt_amt
+		from
+		(
+		    select
+		    deal_dt
+		    ,(select deal.deal_co_cd
+		       from tbas_deal_co_mgmt deal
+		     where deal.ukey_agency_cd = g.org_cd
+		         and deal.deal_co_cl1 = 'A1'
+		         and TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS') between deal.eff_sta_dtm and deal.eff_end_dtm
+		         and deal.del_yn = 'N'
+		         and rownum = 1) agency
+		    ,'F18' trms_item
+		    ,'Y' trms_req_yn
+		    ,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS') trms_req_dt
+		    ,'0' trms_yn
+		    ,'ACCIFM0810' req_user_id
+		    ,org_cd
+		    ,SUM(NVL(erp_rmt_amt,0)) erp_rmt_amt
+		    from tacc_deal_dtl_output_if g
+		    where org_cd <> 'D00066'
+		    and ins_dtm like TO_CHAR(SYSDATE, 'YYYYMMDD')||'%'
+		    group by deal_dt, org_cd
+		) 
+		where erp_rmt_amt <> 0
+	]]>
+	</insert>
+</sqlMap>

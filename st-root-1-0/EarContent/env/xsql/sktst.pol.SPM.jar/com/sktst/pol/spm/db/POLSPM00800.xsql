@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="POLSPM00800">
+	<select id="getProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00800_getProdList_전미량" */ 
+       '' AS CHK,
+       PROD_CD, 
+       PROD_NM, 
+       FBAS_GET_DEAL_NM(MFACT_ID, '') AS MFACT_NM
+  FROM TBAS_PROD_MGMT
+ WHERE DEL_YN = 'N'
+   AND PROD_CL = '1'
+]]> <isNotEmpty prepend="AND" property="MFACT_ID">
+<![CDATA[   MFACT_ID = #MFACT_ID#
+]]> </isNotEmpty>
+<![CDATA[]]> <isNotEmpty prepend="AND" property="PROD_CD">
+<![CDATA[   PROD_CD LIKE '%'||#PROD_CD#||'%'
+]]> </isNotEmpty>
+<![CDATA[]]> <isNotEmpty prepend="AND" property="PROD_NM">
+<![CDATA[   PROD_NM LIKE '%'||#PROD_NM#||'%'
+]]> </isNotEmpty>
+<![CDATA[   AND PROD_CD NOT IN ( SELECT PROD_CD 
+                          FROM TPOL_PROD_GROUP_MGMT 
+                         WHERE DEL_YN = 'N'
+                           AND ((EFF_STA_DT >= #EFF_STA_DT#  AND EFF_STA_DT < TO_DATE(#EFF_END_DT#,'YYYYMMDD')+1) 
+                                OR (EFF_END_DT >= #EFF_STA_DT#  AND EFF_END_DT < TO_DATE(#EFF_END_DT#,'YYYYMMDD')+1)))]]>
+	</select>
+	<insert id="insertProdGroup" ><![CDATA[INSERT /*+ "POLSPM00800_insertProdGroup_전미량" */ 
+  INTO TPOL_PROD_GROUP_MGMT 
+       ( 
+       	   PROD_GROUP_ID,
+           PROD_CD,
+           PROD_GROUP_CD,
+           EFF_STA_DT,
+           EFF_END_DT,
+           DEL_YN,
+           UPD_CNT,
+           INS_DTM,
+           INS_USER_ID,
+           MOD_DTM,
+           MOD_USER_ID 
+       ) 
+       VALUES 
+       (
+       	   #PROD_GROUP_ID#, 
+           #PROD_CD#, 
+           #PROD_GROUP_CD#, 
+           #EFF_STA_DT#, 
+           #EFF_END_DT#, 
+           'N', 
+           0, 
+           TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+           #onlineContext.userInfo.loginId#,
+           TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+           #onlineContext.userInfo.loginId#
+       )]]>
+	</insert>
+	<update id="deleteProdGroup" parameterClass="map" ><![CDATA[DELETE /*+ "POLSPM00800_deleteProdGroup_전미량" */ 
+       TPOL_PROD_GROUP_MGMT 
+ WHERE PROD_CD       = #PROD_CD#
+   AND PROD_GROUP_ID = #PROD_GROUP_ID#]]>
+	</update>
+	<select id="getProdGroupList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00800_getProdGroupList_전미량" */ 
+       '' AS CHK,
+       A.PROD_GROUP_ID,
+       A.PROD_CD, 
+       B.PROD_NM, 
+       FBAS_GET_DEAL_NM(B.MFACT_ID, '') AS MFACT_NM,
+       A.PROD_GROUP_CD,
+       A.EFF_STA_DT,
+       A.EFF_END_DT
+  FROM TPOL_PROD_GROUP_MGMT A, 
+       TBAS_PROD_MGMT B 
+ WHERE A.PROD_CD = B.PROD_CD 
+   AND A.DEL_YN = 'N'
+   AND PROD_GROUP_ID = #PROD_GROUP_ID#]]>
+	</select>
+	<select id="getNewProdGroupId" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 	(LPAD(SPOL_PROD_GROUP_ID.NEXTVAL,12,'0')) AS PROD_GROUP_ID
+  FROM DUAL]]>
+	</select>
+	<insert id="insertProdGroupCopy" ><![CDATA[INSERT /*+ "POLSPM00800_insertProdGroup_전미량" */ 
+  INTO TPOL_PROD_GROUP_MGMT 
+       ( 
+       	   PROD_GROUP_ID,
+           PROD_CD,
+           PROD_GROUP_CD,
+           EFF_STA_DT,
+           EFF_END_DT,
+           DEL_YN,
+           UPD_CNT,
+           INS_DTM,
+           INS_USER_ID,
+           MOD_DTM,
+           MOD_USER_ID 
+       ) 
+    SELECT #NEW_PROD_GROUP_ID#,
+           PROD_CD,
+           PROD_GROUP_CD,
+           #APLY_YMD#,
+           EFF_END_DT,
+           'N', 
+           0, 
+           TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+           #onlineContext.userInfo.loginId#,
+           TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'),
+           #onlineContext.userInfo.loginId#
+      FROM TPOL_PROD_GROUP_MGMT
+     WHERE PROD_GROUP_ID = #PROD_GROUP_ID#]]>
+	</insert>
+	<update id="updateProdGroupClose" parameterClass="map" ><![CDATA[UPDATE TPOL_PROD_GROUP_MGMT
+   SET EFF_END_DT 	 = TO_CHAR(TO_DATE(#APLY_YMD#)-1,'YYYYMMDD')
+ WHERE PROD_GROUP_ID = #PROD_GROUP_ID#]]>
+	</update>
+	<delete id="deleteProdGroupAll" parameterClass="map" ><![CDATA[DELETE /*+ "POLSPM00800_deleteProdGroup_전미량" */ 
+       TPOL_PROD_GROUP_MGMT 
+ WHERE PROD_GROUP_ID = #PROD_GROUP_ID#]]>
+	</delete>
+</sqlMap>

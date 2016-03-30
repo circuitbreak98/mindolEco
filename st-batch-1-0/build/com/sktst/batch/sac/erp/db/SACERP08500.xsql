@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08500">
+  <insert id="insertTsacBondAccBalIf" parameterClass="hmap">
+  <![CDATA[
+    INSERT INTO TSAC_BOND_ACC_BAL_IF (  /* SACERP08500_insertTsacBondAccBalIf_ERP 채권잔액  IF 저장_이강수 */
+           ACC_YM
+         , ACC_PLC
+         , ACC_BAL_AMT
+         , DEL_YN
+         , UPD_CNT
+         , INS_DTM
+         , INS_USER_ID
+         , MOD_DTM
+         , MOD_USER_ID 
+    ) VALUES (
+           #ACC_YM#
+         , #ACC_PLC#
+         , #ACC_BAL_AMT#
+         , 'N'
+         , 1
+         , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+         , #USER_ID#
+         , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+         , #USER_ID#
+      )
+  ]]>
+  </insert>
+
+  <delete id="deleteTsacBondAccBalIf" parameterClass="map">
+  <![CDATA[
+    DELETE /* SACERP08500_deleteTsacBondAccBalIf_ERP 채권잔액 IF 삭제_이강수 */
+      FROM TSAC_BOND_ACC_BAL_IF
+     WHERE ACC_YM = #ACC_YM#
+  ]]>
+  </delete>	
+</sqlMap>

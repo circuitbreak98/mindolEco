@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCMCL00100" Left="8" OnLoadCompleted="ACCMCL00100_OnLoadCompleted" PidAttrib="7" Title="월마감" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_lastMonthCls"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_monthCls"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition" OnColumnChanged="ds_condition_OnColumnChanged">
+				<Contents>
+					<colinfo id="cls_mth" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_saveData"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_error">
+				<Contents>
+					<colinfo id="error_msg" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static3" Left="18" Style="sty_lb_Search" TabOrder="2" Text="마감월" Top="7" VAlign="Middle" Width="68"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="217" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="7" Width="60"></Button>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="34" TabOrder="3" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static0" Left="299" Style="sty_lb_Search" TabOrder="4" Text="최종마감월" Top="7" VAlign="Middle" Width="80"></Static>
+				<MaskEdit BindDataset="ds_lastMonthCls" Border="Flat" Column="cls_mth" Enable="FALSE" Height="20" Id="msk_lastClsMth" Left="386" LeftMargin="8" Mask="####-##" TabOrder="5" Top="7" Type="STRING" Width="60"></MaskEdit>
+				<Shape Bottom="38" Height="40" Id="Shape0" Left="285" LineColor="user10" LineKind="Vertical" Right="286" TabOrder="6" Top="-2" Width="1"></Shape>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="cls_mth" Height="19" Id="cal_clsMth" Left="91" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="7" Type="STRING" UserData="마감월" Width="60"></MaskEdit>
+				<Button Cursor="HAND" Height="21" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="150" OnClick="div_search_btn_monthCalendar_OnClick" TabOrder="8" TabStop="FALSE" Text="Button3" Top="7" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_monthCls" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="174" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="87" Id="grd_monthCls" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="87" UseDBuff="true" UsePopupMenu="true" UseSelColor="FALSE" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="62"/>
+						<col width="166"/>
+						<col width="82"/>
+						<col width="90"/>
+						<col width="143"/>
+						<col width="261"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" cursor="hand" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" cursor="hand" display="text" text="구분"/>
+						<cell bkcolor="user34" col="2" color="user35" cursor="hand" display="text" text="마감여부"/>
+						<cell bkcolor="user34" col="3" color="user35" cursor="hand" display="text" text="처리자"/>
+						<cell bkcolor="user34" col="4" color="user35" cursor="hand" display="text" text="처리일시"/>
+						<cell bkcolor="user34" col="5" color="user35" cursor="hand" display="text" text="비고"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="currow+1"/>
+						<cell col="1" colid="close_bis_mth_cl_nm" display="text"/>
+						<cell align="center" bkcolor="expr:decode(close_yn_cd,&apos;02&apos;,&apos;default&apos;,&apos;User25&apos;)" col="2" colid="close_yn_cd" display="combo"/>
+						<cell align="center" bkcolor="expr:decode(close_yn_cd,&apos;02&apos;,&apos;default&apos;,&apos;User25&apos;)" col="3" colid="mod_nm" display="text"/>
+						<cell align="center" bkcolor="expr:decode(close_yn_cd,&apos;02&apos;,&apos;default&apos;,&apos;User25&apos;)" col="4" colid="mod_dtm" display="text" Mask="####-##-##&#32;##:##:##"/>
+						<cell align="left" bkcolor="expr:decode(close_yn_cd,&apos;02&apos;,&apos;default&apos;,&apos;User25&apos;)" col="5" colid="rmks" display="text" edit="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="btn_excelDown" ImageID="btn_i_exceldown_w" Left="802" OnClick="btn_excelDown_OnClick" TabOrder="2" Text="Button1" ToolTipText="Excel&#32;Download" Top="65" Width="19"></Button>
+		<Div Border="Raised" Height="39" Id="div_process" Left="10" Style="sty_div_input" TabOrder="4" Text="Div0" Top="179" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static4" Left="22" Style="sty_lb_Basic" TabOrder="1" Text="마감&#32;진행상태" Top="6" VAlign="Middle" Width="90"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_closeStNm" Left="118" MaxLength="7" OnChar="div_process_equip_edt_serNum_OnChar" OnKeyDown="div_process_equip_edt_serNum_OnKeyDown" Style="sty_ipt_form" TabOrder="2" Top="6" UpperOnly="TRUE" Width="60"></Edit>
+				<Static Align="Right" Height="20" Id="Static0" Left="206" Style="sty_lb_Basic" TabOrder="3" Text="최종&#32;처리자" Top="6" VAlign="Middle" Width="90"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_modNm" ImeMode="none" Left="302" MaxLength="7" OnChar="div_process_equip_edt_serNum_OnChar" OnKeyDown="div_process_equip_edt_serNum_OnKeyDown" Style="sty_ipt_form" TabOrder="4" Top="6" UpperOnly="TRUE" UserData="단말기&#32;일련번호" Width="110"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="454" Style="sty_lb_Basic" TabOrder="5" Text="최종&#32;처리일시" Top="6" VAlign="Middle" Width="90"></Static>
+				<MaskEdit Border="Flat" Enable="FALSE" Height="20" Id="msk_modDtm" Left="551" LeftMargin="5" Mask="####-##-##&#32;##:##:##" TabOrder="6" Top="6" Type="STRING" Width="126"></MaskEdit>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_delete" ImageID="btn_c_4" Left="737" LeftMargin="5" OnClick="btn_delete_OnClick" Style="sty_btn_c" TabOrder="5" Text="마감취소" Top="231" Width="83"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="674" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="6" Text="마감" Top="231" Width="60"></Button>
+		<Image Align="Left" Color="user27" Height="30" Id="Image0" ImageID="bul_caution" Left="11" LeftMargin="20" Style="sty_lb_info" TabOrder="7" Text="마감작업은&#32;대용량&#32;데이터&#32;작업이므로&#32;다소&#32;시간이&#32;걸립니다.&#32;작업중&#32;절대로&#32;강제종료&#32;하시면&#32;안됩니다.&#32;&#10;만약&#32;비정상&#32;종료되면&#32;작업을&#32;중단하시고&#32;반드시&#32;시스템관리자에게&#32;문의하시기&#32;바랍니다." Top="54" Transparent="TRUE" Width="600"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : ACCMCL00100
+* 업무명      : 정산
+* 프로그램명  : 월마감
+--------------------------------------------------------------------------------
+* 작성자      : 한병곤
+* 작성일      : 2009.09.28
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var error_msg;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ACCMCL00100_OnLoadCompleted(obj)
+{
+
+	ds_condition.AddRow();
+	ds_error.AddRow();
+
+	//일자 셋팅. 
+	div_search.cal_clsMth.value = Mid(cf_getDate(),0,6);
+	
+	// 권한.
+	cf_setAuth(pFrmNum);
+	
+    // sync 처리
+    http.Sync = true;       
+    
+    // 공통 코드를 위한 데이타셋 설정
+    cf_setCommonCodeDsEnv();
+    
+    //  마감여부
+    cf_setCommonCode("grd_monthCls", "ZACC_C_00320", null, 2, 0);
+        
+    // 설정된 코드를 기반으로 공통 코드를 추가 및 데이타 바인딩
+    cf_checkCommonCode();   
+    
+    // sync 처리
+    http.Sync = false;  
+	
+	// 최종월마감 조회.
+	getLastMonthCls();
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "searchClsMth"){
+
+		var iLastStatus = (ds_monthCls.FindRow("mod_dtm",ds_monthCls.Max("mod_dtm")));
+		div_process.edt_closeStNm.value = ds_monthCls.GetColumn(iLastStatus,"close_st_nm");
+		div_process.edt_modNm.value = ds_monthCls.GetColumn(iLastStatus,"mod_nm");
+		div_process.msk_modDtm.value = ds_monthCls.GetColumn(iLastStatus,"mod_dtm");
+		
+	}else if(sSvcID == "saveMonthCls"){		
+		
+		http.TimeOut = 300; // 5분, 서버응답 대기 시간 재셋팅.
+		
+		alert("작업이 완료 되었습니다.");
+		
+		div_search_btn_search_OnClick();
+	}
+}
+
+/*******************************************************************************
+ * @description    : 최종월마감 조회
+*******************************************************************************/
+function getLastMonthCls()
+{
+	// 트랜잭션 설정
+	var sSvcID = "searchLastMonthCls";
+	var sInDs  = "";
+	var sOutDs = "ds_lastMonthCls=ds_lastMonthCls";
+	var sArg   = "sktst.acc.MCL#getLastMonthCls";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);		
+}
+
+/*******************************************************************************
+ * @description    : 달력 조회
+*******************************************************************************/
+function div_search_btn_monthCalendar_OnClick(obj)
+{	
+	cf_callMonthCalendar(div_search.cal_clsMth);
+}
+
+/*******************************************************************************
+ * @description    : 월마감 조회
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	if(!cf_checkObjValues(div_search)){
+		return;
+	}
+	
+	// 트랜잭션 설정
+	var sSvcID = "searchClsMth";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_lastMonthCls=ds_lastMonthCls ds_monthCls=ds_monthCls";
+	var sArg   = "sktst.acc.MCL#getMonthClsList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	
+}
+
+/*******************************************************************************
+ * @description    : excel down
+*******************************************************************************/
+function btn_excelDown_OnClick(obj)
+{
+	cf_exportExcel(grd_monthCls);	
+}
+
+/*******************************************************************************
+ * @description    : 마감
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{	
+	if(div_process.edt_closeStNm.value == "실행중"){
+	
+		alert('현재 마감작업이 실행중입니다. \n\n마감작업이 완료된 후에 처리하시기 바랍니다.');
+		return;
+	}
+
+	var sLastClsMth = div_search.msk_lastClsMth.value;
+	var sNextClsMth = substr(AddMonth(sLastClsMth+"01",1),0,6);
+
+	if( !uf_IsNull(sLastClsMth) && sNextClsMth != div_search.cal_clsMth.value ){
+	
+		alert("마감은 최종마감월의 익월["+sNextClsMth+"]만 가능합니다.");
+		return;
+	}
+	
+	var iRunRow = "";
+
+	for(var i = 0 ; i < ds_monthCls.rowcount ; i++){
+		
+		if(ds_monthCls.GetColumn(i,"close_yn_cd") != "02" ){
+			iRunRow = i;
+			break;
+		}
+	}
+	
+	if(uf_IsNull(iRunRow)){
+	
+		alert('마감 처리 할 데이터가 없습니다.');
+		return;
+		
+	}else{
+	
+		if(!Confirm(ds_monthCls.GetColumn(iRunRow,"close_bis_mth_cl_nm")+"을 수행 하시겠습니까?")){
+			return;
+		}
+	}	
+	
+	ds_saveData.Clear();
+
+	cf_setParam(ds_saveData, "cls_mth", div_search.cal_clsMth.value);
+	cf_setParam(ds_saveData, "close_bis_mth_cl_cd", ds_monthCls.GetColumn(iRunRow,"close_bis_mth_cl_cd"));
+	cf_setParam(ds_saveData, "close_yn_cd", "02"); // 마감
+	cf_setParam(ds_saveData, "upd_cnt", ds_monthCls.GetColumn(iRunRow,"upd_cnt"));
+	cf_setParam(ds_saveData, "rmks", ds_monthCls.GetColumn(iRunRow,"rmks"));
+	
+	// 트랜잭션 설정
+	var sSvcID = "saveMonthCls";
+	var sInDs  = "ds_saveData=ds_saveData ds_monthCls=ds_monthCls";
+	var sOutDs = "";
+	var sArg   = "sktst.acc.MCL#saveMonthCls";
+	
+	http.TimeOut = 1800; // 30분, 서버응답 대기 시간 재셋팅.
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+	
+}
+
+/*******************************************************************************
+ * @description    : 마감취소
+*******************************************************************************/
+function btn_delete_OnClick(obj)
+{
+
+	if(div_process.edt_closeStNm.value == "실행중"){
+	
+		alert('현재 마감작업이 실행중입니다. \n\n마감작업이 완료된 후에 처리하시기 바랍니다.');
+		return;
+	}
+	
+	var sLastClsMth = div_search.msk_lastClsMth.value;
+
+	if( !uf_IsNull(sLastClsMth) && sLastClsMth > div_search.cal_clsMth.value ){
+		alert("마감월이 최종마감월인 경우에만 마감취소가 가능합니다.");
+		return;
+	}
+		
+	var iCancelRow = "";
+
+	for(var i = ds_monthCls.rowcount-1 ; i >= 0 ; i--){
+
+		if(ds_monthCls.GetColumn(i,"close_yn_cd") == "02" ){
+			iCancelRow = i;
+			break;
+		}
+	}
+	
+	if(uf_IsNull(iCancelRow)){
+		alert('마감을 취소 할 데이터가 없습니다.');
+		return;
+		
+	}else{
+	
+		// 10월 마감 취소 불가.
+		//if (div_search.cal_clsMth.value == "200910" 
+			//&& ds_monthCls.GetColumn(iCancelRow,"close_bis_mth_cl_cd") == "01"
+			//)
+			//{
+			
+			//alert('2009년 10월마감은 취소가 불가능 합니다.');
+			//return;
+		//}
+	
+		if(!Confirm(ds_monthCls.GetColumn(iCancelRow,"close_bis_mth_cl_nm")+"을 취소 하시겠습니까?")){
+			return;
+		}	
+	}
+
+	ds_saveData.Clear();
+
+	cf_setParam(ds_saveData, "cls_mth", div_search.cal_clsMth.value);
+	cf_setParam(ds_saveData, "close_bis_mth_cl_cd", ds_monthCls.GetColumn(iCancelRow,"close_bis_mth_cl_cd"));
+	cf_setParam(ds_saveData, "close_yn_cd", "03"); // 마감취소
+	cf_setParam(ds_saveData, "upd_cnt", ds_monthCls.GetColumn(iCancelRow,"upd_cnt"));
+	cf_setParam(ds_saveData, "rmks", ds_monthCls.GetColumn(iCancelRow,"rmks"));
+	
+	// 트랜잭션 설정
+	var sSvcID = "saveMonthCls";
+	var sInDs  = "ds_saveData=ds_saveData ds_monthCls=ds_monthCls";
+	var sOutDs = "";
+	var sArg   = "sktst.acc.MCL#saveMonthCls";
+	
+	http.TimeOut = 1800; // 30분, 서버응답 대기 시간 재셋팅.
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+}
+
+/*******************************************************************************
+ * @description    : 마감월 OnColumnChanged 이벤트
+*******************************************************************************/
+function ds_condition_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	ds_monthCls.ClearData();
+}
+]]></Script>
+</Window>

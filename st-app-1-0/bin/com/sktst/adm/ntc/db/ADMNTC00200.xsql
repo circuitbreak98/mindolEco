@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMNTC00200">
+	<select id="getNoticeList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 	a.flag,
+	a.notice_num, 		/* 공지사항번호 */
+	a.sta_dt,			/* 게시 시작일 */
+	a.notice_type,		/* 공지유형 */
+	a.title,			/* 제목 */
+	a.update_count,		/* 열람수 */
+	a.contents,			/* 내용 */
+	a.doc_id,			/* 문서 ID */
+	a.drawer,		    /* 작성자  */
+	a.end_dt,			/* 게시 종료일  */
+	b.user_nm,
+    decode(b.org_area, null, fbas_get_org_nm(b.org_id)
+                           , fbas_get_deal_nm(b.org_area, TO_CHAR(sysdate, 'yyyyMMdd'))) ORG_NM
+  FROM 
+       (SELECT 'A' as FLAG,
+        	a.notice_num, 		/* 공지사항번호 */
+        	a.sta_dt,			/* 게시 시작일 */
+        	a.notice_type,		/* 공지유형 */
+        	'[공지]'||a.title as title,			/* 제목 */
+        	a.update_count,		/* 열람수 */
+        	a.contents,			/* 내용 */
+        	a.doc_id,			/* 문서 ID */
+        	a.ins_user_id,		/* 작성자  */
+        	a.end_dt,			/* 게시 종료일  */
+        	a.del_yn,
+        	a.drawer
+        FROM    
+        	tadm_notics a
+        	 ,tbas_user_mgmt b
+        WHERE a.drawer = b.user_id
+        and  b.del_yn = 'N'
+        AND  substr(b.org_id,0,1) = 'P'
+        AND  a.del_yn = 'N'
+        AND   (a.notice_chk = 'Y' AND TO_CHAR(sysdate, 'yyyyMMdd') BETWEEN a.notice_sta_dt and a.notice_end_dt )
+]]>        <isNotEqual prepend="AND" property="allRead" compareValue="Y">
+<![CDATA[            ( a.drawer = #onlineContext.userInfo.loginId#
+            OR  exists (select 1 
+                         from tadm_notics_target b
+                        where a.notice_num = b.notice_num
+                          and b.user_id = #onlineContext.userInfo.loginId# ) ) 
+]]>        </isNotEqual>                          
+<![CDATA[
+       UNION ALL  
+       SELECT 'B' as FLAG,
+        	a.notice_num, 		/* 공지사항번호 */
+        	a.sta_dt,			/* 게시 시작일 */
+        	a.notice_type,		/* 공지유형 */
+        	'[공지]'||a.title as title,			/* 제목 */
+        	a.update_count,		/* 열람수 */
+        	a.contents,			/* 내용 */
+        	a.doc_id,			/* 문서 ID */
+        	a.ins_user_id,		/* 작성자  */
+        	a.end_dt,			/* 게시 종료일  */
+        	a.del_yn,
+        	a.drawer
+        FROM    
+        	tadm_notics a
+        	 ,tbas_user_mgmt b
+        WHERE a.drawer = b.user_id
+        and  b.del_yn = 'N'
+        AND  substr(b.org_id,0,1) != 'P'
+        AND  a.del_yn = 'N'
+        AND   (a.notice_chk = 'Y' AND TO_CHAR(sysdate, 'yyyyMMdd') BETWEEN a.notice_sta_dt and a.notice_end_dt )
+]]>        <isNotEqual prepend="AND" property="allRead" compareValue="Y">
+<![CDATA[            ( a.drawer = #onlineContext.userInfo.loginId#
+            OR  exists (select 1 
+                         from tadm_notics_target b
+                        where a.notice_num = b.notice_num
+                          and b.user_id = #onlineContext.userInfo.loginId# ) ) 
+]]>        </isNotEqual>                          
+<![CDATA[
+       UNION ALL           
+       SELECT  'C' as FLAG,
+        	a.notice_num, 		/* 공지사항번호 */
+        	a.sta_dt,			/* 게시 시작일 */
+        	a.notice_type,		/* 공지유형 */
+        	a.title,			/* 제목 */
+        	a.update_count,		/* 열람수 */
+        	a.contents,			/* 내용 */
+        	a.doc_id,			/* 문서 ID */
+        	a.ins_user_id,		/* 작성자  */
+        	a.end_dt,			/* 게시 종료일  */
+        	a.del_yn,
+        	a.drawer
+        FROM    
+        	tadm_notics a
+        WHERE a.del_yn = 'N'
+        AND   (a.notice_chk is null OR a.notice_chk = 'N' OR (a.notice_chk = 'Y' AND a.notice_end_dt < TO_CHAR(sysdate, 'yyyyMMdd')))
+]]>        <isNotEqual prepend="AND" property="allRead" compareValue="Y">
+<![CDATA[            ( a.drawer = #onlineContext.userInfo.loginId#
+            OR  exists (select 1 
+                         from tadm_notics_target b
+                        where a.notice_num = b.notice_num
+                          and b.user_id = #onlineContext.userInfo.loginId# ) ) 
+]]>        </isNotEqual>                          
+<![CDATA[       ) a
+      ,tbas_user_mgmt b
+WHERE a.drawer = b.user_id
+AND   a.del_yn = 'N'		
+
+]]><isEqual prepend="AND" property="end_dt_yn" compareValue="1">
+<![CDATA[	a.end_dt >= TO_CHAR(sysdate, 'yyyyMMdd')
+]]></isEqual>
+<![CDATA[
+	
+/* 공지 유형 */
+]]><isNotEmpty prepend="AND" property="notice_type">
+<![CDATA[	a.notice_type = #notice_type#
+]]></isNotEmpty>
+<![CDATA[
+]]><isNotEmpty prepend="AND" property="notice_num">
+<![CDATA[	a.notice_num = #notice_num#
+]]></isNotEmpty>
+<![CDATA[
+/* 검색조건 */
+]]><isNotEmpty property="search_condtion">
+<![CDATA[]]><isEqual prepend="AND" property="search_type" compareValue="0">
+<![CDATA[	( a.title LIKE '%$search_condtion$%' OR a.contents LIKE '%$search_condtion$%' )
+]]></isEqual>
+<![CDATA[
+]]><isEqual prepend="AND" property="search_type" compareValue="1">
+<![CDATA[	a.title LIKE '%$search_condtion$%'
+]]></isEqual>
+<![CDATA[
+]]><isEqual prepend="AND" property="search_type" compareValue="2">
+<![CDATA[	a.contents LIKE '%$search_condtion$%'
+]]></isEqual>
+<![CDATA[]]></isNotEmpty>
+<![CDATA[
+ORDER BY a.flag asc, a.notice_num DESC]]>
+	</select>
+	<update id="updateCount" parameterClass="map" ><![CDATA[UPDATE                                          /*+ ADMNTC00200_updateCount_조민지_최승호 */ 
+	tadm_notics
+SET
+	update_count = update_count+1 				/* 열람수 */
+WHERE 
+	del_yn = 'N'
+AND 
+	notice_num = to_number(#notice_num#)]]>
+	</update>
+	<select id="getNoticePopInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT					 /*+ ADMNTC00200_getNoticePopInfo_조민지_최승호 */  
+	a.notice_num,		/* 공지사항 번호 */   
+	a.seq_no,			/* 일련 번호 */   
+	a.user_id,			/* 공지대상 아이디 */   
+	a.read_yn,			/* 공지사항 읽음 여부 */   
+	a.read_dtm,			/* 공지사항 읽은 일시 */
+	b.title,			/* 공지사항 제목 */ 
+	b.contents,			/* 공지사항 내용 */ 
+	b.doc_id			/* DOC_ID */ 
+FROM        
+	tadm_notics_target a ,  tadm_notics b 
+WHERE        
+	a.notice_num = b.notice_num
+AND        
+	a.del_yn = 'N' 
+AND    
+	a.user_id = #user_id#
+AND        
+	nvl(a.read_yn,'N') <> 'Y'     
+AND 
+    (b.popup_yn = '1' OR b.popup_yn = 'Y' )
+AND 
+    to_char(sysdate,'YYYYMMDD') between STA_DT and END_DT ]]>
+	</select>
+</sqlMap>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTADV01600">
+	<select id="getPrchsConfirmList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT prchs.PRCHS_MGMT_NO
+	 , prchs.CON_MGMT_NO
+	 , prchs.PROD_CD
+	 , prchs.SER_NUM
+     , prchs.CHECK_DT
+     , prchs.COLOR_CD
+     , deal.ORG_ID
+     , FBAS_GET_ORG_NM(deal.ORG_ID) ORG_NM
+     , deal.UKEY_AGENCY_CD    
+     , FBAS_GET_AGENCY_NM(deal.POS_AGENCY,prchs.CON_DT) AGENCY_NM        
+     , FBAS_GET_DEAL_NM(prchs.CON_PLC_CD,prchs.CON_DT) CON_PLC_NM
+     , prchs.CON_PLC_CD
+     , FBAS_GET_PROD_NM(prchs.PROD_CD) PROD_NM
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', prchs.COLOR_CD) COLOR_NM
+     , prchs.PRCHS_AMT
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00060', prchs.BANK_CD) BANK_NM
+     , prchs.ACC_NO
+     , prchs.CUST_NM
+     , prchs.TEL_NO
+     , prchs.EQP_ST
+     , prchs.EQP_ST_DTL
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', prchs.PRC_ST) PRC_NM
+     , FBAS_GET_USER_NM(prchs.CHECK_USER_ID) CHECK_USER_NM
+     , '0' PRC_CHECK
+  FROM TCST_PRCHS_MGMT prchs  
+  	 , TBAS_DEAL_CO_MGMT deal
+ WHERE prchs.CON_PLC_CD = deal.DEAL_CO_CD
+   AND deal.EFF_STA_DTM <= prchs.CON_DT||'235959'
+   AND deal.EFF_END_DTM >= prchs.CON_DT||'235959'
+   AND prchs.DEL_YN = 'N'
+   AND deal.DEL_YN = 'N'
+   AND prchs.SKN_YN = 'N'
+   AND prchs.PRC_ST = '13'
+   AND prchs.CHECK_DT BETWEEN #CHECK_FROM_DT# AND #CHECK_TO_DT#       
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[	   deal.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[       prchs.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">      
+<![CDATA[       prchs.SER_NUM = #SER_NUM#
+]]></isNotEmpty>	         
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       prchs.PROD_CD = #PROD_CD#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[       prchs.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="CON_MGMT_NO">   
+<![CDATA[       prchs.CON_MGMT_NO = #CON_MGMT_NO#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="BOX_NO">   
+<![CDATA[       prchs.BOX_NO = #BOX_NO#
+]]></isNotEmpty>
+	</select>
+	<update id="updatePrchsConfirmYes" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET CFM_YN = 'Y'
+   	  ,CFM_DT = TO_CHAR(SYSDATE,'YYYYMMDD')
+   	  ,UPD_CNT = UPD_CNT+1
+      ,MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      ,MOD_USER_ID = #onlineContext.userInfo.loginId#	
+      ,PRC_ST = '17'   
+      ,CFM_USER_ID = #onlineContext.userInfo.loginId#  
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#
+   AND DEL_YN = 'N']]>
+	</update>
+</sqlMap>

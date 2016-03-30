@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="488" Id="BASOGM00100" Left="8" OnLoadCompleted="BASOGM00100_OnLoadCompleted" PidAttrib="7" Title="조직관리" Top="8" Ver="1.0" Width="688" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset CanRowPosChange="ds_list_CanRowPosChange" DataSetType="Dataset" Id="ds_list"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_supOrg"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_delete"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_tmp" UpdateControl="False"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_rightPop">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="text" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_org"></Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="156" Id="div_input" Left="288" Style="sty_div_input" TabOrder="1" Text="Div2" Top="32" Width="392">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static8" Left="46" Style="sty_lb_Basic" TabOrder="7" Text="조직구분" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit BindDataset="ds_list" Border="Flat" Column="ORG_ID" Height="20" Id="edOrgId" ImeMode="english" Left="110" LeftMargin="2" MaxLength="8" OnCharChanged="f_applyData" RightMargin="8" Style="sty_ipt_form" TabOrder="1" Top="30" UserData="조직코드" Width="133"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static9" Left="46" Style="sty_lb_Basic" TabOrder="8" Text="조직명" Top="54" VAlign="Middle" Width="60"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static10" Left="46" Style="sty_lb_Basic" TabOrder="9" Text="상위조직" Top="102" VAlign="Middle" Width="60"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static11" Left="22" Style="sty_lb_Basic" TabOrder="10" Text="조직코드" Top="30" VAlign="Middle" Width="84"></Static>
+				<Checkbox BindDataset="ds_list" Column="EFF_ORG_YN" FalseValue="2" Height="20" Id="chk_effOrgYn" Left="110" LeftMargin="5" OnClick="div_input_chk_effOrgYn_OnClick" Style="sty_opt_input" TabOrder="5" Text="유효조직여부" Top="122" TrueValue="1" Width="133"></Checkbox>
+				<Combo BindDataset="ds_list" Border="Flat" CodeColumn="COMM_CD_VAL" Column="ORG_CL" DataColumn="COMM_CD_VAL_NM" Height="20" Id="cmb_org" InnerDataset="ds_org" Left="109" OnChanged="cmb_org_OnChanged" Style="sty_ipt_form" TabOrder="0" Top="6" UserData="조직구분" Width="135"></Combo>
+				<Edit BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="ORG_NM" Height="20" Id="edOrgNm" ImeMode="native" Left="110" LeftMargin="2" MaxLength="40" OnCharChanged="f_applyData" RightMargin="7" Style="sty_ipt_form" TabOrder="2" Top="53" UserData="조직명" Width="133"></Edit>
+				<Combo BindDataset="ds_list" Border="Flat" CodeColumn="org_id" Column="SUP_ORG" DataColumn="ORG_NM" Height="19" Id="cmb_supOrg" InnerDataset="ds_SupOrg" Left="109" Style="sty_ipt_form" TabOrder="4" Top="98" UserData="상위조직" Width="135"></Combo>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="22" Style="sty_lb_Basic" TabOrder="11" Text="조직업무구분" Top="78" VAlign="Middle" Width="84"></Static>
+				<Combo BindDataset="ds_list" Border="Flat" Column="ORG_BIZ_CL" Height="20" Id="cmb_Bizcl" Left="109" Style="sty_ipt_form" TabOrder="3" Top="75" UserData="조직업무구분" Width="135"></Combo>
+				<Image Height="21" Id="Image2" ImageID="bul_mand" Left="41" TabOrder="12" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image3" ImageID="bul_mand" Left="54" TabOrder="13" Top="54" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image4" ImageID="bul_mand" Left="41" TabOrder="14" Top="30" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="15" TabOrder="15" Top="78" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="42" TabOrder="16" Top="102" Transparent="TRUE" Width="20"></Image>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="15" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="조직목록" Top="7" Width="192"></Image>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="296" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="기본정보" Top="8" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="621" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="4" Text="저장" Top="439" Visible="FALSE" Width="60"></Button>
+		<TreeView BindDataset="ds_list" Border="None" Color="#262626" Font="돋움,9" Height="389" Id="tre_org" ImageID="left_menu_tree" InnerImageCount="3" Left="9" LevelColumn="ORG_CL" OnClick="tre_org_OnClick" OnRButtonDown="tre_org_OnRButtonDown" Style="sty_ipt_form" TabOrder="5" TEXTColumn="org_nm" Top="33" Width="271"></TreeView>
+		<Div Border="Raised" Height="187" Id="div_etc" Left="288" Style="sty_div_input" TabOrder="6" Text="Div2" Top="232" Width="392">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static4" Left="39" Style="sty_lb_Basic" TabOrder="4" Text="주소" Top="32" VAlign="Middle" Width="68"></Static>
+				<Button Cursor="HAND" Height="20" Id="btn_addr" ImageID="btn_i_detail_b" Left="225" OnClick="div_input_btn_addr_OnClick" TabOrder="1" Text="Button0" Top="32" Width="20"></Button>
+				<Edit BindDataset="ds_list" Border="Flat" Column="ZIP_CD1" Enable="FALSE" Height="20" Id="ed_zipCd1" Left="110" LeftMargin="2" MaxLength="3" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="32" Width="56"></Edit>
+				<Edit BindDataset="ds_list" Border="Flat" Column="ZIP_CD2" Enable="FALSE" Height="20" Id="ed_zipCd2" Left="168" LeftMargin="2" MaxLength="3" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="32" Width="56"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static7" Left="47" Style="sty_lb_Basic" TabOrder="7" Text="비고" Top="101" VAlign="Middle" Width="60"></Static>
+				<TextArea BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="RMKS" Height="70" Id="ed_rmks" ImeMode="native" Left="110" MaxLength="1000" OnCharChanged="f_applyData" Style="sty_ipt_form" TabOrder="2" Top="104" VScroll="TRUE" Width="264"></TextArea>
+				<Edit BindDataset="ds_list" Border="Flat" Column="ADDR" Enable="FALSE" Height="20" Id="edt_addr" Left="110" LeftMargin="2" MaxLength="500" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="56" Width="263"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static2" Left="251" Style="sty_lb_Basic" TabOrder="9" Text="부서명" Top="7" VAlign="Middle" Visible="FALSE" Width="60"></Static>
+				<Edit BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="DEPT_NM" Height="24" Id="Edit1" ImeMode="native" Left="314" LeftMargin="2" MaxLength="40" OnCharChanged="f_applyData" RightMargin="7" Style="sty_ipt_form" TabOrder="0" Top="7" Visible="FALSE" Width="67"></Edit>
+				<Edit BindDataset="ds_list" Border="Flat" Column="DTL_ADDR" Height="20" Id="edt_dtlAddr" Left="110" LeftMargin="2" MaxLength="50" OnCharChanged="f_applyData" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="80" Width="263"></Edit>
+				<Edit BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="DEPT_CD" Height="20" Id="Edit0" ImeMode="native" Left="110" LeftMargin="2" MaxLength="40" OnCharChanged="f_applyData" RightMargin="7" Style="sty_ipt_form" TabOrder="11" Top="7" Width="133"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="47" Style="sty_lb_Basic" TabOrder="12" Text="부서코드" Top="7" VAlign="Middle" Width="60"></Static>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="296" LeftMargin="15" Style="sty_img_tit" TabOrder="7" Text="기타정보" Top="208" Width="192"></Image>
+		<Image Align="Left" Height="20" Id="img_notice" ImageID="bul_caution" Left="7" LeftMargin="20" Style="sty_lb_info" TabOrder="8" Text="신규조직&#32;추가는&#32;추가하고자&#32;하는&#32;조직의&#32;상위조직에서&#32;오른쪽&#32;클릭&#32;하시기&#32;바랍니다." Top="420" Visible="FALSE" Width="448"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BASOGM00100
+* 업무명      : 기준정보 - 조직관리
+* 프로그램명  : 조직관리
+--------------------------------------------------------------------------------
+* 작성자      : 이종혁
+* 작성일      : 2009.01.29
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 최승호
+수정일    : 2009.03.20
+수정 내역 : 조믹 목록 -> 조직 트리 
+
+수정자    : 한병곤
+수정일    : 2009.04.08
+수정 내역 : 우편번호 검색 수정.
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_ORG_ROW;
+var FV_BOOLEAN_CHECK = true; // 필수 체크 통과 유무
+
+/*******************************************************************************
+* 함수명 : BASOGM00100_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function BASOGM00100_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	//  notice..
+	img_notice.Visible = btn_save.Visible;
+	
+	// 공통 코드 설정
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("ds_org", "ZBAS_C_00080", "선택", null, false); // 조직 구분
+	cf_setCommonCode("div_input.cmb_Bizcl", "ZBAS_C_00190", "선택", null, false); // 조직업무 구분
+	http.Sync = true;
+	cf_checkCommonCode();
+	ds_org.Sort("COMM_CD_VAL");
+    f_search();
+    http.Sync = false;
+}
+
+/*******************************************************************************
+ * @description    : 조직 트리 조회 버튼 클릭 - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	ds_tmp.Clear();
+	f_search();
+}
+
+/*******************************************************************************
+ * @description    : 조직 트리 조회
+*******************************************************************************/
+function f_search()
+{
+	// 조회 조건 설정
+	//cf_setParam(ds_condition, "org_id", "H000000");
+
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=output";
+	var sArg = "sktst.bas.OGM#getOrgTree";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);    
+}
+
+/*******************************************************************************
+ * @description    : 조직 정보 저장 - 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{	
+
+	if(cf_checkDsChanging(ds_list) == 0 )
+	{
+		alert(MSG_00133); //변경사항이 없습니다
+		return;
+	}
+	
+	// div validation 체크.
+	if(!cf_checkObjValues(div_input)) {
+		return;
+	}
+	
+	var sInDs  = "input=ds_tmp:U";
+	
+	cf_copyDataset(ds_tmp, ds_list, ds_list.currow, null, false);
+	ds_tmp.SetRowType(0, ds_list.GetRowType(ds_list.currow));
+
+	// 트랜잭션 설정
+    var sSvcID = "svcSave";
+    var sOutDs = "";
+    var sArg   = "sktst.bas.OGM#saveOrg";
+
+    // 공통 트랜잭션 호출
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    : 입력 텍스트를 바로 DS에 적용 - 이벤트
+*******************************************************************************/
+function f_applyData()
+{
+	applyData();
+}
+
+/*******************************************************************************
+ * @description    : 조직 상세 정보 변경 유무 체크 - 이벤트
+*******************************************************************************/
+function f_checkDs()
+{
+	var nResult = cf_compareDs(ds_list, ds_list_org, ds_list.currow);
+
+	if(nResult != 0)
+	{
+		if(confirm("변경된 데이타가 반영되지 않았습니다. 저장 하시겠습니까?") == true)
+		{
+			FV_BOOLEAN_CHECK = false;
+			btn_save_OnClick();
+			return true;
+		}
+		else
+		{
+			FV_BOOLEAN_CHECK = true;
+			ds_list.Reset();
+			div_input.cmb_org.Enable = false;
+			return true;
+		}
+		
+	}
+	
+	return false;
+}
+
+/*******************************************************************************
+ * @description    : 조직 트리 선택 - 이벤트
+*******************************************************************************/
+function tre_org_OnClick(obj,nOldRow,nNewRow)
+{
+	if(f_checkDs()) return;
+	
+	if(nNewRow == null)
+	{
+		nNewRow = 0;
+	}
+	
+	//cf_copyDataset(ds_tmp, ds_list, nNewRow, null, false);
+	//cf_setOrgDs(ds_tmp);
+	FV_BOOLEAN_CHECK = true;
+	var nSupOrgCl = uf_checkStr2Int(ds_list.getColumn(nNewRow, "org_cl")) -1;
+	f_setSupOrg(nSupOrgCl);
+	FV_ORG_ROW = nNewRow;	
+		
+	ds_org.UnFilter();
+		
+	div_input.cmb_org.Enable = false;
+	//div_input.cmb_supOrg.enable = false;
+	//div_input.cmb_Bizcl.enable = false;	
+	
+}
+
+
+/*******************************************************************************
+ * @description    		: 상위 조직에 따른 화면 정보 설정
+  * @param nSupOrgCl    : 상위조직 구분코드
+*******************************************************************************/
+function f_setSupOrg(nSupOrgCl)
+{
+	if(nSupOrgCl < 1)
+	{
+		div_input.cmb_supOrg.enable = false;
+		
+		//div_input.cmb_Bizcl.Index = -1;
+		div_input.cmb_Bizcl.enable = false;
+	}
+	else
+	{
+		if(nSupOrgCl == 1)
+		{
+
+			ds_supOrg.Filter("org_cl == '"+nSupOrgCl+"' || org_cl == '' || org_cl == '"+(nSupOrgCl+1)+"' ");
+		}
+		else
+		{
+			ds_supOrg.Filter("org_cl == '"+nSupOrgCl+"' || org_cl == '' ");
+		}
+		
+		div_input.cmb_supOrg.enable = true;
+		div_input.cmb_Bizcl.enable = true;
+		if(div_input.cmb_Bizcl.index == -1)
+		{
+			//div_input.cmb_Bizcl.index = 0;
+		}
+		if(div_input.cmb_supOrg.index == -1)
+		{
+			//div_input.cmb_supOrg.index = 0;
+		}
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 신규 등록 - 이벤트
+*******************************************************************************/
+function btn_new_OnClick(obj)
+{  	
+	if(f_checkDs()) return;
+	FV_ORG_ROW = ds_list.AddRow();
+	//ds_tmp.ClearData();
+	//ds_tmp.AddRow();
+	div_input.cmb_org.Index = 0;
+	f_setSupOrg(-1);
+}
+
+
+/*******************************************************************************
+ * @description    : 조직 구분 변경시 - 이벤트
+*******************************************************************************/
+function cmb_org_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	div_input.cmb_supOrg.enable = false;
+	div_input.cmb_Bizcl.enable = false;
+	var nSupOrgCl = parseInt(strCode) - 1;
+	f_setSupOrg(nSupOrgCl);
+}
+
+/*******************************************************************************
+ * @description    : 유효조직상태 확인 - 이벤트
+*******************************************************************************/
+function div_input_chk_effOrgYn_OnClick(obj,strValue)
+{	
+	//유효조직여부 가 체크이면 1 아니면 0 
+	var sState = div_input.chk_effOrgYn.Value;
+	var nCurrentRow = ds_list.currow;
+	//1인상태에서 0으로 바꿨을때만  조회함 , 신규 등록이 아닐때
+	if(sState == 0 && ds_list.GetRowType(nCurrentRow) != "insert")
+	{	
+		var sDelOrg = ds_list.GetColumn(nCurrentRow,"ORG_ID");
+		FV_ORG_ROW = ds_orgMgmt.currow;
+		cf_setParam(ds_condition, "ORG_ID", sDelOrg ); 
+		
+		//트랜잭션 설정
+		var sSvcID = "delSearch";
+		var sInDs  = "nc_input_fieldDs=ds_condition";
+		var sOutDs = "ds_delete=delorg";
+		var sArg   = "sktst.bas.OGM#getDelSearch";
+		//공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+}
+
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+*******************************************************************************/
+function f_callBack(sSvcID)
+{   
+    if(sSvcID == "svcList")
+    {
+		ds_supOrg.Copy(ds_list);
+		ds_supOrg.InsertRow(0);
+		ds_supOrg.SetColumn(0,"org_cl", "");
+		ds_supOrg.SetColumn(0,"org_id", "");
+		ds_supOrg.SetColumn(0,"org_nm", "선택");
+
+		tre_org.Redraw = false;
+		ds_list.AddColumn("org_level", "INT");
+		var sSupOrgId;
+		var sCurOrgCl;
+
+		for(var i=0, n=ds_list.GetRowCount(); i<n; i++)
+		{
+			sSupOrgId = ds_list.GetColumn(i, "sup_org").toString();
+			sCurOrgCl = ds_list.GetColumn(i, "org_cl");
+			ds_list.SetColumn(i, "org_level", );
+			if(ds_list.GetColumn(i, "org_cl") == "3")
+			{
+				ds_list.SetColumn(i, "org_level", "9");
+			}
+			else
+			{
+				if(sSupOrgId.length > 0 && sCurOrgCl == "2")
+				{
+					ds_list.SetColumn(i, "org_level", parseInt(ds_supOrg.LookUp("org_id",ds_list.GetColumn(i,"sup_org"), "org_level"))+1);
+				}
+			}
+
+		}
+		ds_list.ApplyChange();
+		tre_org.Redraw = true;
+
+		cf_setOrgDs(ds_list);
+		tre_org.click();
+		
+		div_input.cmb_org.Enable = false;	
+		div_input.edOrgId.Enable = false;
+		// 권한에 따라 화면 enable 
+		div_input.Enable = btn_save.Visible;
+		div_etc.Enable = btn_save.Visible;
+    }
+    else if(sSvcID == "svcSave")
+    {
+		f_search();
+    }
+    else if(sSvcID == "delSearch") 
+    {
+		var sUorgId = ds_delete.GetColumn(0 ,"userorg_id");//사용자 테이블 org_id
+		var sDorgId = ds_delete.GetColumn(0 ,"dealorg_id");//거래처 테이블 org_id
+		
+		if(sUorgId == "" || sUorgId == null){//사용자관리 org_id가 널일때
+			if(sDorgId == "" || sDorgId == null){//사용자관리 org_id가 널이고 거래처관리 org_id도 널인경우:두테이블에 org_id가 없기때문에 삭제가능
+				
+				
+			}else{//사용자관리 org_id가 널이고 거래처관리 org_id가 널이 아닐때:거래처관리에 org_id 가 있을경우
+				ds_list.SetColumn(FV_ORG_ROW,"EFF_ORG_YN",1);
+				alert(cf_getMessage(MSG_00022, "거래처관리에 조직관리 관련 데이터가 존재하여"));
+			}
+		}else{//사용자관리 org_id가 널이 아닐때
+			if(sDorgId == "" || sDorgId == null){//사용자관리 org_id가 널이 아니고 거래처관리 org_id가 널일때:사용자관리에 org_id가 있을경우
+				ds_list.SetColumn(FV_ORG_ROW,"EFF_ORG_YN",1);
+				alert(cf_getMessage(MSG_00022, "사용자관리에 조직관리 관련 데이터가 존재하여"));
+			}else{//사용자관리 org_id가 널이 아니고 거래처관리 org_id도 널이 아닐때:두테이블에 모두 org_id가 있을경우
+				ds_list.SetColumn(FV_ORG_ROW,"EFF_ORG_YN",1);
+				alert(cf_getMessage(MSG_00022, "사용자관리와 거래처관리에 조직관리 관련 데이터가 존재하여"));
+			}
+		}
+		
+    }
+ }	
+ 
+/*******************************************************************************
+ * @description    : 우편번호 검색 버튼 클릭- 이벤트
+*******************************************************************************/
+function div_input_btn_addr_OnClick(obj)
+{
+	cf_commPopPost("div_etc.ed_zipCd1","div_etc.ed_zipCd2","div_etc.edt_addr");
+}
+
+ /*******************************************************************************
+ * @description    : 데이타셋 로우 변화 체크 - 이벤트
+*******************************************************************************/
+function ds_list_CanRowPosChange(obj,nOldRow,nRow)
+{
+	if(FV_BOOLEAN_CHECK == false)
+	{
+		
+		return false;
+	}
+}
+
+function tre_org_OnRButtonDown(obj,nPosX,nPosY,nRow)
+{
+	var nClickRow = ds_list.currow;
+	
+	if(!btn_save.Visible){
+		return;
+	}	
+	
+	if(ds_list.GetColumn(nClickRow,"ORG_CL") == "3"){
+		return;
+	}
+
+	if(obj.isAboveSel())
+	{
+		ds_rightPop.ClearData();
+
+		ds_rightPop.AddRow();
+		ds_rightPop.SetColumn(0, "code", "1");
+		ds_rightPop.SetColumn(0, "text", "추가");
+
+		ds_list.row = nRow;
+
+		trackPopupMenu("ds_rightPop", "", "code", "text", "", "", nPosX, nPosY, "f_rightPopCallBack", obj, 0, 0);
+	}	
+}
+
+/*******************************************************************************
+ * @description    : 팝업 처리 콜백 함수 - 이벤트
+*******************************************************************************/
+function f_rightPopCallBack(obj, nMenuID, nRow, nCell)
+{
+	var nClickRow = ds_list.currow;
+	var nInsertRow = toNumber(nClickRow)+1;
+	FV_ORG_ROW = ds_list.InsertRow(nInsertRow);
+	
+	var sOrgLevel = ds_list.GetColumn(nClickRow,"ORG_LEVEL");
+	var sOrgCl = ds_list.GetColumn(nClickRow,"ORG_CL");
+
+	// 조직레벨을 셋팅한다.
+	if(sOrgLevel == "2"){
+		// 팀인경우.
+		sOrgLevel = "9";
+	}else{
+		sOrgLevel = toNumber(sOrgLevel)+1;
+	}
+	
+	ds_list.SetColumn(nInsertRow,"EFF_ORG_YN","1");
+	ds_list.SetColumn(nInsertRow,"ORG_CL",toNumber(sOrgCl)+1);
+	ds_list.SetColumn(nInsertRow,"ORG_LEVEL",sOrgLevel);
+	ds_list.SetColumn(nInsertRow,"SUP_ORG",ds_list.GetColumn(nClickRow,"ORG_ID"));
+	
+	div_input.cmb_org.Enable = true;
+	div_input.edOrgId.Enable = true;
+	div_input.cmb_supOrg.enable = true;
+	div_input.cmb_Bizcl.enable = true;	
+	
+	ds_org.Filter("COMM_CD_VAL>"+sOrgCl);
+
+}]]></Script>
+</Window>

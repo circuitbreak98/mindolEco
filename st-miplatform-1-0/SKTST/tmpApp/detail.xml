@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="240" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="팝업" Top="8" Ver="1.0" Width="392" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_detail">
+				<Contents>
+					<colinfo id="id" size="256" summ="default" type="STRING"/>
+					<colinfo id="name" size="256" summ="default" type="STRING"/>
+					<colinfo id="memo" size="256" summ="default" type="STRING"/>
+					<record>
+						<id></id>
+						<memo></memo>
+						<name></name>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_parent"></Dataset>
+		</Datasets>
+		<Shape BKColor="user22" Bottom="120" Height="117" Id="Shape3" Left="4" LineColor="user23" Right="384" RoundHeight="8" RoundUnit="Pixel" RoundWidth="8" TabOrder="3" Top="3" Type="RoundRect" Width="380"></Shape>
+		<Static Border="None" Color="user8" Font="굴림,9" Height="22" Id="Static13" Left="22" TabOrder="4" Text="상세&#32;화면" Top="7" VAlign="Middle" Width="277"></Static>
+		<Static Align="Center" Border="Flat" Height="86" Id="Static19" Left="9" Style="sty_lb_Group" TabOrder="5" Text="상&#10;세&#10;내&#10;역" Top="28" VAlign="Middle" Width="26"></Static>
+		<Static Align="Center" Border="Flat" Height="42" Id="Static21" Left="37" Style="sty_lb_Basic" TabOrder="8" Text="MEMO" Top="72" VAlign="Middle" Width="99"></Static>
+		<Static Align="Center" Border="Flat" Height="20" Id="Static22" Left="37" Style="sty_lb_Basic" TabOrder="7" Text="NAME" Top="50" VAlign="Middle" Width="99"></Static>
+		<Static Align="Center" Border="Flat" Height="20" Id="Static23" Left="37" Style="sty_lb_Basic" TabOrder="6" Text="ID" Top="28" VAlign="Middle" Width="99"></Static>
+		<Edit BindDataset="ds_detail" Border="Flat" Column="id" Height="20" Id="Edit4" Left="138" Readonly="TRUE" Style="sty_ipt_form" TabOrder="1" Top="28" Width="238"></Edit>
+		<Edit BindDataset="ds_detail" Border="Flat" Column="name" Height="20" Id="Edit5" Left="138" Readonly="TRUE" Style="sty_ipt_form" TabOrder="2" Top="50" Width="238"></Edit>
+		<Image Height="5" Id="Image3" ImageID="img_Title_Sub" Left="10" TabOrder="9" Top="15" Width="8"></Image>
+		<TextArea BindDataset="ds_detail" Border="Flat" Column="memo" Height="42" Id="TextArea2" Left="138" Readonly="TRUE" Style="sty_ipt_form" TabOrder="10" Top="72" VScroll="TRUE" Width="238"></TextArea>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_close" ImageID="btn_Input_02" Left="328" OnClick="btn_close_OnClick" Style="sty_btn_form" TabOrder="11" Text="닫기" Top="125" Width="54"></Button>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_msg1" ImageID="btn_Input_05" Left="8" OnClick="btn_msg1_OnClick" Style="sty_btn_form" TabOrder="12" Text="공통메세지1" Top="184" Width="90"></Button>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_msg2" ImageID="btn_Input_05" Left="104" OnClick="btn_msg2_OnClick" Style="sty_btn_form" TabOrder="13" Text="공통메세지2" Top="184" Width="90"></Button>
+		<Static Border="None" Color="user8" Font="굴림,9,Bold" Height="22" Id="Static0" Left="8" TabOrder="14" Text="*&#32;화면상의&#32;메세지&#32;처리는&#32;스크립트에&#32;정의된&#32;메세지를&#32;사용" Top="145" VAlign="Middle" Width="368"></Static>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_msg3" ImageID="btn_Input_05" Left="200" OnClick="btn_msg3_OnClick" Style="sty_btn_form" TabOrder="15" Text="공통메세지3" Top="183" Width="90"></Button>
+		<Static Border="None" Color="user8" Font="굴림,9,Bold" Height="22" Id="Static1" Left="8" TabOrder="16" Text="*&#32;필요에&#32;따라&#32;적절한&#32;메세지&#32;참조" Top="161" VAlign="Middle" Width="277"></Static>
+		<Static Border="None" Color="user8" Font="굴림,9,Bold" Height="22" Id="Static2" Left="115" TabOrder="17" Text="닫기시&#32;부모창에&#32;파라메터&#32;전달&#32;&lt;-&#32;" Top="124" VAlign="Middle" Width="205"></Static>
+		<Button ButtonStyle="TRUE" Cursor="HAND" Height="20" Id="btn_msg4" ImageID="btn_Input_05" Left="293" Style="sty_btn_form" TabOrder="18" Text="공통메세지4" Top="183" Width="90"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : detail
+* 업무명      : 기준코드관리 - 샘플관리
+* 프로그램명  : 팝업
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_NAME; // 사용자 이름
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	var id = param1;
+	var name = param2;
+	var memo = param3;
+	
+	if(ds_detail.GetRowCount() < 1)
+	{
+		ds_detail.AddRow();
+	}
+	ds_detail.SetColumn(0, "id", id);
+	ds_detail.SetColumn(0, "name", name);
+	ds_detail.SetColumn(0, "memo", memo);
+}
+
+
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	if(parent.ds_input.GetRowCount() < 1)
+	{
+		parent.ds_input.AddRow();
+	}
+	// 데이타셋 기반 전달 방식
+	//parent.ds_input.SetColumn(0, "id", ds_detail.GetColumn(0, "id"));
+	//parent.ds_input.SetColumn(0, "name", ds_detail.GetColumn(0, "name"));
+	//parent.ds_input.SetColumn(0, "memo", ds_detail.GetColumn(0, "memo"));
+
+ds_detail.AddColumn("test1");
+ds_detail.AddColumn("test2");
+ds_detail.SetColumn(0, "test1", "ttt111");
+ds_detail.SetColumn(0, "test2", "ttt222");
+	// 함수를 이용한 부모창 값 전달
+
+/*******************************************************************************
+ * @description          : 데이타셋의 카피 - 대상 DS를 기준으로 목적 DS에 정보를 복사
+                          - 없으면 추가한다.
+ * @param oTargetDs      : 목적 DS 객체
+		  oSourceDs      : 대상 DS 객체
+		  nRow           : 대상 로우 - 없으면 전체
+		  bOption       : false시 목적 DS에 로우가 존재하고, 칼럼이 있는 것만 복사
+*******************************************************************************/
+	cf_copyDataSet(parent.ds_input, ds_detail);
+
+	// 인수로 전달 받은 부모창의 함수를 실행하고 창을 종료한다
+/*******************************************************************************
+ * @description         : 인수로 넘겨 받은 명의 함수를 실행학소 창을 종료
+ * @param sMethodName   : 메소드 명 
+		  sParam   		: 메소드 인자
+*******************************************************************************/
+	cf_callnClose(excuteMethod, "fdsa, fdsa");
+	
+	// 클로즈 함수에 전달할 값을 지정하는 방식 - 호출한 부모폼에서 변수로 해당값을 받음
+	// this.close(sData); 
+}
+
+
+
+/*******************************************************************************
+ * @description    : 메세지 출력 - 이벤트
+*******************************************************************************/
+function btn_msg1_OnClick(obj)
+{
+	alert(COM_INF_001);
+}
+
+/*******************************************************************************
+ * @description    : 메세지 출력 - 이벤트
+*******************************************************************************/
+function btn_msg2_OnClick(obj)
+{
+	alert(COM_CFM_001);
+}
+
+/*******************************************************************************
+ * @description    : 메세지 출력 - 이벤트
+*******************************************************************************/
+function btn_msg3_OnClick(obj)
+{
+	alert(COM_ERR_001);
+}
+
+
+
+function btn_msg4_OnClick(obj)
+{
+	if(confirm(COM_ERR_064) == true)
+	{
+		//
+	}
+}
+]]></Script>
+</Window>

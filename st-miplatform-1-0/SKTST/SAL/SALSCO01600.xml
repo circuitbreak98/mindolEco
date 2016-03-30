@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="640" Id="SALSCO01600" Left="8" OnLoadCompleted="SALSCO01600_OnLoadCompleted" PidAttrib="7" Title="판매처변경" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_lastGnrlSale">
+				<Contents>
+					<colinfo id="gnrl_sale_no" size="256" summ="default" type="STRING"/>
+					<colinfo id="gnrl_sale_chg_seq" size="256" summ="default" type="STRING"/>
+					<colinfo id="stl_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="dis_hld_plc" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_input"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_channelChgIfInfo">
+				<Contents>
+					<colinfo id="op_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="op_tm" size="256" summ="default" type="STRING"/>
+					<colinfo id="seq" size="256" summ="default" type="STRING"/>
+					<colinfo id="if_rec_typ" size="256" summ="default" type="STRING"/>
+					<colinfo id="svc_mgmt_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="proc_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="proc_tm" size="256" summ="default" type="STRING"/>
+					<colinfo id="ukey_agency_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="ukey_sub_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_ukey_channel_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_ukey_channel_sub_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_sale_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="af_ukey_channel_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="af_ukey_channel_sub_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="af_sale_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="eqp_mdl_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="eqp_ser_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="error_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="rmks" size="256" summ="default" type="STRING"/>
+					<colinfo id="del_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="upd_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="mod_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="mod_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="sl_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="sl_net_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="ps_apnd_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="cust_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="svc_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="proc_chgrg_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="proc_chgrg_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_gnrl_sale_no" size="256" summ="default" type="STRING"/>
+					<colinfo id="bf_sl_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_chgrg_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="sale_chgrg_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Height="640" Id="Div0" TabOrder="1" Text="Div0" Top="40" Width="1024">
+			<Contents></Contents>
+		</Div>
+		<Div Height="34" Id="div_status" Left="8" TabOrder="2" Text="Div1" Top="6" Width="1008">
+			<Contents>
+				<Static Align="Center" BKColor="user8" Font="굴림,10" Height="25" Id="sta_2" Left="10" Style="sty_img_tit" TabOrder="1" Text="판매처변경정보" VAlign="Middle" Width="117"></Static>
+				<Static Align="Center" BKColor="user8" Enable="FALSE" Font="굴림,10" Height="25" Id="sta_3" Left="210" Style="sty_img_tit" TabOrder="2" Text="판매취소" VAlign="Middle" Width="117"></Static>
+				<Static Align="Center" BKColor="user8" Enable="FALSE" Font="굴림,10" Height="25" Id="sta_4" Left="402" Style="sty_img_tit" TabOrder="3" Text="판매등록" VAlign="Middle" Width="117"></Static>
+				<Static Align="Center" Height="22" Id="Static0" Left="136" TabOrder="4" Text="--&gt;" VAlign="Middle" Width="64"></Static>
+				<Static Align="Center" Height="22" Id="Static1" Left="328" TabOrder="5" Text="--&gt;" VAlign="Middle" Width="64"></Static>
+				<Button ButtonStyle="TRUE" Height="25" Id="btn_salePlcCncl" ImageID="btn_c_4" ImageStatus="PUSH" Left="912" LeftMargin="5" OnClick="div_status_btn_salePlcCncl_OnClick" Style="sty_btn_c" TabOrder="6" TabStop="FALSE" Text="이전단계" Top="-1" Width="88"></Button>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALSCO01600
+* 업무명      :  판매처변경
+* 프로그램명  : 판매처변경
+--------------------------------------------------------------------------------
+* 작성자      : 이문규
+* 작성일      : 2009.06.24
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+
+var FV_IF_OP_DT;
+var FV_IF_OP_TM;
+var FV_IF_SEQ;
+var FV_IF_UPD_CNT;
+
+var FV_SVC_MGMT_NUM;
+var FV_PROD_CL;
+var FV_MDL_CD; 
+var FV_SER_NUM;
+var FV_AF_SL_CL;
+var FV_BF_SL_CL;
+
+var FV_IF_PROC_CL;
+var FV_APND_CL;
+
+var p_gnrl_sale_no;
+var p_gnrl_sale_chg_seq;    
+
+var FV_LOGIN_USER_ID;              //로그인 유저 아이디 
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+function SALSCO01600_OnLoadCompleted(obj)
+{
+    //global 변수 
+    FV_LOGIN_USER_ID = gds_session.GetColumn(0,"loginId"); //로그인 유저 아이디 
+    
+    FV_APND_CL  = p_ps_apnd_cl;
+    FV_IF_OP_DT = p_op_dt;
+    FV_IF_OP_TM = p_op_tm;
+    FV_IF_SEQ   = p_seq;
+
+    FV_SVC_MGMT_NUM = p_svc_mgmt_num;  //서비스 관리번호
+    FV_PROD_CL      = p_prod_cl;       //상품구분   1: 단말기, 2: USIM
+    FV_MDL_CD       = p_mdl_cd;        //모델코드
+    FV_SER_NUM      = p_ser_num;       //일련번호
+    FV_AF_SL_CL     = p_sl_cl;
+    FV_BF_SL_CL     = "";
+        
+	lf_getDivChannelChgIfInfo();
+	lf_getGnrlSaleNo();
+    lf_procStatus(FV_APND_CL);
+}
+
+
+function lf_getDivUrl()
+{
+    var sScreenId = "";
+    
+    switch(FV_APND_CL)
+    {
+	    case "1":
+		    sScreenId = "SAL::SALSCO01700.xml";
+	        break;
+	    case "2":
+	        //판매취소
+	        switch(FV_BF_SL_CL)
+	        {
+	            case "01" :
+	                sScreenId = "SAL::SALRGS00300.xml";
+	                break;
+	            case "02" :    
+	                sScreenId = "SAL::SALAGS00300.xml";
+	                break;
+	            case "03" :    
+	                sScreenId = "SAL::SALORG00400.xml";
+	                break;
+	            case "04" :    
+	                sScreenId = "SAL::SALOAG00400.xml";
+	                break;
+	            case "05" :    
+	                sScreenId = "SAL::SALMGS00200.xml";
+	                break;
+	            default :
+	                break;
+	        }
+		    break;
+	    case "3":
+	        //변경후 판매처로 판매
+	        switch(FV_AF_SL_CL)
+	        {
+	            case "01" :
+	                sScreenId = "SAL::SALRGS00100.xml";
+	                break;
+	            case "02" :    
+	                sScreenId = "SAL::SALAGS00100.xml";
+	                break;
+	            case "03" :    
+	                sScreenId = "SAL::SALORG00100.xml";
+	                break;
+	            case "04" :    
+	                sScreenId = "SAL::SALOAG00100.xml";
+	                break;
+	            case "05" :    
+	                sScreenId = "SAL::SALMGS00100.xml";
+	                break;
+	            default :
+	                break;
+	        }
+		    break;
+	    case "Y":
+            lf_close();
+		    break;
+	    case "Z":
+            alert("PS반영제외 DATA입니다.");
+            this.Close();
+		    break;
+	    default:    
+		    sScreenId = "SAL::SALSCO01700.xml";
+	        break;
+	}        
+	
+	if (FV_APND_CL == "5")
+	{
+	    alert("PS반영제외 DATA입니다.");
+	    return;
+	}
+	else
+	{
+	    Div0.Url = sScreenId;
+	    lf_setTitle();
+	}
+
+}
+
+
+function lf_procStatus(sParam1,sParam2)
+{
+    if (sParam2 == "U")
+    {
+        lf_updatePsApndCl(sParam1);
+    }
+    
+    FV_APND_CL = sParam1;
+
+    lf_getDivUrl();
+
+}
+
+function lf_setTitle()
+{
+
+    switch(FV_APND_CL)
+    {
+        case "1":
+            div_status.sta_2.Enable = true;
+            div_status.sta_3.Enable = false;
+            div_status.sta_4.Enable = false;
+            
+            div_status.btn_salePlcCncl.Visible = false;
+            break;
+        case "2":
+            div_status.sta_2.Enable = false;
+            div_status.sta_3.Enable = true;
+            div_status.sta_4.Enable = false;
+            
+            div_status.btn_salePlcCncl.Visible = true;
+            break;
+        case "3":
+            div_status.sta_2.Enable = false;
+            div_status.sta_3.Enable = false;
+            div_status.sta_4.Enable = true;
+
+            div_status.btn_salePlcCncl.Visible = false;
+            break;
+        case "Y":
+            div_status.sta_2.Enable = false;
+            div_status.sta_3.Enable = false;
+            div_status.sta_4.Enable = true;
+
+            div_status.btn_salePlcCncl.Visible = false;
+            break;
+        default :
+            div_status.sta_2.Enable = true;
+            div_status.sta_3.Enable = false;
+            div_status.sta_4.Enable = false;
+
+            div_status.btn_salePlcCncl.Visible = false;
+            break;
+    }
+
+}
+
+function lf_getGnrlSaleNo()
+{
+    if (uf_IsNull(p_gnrl_sale_no))
+    {
+        lf_getLastGnrlSale();
+    }
+    else
+    {
+        lf_getLastGnrlSaleChgSeq();
+    }
+    return;
+}
+
+/*******************************************************************************
+ * @description         : 일반판매번호  MAX 조회
+*******************************************************************************/
+function lf_getLastGnrlSale()
+{
+    //조회 조건
+    //ds_input
+    ds_input.Clear();
+    //lf_formVarInit에서 초기화 해준 인터페이스 관리 화면에서 넘어온값임.
+    cf_setParam(ds_input, "svc_mgmt_num" , FV_SVC_MGMT_NUM );  //서비스관리번호
+    cf_setParam(ds_input, "prod_cl"      , FV_PROD_CL );       //상품구분
+    cf_setParam(ds_input, "mdl_cd"       , FV_MDL_CD );        //모델코드
+    cf_setParam(ds_input, "ser_num"      , FV_SER_NUM );       //일련번호
+
+ 	var sSvcID = "getLastGnrlSale";
+	var sInDs  = "nc_input_fieldDs=ds_input";
+	var sOutDs = "ds_lastGnrlSale=ds_lastGnrlSale";
+	var sArg   = "sktst.sal.SCO#getLastGnrlSale";	
+    
+    http.Sync = true;
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);     
+	http.Sync = false;
+}
+
+/*******************************************************************************
+ * @description         : 일반판매번호, 일반판매변경순번  MAX 조회
+*******************************************************************************/
+function lf_getLastGnrlSaleChgSeq()
+{
+    //조회 조건
+    //ds_input
+    ds_input.Clear();
+    cf_setParam(ds_input, "gnrl_sale_no" , p_gnrl_sale_no ); 
+
+ 	var sSvcID = "getLastGnrlSaleChgSeq";
+	var sInDs  = "nc_input_fieldDs=ds_input";
+	var sOutDs = "ds_lastGnrlSale=ds_lastGnrlSale";
+	var sArg   = "sktst.sal.SCO#getLastGnrlSaleChgSeq";	
+    
+    http.Sync = true;
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);     
+	http.Sync = false;
+}
+
+function lf_getDivChannelChgIfInfo()
+{
+    //조회 조건
+    //ds_input
+    cf_setParam(ds_input, "op_dt" , FV_IF_OP_DT );  //전송일자
+    cf_setParam(ds_input, "op_tm" , FV_IF_OP_TM );  //전송시각
+    cf_setParam(ds_input, "seq"   , FV_IF_SEQ   );  //순번
+
+ 	var sSvcID = "getDivChannelChgIfInfo";
+	var sInDs  = "nc_input_fieldDs=ds_input";
+	var sOutDs = "ds_channelChgIfInfo=ds_channelChgIfInfo";
+	var sArg   = "sktst.sal.SUI#getChannelChgIfInfo";	
+
+    http.Sync = true;
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	http.Sync = false;
+}
+
+/*******************************************************************************
+ * @description         : 일반판매번호, 일반판매변경순번  MAX 조회
+*******************************************************************************/
+function lf_updateModUserId(sParam)
+{
+    var sModUserId = "";
+    
+    if (sParam == "C")
+    {
+        sModUserId = "";
+    }
+    else if(sParam == "U")
+    {
+        sModUserId = FV_LOGIN_USER_ID;
+    }
+    
+    ds_input.Clear();
+    
+    //lf_formVarInit에서 초기화 해준 인터페이스 관리 화면에서 넘어온값임.
+    cf_setParam(ds_input, "op_dt"         , FV_IF_OP_DT );  //전송일자
+    cf_setParam(ds_input, "op_tm"         , FV_IF_OP_TM );  //전송시각
+    cf_setParam(ds_input, "seq"           , FV_IF_SEQ   );  //순번
+    cf_setParam(ds_input, "mod_user_id"   , sModUserId ); 
+
+ 	var sSvcID = "updateModUserId";
+	var sInDs  = "ds_input=ds_input";
+	var sOutDs = "";
+	var sArg   = "sktst.sal.SCO#updateModUserId";	
+    
+    http.Sync = true;
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);     
+	http.Sync = false;
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+
+    /* 일반판매번호, 일반판매변경순번 취득 */
+    if (sSvcID == "getLastGnrlSale")
+    {
+            
+        if (ds_lastGnrlSale.rowcount > 0)
+        {
+            p_gnrl_sale_no      = ds_lastGnrlSale.GetColumn(0,"gnrl_sale_no");
+            p_gnrl_sale_chg_seq = ds_lastGnrlSale.GetColumn(0,"gnrl_sale_chg_seq");
+            
+            ds_channelChgIfInfo.SetColumn(0,"gnrl_sale_no",ds_lastGnrlSale.GetColumn(0,"gnrl_sale_no"));
+            return;
+        }
+        else
+        {
+            alert("이전 판매 정보가 없습니다.");
+            return;
+        }
+    }
+    else if (sSvcID == "getDivChannelChgIfInfo")
+    {
+        if(ds_channelChgIfInfo.rowcount > 0)
+        {
+            if ( uf_IsNull(ds_channelChgIfInfo.GetColumn(0,"mod_user_id")) )
+            {
+                //작업자(수장자) update
+                lf_updateModUserId("U");
+            }
+            else if( ds_channelChgIfInfo.GetColumn(0,"mod_user_id") != FV_LOGIN_USER_ID )
+            {
+                alert("다른 사용자가 작업중입니다.");
+                this.Close();
+            }
+            
+            p_gnrl_sale_no = ds_channelChgIfInfo.GetColumn(0,"bf_gnrl_sale_no");
+            FV_AF_SL_CL = ds_channelChgIfInfo.GetColumn(0,"sl_cl");
+            FV_BF_SL_CL = ds_channelChgIfInfo.GetColumn(0,"bf_sl_cl");
+        }
+        else
+        {
+            alert("해당되는 채널변경 정보가 없습니다.");
+            this.Close();
+        }
+        return;
+    }
+    else if (sSvcID == "getLastGnrlSaleChgSeq")
+    {
+        p_gnrl_sale_no      = ds_lastGnrlSale.GetColumn(0,"gnrl_sale_no");
+        p_gnrl_sale_chg_seq = ds_lastGnrlSale.GetColumn(0,"gnrl_sale_chg_seq");
+        ds_channelChgIfInfo.SetColumn(0,"gnrl_sale_no",ds_lastGnrlSale.GetColumn(0,"gnrl_sale_no"));
+
+        ds_channelChgIfInfo.SetColumn(0,"stl_plc"    ,ds_lastGnrlSale.GetColumn(0,"stl_plc"));
+        ds_channelChgIfInfo.SetColumn(0,"dis_hld_plc",ds_lastGnrlSale.GetColumn(0,"dis_hld_plc"));
+    }
+    return;
+}    
+
+function div_status_btn_salePlcCncl_OnClick(obj)
+{
+    lf_procStatus("1");
+    return;
+}
+
+function lf_updatePsApndCl(sParam)
+{
+    //var sParam = "";
+    ds_input.ClearData();
+    
+	cf_setParam(ds_input, "op_dt"      , FV_IF_OP_DT );
+	cf_setParam(ds_input, "op_tm"      , FV_IF_OP_TM );
+	cf_setParam(ds_input, "seq"        , FV_IF_SEQ );
+	cf_setParam(ds_input, "ps_apnd_cl" , sParam );
+
+	var sSvcID = "updateChannelChgPsApndCl";
+	var sInDs  = "ds_input=ds_input";
+	var sOutDs = "ds_output=ds_output";
+	var sArg   = "sktst.sal.SCO#updateChannelChgApndCl";
+		   
+	http.Sync = true;
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);	    
+	http.Sync = false;
+	
+	return;
+}
+
+function lf_close()
+{
+    cf_callnClose("lf_reload", "");
+    this.Close();
+}]]></Script>
+</Window>

@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTSKN00110">
+	<insert id="addConsultDtlSknXls" parameterClass="map" ><![CDATA[INSERT INTO TCST_CONSULT_DTL (
+	 CON_MGMT_NO
+	,CON_SEQ  
+	,PROD_CD
+	,CPNT_PROD_CD
+    ,DTL_CL
+    ,TYPE_CL
+    ,QTY
+    ,NRL_QTY
+    ,HLD_QTY
+    ,DDCT_AMT
+    ,DEL_YN
+    ,UPD_CNT
+    ,INS_DTM
+    ,INS_USER_ID
+    ,MOD_DTM
+    ,MOD_USER_ID
+    ,SKN_QTY
+) VALUES (    
+	 #CON_MGMT_NO#
+	,#SEQ# 
+	,#PROD_CD#
+	,#CMP_PROD_CD#
+    ,#DTL_CL#
+    ,'1'    
+    ,#QTY#
+    ,#NRL_QTY#
+    ,#HLD_QTY#
+    ,(CASE WHEN TO_NUMBER(#HLD_QTY#) >= 1 THEN 0
+ 		   ELSE TO_NUMBER(#PRICE#)
+		   END)
+    ,'N'
+    ,1
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId# 
+    ,#HLD_QTY#
+)]]>
+	</insert>
+	<insert id="addConsultMgmtSknXlsIn" parameterClass="map" ><![CDATA[INSERT INTO TCST_CONSULT_MGMT (
+  CON_MGMT_NO    
+  ,PROD_CD        
+  ,SER_NUM        
+  ,CON_DT         
+  ,CON_PLC_CD     
+  ,COLOR_CD       
+  ,SVC_DT         
+  ,EQP_ST         
+  ,USEPRD_DDCT_AMT
+  ,CORROSION_YN   
+  ,POWER_YN       
+  ,CALL_YN        
+  ,DATA_YN        
+  ,DISP_YN        
+  ,FUNCTION_YN    
+  ,LOST_YN        
+  ,RETURN_YN      
+  ,LEASE_YN       
+  ,FLOOD_YN       
+  ,USIM_YN        
+  ,OTHER_YN       
+  ,RMKS           
+  ,CONFIRM_YN     
+  ,FULLSET_YN     
+  ,CON_AMT        
+  ,BUY_CL         
+  ,RES_NO         
+  ,CUST_NM        
+  ,BANK_CD        
+  ,ACC_NO         
+  ,TEL_NO         
+  ,ZIP_CD1        
+  ,ZIP_CD2        
+  ,ADDR           
+  ,DTL_ADDR       
+  ,OUT_YN         
+  ,DEL_YN         
+  ,UPD_CNT        
+  ,INS_DTM        
+  ,INS_USER_ID    
+  ,MOD_DTM        
+  ,MOD_USER_ID    
+  ,CHAG_DEDT_YN   
+  ,SVC_NO         
+  ,SVC_MGMT_NO    
+  ,IMEI           
+  ,IN_YN          
+  ,IN_DT          
+  ,IN_RMKS        
+  ,OTHER_CPNT     
+  ,POL_YN         
+  ,POL_CD         
+  ,PRC_ST  
+  ,SKN_YN  
+  ,SKN_EQP_ST
+  ,SKN_CON_AMT
+  ,CUST_GROUP_NM
+  ,U_EQP_AMT
+  ,CALCULATE_WAY     
+) VALUES (
+   #CON_MGMT_NO#    
+  ,TRIM(#PROD_CD#)
+  ,TRIM(#SER_NUM#)
+  ,NVL(TRIM(#CON_DT#),TO_CHAR(SYSDATE,'YYYYMMDD'))
+  ,TRIM(#CON_PLC_CD#)
+  ,TRIM(#COLOR_CD#)
+  ,NVL(TRIM(#SVC_DT#),TO_CHAR(SYSDATE,'YYYYMMDD'))
+  ,TRIM(#EQP_ST#)
+  ,NVL(#PRCHS_AMT#,0)
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,NVL(#OTHER_YN#,'N')
+  ,'Excel Upload(IN)'
+  ,''
+  ,''
+  ,NVL(#PRCHS_AMT#,0)
+  ,'C'
+  ,TRIM(#RES_NO#)
+  ,TRIM(#CUST_NM#)
+  ,CASE LENGTH(TRIM(#BANK_CD#))
+     WHEN 2 THEN '0'||TRIM(#BANK_CD#)
+     ELSE TRIM(#BANK_CD#)
+   END  
+  ,TRIM(#ACC_NO#)
+  ,TRIM(#TEL_NO#)
+  ,TRIM(#ZIP_CD1#)
+  ,TRIM(#ZIP_CD2#)
+  ,#ADDR#
+  ,#DTL_ADDR#
+  ,'Y'
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,TRIM(#CHAG_DEDT_YN#)
+  ,TRIM(#SVC_NO#)
+  ,TRIM(#SVC_MGMT_NO#)
+  ,TRIM(#IMEI#)
+  ,'C'
+  ,''
+  ,'Excel Upload('||#PRC_GB#||')' 
+  ,#OTHER_CPNT#
+  ,''
+  ,''
+  ,'02'
+  ,'Y'
+  ,TRIM(#EQP_ST#)
+  ,NVL(#PRCHS_AMT#,0)
+  ,#CUST_GROUP_NM#
+  ,NVL(#PRCHS_AMT#,0)
+  ,#CALCULATE_WAY#
+)]]>
+	</insert>
+	<select id="getProdDtl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT '' CON_MGMT_NO
+	 , '' PRCHS_MGMT_NO
+   	 , ROWNUM SEQ
+     , prod.DTL_CL
+     , '1' TYPE_CL
+     , prod.PROD_CD
+     , prod.CMP_PROD_CD
+     , prod.QTY
+     , 0 NRL_QTY
+     , 0 HLD_QTY
+     , prod.PRICE
+  FROM TBAS_PROD_DTL prod
+   	 , TBAS_PROD_MGMT mgmt
+ WHERE prod.PROD_CD = mgmt.PROD_CD
+   AND prod.PROD_CD = #PROD_CD#
+   AND prod.TYPE_CL = '1'
+   AND prod.DEL_YN = 'N'
+   AND mgmt.DEL_YN = 'N'
+   AND prod.ST_DT <= TO_CHAR(SYSDATE,'YYYYMMDD')
+   AND prod.ED_DT >= TO_CHAR(SYSDATE,'YYYYMMDD')]]>
+	</select>
+	<select id="getConMgmtNo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 'CON'||LPAD(TO_CHAR(SCST_CON_MGMT_NO.NEXTVAL),9,'0') CON_MGMT_NO
+  FROM DUAL ]]>
+	</select>
+	<insert id="addConsultMgmtXlsIn" parameterClass="map" ><![CDATA[INSERT INTO TCST_CONSULT_MGMT (
+  CON_MGMT_NO    
+  ,PROD_CD        
+  ,SER_NUM        
+  ,CON_DT         
+  ,CON_PLC_CD     
+  ,COLOR_CD       
+  ,SVC_DT         
+  ,EQP_ST         
+  ,USEPRD_DDCT_AMT
+  ,CORROSION_YN   
+  ,POWER_YN       
+  ,CALL_YN        
+  ,DATA_YN        
+  ,DISP_YN        
+  ,FUNCTION_YN    
+  ,LOST_YN        
+  ,RETURN_YN      
+  ,LEASE_YN       
+  ,FLOOD_YN       
+  ,USIM_YN        
+  ,OTHER_YN       
+  ,RMKS           
+  ,CONFIRM_YN     
+  ,FULLSET_YN     
+  ,CON_AMT        
+  ,BUY_CL         
+  ,RES_NO         
+  ,CUST_NM        
+  ,BANK_CD        
+  ,ACC_NO         
+  ,TEL_NO         
+  ,ZIP_CD1        
+  ,ZIP_CD2        
+  ,ADDR           
+  ,DTL_ADDR       
+  ,OUT_YN         
+  ,DEL_YN         
+  ,UPD_CNT        
+  ,INS_DTM        
+  ,INS_USER_ID    
+  ,MOD_DTM        
+  ,MOD_USER_ID    
+  ,CHAG_DEDT_YN   
+  ,SVC_NO         
+  ,SVC_MGMT_NO    
+  ,IMEI           
+  ,IN_YN          
+  ,IN_DT          
+  ,IN_RMKS        
+  ,OTHER_CPNT     
+  ,POL_YN         
+  ,POL_CD         
+  ,PRC_ST  
+  ,SKN_YN   
+  ,CUST_GROUP_NM  
+  ,CALCULATE_WAY     
+) VALUES (
+   #CON_MGMT_NO#    
+  ,TRIM(#PROD_CD#)
+  ,TRIM(#SER_NUM#)
+  ,NVL(TRIM(#CON_DT#),TO_CHAR(SYSDATE,'YYYYMMDD'))
+  ,TRIM(#CON_PLC_CD#)
+  ,TRIM(#COLOR_CD#)
+  ,NVL(TRIM(#SVC_DT#),TO_CHAR(SYSDATE,'YYYYMMDD'))
+  ,'C'
+  ,NVL(#PRCHS_AMT#,0)
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,'N'
+  ,NVL(#OTHER_YN#,'N')
+  ,'Excel Upload(IN)'
+  ,''
+  ,''
+  ,NVL(#PRCHS_AMT#,0)
+  ,'C'
+  ,TRIM(#RES_NO#)
+  ,TRIM(#CUST_NM#)
+  ,CASE LENGTH(TRIM(#BANK_CD#))
+     WHEN 2 THEN '0'||TRIM(#BANK_CD#)
+     ELSE TRIM(#BANK_CD#)
+   END  
+  ,TRIM(#ACC_NO#)
+  ,TRIM(#TEL_NO#)
+  ,TRIM(#ZIP_CD1#)
+  ,TRIM(#ZIP_CD2#)
+  ,#ADDR#
+  ,#DTL_ADDR#
+  ,'Y'
+  ,'N'
+  ,1
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,to_char(sysdate,'YYYYMMDDHH24MISS')
+  ,#onlineContext.userInfo.loginId#
+  ,TRIM(#CHAG_DEDT_YN#)
+  ,TRIM(#SVC_NO#)
+  ,TRIM(#SVC_MGMT_NO#)
+  ,TRIM(#IMEI#)
+  ,'C'
+  ,''
+  ,'Excel Upload('||#PRC_GB#||')' 
+  ,#OTHER_CPNT#
+  ,''
+  ,''
+  ,'02'
+  ,NVL(#SKN_YN#,'N')
+  ,#CUST_GROUP_NM#  
+  ,#CALCULATE_WAY#
+)]]>
+	</insert>
+	<insert id="addConsultDtlXls" parameterClass="map" ><![CDATA[INSERT INTO TCST_CONSULT_DTL (
+	 CON_MGMT_NO
+	,CON_SEQ  
+	,PROD_CD
+	,CPNT_PROD_CD
+    ,DTL_CL
+    ,TYPE_CL
+    ,QTY
+    ,NRL_QTY
+    ,HLD_QTY
+    ,DDCT_AMT
+    ,DEL_YN
+    ,UPD_CNT
+    ,INS_DTM
+    ,INS_USER_ID
+    ,MOD_DTM
+    ,MOD_USER_ID
+) VALUES (    
+	 #CON_MGMT_NO#
+	,#SEQ# 
+	,#PROD_CD#
+	,#CMP_PROD_CD#
+    ,#DTL_CL#
+    ,'1'    
+    ,#QTY#
+    ,#NRL_QTY#
+    ,#HLD_QTY#
+    ,(CASE WHEN TO_NUMBER(#HLD_QTY#) >= 1 THEN 0
+ 		   ELSE TO_NUMBER(#PRICE#)
+		   END)
+    ,'N'
+    ,1
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId#
+    ,to_char(sysdate,'YYYYMMDDHH24MISS')
+    ,#onlineContext.userInfo.loginId# 
+)]]>
+	</insert>
+</sqlMap>

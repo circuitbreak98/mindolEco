@@ -1,0 +1,1069 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form DomainID="item_00617" Height="600" Id="ADMMNU00100" Left="8" OnLoadCompleted="ADMMNU00100_OnLoadCompleted" OnUnloadCompleted="ADMMNU00100_OnUnloadCompleted" PidAttrib="7" Style="tab" Title="메뉴관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset CanRowPosChange="ds_list_CanRowPosChange" DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="menu_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="MENU_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MENU_SHOT_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="TOP_MENU_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MENU_GROUP" size="256" summ="default" type="STRING"/>
+					<colinfo id="MENU_LVL_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="MENU_URL" size="256" summ="default" type="STRING"/>
+					<colinfo id="SORT_SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="screen_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="SUP_MENU_NUM" size="256" summ="default" type="STRING"/>
+					<colinfo id="TOP_PREFIX_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="SCREEN_SIZE" size="256" summ="default" type="STRING"/>
+					<colinfo id="USE_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="REMARK" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEL_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="UPD_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="INS_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MENU_NM_1" size="256" summ="default" type="STRING"/>
+					<colinfo id="MENU_NM_2" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="MENU_NM_3" size="256" summ="default" type="STRING"/>
+					<colinfo id="MENU_NM_4" size="256" summ="default" type="STRING"/>
+					<colinfo id="column0" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_useYn">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="value" size="256" summ="default" type="STRING"/>
+					<record>
+						<code>Y</code>
+						<value>사용</value>
+					</record>
+					<record>
+						<code>N</code>
+						<value>미사용</value>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_fullSizeYn">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="value" size="256" summ="default" type="STRING"/>
+					<record>
+						<code></code>
+						<value>선택</value>
+					</record>
+					<record>
+						<code>Y</code>
+						<value>전체</value>
+					</record>
+					<record>
+						<code>N</code>
+						<value>일반</value>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_tmp"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_rightPop">
+				<Contents>
+					<colinfo id="code" size="256" summ="default" type="STRING"/>
+					<colinfo id="text" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_menuNo"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset CanColumnChange="ds_auth_CanColumnChange" DataSetType="Dataset" Id="ds_auth" OnColumnChanged="ds_auth_OnColumnChanged">
+				<Contents>
+					<colinfo id="menu_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="user_grp" size="256" summ="default" type="STRING"/>
+					<colinfo id="search_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="save_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="del_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="req_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="aprv_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="can_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="close_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="print_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="init_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="etc1_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="etc2_auth_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="etc3_auth_yn" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_test"></Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="759" LeftMargin="5" OnClick="btn_saveMulti_OnClick" Style="sty_btn_c" TabOrder="1" Text="저장" Top="565" Visible="FALSE" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="24" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="메뉴목록" Top="4" Width="192"></Image>
+		<Tab Border="Flat" Height="557" Id="tab_division" Left="352" MouseOverColor="user12" OnChanged="tab_division_OnChanged" OnChanging="tab_division_OnChanging" SelColor="user11" SelectFont="돋움,9,Bold" Style="sty_tab" TabOrder="3" Top="6" Width="464">
+			<Contents>
+				<TabPage BorderColor="black" Height="528" Id="tab_menu" ImageID="tab_blue" Left="2" TabOrder="19" Text="메뉴관리" Top="27" Width="460">
+					<Div Border="Raised" Height="74" Id="div_screen" Left="6" OnMouseOut="f_applyNowData" Style="sty_div_input" TabOrder="1" Text="Div0" Top="315" Width="448">
+						<Contents>
+							<Static Align="Right" Border="None" DomainID="item_00473" Height="20" Id="Static3" Left="4" LineSpacing="2" Style="sty_lb_Basic" TabOrder="4" Text="화면ID&#32;" Top="7" VAlign="Middle" Width="88"></Static>
+							<Edit BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="SCREEN_ID" Height="20" Id="edt_screenId" ImeMode="english" Left="90" LeftMargin="2" MaxLength="11" OnCharChanged="f_applyNowData" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" UpperOnly="TRUE" UseIME="FALSE" Width="126"></Edit>
+							<Static Align="Right" Border="None" DomainID="item_00715" Height="20" Id="Static9" Left="1" LineSpacing="2" Style="sty_lb_Basic" TabOrder="3" Text="화면크기" Top="38" VAlign="Middle" Width="88"></Static>
+							<Combo BindDataset="ds_list" Border="Flat" CodeColumn="code" Column="SCREEN_SIZE" DataColumn="value" Height="20" Id="cbo_size" INDEX="0" InnerDataset="ds_fullSizeYn" Left="89" Style="sty_ipt_form" TabOrder="1" Top="37" Width="128"></Combo>
+						</Contents>
+					</Div>
+					<Image Align="Left" DomainID="item_00431" Height="25" Id="Image4" ImageID="bul_tit" Left="18" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="화면정보" Top="290" Width="192"></Image>
+					<Image Align="Left" DomainID="item_00431" Height="25" Id="Static19" ImageID="bul_tit" Left="18" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="상세정보" Top="6" Width="192"></Image>
+					<Div Border="Raised" Height="256" Id="div_detail" Left="6" Style="sty_div_input" TabOrder="4" Text="Div0" Top="29" Width="448">
+						<Contents>
+							<Static Align="Right" Border="None" DomainID="item_00114" Height="20" Id="Static02" Left="4" Style="sty_lb_Basic" TabOrder="10" Text="메뉴번호&#32;" Top="6" VAlign="Middle" Width="88"></Static>
+							<Static Align="Right" Border="None" DomainID="item_00621" Height="20" Id="Static0" Left="6" LineSpacing="2" Style="sty_lb_Basic" TabOrder="16" Text="메뉴그룹&#32;" Top="79" VAlign="Middle" Width="88"></Static>
+							<Image Height="21" Id="Image2" ImageID="bul_mand" Left="22" TabOrder="11" Top="4" Transparent="TRUE" Width="20"></Image>
+							<Edit BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="menu_num" Height="20" Id="edt_menuNo" Left="90" LeftMargin="2" Number="TRUE" OnCharChanged="f_applyNowData" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="6" UserData="메뉴번호" Width="126"></Edit>
+							<Image Height="21" Id="Image3" ImageID="bul_mand" Left="35" TabOrder="13" Top="28" Transparent="TRUE" Width="20"></Image>
+							<Static Align="Right" Border="None" DomainID="item_00112" Height="20" Id="Static1" Left="4" LineSpacing="2" Style="sty_lb_Basic" TabOrder="12" Text="메뉴명&#32;" Top="29" VAlign="Middle" Width="88"></Static>
+							<Edit BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="MENU_NM" Height="20" Id="edt_menuNm" ImeMode="native" Left="90" LeftMargin="2" MaxLength="100" OnCharChanged="f_applyNowData" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="29" UserData="메뉴명" Width="281"></Edit>
+							<Image Height="21" Id="Image0" ImageID="bul_mand" Left="22" TabOrder="15" Top="53" Transparent="TRUE" Width="20"></Image>
+							<Static Align="Right" Border="None" DomainID="item_00111" Height="20" Id="Static2" Left="26" LineSpacing="2" Style="sty_lb_Basic" TabOrder="14" Text="메뉴구분" Top="54" VAlign="Middle" Width="62"></Static>
+							<Combo BindDataset="ds_list" Border="Flat" Column="MENU_LVL_CD" Enable="FALSE" Height="20" Id="cbo_level" ImeMode="none" INDEX="0" Left="89" OnChanged="tab_division_tab_menu_cbo_level_OnChanged" ResetIndex="FIRST" Style="sty_ipt_form" TabOrder="3" Top="53" UseIME="FALSE" UserData="메뉴레벨" Width="127"></Combo>
+							<Combo BindDataset="ds_list" Border="Flat" Column="MENU_GROUP" Enable="FALSE" Height="20" Id="cbo_group" Left="89" OnChanged="tab_division_tab_menu_div_detail_cbo_group_OnChanged" Style="sty_ipt_form" TabOrder="4" Top="78" UserData="메뉴그룹" Width="128"></Combo>
+							<Image Height="21" Id="Image5" ImageID="bul_mand" Left="8" TabOrder="18" Top="102" Transparent="TRUE" Width="20"></Image>
+							<Static Align="Right" Border="None" DomainID="item_00619" Height="20" Id="Static6" Left="3" LineSpacing="2" Style="sty_lb_Basic" TabOrder="17" Text="메뉴축약명&#32;" Top="103" VAlign="Middle" Width="88"></Static>
+							<Edit BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="MENU_SHOT_NM" Height="20" Id="edt_shotnm" ImeMode="native" Left="90" LeftMargin="2" MaxLength="50" OnCharChanged="f_applyNowData" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="103" UserData="메뉴축약명" Width="273"></Edit>
+							<Static Align="Right" Border="None" DomainID="item_00179" Height="20" Id="Static4" Left="6" LineSpacing="2" Style="sty_lb_Basic" TabOrder="19" Text="상위메뉴번호&#32;" Top="125" VAlign="Middle" Width="88"></Static>
+							<Edit BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="SUP_MENU_NUM" Height="20" Id="edt_supNum" Left="90" LeftMargin="2" MaxLength="9" Number="TRUE" OnCharChanged="f_applyNowData" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="126" Width="126"></Edit>
+							<Image Height="21" Id="Image6" ImageID="bul_mand" Left="21" TabOrder="20" Top="150" Transparent="TRUE" Width="23"></Image>
+							<Edit BindDataset="ds_list" Border="Flat" Column="SORT_SEQ" Height="20" Id="edt_sort" Left="90" LeftMargin="2" MaxLength="2" Number="TRUE" OnCharChanged="f_applyNowData" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="150" UserData="정렬순서" Width="38"></Edit>
+							<Checkbox BindDataset="ds_list" Column="USE_YN" FalseValue="N" Height="20" Id="chk_use" Left="217" LeftMargin="5" Style="sty_opt_input" TabOrder="8" Text="메뉴여부" Top="150" TrueValue="Y" Width="87"></Checkbox>
+							<Static Align="Right" Border="None" DomainID="item_00375" Height="20" Id="Static7" Left="4" LineSpacing="2" Style="sty_lb_Basic" TabOrder="21" Text="정렬순서&#32;" Top="149" VAlign="Middle" Width="88"></Static>
+							<Static Align="Right" Border="None" DomainID="item_00162" Height="20" Id="Static5" Left="1" LineSpacing="2" Style="sty_lb_Basic" TabOrder="22" Text="비고&#32;" Top="175" VAlign="Middle" Width="88"></Static>
+							<TextArea BindDataset="ds_list" Border="Flat" CheckLength="Byte" Column="REMARK" Height="64" Id="txt_remark" ImeMode="native" Left="90" MaxLength="200" OnCharChanged="f_applyNowData" Style="sty_ipt_readonly" TabOrder="9" Top="175" VScroll="TRUE" Width="275"></TextArea>
+							<Image Height="21" Id="Image1" ImageID="bul_mand" Left="21" TabOrder="23" Top="77" Transparent="TRUE" Width="20"></Image>
+							<Static Align="Right" Border="None" DomainID="item_00111" Height="20" Id="Static3" Left="260" LineSpacing="2" Style="sty_lb_Basic" TabOrder="24" Text="메뉴레벨&#32;" Top="54" VAlign="Middle" Width="62"></Static>
+							<Edit BindDataset="ds_list" Border="Flat" Column="tree_level" Enable="FALSE" Height="20" Id="Edit0" Left="320" LeftMargin="2" MaxLength="2" Number="TRUE" OnCharChanged="f_applyNowData" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="25" Top="54" Width="52"></Edit>
+						</Contents>
+					</Div>
+				</TabPage>
+				<TabPage BorderColor="black" Height="528" Id="tab_auth" ImageID="tab_blue" Left="2" TabOrder="19" Text="권한관리" Top="27" Width="460">
+					<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_Auth" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="499" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="470" Id="grd_auth" InputPanel="FALSE" Left="-1" LineColor="user33" MinWidth="100" OnMouseOut="f_applyNowData" Right="462" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="29" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="463">
+						<contents>
+							<format id="Default">
+								<columns>
+									<col width="126"/>
+									<col width="55"/>
+									<col width="55"/>
+									<col width="55"/>
+									<col width="55"/>
+									<col width="55"/>
+									<col width="55"/>
+								</columns>
+								<head>
+									<cell bkcolor="user34" col="0" color="user35" display="text" text="사용자그룹"/>
+									<cell bkcolor="user34" col="1" color="user35" display="text" text="조회"/>
+									<cell bkcolor="user34" col="2" color="user35" display="text" text="저장"/>
+									<cell bkcolor="user34" col="3" color="user35" display="text" text="삭제"/>
+									<cell bkcolor="user34" col="4" color="user35" display="text" text="승인"/>
+									<cell bkcolor="user34" col="5" color="user35" display="text" text="마감"/>
+									<cell bkcolor="user34" col="6" color="user35" display="text" text="전송"/>
+								</head>
+								<body>
+									<cell align="center" col="0" colid="user_grp" display="combo" edit='expr:iif(ds_auth.GetRowType(currow)==&quot;normal&quot;,&quot;none&quot;,&quot;combo&quot;)' expandimage="btn_combo" expandshow='expr:iif(ds_auth.GetRowType(currow)==&quot;normal&quot;,&quot;false&quot;,&quot;true&quot;)'/>
+									<cell col="1" colid="search_auth_yn" display="checkbox" edit="checkbox"/>
+									<cell col="2" colid="save_auth_yn" display="checkbox" edit="checkbox"/>
+									<cell col="3" colid="del_auth_yn" display="checkbox" edit="checkbox"/>
+									<cell col="4" colid="aprv_auth_yn" display="checkbox" edit="checkbox"/>
+									<cell col="5" colid="close_auth_yn" display="checkbox" edit="checkbox"/>
+									<cell col="6" colid="etc1_auth_yn" display="checkbox" edit="checkbox"/>
+								</body>
+							</format>
+						</contents>
+					</Grid>
+					<Button Cursor="HAND" Height="20" Id="btn_addRow" ImageID="btn_i_add_w" Left="417" OnClick="btn_addRow_OnClick" TabOrder="3" Text="Button7" Top="4" Width="20"></Button>
+					<Button Cursor="HAND" Height="20" Id="btn_delRow" ImageID="btn_i_subtract_w" Left="440" OnClick="btn_delRow_OnClick" TabOrder="2" Text="Button7" Top="4" Width="20"></Button>
+				</TabPage>
+			</Contents>
+		</Tab>
+		<TreeView Border="None" Color="#262626" Font="돋움,9" Height="528" Id="tre_menu" ImageID="left_menu_tree" InnerImageCount="3" Left="24" LevelColumn="tree_level" OnClick="tre_menu_OnClick" OnCollapse="f_callCommmonDetailInfo" OnExpand="f_callCommmonDetailInfo" OnRButtonDown="tre_menu_OnRButtonUp" TabOrder="4" TEXTColumn="MENU_SHOT_NM" Top="32" Width="320"></TreeView>
+		<Image Align="Left" Height="20" Id="img_notice" ImageID="bul_caution" Left="15" LeftMargin="20" Style="sty_lb_info" TabOrder="5" Text="신규메뉴&#32;추가또는&#32;삭제는&#32;추가하고자&#32;하는&#32;메뉴의&#32;상위메뉴에서&#32;오른쪽&#32;클릭&#32;하시기&#32;바랍니다." Top="566" Visible="FALSE" Width="600"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  ADMMNU00100
+* 업무명      :  ADMIN-메뉴관리
+* 프로그램명  :  메뉴관리
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.04.08
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 
+수정일    : 
+수정 내역 : 
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_BOOLEAN_CHECK = true; // 필수 체크 통과 유무
+var FV_INT_AUTH = 0; // 권한 
+var FV_INT_SELECTED_ROW = 0; // 권한 
+
+
+var FV_AUTH_CHECK = "N"; 
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ADMMNU00100_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	f_setAuth();
+	
+	//  notice..
+	img_notice.Visible = btn_save.Visible;	
+	
+	// 공통 코드
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("tab_division.tab_auth.grd_auth", 		"ZBAS_C_00250", "-99,선택", 0, false); // 사용자 그룹
+	cf_setCommonCode("tab_division.tab_menu.div_detail.cbo_group", 	"ZADM_C_00010", null, null, false); // 메뉴그룹
+	cf_setCommonCode("tab_division.tab_menu.div_detail.cbo_level", 	"ZADM_C_00020", null, null, false); // 메뉴레벨
+	
+	http.Sync = true;
+	cf_checkCommonCode();	
+	
+	// 기본 조회 
+	f_search();
+
+	trace(gds_session.GetColumn());
+	http.Sync = false;
+	
+	//trace(ZBAS_C_00250_0.saveXML());
+}
+
+
+/*******************************************************************************
+ * @description    : 권한 체크
+*******************************************************************************/
+function f_setAuth()
+{
+	ds_rightPop.ClearData();
+	var nRow = gds_menu.FindRow("menuNum", pFrmNum);
+	//var sSearchFlag = gds_menu.GetColumn(nRow, "searchAuthYn");
+	var sSaveFlag = gds_menu.GetColumn(nRow, "saveAuthYn");
+	var sDeleteFlag = gds_menu.GetColumn(nRow, "delAuthYn");
+	
+	
+	FV_AUTH_CHECK = gds_menu.GetColumn(nRow, "saveAuthYn");
+	
+	// 조회
+	// if(sSearchFlag == "Y")
+	// {
+		// tab_division.tab_auth.btn_search.Visible = true;		
+	// }
+	
+	// 삭제 
+	if(sDeleteFlag == "Y")
+	{
+		FV_INT_AUTH = 1;
+	}
+	
+	// 추가
+	if(sSaveFlag == "Y")
+	{
+		if(FV_INT_AUTH == 0)
+		{
+			FV_INT_AUTH = 2; // 추가
+		}
+		else
+		{
+			FV_INT_AUTH = 3; // 추가, 삭제
+		}
+		
+		btn_save.Visible = true;
+	}
+}
+
+/*******************************************************************************
+ * @description    : 조회
+*******************************************************************************/
+function f_search()
+{
+	tre_menu.BindDataset = "";
+	// 트랜잭션 설정
+	var sSvcID 	= "svcList";
+	var sInDs  	= "";
+	var sOutDs 	= "ds_list=output";
+	var sArg	= "sktst.adm.MNU#getMenuList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 조회 
+*******************************************************************************/
+function btn_search_OnClick(obj)
+{
+	f_search();
+	
+}
+
+ 
+ /*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcList")
+	{
+		tre_menu.Redraw = false;
+		ds_list.AddColumn("tree_level", "INT");
+		var sSupMenuNum;
+		var sSupMenuLvl;
+
+		for(var i=0, n=ds_list.GetRowCount(); i<n; i++)
+		{
+			sSupMenuNum = ds_list.GetColumn(i, "sup_menu_num").toString();
+			
+			if(sSupMenuNum.length  > 0)
+			{
+				sSupMenuLvl = ds_list.LookUp("MENU_NUM", sSupMenuNum, "MENU_LVL_CD");
+				ds_list.SetColumn(i, "tree_level", parseInt(sSupMenuLvl)+1);
+				//	trace(sSupMenuNum + " / " +sSupMenuLvl + " / " +  (sSupMenuLvl+1));
+			}
+			else
+			{
+				ds_list.SetColumn(i, "tree_level", 1);
+			}
+
+		}
+		ds_list.ApplyChange();
+		
+		tre_menu.BindDataset = "ds_list";
+		/*
+		for(var i=0, n=ds_list.GetRowCount(); i<n; i++)
+		{
+			if(ds_list.getColumn(i, "tree_level") == 1)
+			{
+				//tre_menu.ExpandItem(i, true);
+			}
+		}
+		*/
+		tre_menu.Redraw = true;
+		
+		cf_setOrgDs(ds_list);
+		cf_setOrgDs(ds_auth);
+	
+		ds_list.row = FV_INT_SELECTED_ROW;
+		f_setDetailInfo(FV_INT_SELECTED_ROW);
+		
+		
+	}
+	
+	if(sSvcID == "svcMenuNo")
+	{
+		var nRow = ds_list.currow;
+		var sParentLevel = ds_list.GetColumn(nRow, "MENU_LVL_CD");
+		var sParnetGroup = ds_list.GetColumn(nRow, "MENU_GROUP");
+		var sparentMenuNum =  ds_list.GetColumn(nRow, "MENU_NUM");
+
+		var sTreeLevel = ds_list.GetColumn(nRow, "tree_level");
+
+		var nTargetRow = nRow+1;
+		ds_list.InsertRow(nTargetRow);
+		ds_list.SetColumn(nTargetRow, "SUP_MENU_NUM", sparentMenuNum);
+		ds_list.SetColumn(nTargetRow, "MENU_LVL_CD", parseInt(sParentLevel)+1);
+		ds_list.SetColumn(nTargetRow, "tree_level", parseInt(sTreeLevel)+1);
+		ds_list.SetColumn(nTargetRow, "MENU_GROUP", sParnetGroup);
+		ds_list.SetColumn(nTargetRow, "USE_YN", "Y");
+		ds_list.SetColumn(nTargetRow, "MENU_NUM", ds_tmp.GetColumn(0, "MENU_NUM"));
+		f_setDetailInfo(nTargetRow);
+		
+		tab_division.tab_menu.div_detail.edt_menuNm.SetFocus();
+	}
+	
+	if(sSvcID == "svcSave")
+	{
+		tab_division.TabIndex = 0;
+		f_search();
+	}
+	
+	if(sSvcID == "svcChild")
+	{
+		if(ds_tmp.GetColumn(0, "CHECK_COUNT") > 0)
+		{
+			alert("해당 메뉴의 하위 메뉴가 존재합니다.");
+			return;
+		}
+		
+		ds_list.DeleteRow(ds_list.currow);
+		FV_INT_SELECTED_ROW = FV_INT_SELECTED_ROW-1;
+		ds_list.row = FV_INT_SELECTED_ROW;
+		f_setDetailInfo(FV_INT_SELECTED_ROW);
+		
+		f_save();
+		
+	}
+	
+	if(sSvcID == "svcAuth")
+	{
+		cf_setOrgDs(ds_auth);
+	}
+}
+ 
+/*******************************************************************************
+ * @description    : 메뉴 선택 
+*******************************************************************************/
+function tre_menu_OnClick(obj,nOldRow,nNewRow)
+{
+	if(nOldRow != -1)
+	{
+		if(f_checkScreen())
+		{
+			FV_BOOLEAN_CHECK = true;
+			FV_INT_SELECTED_ROW = nNewRow;
+		}
+		else
+		{
+			FV_BOOLEAN_CHECK = false;
+			return;
+		}
+	}
+
+	f_setDetailInfo(nNewRow);
+}
+
+
+ /*******************************************************************************
+ * @description    : 상세 정보 화면 설정 
+*******************************************************************************/
+function f_setDetailInfo(nNewRow)
+{
+	var oComp = tab_division.tab_menu.div_detail;
+	var bBoolean = false;
+	if(ds_list.GetRowType(ds_list.currow) == "insert")
+	{
+		bBoolean = true;
+	}
+	
+	oComp.edt_menuNm.enable = bBoolean;
+	oComp.cbo_level.enable = bBoolean;
+	oComp.cbo_group.enable = bBoolean;
+	f_setScreenFromLvl(ds_list.GetColumn(nNewRow, "MENU_LVL_CD"));		
+}
+
+ /*******************************************************************************
+ * @description    : 트리 메뉴가 접히거나 펼쳐질때 발생  - 이벤트
+*******************************************************************************/
+function f_callCommmonDetailInfo(obj,strText,nLevel,nImage,nExpandImage,nCollapseImage,nRow)
+{
+	if(f_checkScreen())
+	{
+		FV_BOOLEAN_CHECK = true;
+		FV_INT_SELECTED_ROW = nRow;
+	}
+	else
+	{
+		FV_BOOLEAN_CHECK = false;
+		return;
+	}
+	f_setDetailInfo(nRow);
+}
+
+
+ /*******************************************************************************
+ * @description    : 데이타 변화 유무 및 유효 체크
+ * @param bCheck   : 변화 유무 체크 여부 - true : 체크(default),  false - 체크않함 
+*******************************************************************************/
+function f_checkScreen(bCheck)
+{
+	if(bCheck == null)
+	{
+		bCheck = true;
+	}
+	
+	var bResult = true;
+
+		
+	if(tab_division.TabIndex == 0)
+	{
+		if(bResult && bCheck)
+		{
+			var sResult = cf_compareDs(ds_list, ds_list_org, ds_list.currow);
+					
+			if(sResult != 0 && FV_AUTH_CHECK == "Y")
+			{
+				var sMsg = "메뉴 변경 사항을 저장 하시겠습니까?";
+				if(ds_auth.GetRowCount() > 0)
+				{
+					sResult = cf_compareDs(ds_auth, ds_auth_org, ds_auth.currow);
+					if(sResult != 0)
+					{
+						sMsg = "메뉴와 권한의 변경 사항을 저장 하시겠습니까?";
+					}
+				}
+				
+				if(confirm(sMsg) == true)
+				{
+					btn_saveMulti_OnClick();
+					return;
+				}
+				else
+				{
+					ds_list.Reset();
+					ds_auth.Reset();
+					return;
+				}
+			}
+			
+			if(ds_auth.GetRowCount() > 0 && FV_AUTH_CHECK == "Y")
+			{
+				var sResult = cf_compareDs(ds_auth, ds_auth_org, ds_auth.currow);
+		
+				if(sResult != 0)
+				{
+					if(confirm("권한 변경 사항을 저장 하시겠습니까?") == true)
+					{
+						btn_saveMulti_OnClick();
+						return;
+					}
+					else
+					{
+						ds_auth.Reset();
+						return;
+					}
+				}
+			}
+		}
+
+		bResult = cf_checkObjValues(tab_division.tab_menu.div_detail, true);
+		
+		if(bResult)
+		{
+			bResult = cf_checkObjValues(tab_division.tab_menu.div_screen, true);
+		}
+	}
+	else
+	{
+		if(bCheck)
+		{
+			if(ds_auth.GetRowCount() > 0)
+			{
+				var sResult = cf_compareDs(ds_auth, ds_auth_org, ds_auth.currow);
+		
+				if(sResult != 0 && FV_AUTH_CHECK == "Y")
+				{
+					var sMsg = "권한 변경 사항을 저장 하시겠습니까?";
+				
+					sResult = cf_compareDs(ds_list, ds_list_org, ds_list.currow);
+					if(sResult != 0)
+					{
+						sMsg = "메뉴와 권한의 변경 사항을 저장 하시겠습니까?";
+					}
+					
+					if(confirm(sMsg) == true)
+					{
+						btn_saveMulti_OnClick();
+						return;
+					}
+					else
+					{
+						ds_list.Reset();
+						ds_auth.Reset();
+						return;
+					}
+				}
+			}
+		}
+		
+		
+		bResult = cf_checkObjValues(tab_division.tab_menu.div_detail, true);
+		
+		if(bResult)
+		{
+			bResult = cf_checkObjValues(tab_division.tab_menu.div_screen, true);
+		}
+		
+		if(!bResult)
+		{
+			tab_division.TabIndex = 0;
+		}
+	}
+	
+	return bResult;
+}
+
+ /*******************************************************************************
+ * @description    : 데이타셋 로우 변화 체크 - 이벤트
+*******************************************************************************/
+function ds_list_CanRowPosChange(obj,nOldRow,nRow)
+{
+	if(FV_BOOLEAN_CHECK == false)
+	{
+		return false;
+	}
+	
+	ds_auth.ClearData();
+	tab_division.TabIndex = 0;
+}
+
+ /*******************************************************************************
+ * @description    : 마우스 오른쪽  버튼 클릭 - 이벤트
+*******************************************************************************/
+function tre_menu_OnRButtonUp(obj, nPosX, nPosY, nRow)
+{
+	if(obj.isAboveSel())
+	{
+		ds_rightPop.ClearData();
+		var nMenuLvl = ds_list.GetColumn(nRow, "MENU_LVL_CD");
+		if(nMenuLvl != 4 && FV_INT_AUTH > 1)
+		{
+			var nRow = ds_rightPop.AddRow();
+			ds_rightPop.SetColumn(nRow, "code", "1");
+			ds_rightPop.SetColumn(nRow, "text", "추가");
+		}
+		
+		if( FV_INT_AUTH > 0)
+		{
+			var nRow = ds_rightPop.AddRow();
+			ds_rightPop.SetColumn(nRow, "code", "2");
+			ds_rightPop.SetColumn(nRow, "text", "삭제");
+		}
+		
+		if(FV_INT_AUTH == 0)
+		{
+			return;
+		}
+		ds_list.row = nRow;
+
+		trackPopupMenu("ds_rightPop", "", "code", "text", "", "", nPosX, nPosY, "f_rightPopCallBack", obj, 0, 0);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 팝업 처리 콜백 함수 - 이벤트
+*******************************************************************************/
+function f_rightPopCallBack(obj, nMenuID, nRow, nCell)
+{
+	nRow = ds_list.currow;
+	f_processAction(nRow, nMenuID);
+	break;
+}
+
+/*******************************************************************************
+ * @description    	: 퀵메뉴 이벤트 처리
+ * @param nRow   	: 이벤트 대상 로우
+		  nMenuID   : 이벤트 구분 아이디
+*******************************************************************************/
+function f_processAction(nRow, nMenuID)
+{
+	// 추가
+	if(nMenuID == 1)
+	{
+		var sSvcID 	= "svcMenuNo";
+		var sInDs  	= "";
+		var sOutDs 	= "ds_tmp=ds_menuNo";
+		var sArg	= "sktst.adm.MNU#getMenuNum";
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+	else // 삭제
+	{
+		if(confirm("삭제하시겠습니까?") == true)
+		{
+			f_checkChild(nRow);
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    	: 하위 메뉴의 존재 여부 체크
+ * @param nRow   	: 대상 로우
+*******************************************************************************/
+function f_checkChild(nRow)
+{
+	cf_setParam(ds_condition, "menu_num", ds_list.GetColumn(nRow, "menu_num"));
+	var sSvcID 	= "svcChild";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs 	= "ds_tmp=output";
+	var sArg	= "sktst.adm.MNU#checkChild";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+ /*******************************************************************************
+ * @description    : 메뉴 레벨 변화시 설정 - 이벤트
+*******************************************************************************/
+function tab_division_tab_menu_cbo_level_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	f_setScreenFromLvl(strCode);
+}
+
+ /*******************************************************************************
+ * @description      : 메뉴 레벨 변화에 따른 화면 제어
+ * @param nLvlCd   	 : 메뉴 레벨
+*******************************************************************************/
+function f_setScreenFromLvl(nLvlCd)
+{
+	// 대분류일 경우 
+	if(nLvlCd == 1)
+	{
+		//tab_division.tab_menu.div_detail.edt_supNum.text = "";
+		f_setCompoentStatus("tab_division.tab_menu.div_detail", "edt_supNum", false);
+		
+		if(ds_list.GetRowType(ds_list.currow) == "insert")
+		{
+			tab_division.tab_menu.div_detail.cbo_group.Index = -1;
+		}
+	} 
+	else 
+	{
+		f_setCompoentStatus("tab_division.tab_menu.div_detail", "edt_supNum", true, "상위메뉴번호");
+	}
+	
+	if(nLvlCd < 4)
+	{
+		f_setCompoentStatus("tab_division.tab_menu.div_screen", "edt_screenId", false);
+		f_setCompoentStatus("tab_division.tab_menu.div_screen", "cbo_size", false);
+	}
+	else
+	{
+		f_setCompoentStatus("tab_division.tab_menu.div_screen", "edt_screenId", true, "화면ID");
+		f_setCompoentStatus("tab_division.tab_menu.div_screen", "cbo_size", true, "화면크기");
+	}
+}
+
+/*******************************************************************************
+ * @description    : 컴포넌트 활성화 상태 설정
+*******************************************************************************/
+function f_setCompoentStatus(sDivId, sCompIds, bSetValue, sUserData)
+{
+	var arrComp = sCompIds.split(",","webstyle");
+	var arrUserData = sUserData.split(",","webstyle");
+	var oComponent;
+	for(var i=0,n=arrComp.length; i<n; i++)
+	{
+		oComponent = object(sDivId+"."+arrComp[i]);
+		
+		if(bSetValue)
+		{
+			if(arrUserData.length > i)
+			{
+				oComponent.UserData = arrUserData[i];
+			}
+		}
+		else
+		{
+			oComponent.UserData = "";
+			//oComponent.text = "";
+		}
+		oComponent.Enable = bSetValue;
+	}
+}
+
+ /*******************************************************************************
+ * @description    : 메뉴명 변화시 메뉴 축약명에 기본 세팅- 이벤트
+*******************************************************************************/
+function tab_division_tab_menu_edt_menuNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	tab_division.tab_menu.div_detail.edt_shotnm.Text = strPostText;
+}
+
+/*******************************************************************************
+ * @description   : 저장 버튼 클릭- 이벤트
+ *******************************************************************************/
+function btn_saveMulti_OnClick(obj)
+{
+	var bResult = f_checkScreen(false);
+	if (bResult) 
+	{
+		if(ds_list.GetDelRowCount() < 1)
+		{
+			var nAuthRowCount = ds_auth.GetRowCount();
+			if(ds_list.GetColumn(ds_list.currow, "MENU_LVL_CD") == 4)
+			{
+				if(nAuthRowCount > 0)
+				{
+					for(var i=0; i<nAuthRowCount; i++)
+					{
+						if(ds_auth.GetColumn(i, "user_grp") == "-99")
+						{
+							ds_auth.SetColumn(i, "user_grp", "");
+						}
+											
+					}
+		
+					bResult = cf_checkGrdValues(tab_division.tab_auth.grd_auth, "0,1");
+					
+					// 조회권한 체크여부 확인.
+					for(var i=0; i<nAuthRowCount; i++)
+					{						
+						if(ds_auth.GetColumn(i, "search_auth_yn") == "0" || uf_IsNull(ds_auth.GetColumn(i, "search_auth_yn")))
+						{
+							bResult = false;							
+							alert(tab_division.tab_auth.grd_auth.GetCellText("Body",i,0) +"의 권한을 체크하세요.");
+							uf_SelPos(tab_division.tab_auth.grd_auth,i,1);						
+							return;														
+							
+						}						
+					}					
+				}
+				else
+				{
+					if(ds_list.GetRowType(ds_list.currow) == "insert")
+					{
+						bResult = false;
+						alert("권한을 등록하셔야 합니다!");
+						return;
+					}
+				}
+			}
+		}
+		
+		if(bResult)
+		{
+			f_save();
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description   : 저장 처리 함수
+ *******************************************************************************/
+function f_save()
+{
+	if(cf_checkDsChanging(ds_list) == 0 && cf_checkDsChanging(ds_auth) == 0)
+	{
+		alert("변경된 데이터가 존재하지 않습니다");
+		return;
+	}
+	
+	// 유효성 체크 
+	if(!f_checkValidataion() ) return;
+	
+	
+	var sScreenId = ds_list.GetColumn(ds_list.currow, "screen_id");
+	if(!uf_isEmpty(sScreenId))
+	{
+		ds_list.SetColumn(ds_list.currow, "TOP_PREFIX_CD", substr(sScreenId,0,3));
+	}
+
+	var sSvcID	= "svcSave";
+	var sInDs 	= "menu=ds_list:U auth=ds_auth:U";
+	var sOutDs	= "";
+	var sArg 	= "sktst.adm.MNU#saveMenuAuth";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description   : 저기본 유효성 체크
+ *******************************************************************************/
+function f_checkValidataion()
+{
+	var sMenuLevel = ds_list.GetColumn(ds_list.currow, "MENU_LVL_CD");
+	if(sMenuLevel != "1")
+	{
+		var sSupMenuNum = ds_list.GetColumn(ds_list.currow, "SUP_MENU_NUM");
+		var sCurrentMenuNum = ds_list.GetColumn(ds_list.currow, "menu_num");
+		if(sSupMenuNum == sCurrentMenuNum)
+		{
+			tab_division.TabIndex = 0;
+			alert("현재 메뉴번호와 동일할 수는 없습니다.");
+			tab_division.tab_menu.div_detail.edt_supNum.setFocus();
+			return false;
+		}
+		
+		if(ds_list.FindRow("menu_num", sSupMenuNum) == -1)
+		{
+			tab_division.TabIndex = 0;
+			alert("상위메뉴번호에 존재하지 않는 메뉴번호를 설정하였습니다.");
+			tab_division.tab_menu.div_detail.edt_supNum.setFocus();
+			return false;
+		}
+	}
+	return true;
+}
+
+
+/*******************************************************************************
+ * @description   : 탭 전환 전  유효성 체크 - 이벤트
+ *******************************************************************************/
+function tab_division_OnChanging(obj,nOldIndex,nNewIndex)
+{
+	if(nOldIndex != nNewIndex )
+	{
+		if(nNewIndex == 1)
+		{
+			if(ds_list.GetColumn(ds_list.currow, "MENU_LVL_CD") != 4)
+			{
+				alert("화면 메뉴만 권한 설정이 가능합니다.");
+				return false;
+			}
+			
+
+		}
+		/*
+		if(f_checkScreen(false))
+		{
+			
+		}
+		else
+		{
+			return false;
+		}
+		*/
+	}
+}
+
+
+/*******************************************************************************
+ * @description   : 탭 전환 후 권한 목록 취득 - 이벤트
+ *******************************************************************************/
+function tab_division_OnChanged(obj,nOldIndex,nNewindex)
+{
+	if(nNewindex == 1)
+	{
+		if(ds_auth.GetRowCount() < 1)
+		{
+			cf_setParam(ds_condition, "menu_num", ds_list.GetColumn(ds_list.currow, "menu_num"));
+			
+			var sSvcID 	= "svcAuth";
+			var sInDs = "nc_input_fieldDs=ds_condition";
+			var sOutDs 	= "ds_auth=output";
+			var sArg	= "sktst.adm.AUM#getAuthFromMenu";
+			
+			cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : 로우 추가 - 이벤트
+*******************************************************************************/
+function btn_addRow_OnClick(obj)
+{
+	var nRow = ds_auth.AddRow();
+	
+	ds_auth.setColumn(nRow, "menu_num", ds_list.GetColumn(ds_list.currow, "menu_num"));
+	ds_auth.setColumn(nRow, "user_grp", "-99");
+	ds_auth.setColumn(nRow, "search_auth_yn", "1");
+}
+
+/*******************************************************************************
+ * @description    : 로우 삭제- 이벤트
+*******************************************************************************/
+function btn_delRow_OnClick(obj)
+{
+	if(ds_auth.getRowType(ds_auth.currow) == "insert")
+	{
+		ds_auth.DeleteRow(ds_auth.currow);
+	}
+	else
+	{
+		if(confirm(cf_getMessage(MSG_00102,"")) == true)
+		{
+			ds_auth.DeleteRow(ds_auth.currow);
+		}
+	}
+}
+
+
+/*******************************************************************************
+ * @description    :사용자 그룹의 변경시 이미 존재하는지의 여부 체크- 이벤트
+*******************************************************************************/
+function ds_auth_CanColumnChange(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if(toUpperCase(strColumnID) == "USER_GRP")
+	{
+		var nFindedRow = obj.findRow("USER_GRP", varNewValue);
+		if(nFindedRow > -1)
+		{
+			alert("이미 존재하는 사용자 그룹입니다.");
+			return false;
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : 대분류 변경시 기존에 존재 여부 체크 - 이벤트
+*******************************************************************************/
+function ds_list_CanColumnChange(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if(toUpperCase(strColumnID) == "MENU_LVL_CD" && varNewValue == 1)
+	{
+		/*
+		var nFindedRow = obj.findRow("USER_GRP", varNewValue);
+		if(nFindedRow > -1)
+		{
+			alert("이미 존재하는 사용자 그룹입니다.");
+			return false;
+		}*/
+	}
+}
+
+function f_checkMenuGroupDuplication(sMenuGroupCode)
+{
+	var nFindedRow = ds_list.FindRow("MENU_GROUP", sMenuGroupCode);
+	
+	return nFindedRow;
+}
+
+/*******************************************************************************
+ * @description    : 현재 변화 상태를 직접 데이타셋에 적용
+*******************************************************************************/
+function f_applyNowData()
+{
+	applyData();	
+}
+
+
+/*******************************************************************************
+ * @description    : 서비스 종료시  - 이벤트
+*******************************************************************************/
+function ADMMNU00100_OnUnloadCompleted(obj)
+{
+	var nResult1 = cf_checkDsChanging(ds_list);
+	var nResult2 = cf_checkDsChanging(ds_auth);
+
+	return cf_callDsCheckMsg(nResult1, nResult2);
+}
+
+/*******************************************************************************
+ * @description    : 메뉴 그룹 변경시 중복 여부 체크  - 이벤트
+*******************************************************************************/
+function tab_division_tab_menu_div_detail_cbo_group_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	if(ds_list.GetColumn(ds_list.currow, "MENU_LVL_CD") == 1)
+	{
+		var nFindedRow = ds_list_org.FindRow("MENU_GROUP", strCode);
+		
+		if(nFindedRow > -1)
+		{
+			alert("기존에 존재하는 대메뉴 입니다.");
+			obj.index = -1;
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : dataset OnColumnChanged 이벤트
+*******************************************************************************/
+function ds_auth_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if(strColumnID == "SEARCH_AUTH_YN"){
+
+		if(varNewValue == 0){
+			ds_auth.SetColumn(nRow,"save_auth_yn","0");
+			ds_auth.SetColumn(nRow,"del_auth_yn","0");
+			ds_auth.SetColumn(nRow,"aprv_auth_yn","0");
+			ds_auth.SetColumn(nRow,"close_auth_yn","0");
+			ds_auth.SetColumn(nRow,"etc1_auth_yn","0");
+			
+			if(confirm(cf_getMessage(MSG_00102,"")) == true)
+			{
+				ds_auth.DeleteRow(ds_auth.currow);
+			}			
+		}
+	}
+}
+]]></Script>
+</Window>

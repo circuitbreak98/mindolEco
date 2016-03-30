@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASTMP08100">
+	<select id="selectHelloListDown3" 
+	resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT     /*+ BASTMP08100_selectHelloListDown2_원종윤_원종윤 */
+	ID||'::'||NAME||'::'||MEMO AS msg from SKF_HELLO order by ID asc
+	]]>
+	</select>
+	
+	<select id="TEST" 
+	resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	SELECT     /*+ BASTMP08100_selectHelloListDown2_원종윤_원종윤 */
+	ID||'-'||NAME||'-'||MEMO AS msg from SKF_HELLO order by ID asc
+	]]>
+	</select>
+	
+		<insert id="insertHello2" parameterClass="map">
+	<![CDATA[
+	INSERT /*+ BASTMP08100_insertHello2_원종윤_원종윤 */
+	INTO SKF_HELLO
+	(
+		ID,
+		NAME,
+		MEMO
+	) VALUES (
+		#ID#,
+		#NAME#,
+		#MEMO#
+	)	
+	]]>
+	</insert>
+
+	<procedure id="callSP_BASTMP08100" parameterClass="map" >
+	<![CDATA[
+	{ call SP_BASTMP08100 /*+ BASTMP08100_callSP_BASTMP08100_원종윤_원종윤 */
+	(
+	#ERRCODE,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#ERRMSG,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#OP_STDT,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+    #OP_USER,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#
+) }]]>
+	</procedure>
+</sqlMap>

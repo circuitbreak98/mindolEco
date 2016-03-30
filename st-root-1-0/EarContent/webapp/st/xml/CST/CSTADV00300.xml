@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="248" Id="form" Left="8" OnLoadCompleted="CSTADV00300_OnLoadCompleted" PidAttrib="7" Title="계좌등록" Top="8" Ver="1.0" Width="416" WorkArea="true">
+		<Div Border="Raised" Height="200" Id="div_search" Left="8" Style="sty_div_search" TabOrder="1" Text="질의내용" Top="8" Width="400">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="12" Style="sty_lb_Search" TabOrder="1" Text="판매자명" Top="38" VAlign="Middle" Width="55"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_depo" Left="78" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="36" UserData="처리자" Width="130"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static1" Left="13" Style="sty_lb_Search" TabOrder="3" Text="계좌번호" Top="91" VAlign="Middle" Width="55"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static2" Left="12" Style="sty_lb_Search" TabOrder="4" Text="은행" Top="64" VAlign="Middle" Width="55"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static3" Left="13" Style="sty_lb_Search" TabOrder="5" Text="연락처" Top="117" VAlign="Middle" Width="55"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_telNo" Left="78" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="117" UserData="처리자" Width="130"></Edit>
+				<Combo Border="Flat" Height="22" Id="cmb_bankCd" Left="78" Style="sty_ipt_form" TabOrder="3" Top="61" Width="130"></Combo>
+				<Edit Border="Flat" Height="20" Id="edt_accNo" Left="78" LeftMargin="2" Number="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="91" UserData="처리자" Width="130"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static4" Left="12" Style="sty_lb_Search" TabOrder="9" Text="주민번호" Top="9" VAlign="Middle" Width="55"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_resNo" Left="78" LeftMargin="2" Number="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="6" UserData="처리자" Width="130"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static6" Left="13" Style="sty_lb_Search" TabOrder="11" Text="주소" Top="143" VAlign="Middle" Width="55"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_zipCd1" Left="78" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" TabStop="FALSE" Top="144" Width="32"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_zipCd2" Left="111" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="7" TabStop="FALSE" Top="144" Width="32"></Edit>
+				<Button BindDataset="ds_DlvFee" Cursor="HAND" Height="21" Id="btn_zipCd" ImageID="btn_i_detail_b" Left="144" OnClick="div_search_btn_zipCd_OnClick" TabOrder="8" Text="Button0" Top="144" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_addr" Left="163" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="9" TabStop="FALSE" Top="144" Width="224"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_dtlAddr" Left="78" LeftMargin="2" MaxLength="50" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="166" Width="309"></Edit>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="Button45" ImageID="btn_e_4" Left="176" LeftMargin="17" OnClick="Button45_OnClick" Style="sty_btn_e" TabOrder="2" Text="실명인증" Top="214" Width="85"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Height="24" Id="btn_confirm" ImageID="btn_c_2" Left="270" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="214" Width="61"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Height="24" Id="btn_close" ImageID="btn_d_2" Left="339" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="4" Text="닫기" Top="214" Width="61"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID 	: 
+* 업무명      	: 중고단말기영업 - 상담관리
+* 프로그램명  	: 계좌등록 
+--------------------------------------------------------------------------------
+* 작성자      	: 민동운
+* 작성일      	: 2011.07.15
+--------------------------------------------------------------------------------
+* 1. 변경이력
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+// 글로벌 세션정보
+var FV_USER_ID;					// 사용자ID
+var FV_USER_NM;					// 사용자명
+
+var	FV_ORG_ID;					// 소속 
+var	FV_ORG_NM;					// 소속명
+var	FV_ORG_CL;					// 소속구분
+var	FV_AGENCY_ID;           	// 소속 대리점ID
+var	FV_AGENCY_NM;           	// 소속 대리점명
+var	FV_AGENCY_UKEY_ID;      	// 소속 대리점UKEY ID	
+	
+var	FV_ORG_AREA_ID;				// 근무지 ID
+var	FV_ORG_AREA_NM;				// 근무지명
+var	FV_ORG_AREA_POS_AGENCY_CD;	// 근무지 
+var	FV_ORG_AREA_UKEY_ID;     	// 근무지ukeyid
+var	FV_ORG_AREA_SUB_CD;      	// 근무지subcd
+var	FV_ORG_AREA_CHANNEL_CD;  	// 근무지 channelcd	
+var	FV_USER_GRP;			 	// 유저그룹
+
+var	FV_DUTY;					// 사용자 직책
+var	FV_ORG_AREA_CL1;			// 근무지 구분
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function CSTADV00300_OnLoadCompleted(obj)
+{
+	f_getSession();
+	f_setCombo();	
+}
+
+function f_setCombo()
+{
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("div_search.cmb_bankCd"    , "ZBAS_C_00060", "선택");	
+	cf_checkCommonCode(); 
+}
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function f_getSession()
+{
+	FV_USER_ID        = gds_session.GetColumn(0, "loginid");						// 사용자ID
+	FV_USER_NM        = gds_session.GetColumn(0, "usernm");							// 사용자명
+
+	FV_ORG_ID         = gds_session.GetColumn(0, "orgid");							// 소속 
+	FV_ORG_NM         = gds_session.GetColumn(0, "orgnm");							// 소속명
+	FV_ORG_CL         = gds_session.GetColumn(0, "orgcl");							// 소속구분
+	FV_AGENCY_ID      = gds_session.GetColumn(0, "posAgencyId");        			// 소속 대리점ID
+	FV_AGENCY_NM      = gds_session.GetColumn(0, "posAgencyNm");        			// 소속 대리점명
+	FV_AGENCY_UKEY_ID = gds_session.GetColumn(0, "posAgencyUkeyId");    			// 소속 대리점UKEY ID	
+	
+	FV_ORG_AREA_ID            = gds_session.GetColumn(0, "orgareaid");				// 근무지 ID
+	FV_ORG_AREA_NM            = gds_session.GetColumn(0, "orgareanm");				// 근무지명
+	FV_ORG_AREA_POS_AGENCY_CD = gds_session.GetColumn(0, "orgareaposagencycd");		// 근무지 
+	FV_ORG_AREA_UKEY_ID       = gds_session.GetColumn(0, "orgareaukeyid");      	// 근무지ukeyid
+	FV_ORG_AREA_SUB_CD        = gds_session.GetColumn(0, "orgareaukeysubcd");   	// 근무지subcd
+	FV_ORG_AREA_CHANNEL_CD    = gds_session.GetColumn(0, "orgareaukeychannelcd"); 	// 근무지 channelcd	
+	FV_USER_GRP               = gds_session.GetColumn(0, "usergrp");				// 유저그룹
+	
+	FV_ORG_AREA_CL1           = gds_session.GetColumn(0, "orgareacl1");				// 근무지 구분
+	FV_DUTY                   = gds_session.GetColumn(0, "duty");	   		    	// 직책		
+}
+
+/*******************************************************************************
+ * @description    : 확인 - 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	
+	if (fn_checkVal()) {
+	     
+		parent.div_conInfo4.edt_resNo.Text   = div_search.edt_resNo.Value;
+		parent.div_conInfo4.edt_depo.Text    = div_search.edt_depo.Value;
+		parent.div_conInfo4.edt_bankCd.Text  = div_search.cmb_bankCd.Value;
+		parent.div_conInfo4.edt_accNo.Text   = div_search.edt_accNo.Value;
+		parent.div_conInfo4.edt_telNo.Text   = div_search.edt_telNo.Value;
+		parent.div_conInfo4.edt_zipCd1.Text  = div_search.edt_zipCd1.Value;
+		parent.div_conInfo4.edt_zipCd2.Text  = div_search.edt_zipCd2.Value;
+		parent.div_conInfo4.edt_addr.Text    = div_search.edt_addr.Value;
+		parent.div_conInfo4.edt_dtlAddr.Text = div_search.edt_dtlAddr.Value;
+	
+		this.Close();
+		
+	}
+}
+
+function fn_checkVal()
+{
+	if(uf_isNull(div_search.edt_ResNo.Value) == true) { 
+		alert(cf_getMessage(MSG_00028, "주민번호"));
+		div_search.edt_ResNo.SetFocus();
+		return false;
+	}else if(uf_isNull(div_search.edt_depo.Value) == true) { 
+		alert(cf_getMessage(MSG_00028, "판매자명"));
+		div_search.edt_depo.SetFocus();
+		return false;
+	}else if(uf_isNull(div_search.cmb_bankCd.Value) == true) { 
+		alert(cf_getMessage(MSG_00047, "은행을"));
+		div_search.cmb_bankCd.SetFocus();
+		return false;
+	}else if(uf_isNull(div_search.edt_accNo.Value) == true) { 
+		alert(cf_getMessage(MSG_00028, "계좌번호"));
+		div_search.edt_accNo.SetFocus();
+		return false;
+	}else if(uf_isNull(div_search.edt_telNo.Value) == true) { 
+		alert(cf_getMessage(MSG_00028, "연락처"));
+		div_search.edt_PhoneNum.SetFocus();
+		return false;
+	}else if(uf_isNull(div_search.edt_zipCd1.Value) == true || uf_isNull(div_search.edt_zipCd2.Value) == true) { 
+		alert(cf_getMessage(MSG_00028, "우편번호"));
+		div_search.edt_zipCd1.SetFocus();
+		return false;
+	}else if(uf_isNull(div_search.edt_addr.Value) == true || uf_isNull(div_search.edt_dtlAddr.Value) == true) { 
+		alert(cf_getMessage(MSG_00028, "주소"));
+		div_search.edt_addr.SetFocus();
+		return false;
+	}
+	
+	return true;
+}
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.close();
+}
+
+function div_search_btn_zipCd_OnClick(obj)
+{
+	cf_commPopPost("div_search.edt_zipCd1","div_search.edt_zipCd2","div_search.edt_addr");
+}
+]]></Script>
+</Window>

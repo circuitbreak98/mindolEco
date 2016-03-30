@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASBAR00300">
+	<select id="getBoxProdLst" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASBAR00300_getBoxProdLst_전미량 */
+       '' AS CHK,
+       A.CON_MGMT_NO,
+       CON_DT,          
+       SER_NUM,       
+       FBAS_GET_DEAL_NM(B.MFACT_ID, '') AS MFACT_NM,
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00020', B.prod_chrtic_1) PROD_CHRTIC_1,
+       B.PROD_NM, 
+       EQP_ST,
+       A.CON_PLC_CD,        
+       FBAS_GET_DEAL_NM(A.CON_PLC_CD,A.CON_DT) AS DEAL_CO_NM,    
+       A.CUST_NM,    
+       RES_NO,
+       DTL_1,
+       DTL_2,
+       DTL_3,
+       DTL_4,
+       DTL_5,
+       S_GB
+ FROM (
+       SELECT A.CON_MGMT_NO, 
+              CON_DT, 
+              SER_NUM, 
+              CON_PLC_CD, 
+              CUST_NM, 
+              RES_NO, 
+              A.PROD_CD, 
+              EQP_ST, 
+              FBAS_GET_DTL_YN('P',PRCHS_MGMT_NO,'1') AS DTL_1, 
+              FBAS_GET_DTL_YN('P',PRCHS_MGMT_NO,'2') AS DTL_2, 
+              FBAS_GET_DTL_YN('P',PRCHS_MGMT_NO,'7') AS DTL_3, 
+              FBAS_GET_DTL_YN('P',PRCHS_MGMT_NO,'8') AS DTL_4, 
+              FBAS_GET_DTL_YN('P',PRCHS_MGMT_NO,'4') AS DTL_5,
+              'P' AS S_GB 
+         FROM TCST_PRCHS_MGMT A
+        WHERE BOX_NO = #BOX_NO# 
+]]>        <isNotEmpty prepend="AND" property="CON_MGMT_NO">
+<![CDATA[   			CON_MGMT_NO LIKE '%'||#CON_MGMT_NO#||'%'
+]]> 		</isNotEmpty>
+<![CDATA[          AND A.DEL_YN = 'N'
+       UNION ALL
+       SELECT A.CON_MGMT_NO, 
+              CON_DT, 
+       		  SER_NUM, 
+       		  CON_PLC_CD, 
+       		  CUST_NM, 
+       		  RES_NO, 
+       		  A.PROD_CD, 
+       		  EQP_ST, 
+              FBAS_GET_DTL_YN('C',CON_MGMT_NO,'1') AS DTL_1, 
+              FBAS_GET_DTL_YN('C',CON_MGMT_NO,'2') AS DTL_2, 
+              FBAS_GET_DTL_YN('C',CON_MGMT_NO,'7') AS DTL_3, 
+              FBAS_GET_DTL_YN('C',CON_MGMT_NO,'8') AS DTL_4, 
+              FBAS_GET_DTL_YN('C',CON_MGMT_NO,'4') AS DTL_5,
+              'C' AS S_GB 
+         FROM TCST_CONSULT_MGMT A
+        WHERE BOX_NO = #BOX_NO#
+]]>        <isNotEmpty prepend="AND" property="CON_MGMT_NO">
+<![CDATA[   			CON_MGMT_NO LIKE '%'||#CON_MGMT_NO#||'%'
+]]> 		</isNotEmpty>
+<![CDATA[          AND A.DEL_YN = 'N') A,
+       TBAS_PROD_MGMT B
+ WHERE A.PROD_CD = B.PROD_CD
+ ORDER BY CON_DT]]>
+	</select>
+	<update id="deleteConsultBoxProd" parameterClass="map" ><![CDATA[UPDATE /*+ BASBAR00300_deleteConsultBoxProd_전미량 */
+       TCST_CONSULT_MGMT
+   SET BOX_NO  = '',
+       UPD_CNT = UPD_CNT + 1 ,
+       MOD_DTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS') ,
+       MOD_USER_ID = #onlineContext.userInfo.loginId# 
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+	<update id="deletePrchsBoxProd" parameterClass="map" ><![CDATA[UPDATE /*+ BASBAR00300_deletePrchsBoxProd_전미량 */
+       TCST_PRCHS_MGMT
+   SET BOX_NO  = '',
+       UPD_CNT = UPD_CNT + 1 ,
+       MOD_DTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS') ,
+       MOD_USER_ID = #onlineContext.userInfo.loginId# 
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+</sqlMap>

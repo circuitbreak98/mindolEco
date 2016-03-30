@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM00500">
+	<select id="getUserData" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00500_getUserData_원윤성_한병곤" */
+       user_id
+  FROM tbas_user_mgmt
+ WHERE user_id = #userId#
+   AND email1 = #email1#
+   AND email2 = #email2#
+   AND del_yn = 'N']]>
+	</select>
+	<update id="updatePassWordReset" parameterClass="map" ><![CDATA[UPDATE /*+ "BASUSM00500_updatePassWord_원윤성_한병곤" */
+	   tbas_user_mgmt
+   SET pwd         = #passWord#,
+       mod_dtm     = to_char(sysdate,'yyyymmddhh24MIss'),
+       mod_user_id = #userId#   
+ WHERE user_id = #userId#]]>
+	</update>
+</sqlMap>

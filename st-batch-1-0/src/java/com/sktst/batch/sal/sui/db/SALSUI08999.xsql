@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSUI08999">
+	<insert id="addUkeyIfMq" parameterClass="hmap">
+	<![CDATA[
+        INSERT INTO TBAS_UKEY_IF_MQ
+            (  OP_DT
+             , OP_TM
+             , SEQ
+             , IF_CL
+             , IF_CTT
+            )
+            VALUES
+            (
+				#OP_DT#
+			  , #OP_TM#
+			  , #SEQ#
+			  , #IF_CL#
+			  , #REC_STR#                          /* 전문 Data */
+            )
+	]]>
+	</insert>
+	<insert id="addUkeyIfLog" parameterClass="hmap">
+	<![CDATA[
+        INSERT INTO TBAS_UKEY_IF_LOG
+            (  OP_DT
+             , OP_TM
+             , SEQ
+             , IF_CL
+             , IF_CTT
+             , OP_RSLT
+             , INS_DTM
+             , MOD_DTM
+            )
+            VALUES
+            (
+				#OP_DT#
+			  , #OP_TM#
+			  , #SEQ#
+			  , #IF_CL#
+			  , #REC_STR#                          /* 전문 Data */
+			  , 'N'                                /* 처리결과 */
+			  , #OP_DT# || #OP_TM#                 /* 등록일시 */
+			  , ''                                 /* 수정 */
+            )
+	]]>
+	</insert>
+	<procedure id="call_SP_UKEY_IF_MQ" parameterClass="hmap" >
+	<![CDATA[
+	{ call SP_UKEY_IF_MQ /*+ call_SP_UKEY_IF_MQ_김연석_김연석 */
+	(
+	#IV_OP_DT#, 	#IV_OP_TM#, 	#IV_SEQ#,	#IV_IF_CL#,	#IV_IF_CTT#
+	) }]]>
+	</procedure>
+
+</sqlMap>

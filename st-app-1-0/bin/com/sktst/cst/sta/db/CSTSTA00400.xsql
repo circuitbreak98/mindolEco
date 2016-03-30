@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTSTA00400">
+	<select id="getProdPrcSt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT PROD_CD
+     , FBAS_GET_PROD_NM(PROD_CD) PROD_NM
+     , SUM(PRC_02) PRC_02
+     , SUM(PRC_11) PRC_11
+     , SUM(PRC_12) PRC_12
+     , SUM(PRC_13) PRC_13
+     , SUM(PRC_14) PRC_14
+     , SUM(PRC_15) PRC_15
+     , SUM(PRC_21) PRC_21
+     , SUM(PRC_22) PRC_22
+     , SUM(PRC_23) PRC_23
+     , SUM(PRC_24) PRC_24
+     , SUM(PRC_28) PRC_28
+     , SUM(PRC_2A) PRC_2A
+     , SUM(PRC_2B) PRC_2B
+     , SUM(PRC_31) PRC_31
+     , SUM(PRC_32) PRC_32
+     , SUM(PRC_33) PRC_33
+     , SUM(PRC_34) PRC_34
+     , SUM(PRC_35) PRC_35
+     , COUNT(*) CNT_TOT
+FROM (
+SELECT NVL(b.PROD_CD, a.PROD_CD) PROD_CD
+     , NVL(b.PRC_ST, a.PRC_ST) PRC_ST
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '02' THEN 1 ELSE 0 END AS PRC_02
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '11' THEN 1 ELSE 0 END AS PRC_11
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '12' THEN 1 ELSE 0 END AS PRC_12
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '13' THEN 1 ELSE 0 END AS PRC_13
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '14' THEN 1 ELSE 0 END AS PRC_14
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '15' OR NVL(b.PRC_ST,a.PRC_ST) = '16' THEN 1 ELSE 0 END AS PRC_15
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '21' THEN 1 ELSE 0 END AS PRC_21
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '22' THEN 1 ELSE 0 END AS PRC_22
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '23' THEN 1 ELSE 0 END AS PRC_23
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '24' THEN 1 ELSE 0 END AS PRC_24
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '28' OR NVL(b.PRC_ST,a.PRC_ST) = '29' THEN 1 ELSE 0 END AS PRC_28
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '2A' THEN 1 ELSE 0 END AS PRC_2A
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '2B' OR NVL(b.PRC_ST,a.PRC_ST) = '2C' OR NVL(b.PRC_ST,a.PRC_ST) = '2D' THEN 1 ELSE 0 END AS PRC_2B
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '31' THEN 1 ELSE 0 END AS PRC_31
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '32' THEN 1 ELSE 0 END AS PRC_32
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '33' THEN 1 ELSE 0 END AS PRC_33
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '34' THEN 1 ELSE 0 END AS PRC_34
+     , CASE WHEN NVL(b.PRC_ST,a.PRC_ST) = '35' THEN 1 ELSE 0 END AS PRC_35
+  FROM TCST_CONSULT_MGMT a
+     , TCST_PRCHS_MGMT b
+     , TBAS_DEAL_CO_MGMT c
+ WHERE a.CON_MGMT_NO = b.CON_MGMT_NO(+)
+   AND a.CON_PLC_CD = c.DEAL_CO_CD
+   AND c.EFF_STA_DTM <= b.CON_DT||'235959'
+   AND c.EFF_END_DTM >= b.CON_DT||'235959'
+   AND a.CON_DT BETWEEN #CON_FROM_DT# AND #CON_TO_DT#
+   AND a.DEL_YN = 'N'
+   AND b.DEL_YN(+) = 'N'
+   AND c.DEL_YN = 'N'
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[	   c.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[       a.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[       NVL(b.PROD_CD,a.PROD_CD) = #PROD_CD#
+]]></isNotEmpty> 
+<![CDATA[)
+GROUP BY PROD_CD
+ORDER BY CNT_TOT DESC]]>
+	</select>
+</sqlMap>

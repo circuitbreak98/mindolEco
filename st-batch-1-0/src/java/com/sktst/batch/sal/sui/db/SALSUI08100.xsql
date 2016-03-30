@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALSUI08100">
+	<select id="getTgtSvcMgmtnumList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+	select  /* SALSUI08100_getTgtSvcMgmtnumList_부가상품 가입대상자 추출_김연석_김연석 */
+	        '97'
+         ||  rpad(nvl(dm.UKEY_AGENCY_CD, ' '),  6, ' ')   /* U.Key 대리점코드 */
+         ||  rpad(nvl(dm.UKEY_SUB_CD, ' '),  4, ' ')      /* U.Key 대리점서브코드 */
+         ||  rpad(nvl(gs.svc_mgmt_num, ' '), 10, ' ')     /* 서비스관리번호 */
+         ||  rpad(nvl(es.eqp_mdl_cd, ' '),  5, ' ')       /* 단말기모델코드 */
+         ||  rpad(nvl(es.eqp_ser_num, ' '), 15, ' ')      /* 단말기일련번호 */
+         ||  rpad(gs.gnrl_sale_no, 11, ' ')               /* 일반판매번호 */
+         ||  rpad(' ', 40, ' ')     as MSG                /* Output Area */
+      from   tsal_general_sale   gs
+         ,   tsal_equipment_sale es
+         ,   tbas_deal_co_mgmt   dm
+     where   gs.gnrl_sale_no      =  es.gnrl_sale_no 
+       and   gs.gnrl_sale_chg_seq =  es.gnrl_sale_chg_seq
+       and   es.eqp_mdl_cd       is not null
+       and   gs.gnrl_sale_chg_seq =  1
+       and   nvl(gs.sale_cncl_yn, 'N') =  'N'
+       and   gs.sale_chg_dtm   LIKE  #SCRB_MONTH# || '%'
+       and   gs.svc_plc           =  dm.deal_co_cd
+       and   dm.deal_sta_dt       <= substr(gs.svc_dtm, 1, 8)
+       and   dm.deal_end_dt       >= substr(gs.svc_dtm, 1, 8)
+       and   dm.eff_sta_dtm       <= gs.svc_dtm
+       and   dm.eff_end_dtm       >= gs.svc_dtm
+	]]>
+	</select>
+	<select id="getSystemDateTime" resultClass="hmap" fetchSize="50" ><![CDATA[
+	select  /* SALSUI08100_getSystemDateTime_현재일시_김연석_김연석 */
+	         to_char(sysdate, 'yyyymmddHHMISS') SYS_DTM
+      from   dual
+	]]>
+	</select>
+	<insert id="addBatLog" parameterClass="map" ><![CDATA[                                                                 
+	INSERT INTO TBAS_BAT_LOG
+    VALUES
+    (
+    TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+    , #iv_prog_id#
+    ,   NVL(
+        (SELECT MAX(seq)+1
+        FROM tbas_bat_log
+        WHERE SUBSTR(op_dt,1,8) = TO_CHAR(SYSDATE, 'YYYYMMDD')
+        AND prog_id = #iv_prog_id#),1)
+    , #iv_result_flag#
+    , #iv_fail_cnt#
+    , #iv_proc_dt_fr#
+    , #iv_proc_dt_to#
+    , #iv_rmks#
+    , 'N'
+    , 1
+    , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+    , #iv_prog_id#
+    , TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')
+    , #iv_prog_id#
+    , #iv_obj_dt#
+    )    ]]>
+	</insert>
+</sqlMap>

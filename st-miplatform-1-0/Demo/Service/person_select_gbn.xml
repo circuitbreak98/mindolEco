@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<class2 classname="SimpleSelect" template="SimpleSelect" update="NO">
+	<svcdesc><![CDATA[person 등록내역 조회]]></svcdesc>
+	<header><![CDATA[]]></header>
+	<dataset id="input" io="INPUT" reserved="YES"></dataset>
+	<dataset id="output" io="OUTPUT" reserved="YES">
+		<colinfo id="pid" size="10" type="Integer"></colinfo>
+		<colinfo id="person_name" size="30" type="String"></colinfo>
+		<colinfo id="home_telno" size="20" type="String"></colinfo>
+		<colinfo id="home_address" size="100" type="String"></colinfo>
+		<colinfo id="company" size="50" type="String"></colinfo>
+		<colinfo id="company_telno" size="20" type="String"></colinfo>
+		<colinfo id="company_fax" size="20" type="String"></colinfo>
+		<colinfo id="company_address" size="100" type="String"></colinfo>
+		<colinfo id="company_home" size="100" type="String"></colinfo>
+		<colinfo id="email" size="50" type="String"></colinfo>
+		<colinfo id="mobile" size="20" type="String"></colinfo>
+		<colinfo id="jikgub" size="2" type="String"></colinfo>
+		<colinfo id="dept" size="2" type="String"></colinfo>
+		<colinfo id="remark" size="255" type="String"></colinfo>
+	</dataset>
+	<member_var>
+		<var id="Select_Sql" reserved="YES" type="Sql"><![CDATA[SELECT 	pid,
+	person_name,
+	home_telno,
+	home_address,
+	company,
+	company_telno,
+	company_fax,
+	company_address,
+	company_home,
+	email,
+	mobile,
+	jikgub,
+	dept,
+	remark
+  FROM person
+]]></var>
+	</member_var>
+	<member_func>
+		<function id="OnBegin()" needs="NO" reserved="YES" state="RES_IMP_FUNC" visible="YES"></function>
+		<function id="OnExecuteQueryError()" needs="NO" reserved="YES" state="RES_NOT_FUNC" visible="YES"></function>
+		<function id="OnFetchRow()" needs="NO" reserved="YES" state="RES_NOT_FUNC" visible="YES"></function>
+		<function id="OnFetchEnd()" needs="NO" reserved="YES" state="RES_NOT_FUNC" visible="YES"></function>
+		<function id="OnFetchError()" needs="NO" reserved="YES" state="RES_NOT_FUNC" visible="YES"></function>
+		<function id="OnNoDataFound()" needs="NO" reserved="YES" state="RES_NOT_FUNC" visible="YES"></function>
+		<function id="OnEnd()" needs="NO" reserved="YES" state="RES_NOT_FUNC" visible="YES"></function>
+	</member_func>
+	<source><![CDATA[
+function OnBegin()
+{
+	// TODO: Add your source code here
+	var sWhere = "";
+	if (gbn == "01")  {    //성명
+		sWhere = " where person_name like '%" + skey + "%'";
+    } else if (gbn == "02") {   //회사
+		sWhere = " where company like '%" + skey + "%'";
+    } else if (gbn == "03") {    //휴대폰
+		sWhere = " where mobile like '%" + skey + "%'";
+	}
+
+	Select_Sql = Select_Sql + sWhere;
+}
+]]></source>
+</class2>

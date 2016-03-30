@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SALBOS00200" Left="8" OnLoadCompleted="SALBOS00200_OnLoadCompleted" PidAttrib="7" Title="온라인&#32;상품&#32;판매등록" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_input"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_cardCorp">
+				<Contents>
+					<colinfo id="COMM_CD_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="256" summ="default" type="STRING"/>
+					<record>
+						<COMM_CD_ID></COMM_CD_ID>
+						<COMM_CD_VAL></COMM_CD_VAL>
+						<COMM_CD_VAL_NM></COMM_CD_VAL_NM>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_payInfo">
+				<Contents>
+					<colinfo id="CRDTCRD_CORP1" size="255" summ="default" type="STRING"/>
+					<colinfo id="CRDTCRD_CORP2" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodCpnt">
+				<Contents>
+					<colinfo id="MKTG_DT" size="255" summ="default" type="STRING"/>
+					<colinfo id="SER_NUM" size="255" summ="default" type="STRING"/>
+					<colinfo id="COLOR_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROD_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="PHONE_GRADE" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_edtInfo">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodCU">
+				<Contents>
+					<colinfo id="COMM_CD_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodCO">
+				<Contents>
+					<colinfo id="COMM_CD_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodGRD">
+				<Contents>
+					<colinfo id="COMM_CD_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodCpntList">
+				<Contents>
+					<colinfo id="SEQ" size="255" summ="default" type="STRING"/>
+					<colinfo id="IN_QTY" size="255" summ="default" type="STRING"/>
+					<colinfo id="CPNT_PROD_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="CPNT_COLOR_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="CPNT_SER_NUM" size="255" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_output"></Dataset>
+		</Datasets>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="1" Text="수납정보" Top="446" Width="192"></Image>
+		<Div Border="Raised" Height="87" Id="div_rmks" Left="506" Style="sty_div_input" TabOrder="2" Text="Div0" Top="473" Width="310">
+			<Contents>
+				<TextArea BindDataset="ds_generalSaleIfInfo" Border="Flat" Height="72" Id="txa_rmks" Left="5" Style="sty_ipt_form" TabOrder="60" Top="4" VScroll="TRUE" Width="293"></TextArea>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image6" ImageID="bul_tit" Left="506" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="비고" Top="448" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="689" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="62" Text="저장" Top="568" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="단말기&#32;정보" Top="188" Width="192"></Image>
+		<Image Align="Left" Height="25" Id="Image7" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="거래처정보" Top="10" Width="192"></Image>
+		<Image Align="Left" Height="25" Id="Image8" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="6" Text="고객정보" Top="89" Width="192"></Image>
+		<Div Border="Raised" Height="45" Id="div_dealCoInfo" Left="10" Style="sty_div_input" TabOrder="7" Text="Div0" Top="35" Width="806">
+			<Contents>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_saleDtm" Left="75" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="0" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="109"></Calendar>
+				<Static Align="Right" Height="20" Id="Static6" Left="8" Style="sty_lb_Basic" TabOrder="7" Text="판매일시" Top="8" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_salePlcNm" Left="349" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="140"></Edit>
+				<Button Enable="FALSE" Height="21" Id="btn_salePlc" ImageID="btn_i_detail" Left="489" TabOrder="4" Text="Button0" Top="7" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_salePlcUkeyCd" Left="507" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Width="46"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="284" Style="sty_lb_Basic" TabOrder="8" Text="판매처" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Align="CENTER" Border="Flat" Enable="FALSE" Height="20" Id="edt_saleDtmHh" ImeMode="none" Left="189" LeftMargin="2" MaxLength="2" Number="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Width="38"></Edit>
+				<Edit Align="CENTER" Border="Flat" Enable="FALSE" Height="20" Id="edt_saleDtmMm" ImeMode="none" Left="228" LeftMargin="2" MaxLength="2" Number="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="39"></Edit>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="64" Id="div_custInfo" Left="10" Style="sty_div_input" TabOrder="8" Text="Div0" Top="114" Width="806">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static4" Left="3" Style="sty_lb_Basic" TabOrder="1" Text="전화번호" Top="30" VAlign="Middle" Width="65"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_svcMgmtNum1" Left="75" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="28" Top="30" Width="40"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Style="sty_lb_Basic" TabOrder="2" Text="고객명" Top="5" VAlign="Middle" Width="68"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_custNm" Left="75" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="22" Top="4" Width="124"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="268" Style="sty_lb_Basic" TabOrder="3" Text="주민번호" Top="7" VAlign="Middle" Width="76"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_custBizNum" Left="349" LeftMargin="2" MaxLength="13" RightMargin="2" Style="sty_ipt_form" TabOrder="26" Top="7" Width="92"></Edit>
+				<Static Align="Right" Height="20" Id="Static0" Left="576" Style="sty_lb_Basic" TabOrder="4" Text="고객구분" Top="6" VAlign="Middle" Width="68"></Static>
+				<Static Align="Right" Height="20" Id="Static3" Left="279" Style="sty_lb_Basic" TabOrder="9" Text="주소" Top="30" VAlign="Middle" Width="65"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_svcAddr" Left="349" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="30" Width="432"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_svcMgmtNum2" Left="117" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="11" Top="30" Width="40"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_svcMgmtNum3" Left="159" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="30" Width="40"></Edit>
+				<Combo Border="Flat" CodeColumn="COMM_CD_VAL" DataColumn="COMM_CD_VAL_NM" Enable="FALSE" Height="19" Id="cb_cust" InnerDataset="ds_prodCU" Left="651" TabOrder="14" Top="4" Width="130"></Combo>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="752" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="11" Text="닫기" Top="568" Width="60"></Button>
+		<Div Border="Raised" Height="87" Id="div_payment" Left="10" Style="sty_div_input" TabOrder="16" Text="Div0" Top="473" Width="494">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static5" Left="206" Style="sty_lb_dataview" TabOrder="5" Text="카드수납2" Top="53" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="22" Style="sty_lb_dataview" TabOrder="1" Text="판매가" Top="7" VAlign="Middle" Width="68"></Static>
+				<Static Align="Right" Height="20" Id="Static3" Left="206" Style="sty_lb_dataview" TabOrder="2" Text="카드수납1" Top="30" VAlign="Middle" Width="76"></Static>
+				<Combo Border="Flat" CodeColumn="COMM_CD_VAL" DataColumn="COMM_CD_VAL_NM" Height="20" Id="cmb_crdtcrdcorp2" InnerDataset="ds_cardCorp" Left="286" OnChanged="div_payment_cmb_crdtcrdcorp2_OnChanged" Style="sty_ipt_form" TabOrder="3" Top="52" Width="72"></Combo>
+				<Combo Border="Flat" CodeColumn="COMM_CD_VAL" DataColumn="COMM_CD_VAL_NM" Height="20" Id="cmb_crdtcrdcorp1" InnerDataset="ds_cardCorp" Left="286" OnChanged="div_payment_cmb_crdtcrdcorp1_OnChanged" Style="sty_ipt_form" TabOrder="4" Top="29" Width="72"></Combo>
+				<MaskEdit Border="Flat" Enable="FALSE" Height="20" Id="msk_payAmt" Left="94" LeftMargin="2" Mask="#,###,###,###" MaxLength="10" NullValue="0" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Value="0" Width="89"></MaskEdit>
+				<MaskEdit Border="Flat" Height="20" Id="msk_crdtcrdPayAmt1" Left="358" LeftMargin="2" MaxLength="10" NullValue="0" OnChanged="div_payment_msk_crdtcrdPayAmt1_OnChanged" OnCharChanged="div_payment_msk_crdtcrdPayAmt1_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="30" Value="0" Width="89"></MaskEdit>
+				<MaskEdit Border="Flat" Height="20" Id="msk_crdtcrdPayAmt2" Left="358" LeftMargin="2" MaxLength="10" NullValue="0" OnChanged="div_payment_msk_crdtcrdPayAmt2_OnChanged" OnCharChanged="div_payment_msk_crdtcrdPayAmt2_OnChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="53" Value="0" Width="89"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static8" Left="30" Style="sty_lb_dataview" TabOrder="9" Text="현금수납" Top="30" VAlign="Middle" Width="60"></Static>
+				<MaskEdit Border="Flat" Height="20" Id="msk_cashPayAmt" Left="94" LeftMargin="2" Mask="#,###,###,###" MaxLength="10" NullValue="0" OnChanged="div_payment_msk_cashPayAmt_OnChanged" OnCharChanged="div_payment_msk_cashPayAmt_OnCharChanged" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="30" Value="0" Width="89"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static4" Left="214" Style="sty_lb_dataview" TabOrder="11" Text="수납합계" Top="7" VAlign="Middle" Width="68"></Static>
+				<MaskEdit Border="Flat" Enable="FALSE" Height="20" Id="msk_paySumAmt" Left="287" LeftMargin="2" Mask="#,###,###,###" MaxLength="10" NullValue="0" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="7" Value="0" Width="160"></MaskEdit>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="64" Id="div_dis" Left="11" Style="sty_div_input" TabOrder="12" Text="질의내용" Top="212" Width="806">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static3" Left="3" Style="sty_lb_Basic" TabOrder="1" Text="일련번호" Top="7" VAlign="Middle" Width="64"></Static>
+				<Edit BindDataset="ds_prodCpnt" Border="Flat" Column="SER_NUM" Enable="FALSE" Height="20" Id="edt_serNm" Left="74" MaxLength="15" Style="sty_ipt_form" TabOrder="2" Top="7" UpperOnly="TRUE" Width="124"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="588" Style="sty_lb_dataview" TabOrder="2" Text="색상" Top="8" VAlign="Middle" Width="55"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="298" Style="sty_lb_Basic" TabOrder="4" Text="모델" Top="7" VAlign="Middle" Width="45"></Static>
+				<Edit BindDataset="ds_prodCpnt" Border="Flat" Column="PROD_NM" Enable="FALSE" Height="20" Id="edt_ProdCd" Left="348" MaxLength="10" Style="sty_ipt_form" TabOrder="4" Top="7" UpperOnly="TRUE" Width="140"></Edit>
+				<Button BindDataset="ds_DlvFee" Cursor="HAND" Enable="FALSE" Height="20" Id="btn_ProdCd" ImageID="btn_i_detail" Left="488" TabOrder="5" TabStop="FALSE" Text="Button0" Top="7" Width="20"></Button>
+				<Edit BindDataset="ds_prodCpnt" Border="Flat" Column="PROD_CD" Enable="FALSE" Height="20" Id="edt_ProdNm" Left="506" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Width="46"></Edit>
+				<Static Align="Right" Height="21" Id="Static2" Left="271" Style="sty_lb_Basic" TabOrder="7" Text="단말기등급" Top="32" VAlign="Middle" Width="72"></Static>
+				<Calendar BindDataset="ds_prodCpnt" Border="Flat" ButtonImageID="btn_i_calendar" Column="MKTG_DT" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="Calendar0" Left="74" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="9" TodayColor="user26" Top="31" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="124"></Calendar>
+				<Static Align="Right" Height="20" Id="Static5" Left="7" Style="sty_lb_Basic" TabOrder="10" Text="출시일자" Top="31" VAlign="Middle" Width="60"></Static>
+				<Combo BindDataset="ds_prodCpnt" Border="Flat" CodeColumn="COMM_CD_VAL" Column="COLOR_CD" DataColumn="COMM_CD_VAL_NM" Enable="FALSE" Height="19" Id="cb_color" InnerDataset="ds_prodCO" Left="650" TabOrder="11" Top="7" Width="130"></Combo>
+				<Edit BindDataset="ds_prodCpnt" Border="Flat" Column="PHONE_GRADE" Enable="FALSE" Height="20" Id="txt_Grade" Left="348" MaxLength="15" Style="sty_ipt_form" TabOrder="12" Top="31" UpperOnly="TRUE" Width="140"></Edit>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="150" Id="Div0" Left="11" Style="sty_div_dataview" TabOrder="13" Text="질의내용" Top="284" Width="806">
+			<Contents>
+				<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_prodCpntList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="134" CellMoving="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="124" Id="grd_prodCpntList" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" Right="793" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="10" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="785">
+					<contents>
+						<format id="Default">
+							<columns>
+								<col width="36"/>
+								<col width="128"/>
+								<col width="138"/>
+								<col width="129"/>
+								<col width="79"/>
+							</columns>
+							<head>
+								<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+								<cell bkcolor="user34" col="1" color="user35" display="text" text="구분"/>
+								<cell bkcolor="user34" col="2" color="user35" display="text" text="모델"/>
+								<cell bkcolor="user34" col="3" color="user35" display="text" text="색상"/>
+								<cell bkcolor="user34" col="4" color="user35" display="text" text="기준수량"/>
+							</head>
+							<body>
+								<cell align="center" col="0" display="text" expr="currow+1"/>
+								<cell col="1" colid="PROD_NM" display="text"/>
+								<cell col="2" colid="CPNT_PROD_CD" display="text"/>
+								<cell col="3" colid="CPNT_COLOR_CD" display="text"/>
+								<cell align="right" col="4" colid="IN_QTY" display="text"/>
+							</body>
+						</format>
+					</contents>
+				</Grid>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALBOS00100
+* 업무명      : 온라인판매관리
+* 프로그램명  : 판매등록(B2C-Online)
+--------------------------------------------------------------------------------
+* 작성자      : 김만수
+* 작성일      : 2011.10.25
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_SAL.js"
+
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_SL_CL;                      //영업구분 - 소매
+
+var FV_DIS_FIRST_SEARCH_YN;        //재고-단말기 상태 조회 구분  onload : 01 , 판매처,판매일자 : 02
+var FV_GET_SPLST_MDL_YN;           //모델별 판매가격표 조회 여부
+
+var FV_DIS_EQP_ERR_STATUS  = "0";  //단말기오류상태 ( 0:정상, 1:오류)
+var FV_DIS_USIM_ERR_STATUS = "0";  //USIM  오류상태 ( 0:정상, 1:오류)
+var FV_EQP_ERR_CODE;               //단말기 오류 코드
+var FV_USIM_ERR_CODE;              //USIM 오류 코드
+var FV_EQP_ERR_MSG;                //단말기 오류 메세지
+var FV_USIM_ERR_MSG;               //USIM 오류 메세지
+
+var FV_EQP_POL_ERR_CODE;           //단말기 정책 오류코드
+var FV_EQP_POL_ERR_MSG;            //단말기 정책 오류메세지
+var FV_USIM_POL_ERR_CODE;          //USIM 정책 오류코드
+var FV_USIM_POL_ERR_MSG;           //USIM 정책 오류메세지
+
+var FV_IF_PROC_CL;                 //처리구분  1:Ukey if     2:PS   3 : DUMMY   4 : 판매처변경    5 : 가입비분납전환   6: 약정변경
+var FV_OP_DT;                      //IF 처리일자
+var FV_OP_TM;                      //IF 처리시간
+var FV_SEQ;                        //IF 처리순번
+var FV_UPD_CNT;                    //UPDATE COUNT
+
+var FV_LOGIN_USER_ID;              //로그인 유저 아이디 
+var FV_LOGIN_USER_NM;              //로그인 유저 명
+var FV_LOGIN_DUTY;                 //권한구분
+
+var FV_OLD_RTN_YN;
+
+var FV_SALE_DTM;                   	//판매일시(14자리)
+
+var FV_SALE_DT_KEY_YN;            	// cal_saleDtm : onKeyDown 이벤트 적용여부
+var FV_DIS_ERR_YN;                	// 단말기/USIM 재고 조회시 ERROR 상태
+var FV_POL_ERR_YN;                	// 판매가격 조회시 ERROR 상태
+var FV_ROW = -1;					// 받아올 파라메터
+var FV_AMT1 = 0;					// 현금수납
+var FV_AMT2 = 0;					// 카드수납1
+var FV_AMT3 = 0;					// 카드수납2
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SALBOS00200_OnLoadCompleted(obj)
+{
+	lf_ParamCheck();			// 파라메터 정보 체크
+	
+	cf_setAuth(pFrmNum);       	// 권한 공통
+
+    lf_formVarInit();          	//로컬변수 초기화
+	lf_combomInit();           	//콤보박스 초기화
+	lf_formInit();             	//폼 초기화	
+	lf_getSaleInfo();
+}
+
+/*******************************************************************************
+ * @description         : 파라메터 체크
+*******************************************************************************/
+function lf_ParamCheck()
+{
+	if(FV_ROW == -1)
+	{
+		alert("판매정보가 부족합니다.");
+		
+		this.Close();
+	}
+	
+	var gnrlSaleNo = parent.ds_list.GetColumn(FV_ROW, "GNRL_SALE_NO");
+	var gnrlSaleChgSeq = parent.ds_list.GetColumn(FV_ROW, "GNRL_SALE_CHG_SEQ");
+	
+	if(uf_isEmpty(gnrlSaleNo + "") || uf_isEmpty(gnrlSaleChgSeq + ""))
+	{
+		alert("판매정보가 부족합니다.");
+		
+		this.Close();
+	}
+}
+
+/*******************************************************************************
+ * @description         : 로컬 변수 초기화 초기화
+*******************************************************************************/
+function lf_formVarInit()
+{
+    FV_SL_CL = "01";    //소매
+
+    //global 변수 
+    FV_LOGIN_USER_ID = gds_session.GetColumn(0,"loginId"); //로그인 유저 아이디 
+    FV_LOGIN_USER_NM = gds_session.GetColumn(0,"userNm");  //로그인 유저 명
+    FV_LOGIN_DUTY    = gds_session.GetColumn(0,"duty");    //권한    
+
+    //local 처리 변수
+    FV_DIS_FIRST_SEARCH_YN = "Y";   
+
+    FV_OLD_RTN_YN     = "N";
+    FV_SALE_DT_KEY_YN = "N";
+    FV_DIS_ERR_YN     = "N";
+    FV_POL_ERR_YN     = "N";
+}
+
+/*******************************************************************************
+ * @description         : 콤보박스 초기화
+*******************************************************************************/
+function lf_combomInit()
+{   
+    http.sync = true;
+	cf_setCommonCodeDsEnv();	
+	cf_setCommonCode("ds_cardCorp"	, "ZBAS_C_00050", "선택");   // 신용카드사	
+	cf_setCommonCode("ds_prodCU" 	, "ZSAL_C_00220");   	//고객구분
+	cf_setCommonCode("ds_prodCO" 	, "ZBAS_C_00040");   	//단말기색상
+	cf_setCommonCode("ds_prodGRD" 	, "ZBAS_P_00060");   	//단말기등급
+	cf_checkCommonCode();
+	http.sync = false;
+}
+
+/*******************************************************************************
+ * @description         : 폼 초기화
+*******************************************************************************/
+function lf_formInit()
+{
+	var sdt = parent.ds_list.GetColumn(FV_ROW, "SALE_DTM");
+	var tel = parent.ds_list.GetColumn(FV_ROW, "CUST_TEL_NO");
+	
+	if(tel == null || tel == "")
+	{
+		tel = "--";
+	}
+	
+	var arrTel = tel.split('-');
+	
+	div_dealCoInfo.cal_saleDtm.value = substr(sdt, 0, 8);
+	div_dealCoInfo.edt_saleDtmHh.value = substr(sdt, 8, 2);
+	div_dealCoInfo.edt_saleDtmMm.value = substr(sdt, 10, 2);
+	div_dealCoInfo.edt_salePlcNm.value = parent.ds_list.GetColumn(FV_ROW, "SALE_PLC_NM");
+	div_dealCoInfo.edt_salePlcUkeyCd.value = parent.ds_list.GetColumn(FV_ROW, "SALE_PLC");
+	
+	div_custInfo.edt_custNm.value = parent.ds_list.GetColumn(FV_ROW, "CUST_NM");
+	div_custInfo.edt_custBizNum.value = parent.ds_list.GetColumn(FV_ROW, "CUST_BIZ_NUM");
+
+	div_custInfo.edt_svcMgmtNum1.value = arrTel[0];
+	div_custInfo.edt_svcMgmtNum2.value = arrTel[1];
+	div_custInfo.edt_svcMgmtNum3.value = arrTel[2];
+	div_custInfo.cb_cust.value = parent.ds_list.GetColumn(FV_ROW, "CUST_CL");
+	div_custInfo.edt_svcAddr.value = parent.ds_list.GetColumn(FV_ROW, "CUST_ADDR");
+	
+	div_payment.msk_payAmt.value = parent.ds_list.GetColumn(FV_ROW, "SALE_AMT");
+	div_payment.msk_cashPayAmt.value = parent.ds_list.GetColumn(FV_ROW, "CASH_PAY_AMT");
+	div_payment.msk_crdtcrdPayAmt1.value = parent.ds_list.GetColumn(FV_ROW, "CRDTCRD_PAY_AMT1");
+	div_payment.msk_crdtcrdPayAmt2.value = parent.ds_list.GetColumn(FV_ROW, "CRDTCRD_PAY_AMT2");
+	div_payment.cmb_crdtcrdcorp1.value = parent.ds_list.GetColumn(FV_ROW, "CRDTCRD_CORP1");
+	div_payment.cmb_crdtcrdcorp2.value = parent.ds_list.GetColumn(FV_ROW, "CRDTCRD_CORP2");
+	
+	div_rmks.txa_rmks.value = parent.ds_list.GetColumn(FV_ROW, "RMKS");
+	
+	FV_AMT1 = parent.ds_list.GetColumn(FV_ROW, "CASH_PAY_AMT");
+	FV_AMT2 = parent.ds_list.GetColumn(FV_ROW, "CRDTCRD_PAY_AMT1");
+	FV_AMT3 = parent.ds_list.GetColumn(FV_ROW, "CRDTCRD_PAY_AMT2");
+	
+	lf_summary();	
+}
+
+/*******************************************************************************
+ * @description         : 폼 초기 데이터 바인딩
+*******************************************************************************/
+function lf_getSaleInfo()
+{
+	ds_prodCpntList.Clear();
+	
+	cf_setParam(ds_input, "prod_cd", parent.ds_list.GetColumn(FV_ROW, "EQP_MDL_CD"));
+	cf_setParam(ds_input, "color_cd", parent.ds_list.GetColumn(FV_ROW, "EQP_COLOR_CD"));
+	cf_setParam(ds_input, "ser_num", parent.ds_list.GetColumn(FV_ROW, "PROD_SER_NUM"));
+
+	// 트랜잭션 설정
+	var sSvcID = "svcSaleList";
+	var sInDs  = "nc_input_fieldDs=ds_input";
+	var sOutDs = "ds_prodCpnt=List";
+	var sArg   = "sktst.sal.BOS#getProdInfo";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+	
+	// 트랜잭션 설정
+	sSvcID = "svcSaleCpntList";
+	sInDs  = "nc_input_fieldDs=ds_input";
+	sOutDs = "ds_prodCpntList=List";
+	sArg   = "sktst.sal.BOS#getTdisProdList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+    switch(sSvcID)
+	{
+		case "svcBos11Save":
+			
+			if(ds_output.GetColumn(0, "gnrl_sale_chg_seq") == parent.ds_list.GetColumn(FV_ROW, "GNRL_SALE_CHG_SEQ"))
+			{
+				alert("최신정보가 아니므로 수정할 수 없습니다. 다시 조회하여 주십시요.");
+			}
+			else
+			{		
+				alert("저장 되었습니다");
+			}
+			
+			Parent.div_search_btn_search_OnClick();
+			this.Close();
+			
+			break;
+	}
+    
+    return;
+}
+
+/*******************************************************************************
+ * @description    : 저장
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	var gnrlSaleNo = parent.ds_list.GetColumn(FV_ROW, "GNRL_SALE_NO");
+	var gnrlSaleChgSeq = parent.ds_list.GetColumn(FV_ROW, "GNRL_SALE_CHG_SEQ");
+	
+	var corp1 = div_payment.cmb_crdtcrdcorp1.value;
+	var corp2 = div_payment.cmb_crdtcrdcorp2.value;
+	var pat_amt = div_payment.msk_cashPayAmt.value;
+	var amt1 = div_payment.msk_crdtcrdPayAmt1.value;
+	var amt2 = div_payment.msk_crdtcrdPayAmt2.value;
+	var rmks = div_rmks.txa_rmks.value;
+
+	if(uf_isEmpty(gnrlSaleNo + "") || uf_isEmpty(gnrlSaleChgSeq + ""))
+	{
+		alert("판매정보가 부족합니다.");		
+		return;
+	}
+
+	if(div_payment.msk_payAmt.value != div_payment.msk_paySumAmt.value)
+	{
+		alert("판매가와 수납합계를 확인하세요.");		
+		return;
+	}
+	
+	if(uf_isEmpty(rmks + ""))
+	{
+		alert(cf_getMessage(MSG_00083, "비고"));
+		div_rmks.txa_rmks.SetFocus();
+		return;
+	}
+	
+	if(!Confirm("저장하시겠습니까?")) return;
+	
+	ds_edtInfo.Clear();
+	ds_output.Clear();
+	
+	cf_setParam(ds_edtInfo, "gnrl_sale_no", gnrlSaleNo);
+	cf_setParam(ds_edtInfo, "gnrl_sale_chg_seq", gnrlSaleChgSeq, 1);
+	cf_setParam(ds_edtInfo, "cash_pay_amt", lf_cal(FV_AMT1, pat_amt), 1);
+	cf_setParam(ds_edtInfo, "crdtcrd_corp1", corp1);
+	cf_setParam(ds_edtInfo, "crdtcrd_pay_amt1", lf_cal(FV_AMT2, amt1), 1);
+	cf_setParam(ds_edtInfo, "crdtcrd_corp2", corp2);
+	cf_setParam(ds_edtInfo, "crdtcrd_pay_amt2", lf_cal(FV_AMT3, amt2), 1);
+	cf_setParam(ds_edtInfo, "out_mgmt_no", "");
+	cf_setParam(ds_edtInfo, "ser_num", parent.ds_list.GetColumn(FV_ROW, "PROD_SER_NUM"));
+	cf_setParam(ds_edtInfo, "color_cd", parent.ds_list.GetColumn(FV_ROW, "EQP_COLOR_CD"));
+	cf_setParam(ds_edtInfo, "prod_cd", parent.ds_list.GetColumn(FV_ROW, "EQP_MDL_CD"));
+	cf_setParam(ds_edtInfo, "rmks", rmks);
+		
+	var sSvcID = "svcBos11Save";
+	var sInDs  = "nc_input_fieldDs=ds_edtInfo";
+	var sOutDs = "ds_output=ds_output";
+	var sArg   = "sktst.sal.BOS#saveSalePaymentUpdate";
+
+	//alert(ds_edtInfo.SaveXML());
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 현금수납 변경시 수납합계 자동계산
+*******************************************************************************/
+function div_payment_msk_cashPayAmt_OnChanged(obj,strText)
+{
+	lf_summary();
+}
+
+/*******************************************************************************
+ * @description    : 현금수납 변경시 수납합계 자동계산
+*******************************************************************************/
+function div_payment_msk_cashPayAmt_OnCharChanged(obj,strPreText,strPostText)
+{
+	lf_summary();
+}
+
+/*******************************************************************************
+ * @description    : 카드수납 변경시 수납합계 자동계산
+*******************************************************************************/
+function div_payment_msk_crdtcrdPayAmt1_OnChanged(obj,strText)
+{
+	lf_summary();
+}
+
+/*******************************************************************************
+ * @description    : 카드수납 변경시 수납합계 자동계산
+*******************************************************************************/
+function div_payment_msk_crdtcrdPayAmt2_OnChanged(obj,strText)
+{
+	lf_summary();
+}
+
+/*******************************************************************************
+ * @description    : 창닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	//Parent.div_search_btn_search_OnClick();
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 카드수납1 변경 이벤트
+*******************************************************************************/
+function div_payment_cmb_crdtcrdcorp1_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	div_payment.msk_crdtcrdPayAmt1.value = 0;	
+	lf_summary();
+}
+
+/*******************************************************************************
+ * @description    : 카드수납2 변경 이벤트
+*******************************************************************************/
+function div_payment_cmb_crdtcrdcorp2_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	div_payment.msk_crdtcrdPayAmt2.value = 0;
+	lf_summary();
+}
+
+/*******************************************************************************
+ * @description    : 현금수납 변경시 수납합계 자동계산
+*******************************************************************************/
+function lf_summary()
+{
+	div_payment.msk_paySumAmt.Value = 0; 		
+	div_payment.msk_paySumAmt.Value = eval(div_payment.msk_cashPayAmt.Value) 
+					+ eval(div_payment.msk_crdtcrdPayAmt1.Value)
+					+ eval(div_payment.msk_crdtcrdPayAmt2.Value);
+}
+
+/*******************************************************************************
+ * @description    : 수납정보 가격 변경시 디비에 들어갈 값 계산 
+*******************************************************************************/
+function lf_cal(v1, v2)
+{
+	var v11 = eval(v1);
+	var v22 = eval(v2);
+	
+	return v22 -v11;
+}]]></Script>
+</Window>

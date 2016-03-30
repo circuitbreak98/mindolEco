@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="590" Id="BASPDM00500" Left="8" OnLoadCompleted="BASPDM00500_OnLoadCompleted" PidAttrib="7" Title="상품매핑관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_prodMapList">
+				<Contents>
+					<colinfo id="prod_map_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_map_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_color"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodMapCl"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_cond">
+				<Contents>
+					<colinfo id="prod_map_cd" size="256" summ="default" type="STRING"/>
+					<record>
+						<prod_map_cd></prod_map_cd>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ret"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_in"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodColor"></Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="질의내용" Top="34" Width="810">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="719" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="0" Text="조회" Top="7" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static3" Left="20" Style="sty_lb_Search" TabOrder="0" Text="상품&#32;매핑&#32;코드" Top="8" VAlign="Middle" Width="91"></Static>
+				<Edit BindDataset="ds_cond" Border="Flat" Column="prod_map_cd" Height="20" Id="edt_prodMapCd" Left="121" LeftMargin="2" OnKeyDown="div_search_edt_prodMapCd_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="170"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_prodMapList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="459" CellMoving="TRUE" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="347" Id="grd_prodMapList" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellPosChanged="grd_prodMapList_OnCellPosChanged" Right="818" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="112" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="40"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="상품매핑코드"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="상품코드"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="상품명"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="상품매핑구분"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell align="center" col="1" colid="prod_map_cd" display="text"/>
+						<cell align="left" col="2" colid="prod_cd" display="text"/>
+						<cell align="left" col="3" colid="prod_nm" display="text"/>
+						<cell align="center" col="4" colid="color_cd" combocol="COMM_CD_VAL" combodataset="ds_color" combotext="COMM_CD_VAL_NM" display="combo"/>
+						<cell align="center" col="5" colid="prod_map_cl" combocol="COMM_CD_VAL" combodataset="ds_prodMapCl" combotext="COMM_CD_VAL_NM" display="combo"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="760" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="3" Text="저장" Top="549" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" TabStop="FALSE" Text="상품&#32;매핑&#32;상세&#32;정보" Top="471" Width="192"></Image>
+		<Div Border="Raised" Height="40" Id="div_process" Left="10" Style="sty_div_input" TabOrder="3" Text="질의내용" Top="496" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="20" Style="sty_lb_Search" TabOrder="1" Text="상품매핑코드" Top="8" VAlign="Middle" Width="82"></Static>
+				<Static Align="Right" Height="20" Id="Static0" Left="220" Style="sty_lb_Search" TabOrder="1" Text="상품" Top="8" VAlign="Middle" Width="42"></Static>
+				<Static Align="Right" Height="20" Id="Static4" Left="444" Style="sty_lb_Search" TabOrder="1" Text="색상" Top="8" VAlign="Middle" Width="42"></Static>
+				<Edit BindDataset="ds_prodMapList" Border="Flat" Column="prod_map_cd" Height="20" Id="edt_prodMapCdIn" Left="105" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" UpperOnly="TRUE" Width="100"></Edit>
+				<Edit BindDataset="ds_prodMapList" Border="Flat" Column="prod_cd" Height="20" Id="edt_prodCd" Left="265" LeftMargin="2" OnCharChanged="div_process_edt_prodCd_OnCharChanged" OnFocus="div_process_edt_prodCd_OnFocus" OnKeyDown="div_process_edt_prodCd_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Width="60"></Edit>
+				<Image Height="20" Id="Image1" ImageID="bul_mand" Left="13" TabOrder="7" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Image Height="20" Id="Image0" ImageID="bul_mand" Left="224" TabOrder="8" Top="8" Transparent="TRUE" Width="20"></Image>
+				<Image Height="20" Id="Image2" ImageID="bul_mand" Left="448" TabOrder="9" Top="8" Transparent="TRUE" Width="20"></Image>
+				<Button Height="21" Id="btn_inPop" ImageID="btn_i_detail" Left="324" OnClick="div_process_btn_inPop_OnClick" TabOrder="10" Text="Button0" Top="7" Width="19"></Button>
+				<Combo BindDataset="ds_prodMapList" Border="Flat" CodeColumn="COMM_CD_VAL" Column="color_cd" DataColumn="COMM_CD_VAL_NM" Height="20" Id="cmb_color" InnerDataset="ds_color" Left="488" Style="sty_ipt_form" TabOrder="11" Top="6" Width="100"></Combo>
+				<Static Align="Right" Height="20" Id="Static1" Left="612" Style="sty_lb_Search" TabOrder="12" Text="상품매핑구분" Top="8" VAlign="Middle" Width="82"></Static>
+				<Image Height="20" Id="Image3" ImageID="bul_mand" Left="605" TabOrder="13" Top="8" Transparent="TRUE" Width="20"></Image>
+				<Combo BindDataset="ds_prodMapList" Border="Flat" CodeColumn="COMM_CD_VAL" Column="prod_map_cl" DataColumn="COMM_CD_VAL_NM" Height="20" Id="cmb_prodMapCl" InnerDataset="ds_prodMapCl" Left="696" Style="sty_ipt_form" TabOrder="14" Top="6" Width="100"></Combo>
+				<Edit BindDataset="ds_prodMapList" Border="Flat" Column="prod_nm" Enable="FALSE" Height="20" Id="edt_prodNm" Left="342" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="0" Top="7" Width="90"></Edit>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="11" LeftMargin="15" Style="sty_img_tit" TabOrder="6" TabStop="FALSE" Text="상품&#32;매핑&#32;목록" Top="8" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_new" ImageID="btn_e_4" Left="10" LeftMargin="17" OnClick="btn_new_OnClick" Style="sty_btn_e" TabOrder="7" Text="신규등록" Top="549" Visible="FALSE" Width="85"></Button>
+		<Div Height="24" Id="div_excel" Left="615" TabOrder="8" Text="Div2" Top="88" Width="212">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_excelDown" ImageID="btn_i_exceldown_w" Left="185" OnClick="div_excel_btn_excelDown_OnClick" TabOrder="12" Text="엑셀다운" ToolTipText="Excel&#32;Download" Width="19"></Button>
+				<Button Cursor="HAND" Height="21" Id="btn_delRow" ImageID="btn_i_subtract_w" Left="159" OnClick="div_excel_btn_delRow_OnClick" TabOrder="2" Text="Button1" ToolTipText="추가된&#32;행삭제" Width="19"></Button>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BASPDM00500.xml
+* 업무명      : 기준 / 상품관리
+* 프로그램명  : 상품매핑관리
+--------------------------------------------------------------------------------
+* 작성자      : 김중일
+* 작성일      : 2009.06.19
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 공통 스크립트 로딩
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function BASPDM00500_OnLoadCompleted(obj)
+{
+	http.Sync = true;
+
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+
+	// 그리드 체크박스 설정 및 정렬
+	cf_setGrdChecknSortEvent(grd_prodMapList, 0);
+	
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("ds_color", "ZBAS_C_00040");   		// 색상
+	cf_setCommonCode("ds_prodMapCl", "ZDIS_C_00370"); 		// 상품매핑구분
+	cf_checkCommonCode();
+
+	// 조회조건에 기본값 설정
+	cf_setInitDataForCmb(div_process.cmb_color, "선택");
+	cf_setInitDataForCmb(div_process.cmb_prodMapCl, "선택");
+	div_process.cmb_color.Value = "";
+	div_process.cmb_prodMapCl.Value = "";
+
+	http.Sync = false;	
+	
+	div_search.edt_prodMapCd.SetFocus();
+
+	// 사용자 조작 유무 체크
+    cf_setOrgDs(ds_prodMapList);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcSearch")
+	{
+        ds_prodMapList.Sort("prod_map_cd");
+	}
+	
+	if(sSvcID == "svcSaveProdMapInfo")
+	{
+        f_search();
+	}
+	
+    // 상품코드별 색상
+    if(sSvcID == "svcProdColor")
+    {
+        f_setProdColor();
+    }
+    
+    // 등록 여부 체크
+    if(sSvcID == "svcProdMapCheck")
+    {      	
+    }
+}
+
+/*******************************************************************************
+ * @description    : 상품 매핑 정보 조회
+*******************************************************************************/
+function f_search()
+{
+	// 트랜잭션 설정
+	var sSvcID = "svcSearch";
+	var sInDs = "nc_input_fieldDs=ds_cond";
+	var sOutDs = "ds_prodMapList=ProdMapList";
+	var sArg = "sktst.bas.PDM#getProdMapList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 상품 매핑 등록 여부 체크
+*******************************************************************************/
+function f_getProdMapCheck()
+{
+    FV_NUM_CNT = 0;
+    ds_in.Clear();
+    ds_ret.Clear();
+    cf_setParam(ds_in, "prod_cd", div_process.edt_prodCd.Value);
+    cf_setParam(ds_in, "color_cd", div_process.cmb_color.Value);
+    
+	// 트랜잭션 설정
+	var sSvcID = "svcProdMapCheck";
+	var sInDs = "nc_input_fieldDs=ds_in";
+	var sOutDs = "ds_ret=ProdMapCheck";
+	var sArg = "sktst.bas.PDM#getProdMapCheck";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 상품 매핑 정보 저장
+*******************************************************************************/
+function f_saveProdMapInfo()
+{
+	// 트랜잭션 설정
+	var sSvcID = "svcSaveProdMapInfo";
+	var sInDs = "ds_prodMapList=ds_prodMapList:U";
+	var sOutDs = "ds_ret=";
+	var sArg = "sktst.bas.PDM#saveProdMapInfo";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 상품코드별 색상 리스트 조회
+   @param sProdCd  : 상품코드
+*******************************************************************************/
+function f_getProdColor(sProdCd)
+{   
+    // 입력 파라메터 셋팅
+    ds_in.Clear();
+    ds_prodColor.Clear();
+    cf_setParam(ds_in, "prod_cd", sProdCd);
+    
+	// 트랜잭션 설정
+	var sSvcID = "svcProdColor";
+	var sInDs = "nc_input_fieldDs=ds_in";
+	var sOutDs = "ds_prodColor=ProdColorList";
+	var sArg = "sktst.dis.DCO#getProdColorList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 상품코드별 색상 필터링
+*******************************************************************************/
+function f_setProdColor()
+{
+	var sFilterStr = "COMM_CD_VAL = ''";
+
+	for(var i=0; i<ds_prodColor.rowcount; i++)
+	{
+		sFilterStr += " || COMM_CD_VAL = '" + ds_prodColor.GetColumn(i, "color_cd") + "'"; 
+	}
+
+	ds_color.Filter(sFilterStr);
+}
+
+/*******************************************************************************
+ * @description    : 조회 버튼 클릭 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+    http.Sync = true;
+	f_search();
+	f_getProdColor(div_process.edt_prodCd.Value);
+	http.Sync = false;
+}
+
+/*******************************************************************************
+ * @description    : 키다운 이벤트
+*******************************************************************************/
+function div_search_edt_prodMapCd_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+    if(nChar == 13)
+    {
+        cf_setParam(ds_cond, "prod_map_cd", div_search.edt_prodMapCd.Value);
+        f_search();
+    }
+}
+
+/*******************************************************************************
+ * @description    : 엑셀 다운 이벤트
+*******************************************************************************/
+function div_excel_btn_excelDown_OnClick(obj)
+{
+	cf_exportExcel(grd_prodMapList, 1);
+}
+
+/*******************************************************************************
+ * @description    : 신규 등록 버튼 클릭 이벤트
+*******************************************************************************/
+function btn_new_OnClick(obj)
+{
+    if(ToUpper(ds_prodMapList.GetRowType(ds_prodMapList.currow)) == "INSERT")
+    {
+        alert(cf_getMessage(MSG_00032, "리스트 중에 신규등록 후 저장되지 않은 건이"));
+	    return;
+    }
+	ds_prodMapList.AddRow();
+	div_process.cmb_prodMapCl.Value = "01";
+	div_process.edt_prodMapCdIn.SetFocus();
+}
+
+/*******************************************************************************
+ * @description    : 셀 위치 변경 이벤트
+*******************************************************************************/
+function grd_prodMapList_OnCellPosChanged(obj,nRow,nCell,nOldRow,nOldCell,nPivotIndex,nOldPivotIndex)
+{
+	if(ToUpper(ds_prodMapList.GetRowType(nOldRow)) == "INSERT")
+	{
+	    alert(cf_getMessage(MSG_00032, "리스트 중에 신규등록 후 저장되지 않은 건이"));
+	    ds_prodMapList.row = nOldRow;
+	    return;
+	}
+	
+	f_getProdColor(div_process.edt_prodCd.Value);
+}
+
+/*******************************************************************************
+ * @description    : 저장 버튼 클릭 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+    if(ds_prodMapList.GetUpdate() < 1)
+    {
+        alert(cf_getMessage(MSG_00084, "변경된 내용"));
+        return;
+    }
+    
+    if(Length(Trim(ds_prodMapList.GetColumn(ds_prodMapList.currow, "prod_map_cd"))) < 1)
+    {
+        alert(cf_getMessage(MSG_00083, "상품매핑코드"));
+        div_process.edt_prodMapCdIn.SetFocus();
+        return;
+    }
+    
+    if(Length(Trim(ds_prodMapList.GetColumn(ds_prodMapList.currow, "prod_cd"))) < 1)
+    {
+        alert(cf_getMessage(MSG_00083, "상품코드"));
+        div_process.edt_prodCd.SetFocus();
+        return;
+    }
+    
+    if(Length(Trim(ds_prodMapList.GetColumn(ds_prodMapList.currow, "prod_nm"))) < 1)
+    {
+        alert(cf_getMessage(MSG_00083, "상품명"));
+        div_process.edt_prodCd.SetFocus();
+        return;
+    }
+    
+    if(Length(Trim(ds_prodMapList.GetColumn(ds_prodMapList.currow, "color_cd"))) < 1)
+    {
+        alert(cf_getMessage(MSG_00083, "색상코드"));
+        div_process.edt_colorCd.SetFocus();
+        return;
+    }
+    
+    if(Length(Trim(ds_prodMapList.GetColumn(ds_prodMapList.currow, "prod_map_cl"))) < 1)
+    {
+        alert(cf_getMessage(MSG_00083, "상품매핑구분"));
+        div_process.edt_prodMapCl.SetFocus();
+        return;
+    }
+    
+    if(ds_prodMapList.GetOrgColumn(ds_prodMapList.currow, "prod_map_cd")
+       != ds_prodMapList.GetColumn(ds_prodMapList.currow, "prod_map_cd"))
+    {
+        ds_prodMapList.UpdateControl = false;
+        ds_prodMapList.SetRowType(ds_prodMapList.currow, "insert");
+    }
+	f_saveProdMapInfo();
+}
+
+/*******************************************************************************
+ * @description    : 상품 키다운 이벤트
+*******************************************************************************/
+function div_process_edt_prodCd_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+    if(nChar == 13)
+    {
+	    cf_commPopProd("div_process.edt_prodCd", "div_process.edt_prodNm", nChar);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 상품 버튼 클릭 이벤트
+*******************************************************************************/
+function div_process_btn_inPop_OnClick(obj)
+{
+    http.Sync = true;
+	cf_commPopProd("div_process.edt_prodCd", "div_process.edt_prodNm", 13);
+	f_getProdColor(div_process.edt_prodCd.Value);
+	http.Sync = false;
+}
+
+/*******************************************************************************
+ * @description    : Minus 버튼 클릭 이벤트
+*******************************************************************************/
+function div_excel_btn_delRow_OnClick(obj)
+{
+	ds_prodMapList.DeleteRow(ds_prodMapList.currow);
+}
+
+/*******************************************************************************
+ * @description    : 상품 변경 이벤트
+*******************************************************************************/
+function div_process_edt_prodCd_OnCharChanged(obj,strPreText,strPostText)
+{
+    div_process.edt_prodNm.Value = "";
+	div_process.cmb_color.Value = "";
+
+	f_getProdColor(div_process.edt_prodCd.Value);
+}
+
+/*******************************************************************************
+ * @description    : 상품 포커스 이벤트
+*******************************************************************************/
+function div_process_edt_prodCd_OnFocus(obj)
+{
+	f_getProdColor(div_process.edt_prodCd.Value);
+}
+
+]]></Script>
+</Window>

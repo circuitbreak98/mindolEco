@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="535" Id="form" Left="8" PidAttrib="7" Title="New&#32;Form" Top="8" Ver="1.0" Width="800" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="Dataset0">
+				<Contents>
+					<colinfo id="column_1" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_2" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_3" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_4" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_5" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_6" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_7" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_8" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_9" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_10" size="255" summ="default" type="STRING"/>
+					<record>
+						<column_1>aaaa</column_1>
+						<column_10></column_10>
+						<column_2>ssss</column_2>
+						<column_3></column_3>
+						<column_4></column_4>
+						<column_5></column_5>
+						<column_6></column_6>
+						<column_7></column_7>
+						<column_8></column_8>
+						<column_9></column_9>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="dsParam">
+				<Contents>
+					<colinfo id="id" size="256" summ="default" type="STRING"/>
+					<colinfo id="name" size="256" summ="default" type="STRING"/>
+					<colinfo id="memo" size="256" summ="default" type="STRING"/>
+					<record>
+						<id></id>
+						<memo></memo>
+						<name></name>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="Dataset1">
+				<Contents>
+					<colinfo id="MEMO" size="255" type="STRING"/>
+					<colinfo id="NAME" size="255" type="STRING"/>
+					<colinfo id="ID" size="255" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="Dataset2">
+				<Contents>
+					<colinfo id="column0" size="256" summ="default" type="STRING"/>
+					<colinfo id="column1" size="256" summ="default" type="STRING"/>
+					<record>
+						<column0>aaa</column0>
+						<column1>dddd</column1>
+					</record>
+					<record>
+						<column0>ddd</column0>
+						<column1>ffff</column1>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" BindDataset="Dataset1" BkColor2="default" BoldHead="true" Bottom="448" Editable="TRUE" Enable="true" EndLineColor="default" Height="200" Id="Grid1" InputPanel="FALSE" Left="24" LineColor="default" Right="424" TabOrder="1" TabStop="true" Top="248" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="default" WheelScrollRow="1" Width="400">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="65"/>
+						<col width="127"/>
+						<col width="182"/>
+					</columns>
+					<head>
+						<cell col="0" display="text" text="ID"/>
+						<cell col="1" display="text" text="NAME"/>
+						<cell col="2" display="text" text="MEMO"/>
+					</head>
+					<body>
+						<cell col="0" colid="ID" display="text" edit="normal"/>
+						<cell col="1" colid="NAME" display="text" edit="normal"/>
+						<cell col="2" colid="MEMO" display="text" edit="normal"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Static Align="Right" Height="15" Id="Static0" Left="24" TabOrder="2" Text="ID" Top="83" VAlign="Middle" Width="41"></Static>
+		<Edit Height="21" Id="Edit0" Left="72" TabOrder="3" Top="80" Width="121"></Edit>
+		<Edit Height="21" Id="Edit1" Left="72" TabOrder="4" Top="108" Width="121"></Edit>
+		<Edit Height="21" Id="Edit2" Left="72" TabOrder="5" Top="133" Width="121"></Edit>
+		<Static Align="Right" Height="15" Id="Static1" Left="24" TabOrder="6" Text="Name" Top="111" VAlign="Middle" Width="41"></Static>
+		<Static Align="Right" Height="15" Id="Static2" Left="24" TabOrder="7" Text="Memo" Top="136" VAlign="Middle" Width="41"></Static>
+		<Button Height="53" Id="Button0" Left="256" OnClick="Button0_OnClick" TabOrder="8" Text="저장" Top="88" Width="60"></Button>
+		<Button Height="55" Id="Button1" Left="328" OnClick="fnListInsert" TabOrder="9" Text="리스트&#32;저장" Top="192" Width="87"></Button>
+		<Button Height="32" Id="Button2" Left="144" OnClick="Button2_OnClick" TabOrder="10" Text="행추가" Top="216" Width="88"></Button>
+		<Button Height="57" Id="Button3" Left="336" OnClick="Button3_OnClick" TabOrder="11" Text="조회" Top="88" Width="59"></Button>
+		<Button Height="32" Id="Button4" Left="240" OnClick="Button4_OnClick" TabOrder="12" Text="행삭제" Top="216" Width="88"></Button>
+		<Button Height="77" Id="Button5" Left="551" OnClick="Button5_OnClick" TabOrder="13" Text="Button5" Top="128" Width="84"></Button>
+	</Form>
+	<Script><![CDATA[
+
+var msg_flag;
+function fnCallback(svcid, errcd, errmsg)
+{trace(http.RecvHttpStr);
+	if ( svcid == "testinsert")
+	{
+		if ( msg_flag == "OK" )
+		{
+			fnMultiSelect();
+		}
+		else alert("실패");
+	} else if ( svcid == "testmultiinsert")
+	{
+		if ( msg_flag == "OK" )
+		{
+		fnMultiSelect();
+		}
+		else alert("실패");
+		trace(http.SendHttpStr);
+		
+	} else if ( svcid == "testselect")
+	{
+		
+		
+		if ( msg_flag == "OK" )
+		{
+		}
+		else alert("실패");
+		trace(http.SendHttpStr);
+		
+	}
+}
+
+
+
+function Button0_OnClick(obj)
+{
+	if ( Length(Edit0.Text) == 0 ) { alert("확인"); return; }
+	else if ( Length(Edit1.Text) == 0 ) { alert("확인"); return; }
+	else if ( Length(Edit2.Text) == 0 ) { alert("확인"); return; }
+	
+	dsParam.SetColumn(0, "id", Edit0.Text);
+	dsParam.SetColumn(0, "name", Edit1.Text);
+	dsParam.SetColumn(0, "memo", Edit2.Text);
+	
+	var strParam = "nc_trId=" + Quote("framework.demo.Hello#insertHello");
+	Transaction("testinsert", 
+				"svc::standard.xmi", 
+				"nc_input_fieldDs=dsParam", 
+				"Dataset1=Hello", 
+				strParam, 
+				"fnCallback");
+}
+
+function fnMultiSelect()
+{
+	var strParam = "nc_trId=" + Quote("framework.demo.Hello#selectHelloList");
+	Transaction("testselect", 
+				"svc::standard.xmi", 
+				"nc_input_fieldDs=dsParam", 
+				"Dataset1=Hello", 
+				strParam, 
+				"fnCallback");
+}
+
+function Button3_OnClick(obj)
+{
+	fnMultiSelect();
+}
+
+function fnListInsert(obj)
+{
+	var strParam = "nc_trId=" + Quote("framework.demo.Hello#cudAllHello");
+	Transaction("testmultiinsert", 
+				"svc::standard.xmi", 
+				"Hello=Dataset1:U", 
+				"Dataset1=Hello", 
+				strParam, 
+				"fnCallback");
+}
+function Button2_OnClick(obj)
+{
+	var row = Dataset1.AddRow();
+	Dataset1.SetColumn(row,"nc_cud_flag", "I");
+}
+
+function Button4_OnClick(obj)
+{
+	Dataset1.DeleteRow(Dataset1.row);
+}
+
+function Button5_OnClick(obj)
+{
+	Dataset2.AddColumn("col3");
+	
+	trace(Dataset2.SaveXML());
+}
+]]></Script>
+</Window>

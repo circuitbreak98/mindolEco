@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="DISINN00500">
+	<select id="getInnList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00500_getInnList_이정현_한병곤" */
+       a.in_mgmt_no,
+       a.ord_mgmt_no,
+       a.in_schd_dt,
+       a.prchs_plc_id,
+       FBAS_GET_DEAL_NM(a.prchs_plc_id,a.in_schd_dt) as prchs_plc_nm,    
+       a.in_plc_id,
+       FBAS_GET_DEAL_NM(a.in_plc_id,a.in_schd_dt) as in_plc_nm, 
+       a.in_cl,
+       (SELECT comm_cd_val_nm 
+          FROM tbas_comm_cd_dtl 
+         WHERE comm_cd_id = 'ZDIS_C_00020'
+           AND comm_cd_val = a.in_cl) as in_cl_nm,        
+       a.in_fix_dt,
+       a.in_st,
+       (SELECT comm_cd_val_nm 
+          FROM tbas_comm_cd_dtl 
+         WHERE comm_cd_id = 'ZDIS_C_00060'
+           AND comm_cd_val = a.in_st) as in_st_nm,          
+       a.rmks,
+       sum(b.in_qty) as in_qty,
+       sum(b.in_fix_qty) as in_fix_qty
+  FROM tdis_in_m a,
+       tdis_in_dtl_d b,
+       tbas_deal_co_mgmt c
+ WHERE a.in_mgmt_no = b.in_mgmt_no   
+   AND a.del_yn = 'N'
+   AND b.del_yn = 'N' 
+   AND a.in_plc_id = c.deal_co_cd
+   AND c.del_yn = 'N'
+  AND a.in_cl in ('101','102','103','109','114')      
+]]>    <isNotEmpty prepend="AND" property="staInSchdDt"> 
+<![CDATA[       a.in_schd_dt  >= #staInSchdDt#
+]]>    </isNotEmpty>   
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="endInSchdDt"> 
+<![CDATA[       a.in_schd_dt  <= #endInSchdDt#
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="prchsPlcId">    
+<![CDATA[       a.prchs_plc_id = #prchsPlcId#
+]]>    </isNotEmpty>   
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="inPlcId">    
+<![CDATA[       a.in_plc_id    = #inPlcId#
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="inCl">    
+<![CDATA[       a.in_cl        = #inCl#
+]]>    </isNotEmpty>
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="inSt">    
+<![CDATA[       a.in_st        = #inSt#
+]]>    </isNotEmpty>      
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="posAgencyId">    
+<![CDATA[       c.pos_agency   = #posAgencyId#
+]]>    </isNotEmpty>       
+<![CDATA[   AND (c.deal_co_cd,hseq_no) in (SELECT /*+ INDEX_DESC (x xbas_deal_co_mgmt_pk) */
+                                         x.deal_co_cd,
+                                         x.hseq_no
+                                    FROM tbas_deal_co_mgmt x
+                                   WHERE x.deal_co_cd = c.deal_co_cd
+                                     AND x.del_yn = 'N'
+]]>                                      <isNotEmpty prepend="AND" property="posAgencyId">    
+<![CDATA[                                         x.pos_agency  = #posAgencyId#
+]]>                                      </isNotEmpty>                                          
+<![CDATA[                                     AND x.eff_end_dtm = '99991231235959'
+                                     AND rownum = 1)    
+ GROUP BY a.in_mgmt_no, a.ord_mgmt_no, a.in_schd_dt, a.prchs_plc_id, a.in_plc_id, a.in_cl, a.in_fix_dt, a.in_st, a.rmks
+ ORDER BY a.in_schd_dt desc]]>
+	</select>
+</sqlMap>

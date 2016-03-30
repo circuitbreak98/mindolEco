@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08210">
+
+	<select id="getVirtHistList" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+        SELECT  /* SACERP08210_getVirtHistList_HanaBicNet가상계좌거래내역조회-하창주 */
+                 strvirtidno    /* 거래내역ID(하나은행key) */
+                ,strvirtnumb    /* 가상계좌번호 */
+                ,strbankcode    /* 은행코드 */
+                ,strtrandate    /* 거래일자 */
+                ,strtrantime    /* 거래시간 */
+                ,dectran_amt	/* 거래금액 */
+                ,struniqnumb    /* 거래고유번호 */
+                ,strtranuser    /* 거래자명 */
+                ,strdealcode    /* 취급기관코드 */
+                ,strdealbran    /* 취급지점코드 */
+                ,strtranstat    /*  */
+                ,strtrantype    /*  */
+                ,strtran_gb     /*  */
+                ,strcheckamt    /*  */
+                ,strtml_code    /* 취급단말번호 */
+                ,strmedicode    /* 매체구분코드 */
+                ,strmagam_gb    /*  */
+                ,strnoneseqs    /* 일련번호(날짜별순번) */
+                ,stragentname   /* 가맹점명 */
+                ,egtflag        /*  */
+        FROM    tblvirthist
+        WHERE   strtrandate >= '20090601'
+        AND     egtflag = 'S'
+        AND     strtranstat = 'S'
+        ORDER BY strtrandate, strtrantime
+	]]>
+	</select>
+
+	<update id="updateEgtFlagToS" parameterClass="map">
+	<![CDATA[
+		UPDATE	tblvirthist		/* SACERP08210_updateVirtHist-하창주 */
+		SET		egtflag = 'S'
+		WHERE	strtrandate >= '20090601'
+		AND		egtflag is null
+	]]>
+	</update>
+
+	<update id="updateEgtFlagToN" parameterClass="map">
+	<![CDATA[
+		UPDATE	tblvirthist		/* SACERP08210_updateVirtHist-하창주 */
+		SET		egtflag = 'N'
+		WHERE	strtrandate >= '20090601'
+		AND		egtflag = 'S'
+	]]>
+	</update>
+
+	<select id="getSeqNoDealNo" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT	/* SACERP08210_getSeqNoDealNo-하창주 */
+			(
+				SELECT	max(seq_no)
+				FROM	tacc_imag_acc_if
+				WHERE	dpst_dt = #strtrandate#
+			) as seq_no_max,
+			(
+				select	count(*)
+				from	tacc_imag_acc_if
+				where	imag_acc_no = #strvirtnumb#
+				and		bank_cd = #strbankcode#
+				and		dpst_dt = #strtrandate#
+				and		deal_no = #struniqnumb#
+			) as deal_no_cnt
+		FROM DUAL
+	]]>
+	</select>
+
+	<insert id="addAccImagAccIf" parameterClass="hmap">
+	<![CDATA[
+		INSERT INTO TACC_IMAG_ACC_IF (	/* SACERP08210_addAccImagAccIf-하창주 */
+			 imag_acc_no
+			,bank_cd
+			,dpst_dt
+			,seq_no
+			,dpst_tm
+			,dpst_amt
+			,dpster_nm
+			,deal_no
+			,aply_yn
+			,del_yn
+			,upd_cnt
+			,ins_dtm
+			,ins_user_id
+			,mod_dtm
+			,mod_user_id
+		)
+		VALUES (
+			 #strvirtnumb#
+			,#strbankcode#
+			,#strtrandate#
+			,(SELECT case when max(seq_no) is null then 1 else max(seq_no) + 1 end
+				FROM tacc_imag_acc_if
+			   WHERE imag_acc_no = #strvirtnumb# and bank_cd = #strbankcode# and dpst_dt = #strtrandate#)
+			,#strtrantime#
+			,#dectran_amt#
+			,#strtranuser#
+			,#struniqnumb#
+			,'N'
+			,'N'
+			,1
+			,TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+			,'psadm'
+			,TO_CHAR(sysdate, 'yyyyMMddHH24miss')
+			,'psadm'
+		)
+	]]>
+	</insert>
+</sqlMap>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM01200">
+	<select id="getPortalUserList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ "BASUSM01200_getPortalUserList_김연석_김연석" */
+	   '0'                                                                  CHK
+     , FBAS_GET_ORG_NM(A.ORG_ID)                                            ORG_NM
+     , FBAS_GET_DEAL_NM(A.POS_AGENCY, TO_CHAR(SYSDATE, 'yyyymmddHH24MISS')) POS_AGENCY
+     , FBAS_GET_DEAL_NM(A.ORG_AREA,   TO_CHAR(SYSDATE, 'yyyymmddHH24MISS')) ORG_AREA
+     , A.PORTAL_USER_ID                                                     
+     , A.USER_ID                                                            
+     , A.USER_NM                                                            
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00250', A.USER_GRP)                    USER_GRP
+     , FBAS_GET_COMMCDNM_VAL('ZPTL_C_00300', B.USER_ID_ACT_ST_CD)           USER_STAT
+     , B.START_DT                                                           
+     , B.END_DT                                                             
+     , TO_CHAR(TO_DATE(END_DT, 'yyyymmdd') + 90, 'yyyymmdd')                NEW_END_DT
+     , A.PORTAL_USER_ID                                                     PTL_LOGIN_ID
+     , A.USER_ID                                                            PTL_SYS_JOB_ID
+     , B.POST_ORG_ID                                                        PTL_ORG_ID
+     , NVL(C.ORG_ID, ' ')                                                   PTL_REL_ORG_ID
+     , A.USER_GRP                                                           PTL_USER_TYP_CD
+     , '40'                                                                 PTL_HND_STS_CD
+     , START_DT                                                             PTL_EFF_STA_DT
+     , TO_CHAR(TO_DATE(b.END_DT, 'yyyymmdd') + 90, 'yyyymmdd')              PTL_EFF_END_DT
+     , 'OPS0040001'                                                         PTL_AUDIT_USER_ID
+     , TO_CHAR(SYSDATE, 'yyyymmddHH24MISS')                                 PTL_AUDIT_DTM
+     , TO_CHAR(SYSDATE, 'yyyymmddHH24MISS')                                 PTL_TRANS_DTM
+     , 'TP'                                                                 PTL_SYS_CL
+  FROM TBAS_USER_MGMT   A
+     , TBAS_PORTAL_USER B
+  ,  ( SELECT DISTINCT A.DEAL_CO_CD, B.ORG_ID, A.UKEY_AGENCY_CD
+         FROM TBAS_DEAL_CO_MGMT A
+            , TBAS_PORTAL_ORG   B
+        WHERE A.UKEY_AGENCY_CD = B.ORG_CD
+          AND B.SUB_ORG_CD = 'A000'
+          AND TO_CHAR(SYSDATE, 'yyyymmddHH24MISS') BETWEEN A.EFF_STA_DTM AND A.EFF_END_DTM
+          AND A.DEAL_END_YN = 'N') C
+ WHERE 1=1
+   AND A.PORTAL_USER_ID = B.LOGIN_ID(+)
+   AND A.ORG_AREA       = C.DEAL_CO_CD(+)
+   AND A.PORTAL_USER_ID IS NOT NULL
+   AND A.DEL_YN         = 'N'
+   AND A.EFF_USER_YN    = 'Y'
+   and A.USER_GRP       = 'D14'
+   AND B.USER_ID_ACT_ST_CD = 'UAS_009'
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">
+<![CDATA[   a.pos_agency     = #POS_AGENCY#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="USER_NM">
+<![CDATA[   a.user_nm        = #USER_NM#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="LOGIN_ID">
+<![CDATA[   a.portal_user_id = #LOGIN_ID#
+]]></isNotEmpty>
+<![CDATA[ order by 1, 2, 3, 4, 5]]>
+	</select>
+	<update id="savePortalUserStatus" parameterClass="map" ><![CDATA[]]>
+	</update>
+</sqlMap>

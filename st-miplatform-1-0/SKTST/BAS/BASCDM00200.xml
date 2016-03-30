@@ -1,0 +1,572 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="BASCDM00200" Left="8" OnLoadCompleted="BASCDM00200_OnLoadCompleted" PidAttrib="7" Title="공통코드관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_comm_cd_dtl">
+				<Contents>
+					<colinfo id="comm_cd_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="comm_cd_val" size="256" summ="default" type="STRING"/>
+					<colinfo id="comm_cd_val_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="comm_cd_val_desc" size="256" summ="default" type="STRING"/>
+					<colinfo id="prt_seq" size="256" summ="default" type="STRING"/>
+					<colinfo id="eff_sta_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="eff_end_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="sub_comm_cd_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="rgst_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="rgst_cl_tmp" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ParentCDM">
+				<Contents>
+					<colinfo id="comm_cd_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="comm_cd_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="sup_comm_cd_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="sup_comm_cd_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="sub_comm_cd_id" size="256" summ="default" type="STRING"/>
+					<record>
+						<comm_cd_id></comm_cd_id>
+						<comm_cd_nm></comm_cd_nm>
+						<sub_comm_cd_id></sub_comm_cd_id>
+						<sup_comm_cd_id></sup_comm_cd_id>
+						<sup_comm_cd_nm></sup_comm_cd_nm>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="value" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_comm_cd_lst">
+				<Contents>
+					<colinfo id="comm_cd_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="comm_cd_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="comm_cd_desc" size="256" summ="default" type="STRING"/>
+					<colinfo id="sup_comm_cd_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="sup_comm_cd_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="rgst_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="rgst_cl_tmp" size="256" summ="default" type="STRING"/>
+					<record>
+						<comm_cd_desc></comm_cd_desc>
+						<comm_cd_id></comm_cd_id>
+						<comm_cd_nm></comm_cd_nm>
+						<rgst_cl></rgst_cl>
+						<rgst_cl_tmp></rgst_cl_tmp>
+						<sup_comm_cd_id></sup_comm_cd_id>
+						<sup_comm_cd_nm></sup_comm_cd_nm>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_temp">
+				<Contents>
+					<colinfo id="tmp_comm_cd_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="tmp_comm_cd_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_menu">
+				<Contents>
+					<colinfo id="menu_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="menu_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="menu_shot_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="menu_group" size="256" summ="default" type="STRING"/>
+					<colinfo id="menu_lvl_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="use_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="sort_seq" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="707" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="3" Text="조회" Top="7" Visible="FALSE" Width="60"></Button>
+				<Button Cursor="HAND" Height="20" Id="btn_codeClNm" ImageID="btn_i_detail" Left="677" OnClick="div_search_btn_codeCl_OnClick" TabOrder="4" Text="Button0" Top="8" Width="20"></Button>
+				<Edit BindDataset="ds_ParentCDM" Border="Flat" CheckLength="Byte" Column="comm_cd_nm" Height="20" Id="cond_comm_cd_nm" ImeMode="native" Left="468" LeftMargin="2" MaxLength="80" OnCharChanged="commonCodeChange" OnKeyDown="f_commonKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="8" Width="210"></Edit>
+				<Edit BindDataset="ds_ParentCDM" Border="Flat" Column="comm_cd_id" Height="20" Id="cond_comm_cd_id" ImeMode="english" Left="108" LeftMargin="2" MaxLength="30" OnCharChanged="commonCodeChange" OnKeyDown="f_commonKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="8" UpperOnly="TRUE" UseIME="FALSE" Width="210"></Edit>
+				<Button Cursor="HAND" Height="20" Id="btn_codeClId" ImageID="btn_i_detail" Left="318" OnClick="div_search_btn_codeCl_OnClick" TabOrder="5" Text="Button0" Top="8" Width="20"></Button>
+				<Static Align="Right" Border="None" Height="20" Id="Static1" Left="379" Style="sty_lb_Search" TabOrder="6" Text="코드구분" Top="7" VAlign="Middle" Width="85"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static8" Left="21" Style="sty_lb_Search" TabOrder="7" Text="코드구분ID" Top="7" VAlign="Middle" Width="84"></Static>
+			</Contents>
+		</Div>
+		<Div Border="Raised" Height="110" Id="div_header" Left="10" Style="sty_div_input" TabOrder="2" Text="Div1" Top="60" Width="810">
+			<Contents>
+				<Edit BindDataset="ds_comm_cd_lst" Border="Flat" CheckLength="Byte" Column="comm_cd_desc" Height="20" Id="edt_commCdDesc" ImeMode="native" Left="109" LeftMargin="2" MaxLength="1000" RightMargin="2" TabOrder="1" Top="30" Width="684"></Edit>
+				<Edit BindDataset="ds_comm_cd_lst" Border="Flat" CheckLength="Byte" Column="sup_comm_cd_nm" Height="20" Id="edt_supCommCdNM" ImeMode="native" Left="467" LeftMargin="2" MaxLength="80" OnKeyDown="f_commonKeyDown" RightMargin="2" TabOrder="3" Top="53" Width="326"></Edit>
+				<Static Align="Right" Height="20" Id="Static4" Left="358" Style="sty_lb_Basic" TabOrder="5" Text="슈퍼공통코드명" Top="53" VAlign="Middle" Width="107"></Static>
+				<Static Align="Right" Height="20" Id="Static3" Left="385" Style="sty_lb_Basic" TabOrder="6" Text="공통코드명" Top="7" VAlign="Middle" Width="80"></Static>
+				<Edit BindDataset="ds_comm_cd_lst" Border="Flat" Column="sup_comm_cd_id" Height="20" Id="edt_supCommCdID" ImeMode="english" Left="109" LeftMargin="2" MaxLength="30" OnCharChanged="commonCodeChange" OnKeyDown="f_commonKeyDown" RightMargin="2" TabOrder="2" Top="53" UpperOnly="TRUE" UseIME="FALSE" Width="225"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="12" Style="sty_lb_Basic" TabOrder="7" Text="슈퍼공통코드ID" Top="53" VAlign="Middle" Width="93"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="22" Style="sty_lb_Basic" TabOrder="8" Text="공통코드설명" Top="30" VAlign="Middle" Width="83"></Static>
+				<Static Align="Right" Height="20" Id="Static0" Left="28" Style="sty_lb_Basic" TabOrder="9" Text="공통코드ID" Top="7" VAlign="Middle" Width="77"></Static>
+				<Static Align="Right" Height="20" Id="Static5" Left="22" Style="sty_lb_Basic" TabOrder="10" Text="등록구분" Top="75" VAlign="Middle" Width="83"></Static>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="28" TabOrder="11" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="41" TabOrder="12" Top="75" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image2" ImageID="bul_mand" Left="390" TabOrder="13" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Combo BindDataset="ds_comm_cd_lst" Border="Flat" Column="rgst_cl" Height="20" Id="cbo_Ukey_yn" ImeMode="none" Left="108" TabOrder="4" Top="75" UserData="등록구분" Width="228"></Combo>
+				<Button Cursor="HAND" Height="20" Id="btn_supCdId" ImageID="btn_i_detail" Left="318" OnClick="div_search_btn_codeCl_OnClick" TabOrder="14" Text="Button0" Top="53" Width="20"></Button>
+				<Button Cursor="HAND" Height="20" Id="Button5" ImageID="btn_i_detail" Left="773" OnClick="div_search_btn_codeCl_OnClick" TabOrder="15" Text="Button0" Top="53" Width="20"></Button>
+				<Edit BindDataset="ds_comm_cd_lst" Border="Flat" CheckLength="Byte" Column="comm_cd_nm" Height="20" Id="edt_commCdNM" ImeMode="native" Left="467" LeftMargin="2" MaxLength="80" RightMargin="2" TabOrder="16" Top="7" UserData="공통코드명" Width="326"></Edit>
+				<Edit BindDataset="ds_comm_cd_lst" Border="Flat" Column="comm_cd_id" Height="20" Id="edt_commCdID" ImeMode="english" Left="109" LeftMargin="2" MaxLength="30" RightMargin="2" TabOrder="17" Top="7" UpperOnly="TRUE" UseIME="FALSE" UserData="공통코드ID" Width="225"></Edit>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="760" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="3" Text="저장" Top="565" Visible="FALSE" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="코드목록" Top="181" Width="192"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_comm_cd_dtl" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="546" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="338" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnExpandUp="grd_list_OnExpandUp" Right="818" RowHeight="21" TabOrder="5" TabStop="true" Top="208" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="64"/>
+						<col width="115"/>
+						<col width="174"/>
+						<col width="81"/>
+						<col width="86"/>
+						<col width="86"/>
+						<col width="118"/>
+						<col width="82"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="*&#32;코드값"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="*&#32;코드값명"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="코드값설명"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="*&#32;출력순서"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="*&#32;유효시작일"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="*&#32;유효종료일"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="하위공통코드ID"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="*&#32;등록구분"/>
+					</head>
+					<body>
+						<cell align="left" bkcolor2="user32" col="0" colid="comm_cd_val" display="text" edit='expr:decode(rowType,&quot;insert&quot;,&quot;normal&quot;,&quot;normal&quot;,&quot;none&quot;,&quot;none&quot;)' limit="30"/>
+						<cell bkcolor2="user32" col="1" colid="comm_cd_val_nm" display="text" edit="expr:decode(rgst_cl_tmp,&#32;&apos;1&apos;,&apos;none&apos;,&apos;normal&apos;)" limit="80"/>
+						<cell bkcolor2="user32" col="2" colid="comm_cd_val_desc" display="text" edit="expr:decode(rgst_cl_tmp,&#32;&apos;1&apos;,&apos;none&apos;,&apos;normal&apos;)" limit="1000"/>
+						<cell align="center" bkcolor2="user32" col="3" colid="prt_seq" display="number" edit="number" limit="100"/>
+						<cell align="center" bkcolor2="user32" col="4" colid="eff_sta_dt" display="date" edit="expr:decode(rowType,&apos;insert&apos;,&apos;date&apos;,decode(rgst_cl_tmp,&#32;&apos;1&apos;,&apos;none&apos;,&apos;date&apos;))" expandimage="btn_i_calendar" expandshow='expr:decode(rowType,&quot;insert&quot;,&quot;true&quot;,decode(rgst_cl_tmp,&#32;&apos;1&apos;,&apos;false&apos;,&apos;true&apos;))' limit="8"/>
+						<cell align="center" bkcolor2="user32" col="5" colid="eff_end_dt" display="date" edit="expr:decode(rowType,&apos;insert&apos;,&apos;date&apos;,decode(rgst_cl_tmp,&#32;&apos;1&apos;,&apos;none&apos;,&apos;date&apos;))" expandimage="btn_i_calendar" expandshow="expr:decode(rowType,&apos;insert&apos;,&apos;true&apos;,decode(rgst_cl_tmp,&#32;&apos;1&apos;,&apos;false&apos;,&apos;true&apos;))" limit="8"/>
+						<cell align="center" bkcolor2="user32" col="6" colid="sub_comm_cd_id" display="text" edit="normal" expandimage="btn_i_detail" expandshow="expr:decode(rgst_cl_tmp,&#32;&apos;1&apos;,&apos;false&apos;,&apos;true&apos;)" limit="30"/>
+						<cell col="7" colid="rgst_cl" display="combo" edit="expr:decode(rgst_cl_tmp,&#32;&apos;1&apos;,&apos;none&apos;,&apos;combo&apos;)" expandimage="btn_combo" expandshow="expr:decode(rgst_cl_tmp,&#32;&apos;1&apos;,&apos;false&apos;,&apos;true&apos;)" expandsize="17"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="Button58" ImageID="btn_i_add_w" Left="777" OnClick="Button58_OnClick" TabOrder="7" Text="Button1" ToolTipText="행추가" Top="181" Width="19"></Button>
+		<Button Cursor="HAND" Height="21" Id="Button55" ImageID="btn_i_subtract_w" Left="800" OnClick="Button55_OnClick" TabOrder="6" Text="Button1" ToolTipText="추가된&#32;행삭제" Top="181" Width="19"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_new" ImageID="btn_e_4" Left="10" LeftMargin="15" OnClick="btn_new_OnClick" Style="sty_btn_e" TabOrder="8" Text="신규등록" Top="565" Visible="FALSE" Width="85"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : BASCDM00100
+* 업무명      : 기준정보관리-코드관리
+* 프로그램명  : 공통코드관리
+--------------------------------------------------------------------------------
+* 작성자      : 조민지
+* 작성일      : 2009.01.29
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    : 최승호
+수정일    : 2009.03.24
+수정 내역 : 전체 적인 재개발 작업
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function BASCDM00200_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	cf_setGrdChecknSortEvent(grd_list);
+	
+	div_header.edt_commCdID.Enable = false;
+	div_header.edt_commCdNM.Enable = false;
+	div_header.edt_commCdDesc.Enable = false;
+	div_header.edt_supCommCdID.Enable = false;
+	div_header.edt_supCommCdNM.Enable = false;
+	div_header.cbo_Ukey_yn.Enable = false;
+	
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	cf_setCommonCode("div_header.cbo_Ukey_yn", "ZBAS_C_00170", "선택", null, false); // 등록구분
+	cf_setCommonCode("grd_list", "ZBAS_C_00170", null, 7, false);  // 등록 구분
+	cf_checkCommonCode();
+}
+
+/*******************************************************************************
+ * @description    : 조회 버튼 클릭 - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	f_searchHeader();
+}
+
+/*******************************************************************************
+ * @description    : 조회 헤더 영역-   이벤트
+*******************************************************************************/
+function f_searchHeader()
+{
+	if(trim(div_search.cond_comm_cd_id.Value).length < 1)
+	{	
+		if(trim(div_search.cond_comm_cd_nm.Value).length < 1)
+		{
+			alert(cf_getMessage(MSG_00083,"조회조건"));
+			return;
+		}
+		else
+		{
+			f_commonCodePop(div_search.cond_comm_cd_nm);
+		}
+	}else{			
+
+	cf_setParam(ds_condition, "value", div_search.cond_comm_cd_id.Value);
+	
+   	var sSvcID = "svcHead";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_comm_cd_lst=nc_output_fieldDs";
+	var sArg = "sktst.bas.CDM#getCommonCode";
+	
+	cf_transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 코드 구분 팝업 버튼 클릭 -   이벤트
+*******************************************************************************/
+function div_search_btn_codeCl_OnClick(obj)
+{
+	f_commonCodePop(obj);
+}
+
+/*******************************************************************************
+ * @description    : 코드 구분 팝업 -   이벤트
+*******************************************************************************/
+function f_commonCodePop(obj)
+{
+	var sArg;
+	if(obj.id == "btn_codeClId" || obj.id == "cond_comm_cd_id")
+	{
+		sArg  = 'param1=' + quote(div_search.cond_comm_cd_id.Value);
+		sArg += ' Flag1=' + 1; 
+	}
+	else if(obj.id == "btn_codeClNm" || obj.id == "cond_comm_cd_nm")
+	{
+		sArg  = 'param2=' + quote(div_search.cond_comm_cd_nm.Value);
+		sArg += ' Flag2=' + 2;
+	}
+	else if(obj.id == "btn_supCdId" || obj.id == "edt_supCommCdID")
+	{
+		sArg  = 'param3=' + quote(div_header.edt_supCommCdID.Value);
+		sArg += ' Flag3=' + 3;	
+	}
+	else
+	{
+		sArg  = 'param4=' + quote(div_header.edt_supCommCdNM.Value);
+		sArg += ' Flag4=' + 4; 
+	}
+
+	var sResult = dialog("BAS::BASCDM00100.xml", sArg);
+
+	if(sResult != null && sResult != 0)
+	{
+		f_searchHeader();
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 조회 리스트 영역 -   이벤트
+*******************************************************************************/
+function f_searchList()
+{
+	cf_setParam(ds_condition, "value", div_search.cond_comm_cd_id.Value);
+	
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_comm_cd_dtl=ds_comm_cd_dtl";
+	var sArg = "sktst.bas.CDM#getCommonCodeDetail";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID =="svcHead")
+	{
+		if(ds_comm_cd_lst.GetColumn(0, "rgst_cl") =='1')
+		{
+			div_header.edt_commCdID.Enable = false;
+			div_header.edt_commCdNM.Enable = false;
+			div_header.edt_commCdDesc.Enable = false;
+			div_header.edt_supCommCdID.Enable = false;
+			div_header.edt_supCommCdNM.Enable = false;
+			div_header.cbo_Ukey_yn.Enable = false;
+		}
+		else if(ds_comm_cd_lst.GetColumn(0, "rgst_cl") == '2')
+		{
+			div_header.edt_commCdID.Enable = false;
+			div_header.edt_commCdNM.Enable = true;
+			div_header.edt_commCdDesc.Enable = true;
+			div_header.edt_supCommCdID.Enable = true;
+			div_header.edt_supCommCdNM.Enable = true;
+			div_header.cbo_Ukey_yn.Enable = true;
+		}
+		
+		f_searchList();
+	}
+	
+	if(sSvcID =="svcList")
+	{
+		//trace(ds_comm_cd_dtl.SaveXML());
+		ds_comm_cd_dtl.Sort("comm_cd_val_nm");
+	}
+	
+	if(sSvcID =="svcSave")
+	{
+		if(trim(ds_ParentCDM.GetColumn(0, "comm_cd_id")).length  > 0 )
+		{
+			f_searchHeader();
+		}
+	}
+	
+	if(sSvcID =="svcMenu")
+	{
+		//trace(ds_comm_cd_dtl.SaveXML());
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 로우 추가 - 이벤트
+*******************************************************************************/
+function Button58_OnClick(obj)
+{
+	var oGrdDs = object(grd_list.BindDataset);
+	
+	var nRow = oGrdDs.AddRow();
+	ds_comm_cd_dtl.SetColumn(nRow,"prt_seq",toNumber(ds_comm_cd_dtl.GetColumn(nRow-1, "prt_seq"))+1);
+	ds_comm_cd_dtl.SetColumn(ds_comm_cd_dtl.GetRowPos(),"comm_cd_id",div_header.edt_commCdID.Value);
+	ds_comm_cd_dtl.SetColumn(ds_comm_cd_dtl.GetRowPos(),"eff_sta_dt", Mid(cf_getDate(),0,8));
+	ds_comm_cd_dtl.SetColumn(ds_comm_cd_dtl.GetRowPos(),"eff_end_dt",'99991231');
+	ds_comm_cd_dtl.SetColumn(ds_comm_Cd_dtl.GetRowPos(),"rgst_cl",'2');
+}
+
+
+/*******************************************************************************
+ * @description    : 로우 삭제- 이벤트
+*******************************************************************************/
+function Button55_OnClick(obj)
+{
+	var oGrdDs = object(grd_list.BindDataset);
+	if(oGrdDs.getRowType(oGrdDs.currow) == "insert")
+	{
+		oGrdDs.DeleteRow(oGrdDs.currow);
+	}
+	else
+	{
+		if(oGrdDs.getColumn(oGrdDs.currow, "rgst_cl_tmp") == "1")
+		{
+			alert(ZBAS_C_00170_1.lookup("COMM_CD_VAL", "1", "COMM_CD_VAL_NM")+" 데이타는 삭제할 수 없습니다.");
+			return;
+		}
+		if(confirm(cf_getMessage(MSG_00102,"")) == true)
+		{
+			oGrdDs.DeleteRow(oGrdDs.currow);
+		}
+	}
+}
+
+/*******************************************************************************
+ * @description    : 신규버튼이벤트
+*******************************************************************************/
+function btn_new_OnClick(obj)
+{
+	ds_ParentCDM.ClearData();
+	ds_ParentCDM.AddRow();
+	ds_comm_cd_dtl.ClearData();
+	ds_comm_cd_lst.ClearData();
+	ds_comm_cd_lst.AddRow();
+
+	div_header.edt_commCdID.Enable = true;
+	div_header.edt_commCdNM.Enable = true;
+	div_header.edt_commCdDesc.Enable = true;
+	div_header.edt_supCommCdID.Enable = true;
+	div_header.edt_supCommCdNM.Enable = true;
+	ds_comm_cd_lst.SetColumn(0, "rgst_cl", "2");
+	div_header.cbo_Ukey_yn.Enable = true;
+	
+	div_header.edt_commCdID.SetFocus();
+}
+
+/*******************************************************************************
+ * @description    : 저장 버튼  클릭 - 이벤트
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+	// 헤더 영역 체크
+	if(!cf_checkObjValues(div_header)) return;
+
+	// 그리드 체크
+	if(!cf_checkGrdValues(grd_list, "0,1,3,4,5,7")) return;
+	
+	f_save();
+}
+
+/*******************************************************************************
+ * @description    : 저장
+*******************************************************************************/
+function f_save()
+{
+
+
+	// 트랜잭션 설정
+	var sSvcID 	= "svcSave";
+	var sInDs 	= "ds_comm_cd_lst=ds_comm_cd_lst:U comm_cd_dtl=ds_comm_cd_dtl:U";
+	if(ds_comm_cd_dtl.GetColumn(0, "comm_cd_id") == "ZADM_C_00010")
+	{
+		var nCheck = 0;
+		for(var i=0, n=ds_comm_cd_dtl.GetRowCount(); i<n; i++)
+		{
+			if(ds_comm_cd_dtl.GetRowType(i) == "insert")
+			{
+				var nRow = ds_menu.AddRow();
+				ds_menu.SetColumn(nRow, "menu_nm", ds_comm_cd_dtl.GetColumn(i, "comm_cd_val_nm"));
+				ds_menu.SetColumn(nRow, "menu_shot_nm", ds_comm_cd_dtl.GetColumn(i, "comm_cd_val_nm"));
+				ds_menu.SetColumn(nRow, "menu_group", ds_comm_cd_dtl.GetColumn(i, "comm_cd_val"));
+				
+				ds_menu.SetColumn(nRow, "menu_lvl_cd", "1");
+				ds_menu.SetColumn(nRow, "use_yn", "N");
+				ds_menu.SetColumn(nRow, "sort_seq", "99");
+
+				nCheck++;
+			}
+		}
+		if(nCheck > 0)
+		{
+			f_saveNewFirstMenu();
+		}
+		
+	}
+	
+	
+	var sOutDs 	= "";
+	var sArg 	= "sktst.bas.CDM#saveCommonCodeList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+function f_saveNewFirstMenu()
+{
+	var sSvcID	= "svcMenu";
+	var sInDs 	= "menu=ds_menu:U";
+	var sOutDs	= "";
+	var sArg 	= "sktst.adm.MNU#saveFirstMenu";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 공통 엥터키 다운 - 이벤트
+*******************************************************************************/
+function f_commonKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		f_commonCodePop(obj);
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 그리드 팝업- 이벤트
+*******************************************************************************/
+function grd_list_OnExpandUp(obj,nRow,nCell,strVal,nPivotIndex)
+{
+	if(nCell == 4 || nCell == 5)
+	{
+		cf_setGrdCalendar(obj,nRow,nCell,strVal,nPivotIndex);
+	}
+	else if(nCell == 6)
+	{
+		var sArg = 'Flag5=' + 5;
+
+		var sResult = dialog("BAS::BASCDM00100.xml", sArg);
+	
+		if(sResult != null && sResult != 0)
+		{
+			ds_comm_cd_dtl.SetColumn(nRow, "sub_comm_cd_id",sResult);
+		}		
+	}
+}
+
+/*******************************************************************************
+ * @description    : 코드 ID , 명칭 변경시  - 이벤트
+*******************************************************************************/
+function commonCodeChange(obj,strText)
+{
+	if(obj.id == "cond_comm_cd_id")
+	{
+		div_search.cond_comm_cd_nm.Text = "";
+	}
+	else if(obj.id == "cond_comm_cd_nm")
+	{
+		div_search.cond_comm_cd_id.Text = "";
+	}
+	else if(obj.id == "edt_supCommCdID")
+	{
+		div_header.edt_supCommCdNM.Text = "";
+	}
+	else if(obj.id == "edt_supCommCdNM")
+	{
+		div_header.edt_supCommCdID.Text = "";
+	}
+}
+
+/*******************************************************************************
+ * @description    : 삭제 - 이벤트
+*******************************************************************************/
+function btn_delete_OnClick(obj)
+{
+	var sMsg = div_header.edt_commCdID.text + "의 전체 코드가 모두 삭제 됩니다. 삭제를 진행 하시겠습니까?";
+	if(confirm(sMsg) == true)
+	{
+		var bDelCheck = true;
+		for(var i=0, n=ds_comm_cd_dtl.rowcount; i<n; i++)
+		{
+			if(ds_comm_cd_dtl.GetColumn(i, "rgst_cl") == "1")
+			{
+				bDelCheck = false;
+				break;
+			}
+		}
+	
+		if(div_header.cbo_Ukey_yn.enable && bDelCheck)
+		{
+			ds_comm_cd_lst.DeleteRow(0);
+			ds_comm_cd_dtl.DeleteAll();
+			
+			f_save();
+			/*
+			// 트랜잭션 설정
+			var sSvcID 	= "svcDelete";
+			var sInDs 	= "head=ds_comm_cd_lst";
+			var sOutDs 	= "";
+			var sArg 	= "sktst.bas.CDM#deleteCommonCode";
+			 
+			// 공통 트랜잭션 호출
+			cf_Transaction(sSvcID, sInDs, sOutDs, sArg);*/
+		}
+		else
+		{
+			alert("전체 삭제는 슈퍼코드와 코드목록의 모든 등록구분이 사용자 지정인 상태만 삭제가 가능합니다.");
+		}
+	}
+}
+]]></Script>
+</Window>

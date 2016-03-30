@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 프레임워크 웹 컴포넌트를 정의한다. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+    <bean id="nc.biz.IUserManager"
+        class="com.sktst.common.user.PsUserManager"
+        init-method="init" destroy-method="destroy">
+        <description>
+            <![CDATA[ Component for managing user information ]]>
+        </description>
+        <property name="commonRoleManager" ref="nc.biz.ICommonRoleManager"/>
+        <property name="userLoader">
+            <bean
+                class="com.sktst.common.user.PsUserLoader">
+                <property name="sqlManager" ref="st.db.ISqlManager" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="nc.biz.IOrgManager"
+        class="com.sktst.common.organization.PsOrgManager"
+        init-method="init" destroy-method="destroy">
+        <description>
+            <![CDATA[ Component for managing organization information ]]>
+        </description>
+        <property name="recordsetId" value="GBL_ORG_DS" />
+        <property name="orgLoader">
+            <bean
+                class="com.sktst.common.organization.PsOrgLoader">
+                <property name="sqlManager" ref="st.db.ISqlManager" />
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="nc.biz.IMenuManager"
+        class="com.sktst.common.menu.PsMenuManager"
+        init-method="init" destroy-method="destroy">
+        <description>
+            <![CDATA[Component for managing Menus]]>
+        </description>
+        <property name="menuLoader">
+            <bean class="com.sktst.common.menu.PsMenuLoader">
+                <property name="tempRootMenuId" value="nc_rootMenu" />
+                <property name="sqlManager" ref="st.db.ISqlManager" />
+            </bean>
+        </property>
+        <property name="menuToRecordSet">
+            <bean class="com.sktst.common.menu.PsMenuToRecordSet">
+	            <property name="recordsetId" value="GBL_MENU_DS" />
+                <property name="noUseRecorsetId" value="GBL_NOUSE_MENU_DS" />
+	        </bean>
+        </property>        
+    </bean>
+
+    <bean id="nc.biz.IAuthManager"
+        class="com.sktst.common.user.PsAuthManager"
+        init-method="init" destroy-method="destroy">
+        <description>
+            Component for managing authentication and authorization
+        </description>
+        <property name="userManager" ref="nc.biz.IUserManager" />
+    </bean>
+
+    <bean id="nc.biz.ICommonRoleManager"
+        class="nexcore.framework.online.biz.role.internal.ParamedCommonRoleManager">
+        <description>
+            <![CDATA[ Component for service common role informations  ]]>
+        </description>
+        <property name="bizParamManager" ref="nc.core.IBizParamManager"/>
+    </bean>
+
+    <bean id="nc.biz.IFileUploadManager"
+        class="com.sktst.common.file.PsFileUploadManager">
+        <description>
+            <![CDATA[Component for supporting File Upload]]>
+        </description>
+        <property name="sqlManager" ref="st.db.ISqlManager" />
+    </bean>
+    
+    <bean id="ps.biz.LogToDb" class="com.sktst.common.log.LogToDbUtil">
+        <property name="sqlManager" ref="st.db.ISqlManager" />
+    </bean>
+
+</beans>

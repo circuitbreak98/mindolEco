@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALBOS00600">
+	<select id="getOnlineProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALBOS00600_getOnlineProdList-전미량 */
+       '' AS CHK
+     , '' AS TEMP_1		/*전문유형*/
+     , '' AS TEMP_2	    /*처리일자*/
+     , '' AS TEMP_3	    /*처리시간*/
+     , '' AS TEMP_4	    /*처리자 ID*/
+     , '' AS TEMP_5	    /*판매처 코드*/
+     , '' AS TEMP_6	    /*고객명*/	
+     , '' AS TEMP_7	    /*주민번호*/
+     , '' AS TEMP_8	    /*고객구분*/
+     , '' AS TEMP_9	    /*고객전화번호*/
+     , '' AS TEMP_10	/*고객주소*/
+     , '' AS TEMP_11	/*상품 일련번호*/
+     , OLD_SER_NUM		/*단말기 일련번호*/
+     , PROD_CD			/*단말기 코드*/
+     , FBAS_GET_PROD_NM(PROD_CD) PROD_NM  /*단말기명*/
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', COLOR_CD) AS COLOR_CD /*단말기 색상*/
+     , (DIS_AMT+30000)*1.1   AS SALE_AMT/*판매가*/
+     , DIS_AMT			/*재고가*/
+     , '' AS TEMP_12	/*판매수수료*/
+     , '' AS TEMP_13	/*판매마진*/
+     , '' AS TEMP_14	/*부가세*/
+     , '' AS TEMP_15	/*수납구분*/
+     , '' AS TEMP_16	/*현금수납금*/
+     , '' AS TEMP_17	/*신용카드사1*/
+     , '' AS TEMP_18	/*신용카드수납금액1*/
+     , '' AS TEMP_19	/*신용카드사2*/
+     , '' AS TEMP_20	/*신용카드수납금액2*/
+     , '' AS TEMP_21	/*계약서번호*/
+     , SER_NUM          /*관리번호*/
+     , '' AS TEMP_22	/*비고*/
+  FROM TDIS_PROD_DIS
+ WHERE HLD_PLC_ID = '11030'
+   AND LAST_INOUT_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[   PROD_CD = #PROD_CD#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">
+<![CDATA[   SER_NUM = #SER_NUM#
+]]></isNotEmpty> 
+	</select>
+</sqlMap>

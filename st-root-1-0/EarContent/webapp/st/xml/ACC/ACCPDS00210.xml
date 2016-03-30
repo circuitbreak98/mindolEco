@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="450" Id="ACCPDS00210" Left="8" OnLoadCompleted="ACCPDS00210_OnLoadCompleted" PidAttrib="7" Title="재고보상일련번호&#32;조회" Top="8" Ver="1.0" Width="760" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_serNumList" OnColumnChanged="ds_serNumList_OnColumnChanged">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_serNumListTmp">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_serNumList_0" OnColumnChanged="ds_serNumList_OnColumnChanged">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list_tmp">
+				<Contents>
+					<colinfo id="prod_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="ser_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="dis_amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="down_unit_prc" size="256" summ="default" type="STRING"/>
+					<colinfo id="rgst_seq" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_plc_agency_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="inout_dtl_cl_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="inout_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="hst_agency_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="agency_mov_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_fix_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_fix_yn_tmp" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_serNumList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="354" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="254" Id="grd_serNumList" InputPanel="FALSE" Left="9" LineColor="user33" MinWidth="100" OnHeadClick="grd_serNumList_OnHeadClick" Right="749" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="100" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="740">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="17"/>
+						<col width="28"/>
+						<col width="89"/>
+						<col width="89"/>
+						<col width="89"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="checkbox" edit="checkbox"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="No"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="재고보상일"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="모델명"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="일련번호"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="입고구분"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="입고대리점"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="입고일"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="보유대리점"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="재고이동일"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="in_fix_yn" display="checkbox" edit="checkbox"/>
+						<cell align="center" col="1" display="number" expr="currow+1"/>
+						<cell align="center" col="2" colid="strd_dt" display="date"/>
+						<cell align="center" col="3" colid="mdl_nm" display="text"/>
+						<cell align="center" col="4" colid="ser_num" display="text"/>
+						<cell align="center" col="5" colid="inout_dtl_cl_nm" display="text"/>
+						<cell col="6" colid="in_plc_agency_nm" display="text"/>
+						<cell align="center" col="7" colid="inout_dt" display="date"/>
+						<cell col="8" colid="hst_agency_nm" display="text"/>
+						<cell align="center" col="9" colid="agency_mov_dt" display="date"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="349" LeftMargin="5" OnClick="btn_cancel_OnClick" Style="sty_btn_d" TabOrder="3" Text="취소" Top="413" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="285" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="2" Text="확인" Top="413" Width="60"></Button>
+		<Button Cursor="HAND" Height="21" Id="Button56" ImageID="btn_i_exceldown_w" Left="727" OnClick="btn_excel_OnClick" TabOrder="4" Text="Button1" ToolTipText="Excel&#32;Download" Top="73" Width="19"></Button>
+		<Div Border="Raised" Height="63" Id="div_search" Left="9" Style="sty_div_input" TabOrder="5" Text="Div0" Top="4" Width="740">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="stc_prd_gb" Left="-10" Style="sty_lb_Basic" TabOrder="1" Text="대리점" Top="7" VAlign="Middle" Width="92"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="333" Style="sty_lb_Basic" TabOrder="2" Text="매입처" Top="7" VAlign="Middle" Width="76"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_prchsPlcNm" Left="414" LeftMargin="2" OnCharChanged="div_search_edt_prchsPlcNm_OnCharChanged" OnKeyDown="div_search_edt_prchsPlcId_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="132"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="-27" OnClick="btn_agency_OnClick" TabOrder="4" Text="Button0" Top="486" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="Edit0" ImeMode="none" Left="32" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="494" Width="101"></Edit>
+				<Button Cursor="HAND" Height="21" Id="Button0" ImageID="btn_i_detail" Left="133" OnClick="btn_agency_OnClick" TabOrder="7" Text="Button0" Top="494" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="Edit1" Left="154" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="9" Top="494" Width="101"></Edit>
+				<Edit Border="Flat" Height="20" Id="Edit2" ImeMode="none" Left="-96" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="614" Width="101"></Edit>
+				<Button Cursor="HAND" Height="21" Id="Button1" ImageID="btn_i_detail" Left="5" OnClick="btn_agency_OnClick" TabOrder="10" Text="Button0" Top="614" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="Edit3" Left="26" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="614" Width="101"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_ordPlcNm" Left="87" LeftMargin="2" OnCharChanged="div_search_edt_ordPlcNm_OnCharChanged" OnKeyDown="div_search_edt_ordPlcNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="11" Top="7" UserData="발주처" Width="132"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="-10" Style="sty_lb_Basic" TabOrder="14" Text="제조사" Top="30" VAlign="Middle" Width="92"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_mfactNm" Left="87" LeftMargin="2" OnCharChanged="div_search_edt_ordPlcNm_OnCharChanged" OnKeyDown="div_search_edt_ordPlcNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="15" Top="29" UserData="발주처" Width="132"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="333" Style="sty_lb_Basic" TabOrder="17" Text="모델" Top="31" VAlign="Middle" Width="76"></Static>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_mdlNm" Left="414" LeftMargin="2" OnCharChanged="div_search_edt_prchsPlcNm_OnCharChanged" OnKeyDown="div_search_edt_prchsPlcId_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="18" Top="30" Width="132"></Edit>
+			</Contents>
+		</Div>
+		<Div Border="RaisedEdge" Height="40" Id="div_sum" Left="7" Style="sty_div_dataview" TabOrder="6" Text="Div0" Top="365" Width="740">
+			<Contents>
+				<Edit Align="RIGHT" Border="Flat" Enable="FALSE" Height="20" Id="edt_inSum" Left="337" LeftMargin="2" Number="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="1" Top="7" Width="70"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="229" Style="sty_lb_dataview" TabOrder="2" Text="대리점&#32;보유수량" Top="7" VAlign="Middle" Width="100"></Static>
+				<Edit Align="RIGHT" Border="Flat" Enable="FALSE" Height="20" Id="edt_outSum" Left="581" LeftMargin="2" Number="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="70"></Edit>
+				<Static Align="Right" Height="20" Id="Static0" Left="464" Style="sty_lb_dataview" TabOrder="4" Text="타대리점&#32;보유수량" Top="7" VAlign="Middle" Width="110"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Style="sty_lb_dataview" TabOrder="6" Text="적용수량" Top="7" VAlign="Middle" Width="80"></Static>
+				<Edit Align="RIGHT" Border="Flat" Enable="FALSE" Height="20" Id="edt_totSum" Left="88" LeftMargin="2" Number="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Width="70"></Edit>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCPDS00200
+* 업무명      : 매입채무 - 재고보상등록
+* 프로그램명  : 재고보상등록
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.02.02
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+var FV_IN_FIX_CNT;
+var FV_IN_LIST_ROW;
+var FV_IN_DEBT_FLAG;
+var FV_POP_ORG_CD;
+
+function ACCPDS00210_OnLoadCompleted(obj)
+{
+	div_search.edt_ordPlcNm.Text = sAgencyNm;
+	div_search.edt_prchsPlcNm.Text = sPrchsNm;
+	div_search.edt_mfactNm.Text = sMfactNm;
+	div_search.edt_mdlNm.Text = sMdlNm;
+	
+	FV_POP_ORG_CD = sAgencyCd;		
+		
+	f_getSerNumList();
+}
+
+
+/*******************************************************************************
+ * @description    : 일련번호 조회
+*******************************************************************************/
+function f_getSerNumList()
+{
+    var sProdClOrg = sProdCl;
+    var sMfactIDOrg = sMfactId;
+    var sProdCdOrg = sMdlCd;
+       
+    if(ds_outFixRegOrgList.rowcount >0){
+		
+		ds_outFixRegOrgList.Filter("prod_cd='"+sProdCdOrg+"'&&mfact_id='"+sMfactIDOrg+"'&&add_flag='02'");
+		
+		ds_serNumList.Assign(ds_outFixRegOrgList);
+		
+		ds_outFixRegOrgList.unFilter();
+    }
+    
+    FV_IN_FIX_CNT = ds_serNumList.CaseSum("in_fix_yn=='1'", "in_fix_yn");
+    FV_IN_LIST_ROW = sNrow;
+    ds_serNumList.row = 0;
+    FV_IN_DEBT_FLAG = sDebtFlag;
+    
+    var sHstSumCnt = ds_serNumList.CaseCount("hst_agency==\""+FV_POP_ORG_CD+"\"");
+	var sInPlcSumCnt = ds_serNumList.CaseCount("hst_agency!=\""+FV_POP_ORG_CD+"\"");
+	FV_TOT_CNT = ds_serNumList.GetRowCount();
+	
+	div_sum.edt_inSum.Value = sHstSumCnt;
+    div_sum.edt_outSum.Value = sInPlcSumCnt;
+    div_sum.edt_totSum.Value = FV_TOT_CNT;
+    
+    
+    if(FV_IN_DEBT_FLAG != "0"){
+		grd_serNumList.Editable = "false";
+		btn_confirm.Enable = "false";
+    }
+}
+
+
+/*******************************************************************************
+ * @description    : 취소- 이벤트
+*******************************************************************************/
+function btn_cancel_OnClick(obj)
+{
+	this.Close();
+}
+
+
+/*******************************************************************************
+ * @description    : 확인 - 부모창의 일련번호 데이타셋과 일련번호 비교 수정 및 추가
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{   
+	for(var i=0; i<ds_serNumList.rowcount; i++)
+	{
+		
+		var sProdCd = ds_serNumList.GetColumn(i, "prod_cd");
+		var sColorCd = ds_serNumList.GetColumn(i, "color_cd");
+		var sSerNum = ds_serNumList.GetColumn(i, "ser_num");
+		var sInFixYn = ds_serNumList.GetColumn(i, "in_fix_yn");
+		var sInFixYnTmp = ds_serNumList.GetColumn(i, "in_fix_yn_tmp");
+							
+		if(ds_outFixRegOrgList.FindRow("key_data",sProdCd+sColorCd+sSerNum) <0){
+	   
+			cf_copyDataSet(parent.ds_outFixRegOrgList, ds_serNumList,null,null,true);
+		}else{
+			parent.ds_outFixRegOrgList.SetColumn(ds_outFixRegOrgList.FindRow("key_data",sProdCd+sColorCd+sSerNum), "in_fix_yn", sInFixYn);
+			parent.ds_outFixRegOrgList.SetColumn(ds_outFixRegOrgList.FindRow("key_data",sProdCd+sColorCd+sSerNum), "in_fix_yn_tmp", sInFixYnTmp);
+		}			
+	}  
+		
+	var sDownUnitPrc = toNumber(parent.ds_outFixRegList.GetColumn(FV_IN_LIST_ROW, "down_unit_prc"));
+	var sDisObj = toNumber(parent.ds_outFixRegList.GetColumn(FV_IN_LIST_ROW, "dis_obj"));
+	var sAddQty = toNumber(parent.ds_outFixRegList.GetColumn(FV_IN_LIST_ROW, "add_qty"));
+    
+    parent.ds_outFixRegList.SetColumn(FV_IN_LIST_ROW, "aply_qty", (sAddQty+FV_IN_FIX_CNT));
+    parent.ds_outFixRegList.SetColumn(FV_IN_LIST_ROW, "aply_amt", (sDownUnitPrc*(toNumber(FV_IN_FIX_CNT)+sAddQty)));
+    parent.ds_outFixRegList.SetColumn(FV_IN_LIST_ROW, "exc_qty", (sDisObj-toNumber(FV_IN_FIX_CNT)));
+    parent.ds_outFixRegList.SetColumn(FV_IN_LIST_ROW, "loss_amt", sDownUnitPrc*(sDisObj-toNumber(FV_IN_FIX_CNT)));
+    this.Close();
+}
+
+
+/*******************************************************************************
+ * @description    : 재고보상 전체 선택
+*******************************************************************************/
+function grd_serNumList_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{ 
+	
+	if(nCell == 0)
+	{ 
+	    if(grd_serNumList.GetCellProp("Head", nCell, "text") == "1")
+	    {
+	        grd_serNumList.SetCellProp("Head", nCell, "text", "0");
+	        
+	        for(var i=0; i<ds_serNumList.rowcount; i++)
+	        {
+	            ds_serNumList.SetColumn(i, "in_fix_yn", "0");
+	        }
+	    }
+	    else
+	    { // 전체 체크
+	        grd_serNumList.SetCellProp("Head", nCell, "text", "1");
+	        
+	        for(var i=0; i<ds_serNumList.rowcount; i++)
+	        {
+	            ds_serNumList.SetColumn(i, "in_fix_yn", "1");
+	        }
+	    }
+	}
+	else
+	{
+	    cf_markGridSort(obj,nCell,nX,nY,nPivotIndex);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 데이터셋 변경 이벤트
+*******************************************************************************/
+
+function ds_serNumList_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	FV_IN_FIX_CNT = ds_serNumList.CaseSum("in_fix_yn=='1'", "in_fix_yn");
+}
+
+
+function Button0_OnClick(obj)
+{
+	cf_debug("ds_serNumList");
+}
+
+function Button1_OnClick(obj)
+{
+	cf_debug("ds_list_tmp");
+}
+
+function Button2_OnClick(obj)
+{
+	cf_debug("ds_serNumList");
+}
+
+/*******************************************************************************
+ * @description    : Excel export event
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	cf_exportExcel(grd_serNumList);
+}
+]]></Script>
+</Window>

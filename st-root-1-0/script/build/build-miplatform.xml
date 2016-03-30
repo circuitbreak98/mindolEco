@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Miplatform Copy Files" default="all" basedir=".">
+
+	<property environment="env" />
+
+	<!-- ################################################################## -->
+	<!-- ## [Nexbuild] Auto-generated property ############################ -->
+	<!-- ################################################################## -->
+	<property name="project.name" value="st-miplatform-1-0" />
+
+	<!-- ################################################################## -->
+	<!-- ## [NEXCORE_HOME] common build property ########################## -->
+	<!-- ################################################################## -->
+	<!-- custombuild build.properties -->
+	<property file="${NEXCORE_HOME}/script/build/nexcore.build.properties" />
+	
+	
+	<!-- ################################################################## -->
+	<!-- ## default Deployment ############################################ -->
+	<!-- ################################################################## -->
+	<target name="all" >
+		<antcall target="all-miplatform" />
+	</target>
+
+	<!-- ################################################################## -->
+	<!-- ## WEB classed Deployment ######################################## -->
+	<!-- ################################################################## -->
+	<target name="all-miplatform" >	   
+		<antcall target="copy-miplatform" />    
+	</target>
+
+	<target name="copy-miplatform">	   
+		<!-- Web파일 복사 -->
+		<copy todir="${jeus.ear.web.path}/xml" overwrite="true" preservelastmodified="true" includeemptydirs="false">
+			<fileset dir="${WORKSPACE_HOME}/SKTST" defaultexcludes="false">
+				<exclude name="**/.svn/**" />
+				<exclude name="build-miplatform.xml" />
+			    <exclude name="MRD/**" />
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		<copy todir="${jeus.ear.web.path}/MRD" overwrite="true" preservelastmodified="true" includeemptydirs="false">
+			<fileset dir="${WORKSPACE_HOME}/SKTST/MRD" defaultexcludes="false">
+				<exclude name="**/.svn/**" />
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+    
+</project>

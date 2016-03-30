@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM00700">
+	<select id="getPortalMapping" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ "BASUSM00700_getPortalMapping_김연석_김연석" */
+	   '0'                                                         CHK
+     , a.OP_DT
+     , a.OP_TM
+     , a.OP_DT || a.OP_TM                                          op_dtm
+     , a.SEQ
+     , a.LOGIN_ID
+     , a.SYS_JOB_ID
+     , a.ORG_ID
+     , a.REL_ORG_ID
+     , d.org_cd                                                    agency_cd
+     , d.sub_org_cd                                                sub_cd
+     , b.org_cd                                                    channel_cd
+     , a.USER_TYP_CD
+     , fbas_get_commcdnm_val('ZBAS_C_00250', a.USER_TYP_CD)        user_typ_nm
+     , a.HND_STS_CD
+     , fbas_get_commcdnm_val('ZPTL_C_00200', a.HND_STS_CD)         hnd_sts_nm
+     , d.org_nm                                                    agency_nm
+     , a.EFF_STA_DT
+     , a.EFF_END_DT
+     , a.AUDIT_USER_ID
+     , a.AUDIT_DTM
+     , a.TRANS_DTM
+     , a.SYS_CL
+     , a.PS_APND_YN
+     , c.user_id                                                   ukey_id
+     , c.pwd
+     , c.han_nm
+     , c.email_addr
+     , c.mbl_phon_num
+  from TBAS_PORTAL_MAPPING_RECV a
+     , TBAS_PORTAL_ORG          b
+     , TBAS_PORTAL_USER         c
+     , TBAS_PORTAL_ORG          d
+ where a.ORG_ID     = b.ORG_ID
+   and a.LOGIN_ID   = c.LOGIN_ID
+   and a.rel_org_id = d.org_id
+   and a.op_dt     >= #OP_DT_FR#
+   and a.op_dt     <= #OP_DT_TO#
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">
+<![CDATA[       d.org_cd     = #POS_AGENCY#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="HAN_NM">
+<![CDATA[       c.han_nm  like #HAN_NM# || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="LOGIN_ID">
+<![CDATA[       a.LOGIN_ID   = #LOGIN_ID#
+]]></isNotEmpty>
+<![CDATA[   and a.ps_apnd_yn = 'N'
+   and a.SYS_CL     = 'TP'
+ order by 1 desc, 2 desc]]>
+	</select>
+	<update id="saveMappingCancel" parameterClass="map" ><![CDATA[UPDATE TBAS_PORTAL_MAPPING_RECV  /*+ "BASUSM00700_saveMappingCancel_김연석_김연석" */
+   set ps_apnd_yn = 'Z'
+     , mod_dtm        = to_char(sysdate, 'yyyymmddhh24miss')
+     , mod_user_id    = #onlineContext.userInfo.loginId#
+ where OP_DT          = #OP_DT#
+   and OP_TM          = #OP_TM#
+   and SEQ            = #SEQ#]]>
+	</update>
+	<select id="getPortalPCode" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ "BASUSM00700_getPortalPCode_김연석_김연석" */
+	   DEAL_CO_CD
+  from TBAS_DEAL_CO_MGMT
+ where UKEY_AGENCY_CD  = #AGENCY_CD#
+   and UKEY_CHANNEL_CD = #CHANNEL_CD#
+   and to_char(sysdate, 'yyyymmddhh24miss') between eff_sta_dtm and eff_end_dtm
+ ]]>
+	</select>
+	<select id="getPortalMappingCancel" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ "BASUSM00700_getPortalMappingCancel_김연석_전현주" */
+	 '0' as CHK
+	 , a.OP_DT
+     , a.OP_TM
+     , a.OP_DT || a.OP_TM                                          op_dtm
+     , a.SEQ
+     , a.LOGIN_ID
+     , a.SYS_JOB_ID
+     , a.ORG_ID
+     , a.REL_ORG_ID
+     , d.org_cd                                                    agency_cd
+     , d.sub_org_cd                                                sub_cd
+     , b.org_cd                                                    channel_cd
+     , a.USER_TYP_CD
+     , fbas_get_commcdnm_val('ZBAS_C_00250', a.USER_TYP_CD)        user_typ_nm
+     , a.HND_STS_CD
+     , fbas_get_commcdnm_val('ZPTL_C_00200', a.HND_STS_CD)         hnd_sts_nm
+     , d.org_nm                                                    agency_nm
+     , a.EFF_STA_DT
+     , a.EFF_END_DT
+     , a.AUDIT_USER_ID
+     , a.AUDIT_DTM
+     , a.TRANS_DTM
+     , a.SYS_CL
+     , a.PS_APND_YN
+     , c.user_id                                                   ukey_id
+     , c.pwd
+     , c.han_nm
+     , c.email_addr
+     , c.mbl_phon_num
+  from TBAS_PORTAL_MAPPING_RECV a
+     , TBAS_PORTAL_ORG          b
+     , TBAS_PORTAL_USER         c
+     , TBAS_PORTAL_ORG          d
+ where a.ORG_ID     = b.ORG_ID
+   and a.LOGIN_ID   = c.LOGIN_ID
+   and a.rel_org_id = d.org_id
+   and a.op_dt     >= #OP_DT_FR#
+   and a.op_dt     <= #OP_DT_TO#
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">
+<![CDATA[       d.org_cd     = #POS_AGENCY#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="HAN_NM">
+<![CDATA[       c.han_nm  like #HAN_NM# || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="LOGIN_ID">
+<![CDATA[       a.LOGIN_ID   = #LOGIN_ID#
+]]></isNotEmpty>
+<![CDATA[   and a.ps_apnd_yn = 'Z'
+   and a.SYS_CL     = 'TP'
+ order by 1 desc, 2 desc]]>
+	</select>
+	<update id="saveReMapping" parameterClass="map" ><![CDATA[UPDATE TBAS_PORTAL_MAPPING_RECV  /*+ "BASUSM00700_saveMappingCancel_김연석_김연석" */
+   set ps_apnd_yn = 'N'
+     , mod_dtm        = to_char(sysdate, 'yyyymmddhh24miss')
+     , mod_user_id    = #onlineContext.userInfo.loginId#
+ where OP_DT          = #OP_DT#
+   and OP_TM          = #OP_TM#
+   and SEQ            = #SEQ#]]>
+	</update>
+</sqlMap>

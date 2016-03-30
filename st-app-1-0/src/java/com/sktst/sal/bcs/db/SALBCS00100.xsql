@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALBCS00100">
+	<select id="getProdDisList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALBCS00100_getProdDisList_안희수 */
+ 		SUBSTR(a.sale_dtm, 0,4)||'-'||SUBSTR(a.sale_dtm, 5,2)||'-'||SUBSTR(a.sale_dtm, 7,2) sale_dtm	
+ 	    , FBAS_GET_AGENCY_NM(a.sale_plc, a.sale_dtm) as agency_nm
+        , FBAS_GET_DEAL_NM(a.sale_plc, a.sale_dtm) sale_nm
+        , NVL(FBAS_GET_USER_NM(a.sale_mod_user_id), FBAS_GET_USER_NM(a.sale_chgrg_id)) sale_chgrg_nm
+        , a.cust_nm
+        , b.prod_ser_num
+        , b.eqp_mdl_cd
+        , b.eqp_ser_num
+        , FBAS_GET_COMMCDNM_VAL('ZSAL_C_00030',a.settl_cond) settl_cond_nm
+        , a.settl_cond
+        , c.dis_amt
+        , c.vat_amt
+        , c.mar_amt
+        , c.cmms_amt
+        , c.sale_amt
+        , (SELECT SUM(crdtcrd_pay_amt1+crdtcrd_pay_amt2) FROM tsal_payment WHERE  gnrl_sale_no = A.gnrl_sale_no)  crdtcrd_pay_amt
+        , a.gnrl_sale_no
+        , a.gnrl_sale_chg_seq
+        , a.cust_biz_num
+        , a.sale_plc
+        , a.dis_hld_plc
+        , SUBSTR(a.sale_dtm, 0,8) sale_dtm1 
+        , SUBSTR(a.sale_dtm, 9,2) sale_dtm2	
+        , SUBSTR(a.sale_dtm, 11,2) sale_dtm3	
+        , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040',b.eqp_color_cd) eqp_color_nm
+        , b.eqp_color_cd
+        , FBAS_GET_PROD_NM(b.eqp_mdl_cd) eqp_mdl_nm
+        , crdtcrd_corp1
+        , crdtcrd_corp2
+		, (SELECT SUM(cash_pay_amt) FROM tsal_payment WHERE  gnrl_sale_no = A.gnrl_sale_no) cash_pay_amt
+		, (SELECT SUM(crdtcrd_pay_amt1) FROM tsal_payment WHERE  gnrl_sale_no = A.gnrl_sale_no) crdtcrd_pay_amt1
+		, (SELECT SUM(crdtcrd_pay_amt2) FROM tsal_payment WHERE  gnrl_sale_no = A.gnrl_sale_no) crdtcrd_pay_amt2
+		, (SELECT SUM(cash_pay_amt+crdtcrd_pay_amt1+crdtcrd_pay_amt2) FROM tsal_payment WHERE  gnrl_sale_no = A.gnrl_sale_no) tot_amt
+        , a.rmks
+        , (  SELECT pos_agency
+	         FROM TBAS_DEAL_CO_MGMT CO 
+	        WHERE CO.EFF_END_DTM = '99991231235959' 
+	              AND CO.DEAL_CO_CD = a.sale_plc
+	              AND DEL_YN = 'N' ) pos_agency /* 판매대리점 id  */
+	    , x.eqp_st
+        , y.mktg_dt
+        , NVL(a.sale_mod_user_id, a.sale_chgrg_id) sale_chgrg_id
+        , z.ukey_agency_cd
+        , FBAS_GET_ORG_NM(z.org_id) org_nm
+        , h.out_mgmt_no
+        , h.out_seq
+   FROM   tsal_gnrl_sale a
+        , tsal_equipment_sale b
+        , tsal_sale_amt c
+        , tsal_payment d
+        , tdis_prod_dis x
+        , tdis_prod_inout_hst h
+        , tbas_prod_mgmt y
+        , tbas_deal_co_mgmt z
+  WHERE a.sale_dtm >= #str_dt_fr#||'000000'
+    AND a.sale_dtm <= #str_dt_to#||'999999'
+    AND a.del_yn 			= 'N'
+    AND a.cust_cl 			= '1'		/* 일반고객 */
+    AND a.sale_typ_cd		= '02'		/* B2C    */
+    AND a.gnrl_sale_no NOT IN (SELECT gnrl_sale_no 
+    							 FROM tsal_gnrl_sale 
+    							WHERE sale_typ_cd = '02' 
+    							  AND SALE_CNCL_YN = 'Y')
+    AND a.gnrl_sale_chg_seq = ( SELECT MAX(gnrl_sale_chg_seq) 
+    							  FROM tsal_gnrl_sale 
+    							 WHERE gnrl_sale_no = a.gnrl_sale_no)
+    AND a.gnrl_sale_no 		= b.gnrl_sale_no
+    AND a.gnrl_sale_chg_seq = b.gnrl_sale_chg_seq
+    AND b.del_yn			= 'N'
+    AND a.gnrl_sale_no 		= c.gnrl_sale_no
+    AND a.gnrl_sale_chg_seq = c.gnrl_sale_chg_seq
+    AND c.del_yn			= 'N'
+    AND a.gnrl_sale_no 		= d.gnrl_sale_no
+    AND a.gnrl_sale_chg_seq = d.gnrl_sale_chg_seq
+    AND d.del_yn			= 'N' 
+    AND x.hld_plc_id 		= a.sale_plc
+    AND x.prod_cd 			= y.prod_cd
+    AND x.del_yn 			= 'N'
+    AND b.eqp_mdl_cd 		= x.prod_cd
+    AND b.eqp_color_cd 		= x.color_cd
+    AND b.prod_ser_num 		= x.ser_num
+    AND x.prod_cd 			= h.prod_cd
+    AND x.color_cd 			= h.color_cd
+    AND x.ser_num 			= h.ser_num
+    AND h.inout_seq = (SELECT MAX(inout_seq)
+				  FROM TDIS_PROD_INOUT_HST e
+                  WHERE 1=1
+                  AND e.prod_cd		 = x.prod_cd
+                  AND e.color_cd 	 = x.color_cd 
+                  AND e.ser_num 	 = x.ser_num
+                  AND e.inout_dtl_cl = '205'
+                  AND e.del_yn		 = 'N'
+				)
+    AND a.sale_plc			= z.deal_co_cd(+)
+    AND	z.eff_end_dtm(+) 	= '99991231235959'
+    ]]>
+    <isNotEmpty prepend="AND" property="agency_cd">                       
+<![CDATA[    a.sale_plc IN ( SELECT deal_co_cd 
+		                       FROM tbas_deal_co_mgmt
+		                      WHERE del_yn = 'N'
+		                        AND deal_end_yn != 'Y'
+		                        AND deal_co_cl1 in ('A1','A2','Z1')
+		                        AND pos_agency = #agency_cd#
+		                        AND eff_end_dtm = '99991231235959')
+]]></isNotEmpty>  
+    <isNotEmpty prepend="AND" property="sale_chgrg_id">                       
+<![CDATA[    a.sale_chgrg_id  = #sale_chgrg_id#
+]]></isNotEmpty> 
+	ORDER BY a.mod_dtm DESC   
+	</select>
+</sqlMap>

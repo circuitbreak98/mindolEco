@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SACERP08170">
+
+	<select id="getAgencyListTmSaleAmt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT  /* SACERP08170_getAgencyList_월수불마감_대리점목록조회_하창주 */
+				 b.org_id
+				,a.org_id					/*대리점*/
+				,ukey_agency_cd
+				/* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+				,(SELECT CASE WHEN min(user_cd) is null AND b.org_id = 'C10011' THEN '140034' else min(user_cd) END
+					FROM tbas_user_mgmt
+				   WHERE pos_agency = a.org_id
+					 AND user_grp = 'D17'
+					 AND del_yn = 'N'
+					 AND eff_user_yn = 'Y'
+					 AND attc_cat in ('1', '2')) as user_cd
+		  FROM	tdis_inout_close a, tbas_deal_co_mgmt b
+		 WHERE	a.org_id		= b.deal_co_cd
+		   AND	b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+											hseq_no 
+									FROM	tbas_deal_co_mgmt
+									WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+								  )
+		   AND	a.close_yymm	= #YYMM#
+		   and	nvl(a.tm_sale_amt, 0) <> 0
+	]]>
+			<isNotEmpty prepend="AND" property="AGENCY">
+	<![CDATA[	a.org_id 	= #AGENCY#		]]>
+			</isNotEmpty>
+	<![CDATA[
+		GROUP BY b.org_id, a.close_yymm, a.org_id, ukey_agency_cd
+		ORDER BY a.close_yymm, a.org_id
+	]]>
+	</select>
+
+	<select id="getTmSaleAmt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select  /* SACERP08170_getTmSaleAmt_매출(판매)원가조회_하창주 */
+				 org_id				/*대리점코드*/
+				,close_yymm			/*마감년월*/
+				,sum(nvl(tm_sale_amt, 0)) as sale_amt		/*매출원가*/
+				,'' as ukey_sub_cd
+		  from	tdis_inout_close
+		 where	org_id		= #AGENCY#
+		   and	close_yymm	= #YYMM#
+		   --and	fix_yn		= 'Y'
+		   and	nvl(tm_sale_amt, 0) <> 0
+		group by close_yymm, org_id
+	]]>
+	</select>
+	
+	<select id="getAgencyListDisMovOutAmt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT  /* SACERP08170_getAgencyList_월수불마감_대리점목록조회_하창주 */
+				 b.org_id
+				,a.org_id					/*대리점*/
+				,ukey_agency_cd
+				/* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+				,(SELECT CASE WHEN min(user_cd) is null AND b.org_id = 'C10011' THEN '140034' else min(user_cd) END
+					FROM tbas_user_mgmt
+				   WHERE pos_agency = a.org_id
+					 AND user_grp = 'D17'
+					 AND del_yn = 'N'
+					 AND eff_user_yn = 'Y'
+					 AND attc_cat in ('1', '2')) as user_cd
+		  FROM	tdis_inout_close a, tbas_deal_co_mgmt b
+		 WHERE	a.org_id		= b.deal_co_cd
+		   AND	b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+											hseq_no 
+									FROM	tbas_deal_co_mgmt
+									WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+								  )
+		   AND	a.close_yymm	= #YYMM#
+		   and	nvl(a.dis_mov_out_amt, 0) <> 0
+	]]>
+			<isNotEmpty prepend="AND" property="AGENCY">
+	<![CDATA[	a.org_id 	= #AGENCY#		]]>
+			</isNotEmpty>
+	<![CDATA[
+		GROUP BY b.org_id, a.close_yymm, a.org_id, ukey_agency_cd
+		ORDER BY a.close_yymm, a.org_id
+	]]>
+	</select>
+	
+	<select id="getDisMovOutAmt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select  /* SACERP08170_getDisMovOutAmt_재고이동출고금액조회_하창주 */
+				 org_id				/*대리점코드*/
+				,close_yymm			/*마감년월*/
+				,sum(nvl(dis_mov_out_amt, 0)) as dis_mov_out_amt		/*재고이동출고금액*/
+				,'' as ukey_sub_cd
+		  from	tdis_inout_close
+		 where	org_id		= #AGENCY#
+		   and	close_yymm	= #YYMM#
+		   --and	fix_yn		= 'Y'
+		   and	nvl(dis_mov_out_amt, 0) <> 0
+		group by close_yymm, org_id
+	]]>
+	</select>
+
+	<select id="getAgencyListDisMovInAmt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		SELECT  /* SACERP08170_getAgencyList_월수불마감_대리점목록조회_하창주 */
+				 b.org_id
+				,a.org_id					/*대리점*/
+				,ukey_agency_cd
+				/* 성장센터(C10011) 정산담당자 : 장한나(140034) */
+				,(SELECT CASE WHEN min(user_cd) is null AND b.org_id = 'C10011' THEN '140034' else min(user_cd) END
+					FROM tbas_user_mgmt
+				   WHERE pos_agency = a.org_id
+					 AND user_grp = 'D17'
+					 AND del_yn = 'N'
+					 AND eff_user_yn = 'Y'
+					 AND attc_cat in ('1', '2')) as user_cd
+		  FROM	tdis_inout_close a, tbas_deal_co_mgmt b
+		 WHERE	a.org_id		= b.deal_co_cd
+		   AND	b.hseq_no		= ( SELECT /*+ INDEX_DESC(tbas_deal_co_mgmt xbas_deal_co_mgmt_pk) */
+											hseq_no 
+									FROM	tbas_deal_co_mgmt
+									WHERE	deal_co_cd = b.deal_co_cd AND rownum = 1
+								  )
+		   AND	a.close_yymm	= #YYMM#
+		   and	nvl(a.dis_mov_in_amt, 0) <> 0
+	]]>
+			<isNotEmpty prepend="AND" property="AGENCY">
+	<![CDATA[	a.org_id 	= #AGENCY#		]]>
+			</isNotEmpty>
+	<![CDATA[
+		GROUP BY b.org_id, a.close_yymm, a.org_id, ukey_agency_cd
+		ORDER BY a.close_yymm, a.org_id
+	]]>
+	</select>
+	
+	<select id="getDisMovInAmt" resultClass="hmap" fetchSize="50" >
+	<![CDATA[
+		select  /* SACERP08170_getDisMovInAmt_재고이동입고금액조회_하창주 */
+				 org_id				/*대리점코드*/
+				,close_yymm			/*마감년월*/
+				,sum(nvl(dis_mov_in_amt, 0)) as dis_mov_in_amt		/*재고이동입고금액*/
+				,'' as ukey_sub_cd
+		  from	tdis_inout_close
+		 where	org_id		= #AGENCY#
+		   and	close_yymm	= #YYMM#
+		   --and	fix_yn		= 'Y'
+		   and	nvl(dis_mov_in_amt, 0) <> 0
+		group by close_yymm, org_id
+	]]>
+	</select>
+
+</sqlMap>

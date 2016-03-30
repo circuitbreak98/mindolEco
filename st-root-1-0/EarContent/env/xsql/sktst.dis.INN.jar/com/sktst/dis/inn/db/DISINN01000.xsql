@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="DISINN01000">
+	<select id="getCpntDisList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISINN01000_getCpntDisList_이문규 */
+         a.prod_cd
+       , b.prod_nm  
+       , a.color_cd
+	   , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', a.color_cd) AS color_nm       
+       , a.ser_num
+       , a.dis_st
+       , a.fst_prchs_plc_id
+       , fbas_get_deal_nm(a.fst_prchs_plc_id, a.last_inout_dt) fst_prchs_plc_nm     
+       , a.dis_amt as dis_amt
+       , nvl(fbas_get_reserve_amt(e.con_mgmt_no),0) as reserve_amt
+       , nvl(fbas_get_reserve_amt(e.con_mgmt_no),0) + a.dis_amt as tot_dis_amt
+       , a.eqp_st
+       , c.in_mgmt_no
+       , c.in_seq
+       , d.prchs_mgmt_no
+       , a.hld_plc_id
+       , a.upd_cnt   
+       , '0' prc_check    
+       , e.con_mgmt_no 
+       , a.fst_prchs_plc_id as prchs_plc_id
+       , e.IMEI
+FROM     tdis_dis a
+       , tbas_prod_mgmt b
+       , (SELECT x.prod_cd
+                ,x.color_cd
+                ,x.ser_num
+                ,x.inout_seq
+                ,x.inout_cl
+                ,x.inout_dtl_cl
+                ,x.inout_dt
+                ,x.in_mgmt_no
+                ,x.in_seq 
+          FROM   TDIS_DIS_INOUT_HST x
+          WHERE (x.prod_cd,x.color_cd,x.ser_num,x.inout_seq)
+                              in (SELECT prod_cd,color_cd,ser_num,max(inout_seq)
+                                   FROM  TDIS_DIS_INOUT_HST
+                                   WHERE inout_cl     = '100'    
+                                   AND   inout_dtl_cl IN ('101','114','113') 
+                                   AND   del_yn       = 'N'
+                                   group BY prod_cd, color_cd, ser_num)
+         ) c 
+       , tdis_in_dtl_d d 
+       , tcst_prchs_mgmt e               
+WHERE   a.fst_in_fix_dt between #in_from_dt# and #in_to_dt#
+AND     a.dis_st            = '01'
+AND     a.last_inout_cl     = '100'           /* 마지막입출고구분 : 100 입고, 200 출고, 300 이동출고 */
+AND     a.last_inout_dtl_cl IN ('101','114','113')  /* 마지막입출고상세구분 : 101 구매입고 114 매입입고 113 구성품취소입*/
+AND     a.del_yn            = 'N'
+AND     a.prod_cd           = b.prod_cd
+AND     b.prod_cl           = '1'             /* 상품구분 : 1 단말기 */
+AND     a.prod_cd           = c.prod_cd
+AND     a.color_cd          = c.color_cd
+AND     a.ser_num           = c.ser_num
+AND     a.last_inout_cl     = c.inout_cl
+AND     a.last_inout_dtl_cl = c.inout_dtl_cl
+AND     a.last_inout_dt     = c.inout_dt
+AND     c.in_mgmt_no        = d.in_mgmt_no
+AND     c.in_seq            = d.in_seq
+AND     d.del_yn            = 'N'
+AND     d.prchs_mgmt_no = e.prchs_mgmt_no
+]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       a.prod_cd = #prod_cd#
+]]></isNotEmpty>  
+<![CDATA[]]><isNotEmpty prepend="AND" property="ser_num">
+<![CDATA[       a.ser_num = #ser_num#
+]]></isNotEmpty>  
+<![CDATA[]]><isNotEmpty prepend="AND" property="BOX_NO">
+<![CDATA[	   BOX_NO              = #BOX_NO#
+]]></isNotEmpty>  
+	</select>
+	<select id="getCpntDisBoxList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISINN01000_getCpntDisBoxList_전미량 */
+         A.PROD_CD
+       , B.PROD_NM  
+       , A.COLOR_CD
+	   , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', A.COLOR_CD) AS COLOR_NM       
+       , A.SER_NUM
+       , A.DIS_ST
+       , A.FST_PRCHS_PLC_ID
+       , FBAS_GET_DEAL_NM(A.FST_PRCHS_PLC_ID, A.LAST_INOUT_DT) FST_PRCHS_PLC_NM     
+       , A.DIS_AMT AS DIS_AMT
+       , NVL(FBAS_GET_RESERVE_AMT(E.CON_MGMT_NO),0) AS RESERVE_AMT
+       , NVL(FBAS_GET_RESERVE_AMT(E.CON_MGMT_NO),0) + A.DIS_AMT AS TOT_DIS_AMT
+       , A.EQP_ST
+       , C.IN_MGMT_NO
+       , C.IN_SEQ
+       , D.PRCHS_MGMT_NO
+       , A.HLD_PLC_ID
+       , A.UPD_CNT   
+       , E.CON_MGMT_NO 
+       , '0' PRC_CHECK    
+       , e.IMEI
+  FROM   TDIS_DIS A
+       , TBAS_PROD_MGMT B
+       , (SELECT X.PROD_CD
+                ,X.COLOR_CD
+                ,X.SER_NUM
+                ,X.INOUT_SEQ
+                ,X.INOUT_CL
+                ,X.INOUT_DTL_CL
+                ,X.INOUT_DT
+                ,X.IN_MGMT_NO
+                ,X.IN_SEQ 
+            FROM TDIS_DIS_INOUT_HST X
+           WHERE (X.PROD_CD,X.COLOR_CD,X.SER_NUM,X.INOUT_SEQ)
+                               IN (SELECT PROD_CD,COLOR_CD,SER_NUM,MAX(INOUT_SEQ)
+                                     FROM TDIS_DIS_INOUT_HST
+                                    WHERE INOUT_CL     = '100'    
+                                      AND INOUT_DTL_CL IN ('101','114','113') 
+                                      AND DEL_YN       = 'N'
+                                   GROUP BY PROD_CD, COLOR_CD, SER_NUM)
+         ) C 
+       , TDIS_IN_DTL_D D         
+       , TCST_PRCHS_MGMT E
+ WHERE A.FST_IN_FIX_DT BETWEEN #in_from_dt# AND #in_to_dt# 
+   AND A.DIS_ST            = '01'            /* 재고상태 : 01 가용 */
+   AND A.LAST_INOUT_CL     = '100'           /* 마지막입출고구분 : 100 입고, 200 출고, 300 이동출고 */
+   AND A.LAST_INOUT_DTL_CL IN ('101','114','113')  /* 마지막입출고상세구분 : 101 구매입고 114 매입입고 113 구성품취소입*/
+   AND A.DEL_YN            = 'N'
+   AND A.PROD_CD           = B.PROD_CD
+   AND B.PROD_CL           = '1'             /* 상품구분 : 1 단말기 */
+   AND A.PROD_CD           = C.PROD_CD
+   AND A.COLOR_CD          = C.COLOR_CD
+   AND A.SER_NUM           = C.SER_NUM
+   AND A.LAST_INOUT_CL     = C.INOUT_CL
+   AND A.LAST_INOUT_DTL_CL = C.INOUT_DTL_CL
+   AND A.LAST_INOUT_DT     = C.INOUT_DT
+   AND D.PRCHS_MGMT_NO     = E.PRCHS_MGMT_NO
+   AND C.IN_SEQ            = D.IN_SEQ
+   AND D.DEL_YN            = 'N'
+   AND BOX_NO              = #BOX_NO#]]>
+	</select>
+</sqlMap>

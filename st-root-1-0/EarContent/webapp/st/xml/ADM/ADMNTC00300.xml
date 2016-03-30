@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="SMS&#32;전송&#32;관리" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_list"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dtl">
+				<Contents>
+					<colinfo id="CHK" size="256" summ="default" type="STRING"/>
+					<colinfo id="TRAN_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TRAN_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="NAME" size="256" summ="default" type="STRING"/>
+					<colinfo id="TEL_NO" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADDR_CAT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SKT_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="CONTEXT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RTN_TEL_NO" size="256" summ="default" type="STRING"/>
+					<colinfo id="TRAN_RSLT_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="TRAN_RSLT_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ERR_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="NEW_TRAN_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="NEW_TRAN_CNT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ReSendSMS">
+				<Contents>
+					<colinfo id="tran_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="tran_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="new_tran_dt" size="256" summ="default" type="STRING"/>
+					<record>
+						<new_tran_dt></new_tran_dt>
+						<tran_cnt></tran_cnt>
+						<tran_dt></tran_dt>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_SelSms">
+				<Contents>
+					<colinfo id="CODE" size="256" summ="default" type="STRING"/>
+					<colinfo id="NAME" size="256" summ="default" type="STRING"/>
+					<record>
+						<CODE>ALL</CODE>
+						<NAME>전체선택</NAME>
+					</record>
+					<record>
+						<CODE>ERR</CODE>
+						<NAME>전송오류</NAME>
+					</record>
+					<record>
+						<CODE>CAN</CODE>
+						<NAME>전체취소</NAME>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="1010">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="767" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="7" Width="60"></Button>
+				<Calendar BindDataset="\" Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_staDt" Left="62" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="2" TodayColor="user26" Top="7" UserData="게시시작일" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="97"></Calendar>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_endDt" Left="174" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="3" TodayColor="user26" Top="7" UserData="게시시작일" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="97"></Calendar>
+				<Static Align="Right" Height="20" Id="Static6" Left="-19" Style="sty_lb_Search" TabOrder="4" Text="발신일" Top="7" VAlign="Middle" Width="76"></Static>
+				<Edit Border="Flat" Font="굴림,-1" Height="20" Id="edt_title" ImeMode="native" Left="348" LeftMargin="2" OnKeyDown="f_commonEnterDown" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Width="205"></Edit>
+				<Static Align="Right" Height="20" Id="Static0" Left="277" Style="sty_lb_Search" TabOrder="6" Text="제목" Top="7" VAlign="Middle" Width="68"></Static>
+				<Static Height="20" Id="Static2" Left="162" TabOrder="7" Text="~" Top="12" Width="13"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="566" Style="sty_lb_Search" TabOrder="8" Text="업무구분" Top="7" VAlign="Middle" Width="76"></Static>
+				<Combo Border="Flat" Height="20" Id="cmb_SmsJobCl" ImeMode="none" INDEX="0" Left="645" Style="sty_ipt_form" TabOrder="9" Top="6" Width="108"></Combo>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="377" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="297" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellPosChanged="grd_list_OnCellPosChanged" Right="1018" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="80" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1010">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="127"/>
+						<col width="87"/>
+						<col width="306"/>
+						<col width="72"/>
+						<col width="230"/>
+						<col width="182"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="발신일"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="업무구분"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="제목"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="수신자&#32;수"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="발신자조직(근무지)"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="발신자"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="tran_dt" display="text" Mask="####-##-##&#32;##:##:##" Valign="Center"/>
+						<cell align="center" col="1" colid="sms_job_nm" display="text" Valign="Center"/>
+						<cell align="left" col="2" colid="title" display="text" Valign="Center"/>
+						<cell align="center" col="3" colid="tran_count" display="text" Valign="Center"/>
+						<cell align="left" col="4" colid="org_nm" display="text"/>
+						<cell align="center" col="5" colid="user_nm" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" Text="SMS&#32;전송&#32;목록" Top="52" Width="192"></Image>
+		<Div Border="SunkenEdge" Height="144" Id="Div1" Left="10" Style="sty_div_dataview" TabOrder="4" Text="Div0" Top="408" Width="334">
+			<Contents>
+				<TextArea BindDataset="ds_list" Border="Flat" Column="context" Height="127" Id="TextArea1" Left="7" Readonly="TRUE" Style="sty_ipt_readonly" TabOrder="1" Top="6" VScroll="TRUE" Width="317"></TextArea>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="5" Text="SMS&#32;내용" Top="383" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_new" ImageID="btn_e_4" Left="10" LeftMargin="15" OnClick="btn_new_OnClick" Style="sty_btn_e" TabOrder="6" Text="SMS&#32;전송" Top="558" Visible="FALSE" Width="85"></Button>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="354" LeftMargin="15" Style="sty_img_tit" TabOrder="7" Text="수신&#32;결과" Top="383" Width="192"></Image>
+		<Div Border="SunkenEdge" Height="144" Id="Div0" Left="352" Style="sty_div_dataview" TabOrder="8" Text="Div0" Top="408" Width="664">
+			<Contents>
+				<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_dtl" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="135" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="129" Id="grd_list" InputPanel="FALSE" Left="6" LineColor="user33" MinWidth="100" Right="655" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="6" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="649">
+					<contents>
+						<format id="Default">
+							<columns>
+								<col width="90"/>
+								<col width="111"/>
+								<col width="233"/>
+								<col width="70"/>
+								<col width="231"/>
+							</columns>
+							<head>
+								<cell bkcolor="user34" col="0" color="user35" display="text" text="재전송&#32;선택"/>
+								<cell bkcolor="user34" col="1" color="user35" display="text" text="전화번호"/>
+								<cell bkcolor="user34" col="2" color="user35" display="text" text="이름"/>
+								<cell bkcolor="user34" col="3" color="user35" display="text" text="성공여부"/>
+								<cell bkcolor="user34" col="4" color="user35" display="text" text="실패내용"/>
+							</head>
+							<body>
+								<cell align="center" col="0" colid="CHK" display="checkbox" edit="checkbox" SuppressAlign="Middle" Valign="Center"/>
+								<cell align="center" col="1" colid="TEL_NO" display="text" SuppressAlign="Middle" Valign="Center"/>
+								<cell align="center" col="2" colid="NAME" display="text" SuppressAlign="Middle" Valign="Center"/>
+								<cell align="center" col="3" colid="TRAN_RSLT_NM" display="text" Valign="Center"/>
+								<cell col="4" colid="ERR_NM" display="text"/>
+							</body>
+						</format>
+					</contents>
+				</Grid>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_ReSend" ImageID="btn_e_6" Left="909" LeftMargin="15" OnClick="btn_ReSend_OnClick" Style="sty_btn_e" TabOrder="9" Text="SMS&#32;재전송" Top="558" Visible="FALSE" Width="109"></Button>
+		<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="999" OnClick="btn_excelDown_OnClick" TabOrder="10" Text="Button1" ToolTipText="Excel&#32;Download" Top="57" Width="19"></Button>
+		<Radio Border="None" CodeColumn="code" ColumnCount="3" DataColumn="NAME" Height="20" Id="rdo_SmsSelect" INDEX="2" InnerDataset="ds_SelSms" Left="781" LeftMargin="5" OnClick="rdo_SmsSelect_OnClick" RightMargin="25" Style="sty_opt_search" TabOrder="11" Top="384" Width="234"></Radio>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ADMNTC00300
+* 업무명      : admin - SMS 전송관리 
+* 프로그램명  : SMS 전송관리 
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.04.22
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	btn_ReSend.Visible = btn_new.Visible;
+	btn_ReSend.Enable  = false;
+	
+	http.Sync = true;	
+
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	// SMS 업무구분 : ZADM_C_00110
+	cf_setCommonCode("div_search.cmb_SmsJobCl", "ZADM_C_00110", "전체");
+	
+	// 설정된 코드를 기반으로 공통 코드를 추가 및 데이타 바인딩
+	cf_checkCommonCode();
+
+	// 정렬 기능
+	cf_setGrdChecknSortEvent(Div0.grd_list);
+	cf_setGrdChecknSortEvent(grd_list);
+	
+	div_search.cmb_SmsJobCl.Index = 1;
+	
+	div_search.cal_staDt.value = Mid(cf_getDate(),0,8);
+	div_search.cal_endDt.value = Mid(cf_getDate(),0,8);
+	
+	http.Sync = false;	
+}
+
+/*******************************************************************************
+ * @description    : 조회 버튼 클릭- 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+	f_search();
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcList")
+	{
+		// 상세 조회
+		if(ds_list.GetRowCount() > 0){
+			f_searchDtl(0);
+			btn_ReSend.Enable = true;
+		} else {
+			btn_ReSend.Enable = false;
+		}
+	}
+
+    if(sSvcId == "svcReSend")
+    {
+		alert("SMS 메시지가 재전송 되었습니다.");
+		f_search();
+    }
+}
+
+/*******************************************************************************
+ * @description    : 조회 함수 - 이벤트
+*******************************************************************************/
+function f_searchDtl(irow)
+{
+	// 조회 조건 설정
+	cf_setParam(ds_condition, "tran_dt", substr(ds_list.GetColumn(irow,"tran_dt"), 0, 8));
+	cf_setParam(ds_condition, "tran_cnt", ds_list.GetColumn(irow,"tran_cnt"));
+	cf_setParam(ds_condition, "msg_ser_num", ds_list.GetColumn(irow,"msg_ser_num"));
+	cf_setParam(ds_condition, "sms_job_cl", div_search.cmb_SmsJobCl.Value);
+
+	// 트랜잭션 설정
+	var sSvcID = "svcDtlList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_dtl=output";
+	var sArg = "sktst.adm.NTC#getSmsDtlList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    : 조회 함수 - 이벤트
+*******************************************************************************/
+function f_search()
+{
+	// 조회 조건 설정
+	cf_setParam(ds_condition, "tran_sta_dt", div_search.cal_staDt.value);
+	cf_setParam(ds_condition, "tran_end_dt", div_search.cal_endDt.value);
+	cf_setParam(ds_condition, "tran_title", div_search.edt_title.text);
+	cf_setParam(ds_condition, "sms_job_cl", div_search.cmb_SmsJobCl.Value);
+	cf_setParam(ds_condition, "org_id", gds_session.GetColumn(0,"orgId"));
+	
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=output";
+	var sArg = "sktst.adm.NTC#getSmsList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+/*******************************************************************************
+ * @description    : 신규 등록- 이벤트
+*******************************************************************************/
+function btn_new_OnClick(obj)
+{
+	var nLeft = 192;
+	var nTop = 95;
+
+
+	var sSmsJobCl = "00";
+	var sArg      = "SmsJobCl=" +quote(sSmsJobCl);
+
+	dialog("ADM::ADMNTC00500.xml", sArg, 200, 544, "", GetPlatformInfo("WorkArea","Left"), GetPlatformInfo("WorkArea","Top"));
+
+}
+
+/*******************************************************************************
+ * @description    : 엔터키 이벤트 - 이벤트
+*******************************************************************************/
+function f_commonEnterDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		f_search();
+	}
+}
+
+/*******************************************************************************
+ * @description    : OnCellClick 이벤트 - 이벤트
+*******************************************************************************/
+function grd_list_OnCellClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	var oGrdDs = object(obj.BindDataset); 
+	
+	var sArg  = "tran_dt="+quote(oGrdDs.getColumn(nRow,"tran_dt"));
+	    sArg += " tran_cnt="+quote(oGrdDs.getColumn(nRow,"tran_cnt"));
+
+	f_searchDtl(nRow);	
+}
+
+/*******************************************************************************
+ * @description    : OnCellPosChanged 이벤트 - 이벤트
+*******************************************************************************/
+function grd_list_OnCellPosChanged(obj,nRow,nCell,nOldRow,nOldCell,nPivotIndex,nOldPivotIndex)
+{
+	var oGrdDs = object(obj.BindDataset); 
+
+	var sArg  = "tran_dt="+quote(substr(oGrdDs.getColumn(nRow,"tran_dt"), 0, 8));
+	    sArg += " tran_cnt="+quote(oGrdDs.getColumn(nRow,"tran_cnt"));
+
+	f_searchDtl(nRow);	
+}
+
+/*******************************************************************************
+ * @description    : 선택된 SMS 메시지 재 전송
+*******************************************************************************/
+function btn_ReSend_OnClick(obj)
+{
+	var sSmsReSend    = "";
+	var sSmsReSendCnt =  0;
+
+	for(var i=0; i < ds_dtl.rowcount; i++)
+	{
+		if(ds_dtl.GetColumn(i, "CHK") == "1"){
+			sSmsReSendCnt = sSmsReSendCnt + 1;
+		}
+
+		ds_dtl.SetColumn(i, "NEW_TRAN_DT", ToDay());
+	}
+
+	if (sSmsReSendCnt >= 1) {
+		sSmsReSend = Confirm(sSmsReSendCnt + "명에게 모두 재전송 됩니다.\n\n SMS 재전송을 진행하시겠습니까 ?");
+		if (sSmsReSend == false)    {
+			alert("SMS 재전송이 취소되었습니다.");
+			return;
+		}
+    } else {
+		alert("선택된 사용자가 없습니다.");
+		return;
+    }
+
+	var sSvcID	= "svcReSend";
+	var sInDs 	= "ds_dtl=ds_dtl";
+	var sOutDs	= "";
+	var sArg 	= "sktst.adm.NTC#saveReSend";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : excelDown 클릭- 이벤트
+*******************************************************************************/
+function btn_excelDown_OnClick(obj)
+{
+	var sSmsJob = ds_condition.GetColumn(0, "sms_job_cl");
+	if (uf_IsNull(sSmsJob) || sSmsJob == "00") {
+		alert("Excel 출력 기능을 이용할 수 없습니다.");
+	} else {
+		cf_exportExcel(grd_list);
+	}
+}
+
+/*******************************************************************************
+ * @description    : SMS 재 저송 시 선택여부
+*******************************************************************************/
+function rdo_SmsSelect_OnClick(obj)
+{
+
+    var sErrCd;
+
+	for(var i=0; i < ds_dtl.rowcount; i++)
+	{
+	    // SMS 재전송 선택 구분에 따라 Check 활성화,...
+		switch(rdo_SmsSelect.Value)
+		{
+			case "ALL" :
+
+                // 전체선택
+                ds_dtl.SetColumn(i, "CHK", "1");
+				break;
+
+			case "ERR" :
+
+				// SMS오류만 선택
+				sErrCd = ds_dtl.GetColumn(i, "TRAN_RSLT_NM");
+				if (sErrCd == "Y") {
+    				ds_dtl.SetColumn(i, "CHK", "0");
+    			} else {
+    				ds_dtl.SetColumn(i, "CHK", "1");
+    			}
+
+				break;
+
+			case "CAN" :
+
+                // 전체선택취소
+                ds_dtl.SetColumn(i, "CHK", "0");
+
+				break;
+
+			default :
+
+				return;
+		}
+	}
+}]]></Script>
+</Window>

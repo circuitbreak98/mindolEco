@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="465" Id="ACCACO00700" Left="8" OnLoadCompleted="ACCACO00700_OnLoadCompleted" PidAttrib="7" Title="정산상계등록" Top="8" Ver="1.0" Width="700" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="POS_AGENCY" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_UKEY" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="ERP_FIX_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="PAY_CL" size="256" summ="default" type="STRING"/>
+					<record>
+						<ACC_MTH></ACC_MTH>
+						<ACC_PLC></ACC_PLC>
+						<DEAL_NM></DEAL_NM>
+						<DEAL_UKEY></DEAL_UKEY>
+						<ERP_FIX_YN></ERP_FIX_YN>
+						<PAY_CL></PAY_CL>
+						<POS_AGENCY></POS_AGENCY>
+						<SL_CL></SL_CL>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_accMtchDtlD">
+				<Contents>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTCH_ITM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTCH_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_excelAccMtchDtlD">
+				<Contents>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTCH_ITM" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTCH_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="RMKS" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_delAccMtchDtlD">
+				<Contents>
+					<colinfo id="ACC_PLC" size="256" summ="default" type="STRING"/>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="SEQ" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="630" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="6" Text="닫기" Top="421" Width="60"></Button>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_accMtchDtlD" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="406" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="320" Id="grd_accMtchDtlD" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="690" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="86" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="680">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="200"/>
+						<col width="100"/>
+						<col width="200"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="항목설명"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="금액"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="비고"/>
+					</head>
+					<body>
+						<cell align="left" col="0" colid="ACC_MTCH_ITM" display="text" edit="normal"/>
+						<cell align="right" col="1" colid="ACC_MTCH_AMT" display="number" edit="integer" limit="9"/>
+						<cell align="left" col="2" colid="RMKS" display="text" edit="normal"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" display="text" text="합계"/>
+						<cell align="right" bkcolor="user37" col="1" color="user38" display="number" expr='sum(&quot;ACC_MTCH_AMT&quot;)'/>
+						<cell bkcolor="user37" col="2" color="user38" display="text"/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Button Height="20" Id="btn_addRow" ImageID="btn_i_add_w" Left="648" OnClick="btn_addRow_OnClick" TabOrder="3" Text="Button7" Top="61" Width="20"></Button>
+		<Button Height="20" Id="btn_delRow" ImageID="btn_i_subtract_w" Left="670" OnClick="btn_delRow_OnClick" TabOrder="2" Text="Button7" Top="61" Width="20"></Button>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="정산상계내역" Top="61" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="566" LeftMargin="5" OnClick="btn_save_onClick" Style="sty_btn_c" TabOrder="5" Text="저장" Top="421" Width="60"></Button>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="7" Text="Div0" Top="10" Width="680">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="3" Style="sty_lb_Search" TabOrder="1" Text="대리점" Top="8" VAlign="Middle" Width="45"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCdNm" Left="52" LeftMargin="2" OnKeyDown="div_search_edt_agencyCdNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" UserData="발주처" Width="80"></Edit>
+				<Button Cursor="HAND" Height="20" Id="btn_agency" ImageID="btn_i_detail" Left="132" OnClick="div_search_btn_agency_OnClick" TabOrder="3" Text="Button0" Top="7" Width="20"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="150" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="80"></Edit>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="POS_AGENCY" Enable="FALSE" Height="20" Id="edt_agencyCd" Left="230" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" Visible="FALSE" Width="10"></Edit>
+				<Static Align="Right" Height="20" Id="Static4" Left="420" Style="sty_lb_Search" TabOrder="9" Text="정산처" Top="8" VAlign="Middle" Width="40"></Static>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="deal_nm" Height="20" Id="edt_dealNm" Left="467" LeftMargin="2" OnKeyDown="div_search_edt_dealNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="8" Width="80"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_dealCo" ImageID="btn_i_detail" Left="547" OnClick="div_search_btn_dealCo_OnClick" TabOrder="8" Text="Button0" Top="8" Width="19"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="ACC_PLC" Height="20" Id="edt_dealCd" ImeMode="none" Left="565" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="8" Width="80"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="241" Style="sty_lb_dataview" TabOrder="10" Text="정산월" Top="8" VAlign="Middle" Width="60"></Static>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="ACC_MTH" Height="20" Id="cal_accMth" Left="307" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="11" Top="8" Type="STRING" Width="77"></MaskEdit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="384" OnClick="btn_monthCalendar_OnClick" TabOrder="12" TabStop="FALSE" Text="Button3" Top="8" Width="17"></Button>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCACO00700
+* 업무명      : 정산 - 판매점정산관리
+* 프로그램명  : 정산상계등록
+--------------------------------------------------------------------------------
+* 작성자      : 전승호
+* 작성일      : 2009.03.09
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_LOGIN_ID;      	//사용자계정     
+var FV_ORG_ID;         	//조직코드    
+var FV_ORG_CL;         	//조직구분      
+var FV_SUP_ORG_ID;      //상위조직코드   
+var FV_USER_GRP;        //사용자그룹   
+var FV_ORG_AREA_ID; 	// 근무지 cd.
+var FV_ORG_AREA_NM; 	// 근무지 nm.       
+var FV_POS_AGENCY_ID;   // 소속 대리점ID 
+var FV_POS_AGENCY_NM;   // 소속 대리점명 
+var FV_POS_AGENCY_UKEY_ID; // 소속 대리점UKEY ID 
+var PAY_CL;				// 결제구분(온라인소매수수료/온라인결제수수료)
+
+
+/*******************************************************************************
+* 함수명 : ACCACO00700_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function ACCACO00700_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_accMtchDtlD);	// 그리드 정렬
+	
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	http.Sync = true;
+	
+	f_initSearchSet();
+
+	if(FIX_YN == "Y" && MTCH_DTL_YN == "N" ){ //초기 조회시 가감 항목을 조회
+	
+		f_accMthDtl(); // 정산상계 내역 조회
+		
+	}
+
+	grd_accMtchDtlD.Redraw = false;
+	
+	if(MTCH_DTL_YN == "Y" ){
+	
+		if(accMtchDtlD == "N"){
+			
+			cf_copyDataset(ds_accMtchDtlD, parent.ds_accMtchDtlD, null, true);
+			ds_accMtchDtlD.filter("ACC_PLC=" + quote(ACC_PLC) + "&&ACC_MTH=" + quote(ACC_MTH)+ "&&SL_CL=" + quote(SL_CL));
+			
+		}else{
+		
+			http.Sync = true;
+			f_accMthDtl();
+			http.Sync = false;
+				
+			if(ds_accMtchDtlD.rowcount > 0){
+				cf_copyDataset(ds_excelAccMtchDtlD, parent.ds_accMtchDtlD, null, true);
+				
+				ds_accMtchDtlD.filter("ACC_PLC=" + quote(ACC_PLC) + "&&ACC_MTH=" + quote(ACC_MTH)+ "&&SL_CL=" + quote(SL_CL));
+				
+				ds_excelAccMtchDtlD.filter("ACC_PLC=" + quote(ACC_PLC) + "&&ACC_MTH=" + quote(ACC_MTH)+ "&&SL_CL=" + quote(SL_CL));
+	
+				for( var nRow=0; nRow<ds_excelAccMtchDtlD.rowcount; nRow++ ){
+					
+					if(ds_accMtchDtlD.rowcount > 0 ){
+						if(nRow=0){
+							ds_excelAccMtchDtlD.SetColumn(nRow,"SEQ",toNumber(ds_accMtchDtlD.Max("SEQ")+1));
+						}else{
+							ds_excelAccMtchDtlD.SetColumn(nRow,"SEQ",toNumber(ds_excelAccMtchDtlD.Max("SEQ")+1));
+						}	
+					}else{
+						ds_excelAccMtchDtlD.SetColumn(nRow,"SEQ",toNumber(ds_excelAccMtchDtlD.Max("SEQ")+1));
+					}
+				}
+				
+				for(var nRow = ds_excelAccMtchDtlD.rowCount-1; nRow>=0; nRow--) {
+					/*
+					var ACC_PLC = ds_accMtchDtlD.GetColumn(nRow,"ACC_PLC");
+					var ACC_MTH = ds_accMtchDtlD.GetColumn(nRow,"ACC_MTH");
+					var SL_CL   = ds_accMtchDtlD.GetColumn(nRow,"SL_CL");
+					var SEQ     = ds_accMtchDtlD.GetColumn(nRow,"SEQ");
+					
+					var findRow = ds_accMtchDtlD.SearchRow("ACC_PLC==" + quote(ACC_PLC) +
+																" && ACC_MTH==" + quote(ACC_MTH) +
+																" && SL_CL==" + quote(SL_CL) +
+																" && SEQ==" + quote(SEQ));
+					*/
+					//if(findRow != -1){
+						ds_accMtchDtlD.AddRow();
+						ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow,"ACC_PLC",ds_excelAccMtchDtlD.GetColumn(nRow,"ACC_PLC"));
+						ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow,"ACC_MTH",ds_excelAccMtchDtlD.GetColumn(nRow,"ACC_MTH"));
+						ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow,"SL_CL",ds_excelAccMtchDtlD.GetColumn(nRow,"SL_CL"));
+						if(ds_accMtchDtlD.rowcount > 0 ){
+							ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow,"SEQ",toNumber(ds_accMtchDtlD.Max("SEQ"))+1);
+						}else{
+							ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow,"SEQ",toNumber(ds_excelAccMtchDtlD.Max("SEQ"))+1);
+						}
+						ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow,"DEAL_CO_NM",ds_excelAccMtchDtlD.GetColumn(nRow,"DEAL_CO_NM"));
+						ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow,"ACC_MTCH_ITM",ds_excelAccMtchDtlD.GetColumn(nRow,"ACC_MTCH_ITM"));
+						ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow,"ACC_MTCH_AMT",ds_excelAccMtchDtlD.GetColumn(nRow,"ACC_MTCH_AMT"));
+						ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow,"RMKS",ds_excelAccMtchDtlD.GetColumn(nRow,"RMKS"));
+					//}else{
+						//ds_accMtchDtlD.DeleteRow(nRow);
+					//}
+					
+				}
+			}else{
+			
+				cf_copyDataset(ds_accMtchDtlD, parent.ds_accMtchDtlD, null, true);
+				ds_accMtchDtlD.filter("ACC_PLC=" + quote(ACC_PLC) + "&&ACC_MTH=" + quote(ACC_MTH)+ "&&SL_CL=" + quote(SL_CL));
+			
+			}	
+		}
+		
+	}
+	
+	grd_accMtchDtlD.Redraw = true;
+	
+	if(ds_accMtchDtlD.rowcount == 0){
+		btn_addRow_OnClick();
+	}
+	
+	http.Sync = false;
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack
+* 기능명 : 트랜잭션 콜백
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+
+	if(sSvcID == "getAccMtchDtlList")
+	{	
+		return;
+	}
+	
+}
+
+/*******************************************************************************
+* 함수명 : f_accMthDtl
+* 기능명 : 정산상계내역조회
+*******************************************************************************/
+function f_accMthDtl()
+{
+	var sSvcID = "getAccMtchDtlList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_accMtchDtlD=ds_accMtchDtlD";
+	var sArg   = "sktst.acc.ACO#getAccMtchDtlList";
+
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+}
+
+/*******************************************************************************
+* 함수명 : f_initSearchSet
+* 기능명 : 정산상계내역 검색조건 세팅
+*******************************************************************************/
+function f_initSearchSet()
+{
+	cf_setParam(ds_condition,"ACC_MTH"   	   ,ACC_MTH);	//정산월
+	cf_setParam(ds_condition,"DEAL_NM"   	   ,DEAL_CO_NM);//정산처명
+	cf_setParam(ds_condition,"ACC_PLC"   	   ,ACC_PLC);	//정산처코드
+	cf_setParam(ds_condition,"SL_CL"   	   	   ,SL_CL);		//영업구분
+	div_search.edt_agencyCdNm.Text = POS_AGENCY_NM;			//대리점명
+	div_search.edt_agencyUkeyCd.Text = POS_AGENCY;			//대리점코드
+	div_search.cal_accMth.Text = ACC_MTH;
+	
+	cf_setParam(ds_condition,"PAY_CL"   	   	,PAY_CL);	//결제구분
+	
+	if(ERP_FIX_YN == "Y" || SALE_CMMS_FIX_YN != "Y"){
+		btn_addRow.Enable = false;
+		btn_delRow.Enable = false;
+		btn_save.Enable = false;
+		grd_accMtchDtlD.Enable = false;
+	}else{
+		btn_addRow.Enable = true;
+		btn_delRow.Enable = true;
+		btn_save.Enable = true;	
+		grd_accMtchDtlD.Enable = true;	
+	}
+	
+	uf_ObjComponentEnable(div_search,false);
+	
+}
+
+/*******************************************************************************
+* 함수명 : btn_addRow_OnClick
+* 기능명 : 로우 추가
+*******************************************************************************/
+function btn_addRow_OnClick(obj)
+{
+	ds_accMtchDtlD.AddRow();
+	
+	ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow, "ACC_PLC",ACC_PLC);
+	ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow, "ACC_MTH",ACC_MTH);
+	ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow, "SL_CL",SL_CL);
+	ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow, "SEQ",ds_accMtchDtlD.max("SEQ")+1);
+	ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow, "DEAL_CO_NM",div_search.edt_dealNm.Text);
+	ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow, "ACC_MTCH_ITM", "");
+	ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow, "ACC_MTCH_AMT", "0");
+	ds_accMtchDtlD.SetColumn(ds_accMtchDtlD.lastrow, "RMKS", "");
+	
+	f_set_gridFocus(grd_accMtchDtlD, ds_accMtchDtlD.lastrow, 0);
+}
+
+
+/*******************************************************************************
+* 함수명 : btn_delRow_OnClick
+* 기능명 : 로우 삭제
+*******************************************************************************/
+function btn_delRow_OnClick(obj)
+{
+	var currow = ds_accMtchDtlD.GetRowPos();
+	
+	//삭제할 데이터 추가한다.
+	ds_delAccMtchDtlD.AddRow();
+	ds_delAccMtchDtlD.SetColumn(ds_delAccMtchDtlD.lastrow,"ACC_PLC",ds_accMtchDtlD.GetColumn(currow,"ACC_PLC"));
+	ds_delAccMtchDtlD.SetColumn(ds_delAccMtchDtlD.lastrow,"ACC_MTH",ds_accMtchDtlD.GetColumn(currow,"ACC_MTH"));
+	ds_delAccMtchDtlD.SetColumn(ds_delAccMtchDtlD.lastrow,"SL_CL",ds_accMtchDtlD.GetColumn(currow,"SL_CL"));
+	ds_delAccMtchDtlD.SetColumn(ds_delAccMtchDtlD.lastrow,"SEQ",ds_accMtchDtlD.GetColumn(currow,"SEQ"));
+	
+	ds_accMtchDtlD.deleteRow(currow);
+		
+}
+
+/*******************************************************************************
+* 함수명 : f_pre_save
+* 기능명 : 저장버튼 전 체크함수 
+*******************************************************************************/
+function f_pre_save()
+{	
+	for( var nRow=0; nRow<ds_accMtchDtlD.rowcount; nRow++ ){
+
+		if(uf_isNull(ds_accMtchDtlD.GetColumn(nRow,"ACC_MTCH_ITM")) == true){
+			alert(cf_getMessage(MSG_00135, "항목설명"));
+			f_set_gridFocus(grd_accMtchDtlD, nRow, 0);
+			return false;
+		}else if(uf_isNull(ds_accMtchDtlD.GetColumn(nRow,"ACC_MTCH_AMT")) == true
+						|| ds_accMtchDtlD.GetColumn(nRow,"ACC_MTCH_AMT") == 0){
+			alert(cf_getMessage(MSG_00132, "정산상계금액;0"));
+			f_set_gridFocus(grd_accMtchDtlD, nRow, 1);
+			return false;
+		}		
+	}
+	
+    return true;
+}
+
+/*******************************************************************************
+ * @description    : 저장
+*******************************************************************************/
+function btn_save_onClick(obj)
+{
+
+	if (!(f_pre_save())) return;
+	
+	var dupCnt = 0;
+	dupCnt = parent.ds_accMtchDtlD.CaseCount("ACC_PLC==" + quote(ACC_PLC) +
+											 " && ACC_MTH==" + quote(ACC_MTH)+
+											 " && SL_CL==" + quote(SL_CL));
+	if(dupCnt > 0 ){
+	
+		for(var idx = 0; idx < dupCnt; idx++){
+		
+			var nRow = parent.ds_accMtchDtlD.SearchRow("ACC_PLC==" + quote(ACC_PLC) +
+													   " && ACC_MTH==" + quote(ACC_MTH) +
+													   " && SL_CL==" + quote(SL_CL));
+			if(nRow != -1){
+				parent.ds_accMtchDtlD.DeleteRow(nRow);
+			}
+		}
+		
+	}
+	
+	/*
+	//부모그리드의  정산상계 금액 입력
+	var objNm = object("parent."+PARENT_GRDDS);
+	
+	//부모데이터의 원데이터 조회									
+	var findOrginRow = parent.ds_copyMonthClsList.SearchRow("ACC_PLC==" + quote(ACC_PLC) +
+															" && ACC_MTH==" + quote(ACC_MTH) +
+															" && SL_CL==" + quote(SL_CL));
+	var ORG_ACC_MTCH_AMT = 0;											   
+	if(findOrginRow != -1){
+		ORG_ACC_MTCH_AMT = parent.ds_copyMonthClsList.getColumn(findOrginRow,"ACC_MTCH_AMT");
+	}
+	
+	objNm.setColumn(PARENT_CURROW,"ACC_MTCH_AMT",toNumber(ds_accMtchDtlD.sum("ACC_MTCH_AMT")) +
+												 toNumber(ORG_ACC_MTCH_AMT));	
+	*/
+	//부모그리드의  정산상계 금액 입력
+	var objNm = object("parent."+PARENT_GRDDS);
+	objNm.setColumn(PARENT_CURROW,"ACC_MTCH_AMT",ds_accMtchDtlD.sum("ACC_MTCH_AMT"));
+	
+	//부모데이트의 정산상계 Data 이관
+	//추가할 Dataset과 기존의 Dataset의 Column 정보는 일치해야 합니다.
+	//ACCACO00100.XML 의 데이터 셋과 동일하게 맞쳐줘야한다.
+	parent.ds_accMtchDtlD.AppendDataSet(ds_accMtchDtlD);
+	
+	//삭제할 데이터를 부모데이터에 카피한다.
+	cf_copyDataset(parent.ds_delAccMtchDtlD, ds_delAccMtchDtlD, null, true);
+	accMtchDtlD = "N";
+	this.close("1");
+
+}
+
+/*******************************************************************************
+ * @description    : 가감금액 합계 변경 - 이벤트
+*******************************************************************************/
+function ds_accMtchDtlD_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	if(strColumnID == "ACC_MTCH_AMT"){
+		
+		if(uf_isNull(varNewValue) == true){
+		
+			obj.SetColumn(0,strColumnID,0);
+			varNewValue = 0;
+		}
+				
+	}
+	
+}
+
+/*******************************************************************************
+ * @description    : 닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+/*******************************************************************************
+* 함수명 : f_set_gridFocus
+* 기능명 : 그리드 포커스 이동
+*******************************************************************************/
+function f_set_gridFocus(gridObj, nRow, nCellIdx) 
+{	
+	var dataSetObj = object(gridObj.bindDataset);
+	dataSetObj.row = nRow;
+	gridObj.SetCellPos(nCellIdx);
+	gridObj.SetFocus();
+}
+
+
+]]></Script>
+</Window>

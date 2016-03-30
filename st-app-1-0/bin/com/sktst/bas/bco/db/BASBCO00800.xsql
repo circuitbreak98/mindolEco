@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO00800">
+	<select id="getDeal" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[
+SELECT    /*+ BASBCO00800_getDeal_조민지_심연정 */
+		 a.deal_co_cd
+        ,a.hseq_no
+        ,a.deal_co_nm
+        ,a.deal_co_cl1
+        ,a.deal_co_cl2
+        ,a.ukey_agency_cd
+        ,a.ukey_sub_cd
+        ,a.ukey_channel_cd
+        ,a.pos_agency
+        ,a.org_id
+        ,b.org_nm
+        ,a.normal_yn
+FROM    tbas_deal_co_mgmt a
+        ,tbas_org_mgmt b
+WHERE   a.del_yn ='N'
+AND     a.normal_yn = 'Y'
+AND     a.deal_co_cl1='11'
+AND     a.org_id = b.org_id 
+AND		a.org_id IN ($org_id$)
+]]><isNotEmpty prepend="AND" property="ukey_agency_cd">
+<![CDATA[		a.ukey_agency_cd LIKE '$ukey_agency_cd$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="deal_co_nm">
+<![CDATA[		a.deal_co_nm LIKE '$deal_co_nm$%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="org_nm">
+<![CDATA[		b.org_nm LIKE '$org_nm$%'
+]]></isNotEmpty>
+<![CDATA[
+ORDER BY b.org_nm, a.ukey_agency_cd]]>
+	</select>
+	<select id="getDealByCondition" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[
+SELECT    /*+ BASBCO00800_getDealByCondition_조민지_심연정 */
+		 a.deal_co_cd
+        ,a.hseq_no
+        ,a.deal_co_nm
+        ,a.deal_co_cl1
+        ,a.deal_co_cl2
+        ,a.ukey_agency_cd
+        ,a.ukey_sub_cd
+        ,a.ukey_channel_cd
+        ,a.pos_agency
+        ,a.org_id
+        ,b.org_nm
+        ,a.normal_yn
+FROM    tbas_deal_co_mgmt a
+        ,tbas_org_mgmt b
+WHERE   a.del_yn ='N'
+AND     a.normal_yn = 'Y'
+AND     a.deal_co_cl1='11'
+AND     a.org_id = b.org_id 
+AND		a.org_id IN ($org_id$)
+]]><isNotEmpty prepend="AND" property="ukey_agency_cd">
+<![CDATA[		(a.ukey_agency_cd LIKE '$ukey_agency_cd$%'
+      or a.deal_co_nm LIKE '$ukey_agency_cd$%' )      
+]]></isNotEmpty>
+<![CDATA[ORDER BY b.org_nm, a.ukey_agency_cd]]>
+	</select>
+</sqlMap>

@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="360" Id="form" Left="8" OnLoadCompleted="POLFPO00200_OnLoadCompleted" PidAttrib="7" Title="운영모델단가표&#32;상품&#32;변경관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_prod_mgmt">
+				<Contents>
+					<colinfo id="PROD_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="USE_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_RSN" size="256" summ="default" type="STRING"/>
+					<colinfo id="MKTG_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="END_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="USE_STOP_DT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="MFACT_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CHRTIC_1" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROD_CHRTIC_2" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="UPLST_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="POL_YM" size="256" summ="default" type="STRING"/>
+					<colinfo id="POL_TS" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_STA_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_END_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="HOUR" size="256" summ="default" type="STRING"/>
+					<colinfo id="MIN" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_END_DTM" size="256" summ="default" type="STRING"/>
+					<record>
+						<APLY_END_DTM></APLY_END_DTM>
+						<APLY_STA_DTM></APLY_STA_DTM>
+						<HOUR></HOUR>
+						<MIN></MIN>
+						<MOD_END_DTM></MOD_END_DTM>
+						<POL_TS></POL_TS>
+						<POL_YM></POL_YM>
+						<UPLST_ID></UPLST_ID>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_ymd">
+				<Contents>
+					<colinfo id="YMD" size="256" summ="default" type="STRING"/>
+					<colinfo id="HH" size="256" summ="default" type="STRING"/>
+					<colinfo id="MM" size="256" summ="default" type="STRING"/>
+					<colinfo id="FLAG" size="256" summ="default" type="STRING"/>
+					<record>
+						<FLAG></FLAG>
+						<HH></HH>
+						<MM></MM>
+						<YMD></YMD>
+					</record>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_input" TabOrder="1" Text="질의내용" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static3" Left="38" Style="sty_lb_Basic" TabOrder="1" Text="변경적용시작일" Top="7" VAlign="Middle" Width="100"></Static>
+				<Calendar BindDataset="ds_ymd" Border="Flat" ButtonImageID="btn_i_calendar" Column="ymd" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_mod_ymd" Left="143" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" OnChanged="div_search_cal_mod_ymd_OnChanged" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="1" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="113"></Calendar>
+				<Edit Align="CENTER" BindDataset="ds_ymd" Border="Flat" Column="hh" Font="굴림,-1" Height="20" Id="ed_hour" Left="257" LeftMargin="2" MaxLength="2" Number="TRUE" OnChanged="div_search_ed_hour_OnChanged" RightMargin="2" Style="sty_ipt_search" TabOrder="2" Top="7" Width="22"></Edit>
+				<Edit Align="CENTER" BindDataset="ds_ymd" Border="Flat" Column="mm" Font="굴림,-1" Height="20" Id="ed_min" Left="280" LeftMargin="2" MaxLength="2" Number="TRUE" OnChanged="div_search_ed_min_OnChanged" RightMargin="2" Style="sty_ipt_search" TabOrder="3" Top="7" Width="22"></Edit>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="760" LeftMargin="5" OnClick="btn_cancel_OnClick" Style="sty_btn_d" TabOrder="4" Text="취소" Top="325" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="695" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="325" Width="60"></Button>
+		<Grid AutoFit="TRUE" BindDataset="ds_prod_mgmt" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="314" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="254" Id="grd_pol_uplst" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="60" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="30"/>
+						<col width="75"/>
+						<col width="166"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="70"/>
+						<col width="80"/>
+						<col width="86"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="checkbox" edit="checkbox"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="변경사유"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="출시일"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="단종일"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="중지일"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="상품구분"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="제조사"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="상품&#32;특성1" wordwrap="exchar"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="상품&#32;특성2" wordwrap="exchar"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="chk" display="checkbox" edit='expr:iif(MOD_RSN=&apos;S&apos;,&quot;none&quot;,&quot;none&quot;)'/>
+						<cell align="center" col="1" colid="PROD_NM" display="text"/>
+						<cell col="2" display="text" expr="DECODE(MOD_RSN,&apos;C&apos;,&apos;사용중&apos;,&apos;S&apos;,&apos;사용중지&apos;)"/>
+						<cell align="center" col="3" colid="MKTG_DT" display="text" Mask="@@@@-@@-@@"/>
+						<cell align="center" col="4" colid="END_DT" display="text" Mask="@@@@-@@-@@"/>
+						<cell align="center" col="5" colid="USE_STOP_DT" display="text" Mask="@@@@-@@-@@"/>
+						<cell align="center" col="6" colid="PROD_CL" combocol="code" combotext="name" display="combo"/>
+						<cell align="center" col="7" colid="DEAL_CO_NM" combocol="code" combotext="name" display="text"/>
+						<cell align="center" col="8" colid="PROD_CHRTIC_1" combocol="code" combotext="name" display="combo"/>
+						<cell align="center" col="9" colid="PROD_CHRTIC_2" combocol="code" combotext="name" display="combo"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : POLFPO00200
+* 업무명      : 정책관리
+* 프로그램명  : 상품관리변경대상(P) 
+--------------------------------------------------------------------------------
+* 작성자      : 전승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+var FV_STR_NAME; // 사용자 이름
+
+/*******************************************************************************
+* 함수명 : POLFPO00100_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function POLFPO00200_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_pol_uplst);	// 그리드 정렬
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	http.Sync = true;
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	
+	cf_setCommonCode("grd_pol_uplst", "ZBAS_C_00010", null, 6);
+	
+	cf_setCommonCode("grd_pol_uplst", "ZBAS_C_00020", null, 8);
+	
+	cf_setCommonCode("grd_pol_uplst", "ZBAS_C_00030", null, 9);
+	
+	cf_checkCommonCode();
+
+	if(substr(APLY_STA_DTM,0,8) > TODAY()){ //정책년월이 현재년월 보다 큰 운영모델 단가표 변경시
+		div_search.cal_mod_ymd.Value =  substr(APLY_STA_DTM,0,8);
+		div_search.ed_hour.value = "00";
+		div_search.ed_min.value = "00";
+	}else{
+		if(substr(APLY_END_DTM,0,6) < substr(TODAY(),0,6) ){ //정책년월이 과거정책이면 종료일을 세팅
+			div_search.cal_mod_ymd.Value =  substr(APLY_END_DTM,0,8);
+		}else{
+			div_search.cal_mod_ymd.Value =  TODAY();
+		}
+		div_search.ed_hour.value = "00"; 
+		div_search.ed_min.value = "00";
+	}
+	
+    ds_condition.SetColumn(0,"UPLST_ID",UPLST_ID);
+    ds_condition.SetColumn(0,"POL_YM",POL_YM);
+    ds_condition.SetColumn(0,"POL_TS",POL_TS);
+   
+    ds_condition.SetColumn(0,"APLY_STA_DTM",APLY_STA_DTM);
+    ds_condition.SetColumn(0,"APLY_END_DTM",APLY_END_DTM);
+
+    df_search();
+    
+    http.Sync = false;
+    
+    if(CRUD_FLAG == "Y"){ //적용년월 운영모델 단가표의 적용기간 마지막 날짜 인경우.
+		div_search.cal_mod_ymd.Enable = true;
+		div_search.ed_hour.Enable = true;
+		div_search.ed_min.Enable = true;
+    }else{
+		div_search.cal_mod_ymd.Enable = false;
+		div_search.ed_hour.Enable = false;
+		div_search.ed_min.Enable = false;
+		div_search.cal_mod_ymd.Value =  substr(APLY_STA_DTM,0,8);
+		div_search.ed_hour.Value =  substr(APLY_STA_DTM,8,2);
+		div_search.ed_min.Value =  substr(APLY_STA_DTM,10,2);
+    }
+    
+    ds_ymd.SetColumn(0,"FLAG","Y"); //변경적용시작일 onchange 이벤트 적용
+     
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcSearch")
+	{
+		ds_prod_mgmt.AddColumn("chk");
+		
+		//변경상품 대상이 중지/신규에 대해서 모두 check 박스를 체크한다.
+		for( var nRow=0 ; nRow<ds_prod_mgmt.rowcount; nRow++ ){
+			//if(ds_prod_mgmt.GetColumn(nRow,"MOD_RSN") == "S"){
+				ds_prod_mgmt.SetColumn(nRow,"chk",1);
+			//}
+		}
+		
+		//grd_pol_uplst_OnHeadClick(grd_pol_uplst,0,,,);
+		grd_pol_uplst.SetCellProp("head",0,"text","1");
+		
+	}
+}
+
+/*******************************************************************************
+* 함수명 : df_search
+* 기능명 : 공통 조회 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function df_search(sButtonID)
+{
+	var sSvcID = "svcSearch";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_prod_mgmt=ds_prod_mgmt";
+	var sArg = "sktst.pol.FPO#getProdMgmtList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+* 함수명 : btn_confirm_OnClick
+* 기능명 : btn_confirm_OnClick 이벤트 발생시
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	if(APLY_STA_DTM > div_search.cal_mod_ymd.Value+div_search.ed_hour.Text+div_search.div_search.ed_min.Text){
+		alert(cf_getMessage(MSG_00131, "변경적용시작일;적용시작일자;적용종료일자"));
+		return;
+	}
+	gds_temp.Clear();
+	
+	ds_prod_mgmt.Filter("chk='1'");
+	
+	gds_temp.CopyF(ds_prod_mgmt);
+	
+	if(APLY_STA_DTM == div_search.cal_mod_ymd.Value+div_search.ed_hour.Text+div_search.div_search.ed_min.Text){
+		POP_FLAG = "N";
+	}else{
+		POP_FLAG = "Y"; 
+	}
+	
+	var sArg  = "UPLST_ID=" + quote(ds_condition.GetColumn(0,"UPLST_ID"));
+	    sArg += " POL_YM=" + quote(ds_condition.GetColumn(0,"POL_YM"));
+	    sArg += " POL_TS=" + quote(ds_condition.GetColumn(0,"POL_TS"));
+	    sArg += " APLY_STA_DTM=" + quote(div_search.cal_mod_ymd.Value+div_search.ed_hour.Text+div_search.div_search.ed_min.Text);
+	    sArg += " APLY_END_DTM=" + quote(APLY_END_DTM);
+	    sArg += " HST_FLAG=" + quote("Y");
+	    sArg += " CRUD_FLAG=" + quote(CRUD_FLAG);
+	    sArg += " POP_FLAG=" + quote(POP_FLAG);
+	    sArg += " RMKS=" + quote(RMKS);
+	    sArg += " DIS_CMP_FNSH_YN=" + quote(DIS_CMP_FNSH_YN);
+	
+	gf_openWindow("100000130", sArg);
+	
+	this.close();
+	
+}
+
+/*******************************************************************************
+* 함수명 : btn_confirm_OnClick
+* 기능명 : btn_confirm_OnClick 이벤트 발생시
+*******************************************************************************/
+function btn_cancel_OnClick(obj)
+{
+	var sArg  = "UPLST_ID=" + quote(ds_condition.GetColumn(0,"UPLST_ID"));
+	sArg += " POL_YM=" + quote(ds_condition.GetColumn(0,"POL_YM"));
+	sArg += " POL_TS=" + quote(ds_condition.GetColumn(0,"POL_TS"));
+	sArg += " APLY_STA_DTM=" + quote(APLY_STA_DTM);
+	sArg += " APLY_END_DTM=" + quote(APLY_END_DTM);
+	sArg += " HST_FLAG=" + quote("Y");
+	sArg += " CRUD_FLAG=" + quote(CRUD_FLAG);
+	sArg += " POP_FLAG=" + quote("N");
+	sArg += " RMKS=" + quote(RMKS);
+	sArg += " DIS_CMP_FNSH_YN=" + quote(DIS_CMP_FNSH_YN);
+	
+	gf_openWindow("100000130", sArg);
+	
+	this.close();
+}
+
+/*******************************************************************************
+* 함수명 : div_search_cal_mod_ymd_OnChanged
+* 기능명 : 변경일시 변경시
+*******************************************************************************/
+function div_search_cal_mod_ymd_OnChanged(obj,strOldText,strNewText)
+{
+	if(ds_ymd.GetColumn(0,"FLAG") == "Y"){
+		if(uf_isNull(strOldText) == false){ 
+		
+			var MOD_YMD = strNewText+div_search.ed_hour.Text+div_search.ed_min.Text;
+
+			if(MOD_YMD < APLY_STA_DTM || MOD_YMD > APLY_END_DTM){
+				
+				ds_ymd.SetColumn(0,"YMD",strOldText);
+				div_search.cal_mod_ymd.SetFocus();
+				alert(cf_getMessage(MSG_00131, "변경적용시작일;적용시작일자;적용종료일자"));
+				return false;
+				
+			}else{
+				ds_condition.SetColumn(0,"APLY_END_DTM",MOD_YMD);
+				df_search();
+			}
+		}
+	}
+	
+}
+
+/*******************************************************************************
+* 함수명 : div_search_ed_hour_OnChanged
+* 기능명 : 변경일시 시간 변경시
+*******************************************************************************/
+function div_search_ed_hour_OnChanged(obj,strText)
+{
+	if(ds_ymd.GetColumn(0,"FLAG") == "Y"){
+		if(length(strText) !=2) {
+			
+			strText = Lpad(strText,"0",2);
+			ds_ymd.SetColumn(0,"HH",strText);
+		}
+		
+		if(strText > 23){
+			ds_ymd.SetColumn(0,"HH","00");
+			div_search.ed_hour.SetFocus();
+			alert(cf_getMessage(MSG_00034, "23시"));
+			return false;
+		}
+		
+		var MOD_YMD = div_search.cal_mod_ymd.Value+strText+div_search.ed_min.Text;
+	
+		if(MOD_YMD < APLY_STA_DTM || MOD_YMD > APLY_END_DTM){
+			ds_ymd.SetColumn(0,"HH","00");
+			div_search.ed_hour.SetFocus();
+			alert(cf_getMessage(MSG_00131, "변경적용시작일;적용시작일자;적용종료일자"));
+			return false;
+			
+		}else{
+			ds_condition.SetColumn(0,"APLY_END_DTM",MOD_YMD);
+		}	
+	}
+}
+
+/*******************************************************************************
+* 함수명 : div_search_ed_min_OnChanged
+* 기능명 : 변경일시 분 변경시
+*******************************************************************************/
+function div_search_ed_min_OnChanged(obj,strText)
+{
+	if(ds_ymd.GetColumn(0,"FLAG") == "Y"){
+		if(length(strText) !=2) {
+			
+			strText = Lpad(strText,"0",2);
+			ds_ymd.SetColumn(0,"MM",strText);
+		}
+		
+		if(strText > 59){
+			ds_ymd.SetColumn(0,"MM","00");
+			div_search.ed_min.SetFocus();
+			alert(cf_getMessage(MSG_00034, "59분"));
+			return false;
+		}
+		
+		var MOD_YMD = div_search.cal_mod_ymd.Value+div_search.ed_hour.Text+strText;
+	
+		if(MOD_YMD < APLY_STA_DTM || MOD_YMD > APLY_END_DTM){
+			ds_ymd.SetColumn(0,"MM","00");
+			div_search.ed_min.SetFocus();
+			alert(cf_getMessage(MSG_00131, "변경적용시작일;적용시작일자;종료일자"));
+			return false;
+			
+		}else{
+			ds_condition.SetColumn(0,"APLY_END_DTM",MOD_YMD);
+		}	
+	}	
+}
+
+/*******************************************************************************
+* 함수명 : grd_pol_uplst_OnHeadClick
+* 기능명 : grid헤더 클릭시 Sort
+*******************************************************************************/
+function grd_pol_uplst_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+	if( nCell==0 )
+	{
+		f_grid_check_all(obj,ds_prod_mgmt);  //전부 체크
+	}
+}
+
+/*******************************************************************************
+* 함수명 : grd_pol_uplst_OnHeadClick
+* 기능명 : grid헤더 클릭시 Sort
+*******************************************************************************/
+function f_grid_check_all(grid,ds)
+{
+	var nCount = ds.rowcount;
+	if( grid.GetCellProp("head", 0, "Text") == "1" ) {
+		for ( var nRow=0; nRow < nCount; nRow++ ) {
+			if(ds_prod_mgmt.GetColumn(nRow,"MOD_RSN") == "C"){
+				ds.SetColumn(nRow,"chk","1");
+				grid.SetCellProp("head",0,"text","1");	
+			}
+						
+		}
+	} else {
+		for ( var nRow=0; nRow < nCount; nRow++ ){
+			if(ds_prod_mgmt.GetColumn(nRow,"MOD_RSN") == "C"){
+				ds.SetColumn(nRow,"chk","1");
+				grid.SetCellProp("head",0,"text","1");	
+			}
+		}
+	}
+}
+
+]]></Script>
+</Window>

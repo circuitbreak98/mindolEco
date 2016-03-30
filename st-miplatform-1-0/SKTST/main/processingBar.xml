@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="120" Id="processingBar" Left="8" OnLoadCompleted="processingBar_OnLoadCompleted" OnTimer="processingBar_OnTimer" PidAttrib="7" Title="처리중" Top="8" Ver="1.0" Width="350" WorkArea="true">
+		<Button Height="16" Id="btn_closeWindow" ImageID="btm_btn_close" Left="328" OnClick="btn_closeWindow_OnClick" TabOrder="2" ToolTipText="창닫기" Top="3" Visible="FALSE" Width="19"></Button>
+		<Image Height="120" Id="Image0" ImageID="IMG::ing.gif" TabOrder="1" Width="350"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : processingBar
+* 업무명      : 공통
+* 프로그램명  : 처리중 표시 바
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.03.11
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+function btn_closeWindow_OnClick(obj)
+{
+	this.Close();
+}
+
+function processingBar_OnTimer(obj,nEventID)
+{
+	
+	if(parent != null)
+	{
+		//trace("processingBar_OnTimer : " + parent.FV_BOOLEAN_PROGRESSBAR_SVC_ID);	
+		if(parent.FV_BOOLEAN_PROGRESSBAR_SVC_ID == null 
+		   || parent.FV_BOOLEAN_PROGRESSBAR_SVC_ID == "")
+		{
+			this.Close();
+		}
+	}
+}
+
+function processingBar_OnLoadCompleted(obj)
+{
+	SetTimer("Close", 1000);
+}
+]]></Script>
+</Window>

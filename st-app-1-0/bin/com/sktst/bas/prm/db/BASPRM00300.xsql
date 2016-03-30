@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASPRM00300">
+	<select id="getDeliverFee" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ BASPRM00300_getDeliverFee_조민지_심연정 */  
+        a.ser_num
+       ,a.deal_co_cd
+       ,(SELECT aa.deal_co_nm FROM tbas_deal_co_mgmt aa 
+       	 WHERE  aa.deal_co_cd = a.deal_co_cd AND aa.eff_end_dtm = '99991231235959') AS deal_co_nm	
+       ,a.del_yn
+       ,a.dlv_typ
+       ,a.unit
+       ,a.unit_prc
+       ,a.sta_dt
+       ,a.end_dt
+       ,NVL(a.rmks,'') AS rmks
+       ,a.ins_dtm
+       ,a.ins_user_id
+       ,a.mod_dtm
+       ,a.mod_user_id
+       ,a.upd_cnt
+       ,'X' AS max_flag
+FROM    tbas_dlv_fee_mgmt a
+WHERE   (a.deal_co_cd,a.ser_num) IN ( SELECT  b.deal_co_cd 
+                                              ,MAX(b.ser_num) AS ser_num
+                                      FROM    tbas_dlv_fee_mgmt  b
+                                      WHERE   b.del_yn = 'N'
+                                      GROUP BY b.deal_co_cd,b.dlv_typ,b.unit  )
+AND     a.sta_dt <= #st_dt#
+AND     a.end_dt >= #st_dt#                                                    
+ORDER BY a.deal_co_cd, a.dlv_typ,a.unit,  a.sta_dt]]>
+	</select>
+	<insert id="saveDeliverFee_addDeliverFee" parameterClass="map" ><![CDATA[INSERT INTO /*+ BASPRM00300_saveDeliverFee_addDeliverFee_조민지_심연정 */ tbas_dlv_fee_mgmt
+    (
+    deal_co_cd,
+    upd_cnt,
+    ser_num,
+    dlv_typ,
+    unit,
+    unit_prc,
+    sta_dt,
+    end_dt,
+    rmks,
+    del_yn,
+    ins_dtm,
+    ins_user_id,
+    mod_dtm,
+    mod_user_id    
+    )
+VALUES 
+    (
+    #DEAL_CO_CD#,
+    1,
+    (SELECT NVL(MAX(ser_num)+1,1) AS ser_num
+       FROM tbas_dlv_fee_mgmt),
+    #DLV_TYP#,
+    #UNIT#,
+    #UNIT_PRC#,
+    #STA_DT#,
+    #END_DT#,
+    #RMKS#,
+    'N',
+    to_char(sysdate, 'YYYYMMDDHH24MISS'),
+    #onlineContext.userInfo.loginId#,
+    to_char(sysdate, 'YYYYMMDDHH24MISS'),
+    #onlineContext.userInfo.loginId#
+    )]]>
+	</insert>
+	<select id="getDeliverFeeHst" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ BASPRM00300_getDeliverFeeHst_조민지_심연정 */  
+        a.ser_num,
+        b.max_flag,
+        a.deal_co_cd,
+        (SELECT aa.deal_co_nm FROM tbas_deal_co_mgmt aa 
+       	 WHERE  aa.deal_co_cd = a.deal_co_cd AND aa.eff_end_dtm = '99991231235959') AS deal_co_nm	,
+        a.del_yn,
+        a.dlv_typ,
+        a.unit,
+        a.unit_prc,
+        a.sta_dt,
+        a.end_dt,
+        NVL(a.rmks,'') AS rmks,
+        a.ins_dtm,
+        a.ins_user_id,
+        a.mod_dtm,
+        a.mod_user_id,
+        a.upd_cnt
+FROM    tbas_dlv_fee_mgmt a,
+       (SELECT  c.SER_NUM,
+                c.deal_co_cd,
+                'X' AS max_flag
+        FROM    tbas_dlv_fee_mgmt c
+        WHERE   (c.deal_co_cd ,c.ser_num) IN (SELECT    d.deal_co_cd ,                                             
+                                                        MAX(d.ser_num) AS ser_num
+                                              FROM      tbas_dlv_fee_mgmt  d
+                                              WHERE     d.del_yn = 'N'
+                                              GROUP BY  d.deal_co_cd, d.dlv_typ, d.unit  )) b
+WHERE a.ser_num = b.ser_num(+) 
+  AND a.deal_co_cd = b.deal_co_cd (+)
+  AND a.del_yn = 'N'
+ORDER BY a.deal_co_cd, a.dlv_typ,a.unit, a.ser_num]]>
+	</select>
+	<select id="saveDeliverFee_getDup" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ BASPRM00300_saveDeliverFee_saveDeliverFee_getDup_조민지_심연정 */         count(*) as cnt
+FROM    tbas_dlv_fee_mgmt 
+WHERE   deal_co_cd = #DEAL_CO_CD#
+AND		DLV_TYP = #DLV_TYP#
+AND		unit = #unit#
+AND		del_yn = 'N']]>
+	</select>
+	<update id="saveDeliverFee_updateEndDt" parameterClass="map" ><![CDATA[UPDATE   /*+ BASPRM00300_saveDeliverFee_updateEndDt_조민지_심연정 */  
+		tbas_dlv_fee_mgmt
+SET     end_dt = (SELECT    to_char(sysdate-1, 'YYYYMMDD') 
+                  FROM      tbas_dlv_fee_mgmt
+                  WHERE     ser_num = #SER_NUM#
+                  AND       deal_co_cd = #DEAL_CO_CD#
+                  AND		DLV_TYP=#DLV_TYP#
+                  AND		UNIT = #UNIT#)
+        ,mod_dtm =to_char(sysdate, 'YYYYMMDDHH24MISS')
+	    ,mod_user_id = #onlineContext.userInfo.loginId#
+WHERE   ser_num = #ser_num#
+AND		deal_co_cd = #DEAL_CO_CD#
+AND		DLV_TYP=#DLV_TYP#
+AND		UNIT = #UNIT#]]>
+	</update>
+	<insert id="saveDeliverFee_addStaDt" parameterClass="map" ><![CDATA[INSERT INTO /*+ BASPRM00300_saveDeliverFee_addStaDt_조민지_심연정 */ tbas_dlv_fee_mgmt
+    (
+    dlv_typ,
+    unit,
+    unit_prc,
+    sta_dt,
+    end_dt,
+    rmks,
+    del_yn,
+    ins_dtm,
+    ins_user_id,
+    mod_dtm,
+    mod_user_id,
+    deal_co_cd,
+    upd_cnt,
+    ser_num
+    )
+VALUES 
+    (
+    #DLV_TYP#,
+    #UNIT#,
+    #UNIT_PRC#,
+    TO_CHAR(SYSDATE,'YYYYMMDD'),
+    '99991231',
+    #RMKS#,
+    'N',
+    to_char(sysdate, 'YYYYMMDDHH24MISS'),
+    #onlineContext.userInfo.loginId#,
+    to_char(sysdate, 'YYYYMMDDHH24MISS'),
+    #onlineContext.userInfo.loginId#,
+    #DEAL_CO_CD#,
+    1,
+    (SELECT NVL(MAX(ser_num)+1,1) AS ser_num
+       FROM tbas_dlv_fee_mgmt)
+    )]]>
+	</insert>
+	<select id="getNewStaDt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ BASPRM00300_saveDeliverFee_getNewStaDt_조민지_심연정 */         count(*) as cnt
+FROM    tbas_dlv_fee_mgmt 
+WHERE   deal_co_cd = #DEAL_CO_CD#
+AND		DLV_TYP = #DLV_TYP#
+AND		unit = #unit#
+AND		sta_dt =TO_CHAR(SYSDATE,'YYYYMMDD')
+AND		del_yn = 'N']]>
+	</select>
+	<update id="updateDlv" parameterClass="map" ><![CDATA[UPDATE   /*+ BASPRM00300_saveDeliverFee_updateDlv_조민지_심연정 */  
+		tbas_dlv_fee_mgmt
+SET     UNIT_PRC = #UNIT_PRC#
+		,rmks=#rmks#
+		,mod_dtm =to_char(sysdate, 'YYYYMMDDHH24MISS')
+	    ,mod_user_id =    #onlineContext.userInfo.loginId#
+WHERE   ser_num = #ser_num#
+AND		deal_co_cd = #DEAL_CO_CD#
+AND		DLV_TYP=#DLV_TYP#
+AND		UNIT = #UNIT#]]>
+	</update>
+</sqlMap>

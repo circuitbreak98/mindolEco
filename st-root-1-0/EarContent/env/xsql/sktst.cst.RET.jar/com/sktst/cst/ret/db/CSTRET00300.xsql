@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="CSTRET00300">
+	<select id="getPrchsMgmtRetLst" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT '' AS CHK , 
+       FBAS_GET_PROD_NM(PROD_CD) AS PROD_NM , 
+       PRCH.SER_NUM , 
+       PRCH.CUST_NM , 
+       PRCH.TEL_NO , 
+       PRCH.ZIP_CD1 ||'-'|| PRCH.ZIP_CD2 AS ZIP_CD , 
+       PRCH.ADDR || ' ' ||PRCH.DTL_ADDR AS ADDR , 
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490',PRC_ST) AS PRC_NM , 
+       PRC_ST , 
+       PRCHS_MGMT_NO ,
+       RTN_DT ,
+       RTN_RMKS
+  FROM TCST_PRCHS_MGMT PRCH
+     , TBAS_DEAL_CO_MGMT DEAL
+ WHERE PRCH.PRC_ST IN ('24','27','28') 
+   AND PRCH.CON_PLC_CD = DEAL.DEAL_CO_CD
+/*   AND DEAL.EFF_END_DTM = '99991231235959' */
+   AND DEAL.EFF_STA_DTM <= PRCH.CON_DT||'235959'
+   AND DEAL.EFF_END_DTM >= PRCH.CON_DT||'235959'
+   AND PRCH.DEL_YN = 'N' 
+   AND PRCH.RTN_CL = '0'
+   AND PRCH.RTN_YN = 'Y'
+   AND PRCH.SKN_YN = 'N'
+]]><isEqual prepend="AND" property="DT_GB" compareValue="1"> 
+<![CDATA[   PRCH.CON_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]></isEqual> 
+<![CDATA[]]><isEqual prepend="AND" property="DT_GB" compareValue="2"> 
+<![CDATA[   PRCH.RTN_DT BETWEEN #FROM_DT# AND #TO_DT#    
+]]></isEqual>
+<![CDATA[]]><isNotEmpty prepend="AND" property="POS_AGENCY">   
+<![CDATA[   DEAL.POS_AGENCY = #POS_AGENCY#
+]]></isNotEmpty>	   
+<![CDATA[]]><isNotEmpty prepend="AND" property="CONPLC_CD">   
+<![CDATA[   PRCH.CON_PLC_CD = #CONPLC_CD#
+]]></isNotEmpty>	      
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[   PRCH.PROD_CD = #PROD_CD#
+]]></isNotEmpty>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="REMIT_YN">   
+<![CDATA[   NVL(PRCH.REMIT_YN,'N') = #REMIT_YN#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">
+<![CDATA[   PRCH.SER_NUM = #SER_NUM#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[   PRCH.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+	</select>
+	<update id="updatePrchsMgmtRtn" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET RTN_DT = #RTN_DT#
+     , RTN_RMKS = #RTN_RMKS#
+ WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#
+   ]]>
+	</update>
+	<update id="updatePrchsMgmtRtnCancel" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT
+   SET RTN_DT   = ''
+     , RTN_RMKS = ''
+     , RTN_YN   = 'N'
+ WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#
+   ]]>
+	</update>
+</sqlMap>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTSKN01200">
+	<select id="getClctNoList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT CON_MGMT_NO
+     , OUT_MGMT_NO
+     , OUT_DT
+     , CLCT_DT
+     , PROD_CD
+     , FBAS_GET_PROD_NM(PROD_CD) PROD_NM
+     , SER_NUM
+     , EQP_ST
+     , CON_AMT
+     , SKN_YN
+     , PRC_ST
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', COLOR_CD) COLOR_NM
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490',PRC_ST) PRC_ST_NM
+  FROM (
+		SELECT a.CON_MGMT_NO
+		     , OUT_MGMT_NO
+		     , b.OUT_DT
+		     , a.CLCT_DT
+		     , a.COLOR_CD
+		     , nvl(c.PROD_CD,a.PROD_CD) PROD_CD
+		     , nvl(c.SER_NUM,a.SER_NUM) SER_NUM
+		     , nvl(c.EQP_ST,a.EQP_ST) EQP_ST
+		     , a.CON_AMT
+		     , a.SKN_YN
+		     , nvl(c.PRC_ST,a.PRC_ST) PRC_ST
+		  FROM TCST_CONSULT_MGMT a
+		     , TCST_PRCHS_OUT_M b
+		     , TCST_PRCHS_MGMT c
+		 WHERE a.CON_MGMT_NO = OUT_MGMT_NO
+		   AND OUT_DT BETWEEN #CLCT_FROM_DT# AND #CLCT_TO_DT#
+		   AND a.CON_MGMT_NO = c.CON_MGMT_NO(+)
+		   AND a.DEL_YN = 'N'
+		   AND b.DEL_YN = 'N'
+		   AND c.DEL_YN = 'N'		   
+	   )
+ WHERE CLCT_DT IS NULL
+ ORDER BY OUT_DT desc]]>
+	</select>
+	<update id="updateClctYes" parameterClass="map" ><![CDATA[ UPDATE TCST_CONSULT_MGMT
+    SET CLCT_YN = 'Y'
+      , CLCT_DT = #CLCT_DT#
+      , SKN_YN = 'Y'
+      , SKN_EQP_ST = EQP_ST
+      , SKN_CON_AMT = CON_AMT
+      , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+      , MOD_USER_ID = #onlineContext.userInfo.loginId#      
+  WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+	<select id="getClctConsultNoList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[ SELECT a.CON_MGMT_NO
+      , a.CLCT_DT
+      , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', a.COLOR_CD) COLOR_NM
+      , nvl(b.PROD_CD,a.PROD_CD) PROD_CD
+      , FBAS_GET_PROD_NM(NVL(b.PROD_CD,a.PROD_CD)) PROD_NM
+      , nvl(b.SER_NUM,a.SER_NUM) SER_NUM
+      , nvl(b.EQP_ST,a.EQP_ST) EQP_ST
+      , a.CON_AMT
+      , a.SKN_YN
+      , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490',nvl(b.PRC_ST,a.PRC_ST)) PRC_ST_NM
+   FROM TCST_CONSULT_MGMT a
+      , TCST_PRCHS_MGMT b
+  WHERE a.CON_MGMT_NO = b.CON_MGMT_NO(+)
+    AND a.CON_MGMT_NO = #CON_MGMT_NO#
+    AND a.DEL_YN = 'N'      
+    AND b.DEL_YN = 'N']]>
+	</select>
+</sqlMap>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="500" Id="G_debug" Left="8" OnLoadCompleted="G_debug_OnLoadCompleted" PidAttrib="1" Title="DEBUG&#32;TOOL" Top="8" Ver="1.1" Width="800" WorkArea="TRUE">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="DS_DEBUG">
+				<Contents>
+					<colinfo Id="aastatus" Size="255" Type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="DS_DEL"></Dataset>
+			<Dataset DataSetType="Dataset" Id="DS_ORG">
+				<Contents>
+					<colinfo Id="aaaaa_st" Size="255" Type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="DS_FILTER"></Dataset>
+		</Datasets>
+		<Grid BindDataset="DS_DEBUG" BkColor2="default" BoldHead="true" Bottom="376" ColSelect="TRUE" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" Height="328" Id="grd_debug" InputPanel="FALSE" LineColor="default" OnEnterEdit="grd_debug_OnEnterEdit" Right="792" TabOrder="1" TabStop="true" Top="48" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="default" WheelScrollRow="1" Width="792"></Grid>
+		<Static BKColor="#f9c16b" Height="21" Id="Static1" TabOrder="2" Width="794"></Static>
+		<Grid BindDataset="DS_DEBUG" BkColor2="default" BoldHead="true" Bottom="497" ColSelect="TRUE" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" Height="57" Id="gd_sel_list" InputPanel="FALSE" LineColor="default" Right="794" TabOrder="3" TabStop="true" Top="440" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="default" WheelScrollRow="1" Width="794"></Grid>
+		<Static Height="15" Id="Static0" Left="12" TabOrder="4" Text="데이터&#32;DEBUG&#32;VER1.0" Top="9" Width="268"></Static>
+		<button Height="25" Id="btn_load" Left="600" OnClick="btn_load_OnClick" TabOrder="5" Text="xml로저장" Top="5" Width="64"></button>
+		<button Height="25" Id="btn_close" Left="736" OnClick="btn_close_OnClick" TabOrder="6" Text="닫기" Top="5" Width="51"></button>
+		<Grid BindDataset="ds_org" BkColor2="default" BoldHead="true" Bottom="372" ColSelect="TRUE" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" Height="276" Id="gd_org" InputPanel="FALSE" Left="600" LineColor="default" Right="784" TabOrder="7" TabStop="true" Top="96" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="FALSE" VLineColor="default" WheelScrollRow="1" Width="184"></Grid>
+		<Static BKColor="#fffde9" Height="13" Id="Static2" Left="185" TabOrder="8" Text="insert/update/normal" Top="32" Width="605"></Static>
+		<Static BKColor="#fffde9" Height="13" Id="Static3" Left="610" TabOrder="9" Text="ORG데이터셑(삭제된것만)" Top="32" Width="184"></Static>
+		<Static BKColor="#fffde9" Height="13" Id="Static4" TabOrder="10" Text="선택된&#32;데이터셑" Top="384" Width="794"></Static>
+		<button Height="25" Id="BTN_FILTER" Left="436" OnClick="BTN_FILTER_OnClick" TabOrder="11" Text="조회조건필터" Top="5" Width="83"></button>
+		<button Height="25" Id="BTN_EXCEL" Left="519" OnClick="BTN_EXCEL_OnClick" TabOrder="12" Text="엑셀로&#32;저장" Top="5" Width="83"></button>
+		<edit Border="Raised" Height="19" Id="ED_ds_name" Left="2" TabOrder="13" Top="28" Width="178"></edit>
+		<button Height="25" Id="btn_log" Left="664" OnClick="btn_log_OnClick" TabOrder="14" Text="로그로&#32;변환" Top="5" Width="72"></button>
+		<TextArea Height="22" Id="TextArea0" TabOrder="15" Text="노멀한&#32;데이터셑은&#32;업데이트&#32;인서트된내용만&#32;보여주며&#32;org컬럼에서&#32;삭제된&#32;컬럼을&#32;보여줍니다." Top="416" Width="719"></TextArea>
+		<File Bottom="445" Height="24" Id="File0" Left="721" Right="745" TabOrder="16" Top="421" Width="24"></File>
+		<FileDialog Bottom="480" Height="24" Id="FileDialog0" Left="725" Right="749" TabOrder="17" Top="456" Width="24"></FileDialog>
+	</Form>
+	<Script><![CDATA[var ds_obj;
+function G_debug_OnLoadCompleted(obj)
+{
+	ed_ds_name.Text = dsName;
+	ds_obj = object(dsName);	
+	
+	for(i=0;i<ds_obj.colcount(); i++) {
+		DS_debug.AddColumn(ds_obj.GetColid(i), "text", "255");
+	}
+
+	for(i=0;i<ds_obj.colcount(); i++) {
+		DS_org.AddColumn(ds_obj.GetColid(i), "text", "255");
+	}
+	
+	//textarea0.Value = 
+	var org_colid;
+	var org_dataValue;
+	for(i=0;i<ds_obj.rowcount(); i++ ) 
+	{
+		DS_debug.addrow();
+		DS_debug.SetColumn(i, "aastatus", ds_obj.GetRowType(i));
+		for(j=0;j<ds_obj.colcount(); j++) 
+		{
+			org_colid = ds_obj.GetColid(j);
+			org_dataValue = ds_obj.GetColumn(i, org_colid);
+			DS_debug.SetColumn(i, org_colid, org_dataValue );
+		}
+	}
+	
+	
+	//alert(ds_obj.GetOrgBuffCount());
+	for(i=0;i<ds_obj.GetOrgBuffCount(); i++ ) {
+		DS_org.addrow();
+		DS_org.SetColumn(i, "aastatus", ds_obj.GetOrgBuffType(i));
+		for(j=0;j<ds_obj.colcount(); j++) 
+		{
+			org_colid = ds_obj.GetColid(j);
+			org_dataValue = ds_obj.GetOrgColumn(i, org_colid);
+			//alert(org_colid + " :"  + org_dataValue);
+			DS_org.SetColumn(i, org_colid, org_dataValue );
+			//trace(DS_org.GetColumn(i, org_colid));
+		}
+	}
+	
+	//DS_ORG.Filter("1status=delete");
+	fn_grid_setting();
+	
+}
+
+function fn_grid_setting() 
+{
+	//example format
+	//trace(tmp_str);
+	grd_debug.contents = fn_grid_contents(ds_debug);
+	gd_sel_list.contents = fn_grid_contents(ds_debug);
+	gd_org.contents = fn_grid_contents(ds_org);
+	//trace(grd_debug.contents);
+}
+
+function fn_grid_contents(ds_obj) {
+	var tmp_str = "";
+			tmp_str = '<contents>\n';
+			/*column setting*/
+			tmp_str += fn_set_gd_contents(ds_obj, "columns");
+			/*head setting*/
+			tmp_str += fn_set_gd_contents(ds_obj, "head");
+			/*body setting*/
+			tmp_str += fn_set_gd_contents(ds_obj, "body");
+			tmp_str += '</contents>';
+			return tmp_str;
+}
+
+//type column, head, body
+function fn_set_gd_contents(ds_obj, type)
+{
+	var colcnt = ds_obj.ColCount();
+	var v_colid = "";
+	var coltmp_str = '';
+	
+	coltmp_str = '		<'+type+'>\n';
+
+	for(i=0;i < colcnt ;i++)  {
+		
+		var v_colid = ds_obj.GetColID(i);
+		var v_colnum = i +1;
+		if(type == "columns") {
+			if(i == 0) {
+				coltmp_str += '		<col width="30"/> \n';
+			}
+			coltmp_str += '		<col width="100"/> \n';
+		} else if ( type == "head") {
+			if(i == 0) {
+				coltmp_str +='				<cell col="'+i +'" bkcolor="#ede8e0" text="NO." color="#422709" display="text"/>\n';
+			}
+			coltmp_str +='				<cell col="'+ v_colnum+'" bkcolor="#ede8e0" text="'+v_colid +'" color="#422709" display="text"/>\n';
+		} else if (type =="body") {
+			if(i == 0) {
+				coltmp_str +='			<cell col="0" colid="" expr="currow+1" display="text"/>\n';
+			}
+			coltmp_str += '				<cell col="'+v_colnum+'" colid="'+v_colid+'" display="text"/>\n';
+		}
+		
+	}
+	coltmp_str += '		</'+type+'>\n';
+	//trace (coltmp_str);
+	return coltmp_str;
+}
+
+function fn_set_gd_orgcontents(ds_obj, type)
+{
+	var colcnt = ds_obj.ColCount();
+	var v_colid = "";
+	var coltmp_str = '';
+	
+	coltmp_str = '		<'+type+'>\n';
+
+	for(i=0;i < colcnt ;i++)  {
+		
+		var v_colid = ds_obj.GetColID(i);
+		var v_colnum = i +1;
+		if(type == "columns") {
+			if(i == 0) {
+				coltmp_str += '		<col width="30"/> \n';
+			}
+			coltmp_str += '		<col width="100"/> \n';
+		} else if ( type == "head") {
+			if(i == 0) {
+				coltmp_str +='				<cell col="'+i +'" bkcolor="#ede8e0" text="NO." color="#422709" display="text"/>\n';
+			}
+			coltmp_str +='				<cell col="'+ v_colnum+'" bkcolor="#ede8e0" text="'+v_colid +'" color="#422709" display="text"/>\n';
+		} else if (type =="body") {
+			if(i == 0) {
+				coltmp_str +='			<cell col="0" colid="" expr="currow+1" display="text"/>\n';
+			}
+			coltmp_str += '				<cell col="'+v_colnum+'" colid="'+v_colid+'" display="text"/>\n';
+		}
+		
+	}
+	coltmp_str += '		</'+type+'>\n';
+	//trace (coltmp_str);
+	return coltmp_str;
+}
+
+
+function btn_close_OnClick(obj)
+{
+	close();
+}
+
+function btn_load_OnClick(obj)
+{
+	//alert(G_datasetContents(ds_obj));
+	//ds_debug.de
+	var tmpStr = ds_debug.SaveXML();//G_datasetContents(ds_obj);
+	FileDialog0.Type = "SAVE";
+	if ( FileDialog0.open() )
+	{
+		File0.FileName = FileDialog0.FilePath + "\\" + FileDialog0.FileName;
+		//alert(Static1.Text);
+		if ( File0.Open("wt") )
+		{
+			File0.Write(tmpStr);
+			File0.Close();
+		}
+	}
+}
+
+function BTN_FILTER_OnClick(obj)
+{
+	//그리드 명 , 세팅된 데이터 셑명, 시작 컬럼, 끝컬럼.'' 				
+	var end_col = DS_DEBUG.ColCount();
+	//G_GRD_Filter("grd_debug","DS_FILTER" ,0, end_col);
+}
+
+function BTN_EXCEL_OnClick(obj)
+{
+	grd_debug.ExportExcel("DEBUG");
+}
+
+function grd_debug_OnEnterEdit(obj,nRow,nCell)
+{
+	grd_debug.SetCellProp("BODY", nCell, "edit", "normal");
+	//grd_debug.SetCellProp(
+}
+
+function btn_log_OnClick(obj)
+{
+	var tmpStr = ds_obj.SaveXML();
+	 //G_datasetContents(ds_obj);
+	//trace(tmpStr);
+
+}
+]]></Script>
+</Window>

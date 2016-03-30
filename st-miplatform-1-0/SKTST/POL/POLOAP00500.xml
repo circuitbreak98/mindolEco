@@ -1,0 +1,611 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="POLOAP00500" Left="8" OnLoadCompleted="POLOAP00500_OnLoadCompleted" PidAttrib="7" Title="추가판매수수료&#32;관리" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_apolAddCmmsMgmt">
+				<Contents>
+					<colinfo id="APOL_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="POL_YM" size="256" summ="default" type="STRING"/>
+					<colinfo id="POL_TS" size="256" summ="default" type="STRING"/>
+					<colinfo id="POL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_STA_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="APLY_END_DTM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_DVS" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_DVS_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="LAST_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_USER_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_DTM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="POL_YM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_DVS" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="HIST_YN" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_USER_ID" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_polYm">
+				<Contents>
+					<colinfo id="POL_YM" size="256" summ="default" type="STRING"/>
+					<record>
+						<POL_YM>2009</POL_YM>
+					</record>
+					<record>
+						<POL_YM>2008</POL_YM>
+					</record>
+					<record>
+						<POL_YM>2007</POL_YM>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_month">
+				<Contents>
+					<colinfo id="CODE" size="256" summ="default" type="STRING"/>
+					<record>
+						<CODE>01</CODE>
+					</record>
+					<record>
+						<CODE>02</CODE>
+					</record>
+					<record>
+						<CODE>03</CODE>
+					</record>
+					<record>
+						<CODE>04</CODE>
+					</record>
+					<record>
+						<CODE>05</CODE>
+					</record>
+					<record>
+						<CODE>06</CODE>
+					</record>
+					<record>
+						<CODE>07</CODE>
+					</record>
+					<record>
+						<CODE>08</CODE>
+					</record>
+					<record>
+						<CODE>09</CODE>
+					</record>
+					<record>
+						<CODE>10</CODE>
+					</record>
+					<record>
+						<CODE>11</CODE>
+					</record>
+					<record>
+						<CODE>12</CODE>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_org">
+				<Contents>
+					<colinfo id="COMM_CD_VAL" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_histYn">
+				<Contents>
+					<colinfo id="CODE" size="256" summ="default" type="STRING"/>
+					<colinfo id="NAME" size="256" summ="default" type="STRING"/>
+					<record>
+						<CODE>Y</CODE>
+						<NAME>예</NAME>
+					</record>
+					<record>
+						<CODE>N</CODE>
+						<NAME>아니오</NAME>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_modUser">
+				<Contents>
+					<colinfo id="MOD_USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="MOD_USER_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="64" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="질의내용" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static6" Left="14" Style="sty_lb_Search" TabOrder="1" Text="조회년월" Top="7" VAlign="Middle" Width="76"></Static>
+				<MaskEdit BindDataset="ds_condition" Border="Flat" Column="POL_YM" Height="20" Id="cal_polYm" Left="93" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="7" Type="STRING" Width="110"></MaskEdit>
+				<Button Cursor="HAND" Height="18" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="185" OnClick="btn_monthCalendar_OnClick" TabOrder="12" Text="Button3" Top="8" Width="17"></Button>
+				<Static Align="Right" Height="20" Id="Static0" Left="214" Style="sty_lb_Search" TabOrder="3" Text="작성조직" Top="7" VAlign="Middle" Width="76"></Static>
+				<Static Align="Right" Height="20" Id="Static2" Left="224" Style="sty_lb_Search" TabOrder="9" Text="적용대리점" Top="31" VAlign="Middle" Width="66"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCdNm" Left="294" LeftMargin="2" OnCharChanged="div_search_edt_agencyCdNm_OnCharChanged" OnKeyDown="div_search_edt_agencyCdNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Text="전체" Top="31" UserData="대리점" Width="113"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_orgNm" Left="294" LeftMargin="2" OnCharChanged="div_search_edt_orgNm_OnCharChanged" OnKeyDown="div_search_edt_orgNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Text="전체" Top="7" UserData="대리점" Width="113"></Edit>
+				<Button Height="21" Id="btn_org" ImageID="btn_i_detail" Left="406" OnClick="div_search_btn_org_OnClick" TabOrder="5" Text="Button0" Top="7" Width="19"></Button>
+				<Button Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="406" OnClick="div_search_btn_agency_OnClick" TabOrder="8" Text="Button0" Top="31" Width="19"></Button>
+				<Edit BindDataset="ds_condition" Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" ImeMode="none" Left="426" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="7" Top="31" UpperOnly="TRUE" Width="68"></Edit>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="MOD_DVS" Enable="FALSE" Height="20" Id="edt_orgId" Left="426" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="4" Top="7" UpperOnly="TRUE" Width="68"></Edit>
+				<Edit BindDataset="ds_condition" Border="Flat" Column="ORG_ID" Height="20" Id="edt_agencyCd" Left="496" MaxLength="10" Style="sty_ipt_form" TabOrder="11" Top="31" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_search" ImageID="btn_a_2" Left="726" LeftMargin="5" OnClick="df_search" Style="sty_btn_a" TabOrder="2" Text="조회" Top="7" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static1" Left="29" Style="sty_lb_Search" TabOrder="14" Text="이력포함" Top="31" VAlign="Middle" Width="60"></Static>
+				<Radio BindDataset="ds_condition" Border="None" CodeColumn="CODE" Column="HIST_YN" ColumnCount="2" DataColumn="NAME" Height="21" Id="rdo_histYn" INDEX="1" InnerDataset="ds_histYn" Left="93" LeftMargin="5" RightMargin="5" Style="sty_opt_search" TabOrder="15" Top="31" Value="Y" Width="111">
+					<Contents>
+						<Layout code="Y" height="20" left="5" text="예" top="0" width="30"/>
+						<Layout code="N" height="20" left="40" text="아니오" top="0" width="70"/>
+					</Contents>
+				</Radio>
+				<Static Align="Right" Height="20" Id="Static4" Left="490" Style="sty_lb_Search" TabOrder="17" Text="작성자" Top="7" VAlign="Middle" Width="68"></Static>
+				<Combo BindDataset="ds_condition" Border="Flat" CodeColumn="MOD_USER_ID" Column="MOD_USER_ID" DataColumn="MOD_USER_NM" Height="20" Id="cmb_modUser" InnerDataset="ds_modUser" Left="564" OnChanged="tab_gnrlPrMny_tab_prodInfo_div_process_cmb_mfact_OnChanged" Style="sty_ipt_form" TabOrder="16" Top="4" Width="150"></Combo>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_apolAddCmmsMgmt" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="548" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="464" Id="grd_bpolSaleMgmt" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_ipol_OnCellDblClick" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="84" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="40"/>
+						<col width="328"/>
+						<col width="40"/>
+						<col width="70"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="50"/>
+						<col width="95"/>
+						<col width="114"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="정책명칭"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="차수"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="적용년월"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="적용시작일시"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="적용종료일시"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="작성자"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="작성일시"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="비고"/>
+					</head>
+					<body>
+						<cell align="center" col="0" color='expr:Decode(LAST_YN,&#32;&quot;Y&quot;,&#32;&quot;#000000&quot;,&#32;&quot;N&quot;,&#32;&quot;User44&quot;)' display="text" expr="row+1"/>
+						<cell col="1" colid="POL_NM" color='expr:Decode(LAST_YN,&#32;&quot;Y&quot;,&#32;&quot;#000000&quot;,&#32;&quot;N&quot;,&#32;&quot;User44&quot;)' display="text"/>
+						<cell align="center" col="2" colid="POL_TS" color='expr:Decode(LAST_YN,&#32;&quot;Y&quot;,&#32;&quot;#000000&quot;,&#32;&quot;N&quot;,&#32;&quot;User44&quot;)' display="text" expr='POL_TS&#32;+&#32;&quot;차&quot;'/>
+						<cell align="center" col="3" colid="APLY_STA_DTM" color='expr:Decode(LAST_YN,&#32;&quot;Y&quot;,&#32;&quot;#000000&quot;,&#32;&quot;N&quot;,&#32;&quot;User44&quot;)' display="text" Mask="@@@@-@@"/>
+						<cell align="left" col="4" colid="APLY_STA_DTM" color='expr:Decode(LAST_YN,&#32;&quot;Y&quot;,&#32;&quot;#000000&quot;,&#32;&quot;N&quot;,&#32;&quot;User44&quot;)' display="text" Mask="@@@@-@@-@@&#32;@@:@@"/>
+						<cell align="left" col="5" colid="APLY_END_DTM" color='expr:Decode(LAST_YN,&#32;&quot;Y&quot;,&#32;&quot;#000000&quot;,&#32;&quot;N&quot;,&#32;&quot;User44&quot;)' display="text" Mask="@@@@-@@-@@&#32;@@:@@"/>
+						<cell align="left" col="6" colid="MOD_USER_NM" color='expr:Decode(LAST_YN,&#32;&quot;Y&quot;,&#32;&quot;#000000&quot;,&#32;&quot;N&quot;,&#32;&quot;User44&quot;)' display="text"/>
+						<cell align="left" col="7" colid="MOD_DTM" color='expr:Decode(LAST_YN,&#32;&quot;Y&quot;,&#32;&quot;#000000&quot;,&#32;&quot;N&quot;,&#32;&quot;User44&quot;)' display="text" Mask="@@@@-@@-@@&#32;@@:@@"/>
+						<cell col="8" colid="RMKS" color='expr:Decode(LAST_YN,&#32;&quot;Y&quot;,&#32;&quot;#000000&quot;,&#32;&quot;N&quot;,&#32;&quot;User44&quot;)' display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_insert" ImageID="btn_e_4" Left="10" LeftMargin="15" OnClick="btn_insert_OnClick" Style="sty_btn_e" TabOrder="3" Text="신규등록" Top="565" Width="85"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : POLOAP00500  
+* 업무명      : 온라인도매가격표정책관리
+* 프로그램명  : 추가판매수수료 관리
+--------------------------------------------------------------------------------
+* 작성자      : 장화수
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 1. 전 처리기
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+
+ 
+//==============================================================================
+// 2. 폼 변수 정의
+//==============================================================================
+var FV_ORG_ID;	//조직코드
+var FV_ORG_CL;  //조직구분
+
+
+
+//==============================================================================
+// 3. 폼 로드
+//==============================================================================
+/*******************************************************************************
+* 함수명 : POLOAP00500_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function POLOAP00500_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_bpolSaleMgmt);	// 그리드 정렬
+
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+    // 세션정보 취득.
+    FV_ORG_ID = gds_session.GetColumn(0,"orgId");
+    FV_ORG_CL = gds_session.GetColumn(0,"orgCl");	
+
+
+	if(ds_condition.GetRowCount() < 1)
+	{
+		ds_condition.AddRow();
+	}
+
+    ds_condition.setColumn(0, "ORG_ID", gds_session.GetColumn(0, "posAgencyId"));
+	uf_enableAgencyByAuth("div_search", "edt_agencyCdNm,edt_agencyCd,btn_agency");
+
+
+    http.Sync = true;
+	df_search();
+	
+	f_modUserSet();
+	div_search.cmb_modUser.index = 0;   //작성자
+	div_search.rdo_histYn.Value =  "Y";   //이력포함여부
+	
+	http.Sync = false;
+	
+	
+}
+
+
+/*******************************************************************************
+* 함수명 : df_reSet
+* 기능명 : 화면 초기화
+*******************************************************************************/
+function df_reSet(sArg)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+    // 세션정보 취득.
+    FV_ORG_ID = gds_session.GetColumn(0,"orgId");
+    FV_ORG_CL = gds_session.GetColumn(0,"orgCl");	
+
+
+    http.Sync = true;
+	df_search(sArg);
+	
+	f_modUserSet();
+	div_search.cmb_modUser.index = 0;   //작성자
+	div_search.rdo_histYn.Value =  "Y";   //이력포함여부
+	
+	http.Sync = false;
+}
+
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcSearch")
+	{
+		//f_lastYnSet();
+		//div_search.cmb_org.Index = 0;   
+		//trace(ds_apolAddCmmsMgmt.SaveXML());
+
+	}
+}
+
+
+/*******************************************************************************
+* 함수명 : f_modUserSet
+* 기능명 : 작성자 세팅
+*******************************************************************************/
+function f_modUserSet()
+{
+    ds_modUser.ClearData();
+	ds_modUser.AddRow();
+	ds_modUser.SetColumn(ds_modUser.lastrow,"MOD_USER_ID","");
+	ds_modUser.SetColumn(ds_modUser.lastrow,"MOD_USER_NM","전체");
+	var nExistRow = "";
+
+	for( var idx =0 ; idx<=ds_apolAddCmmsMgmt.RowCount()-1; idx++ ){
+	
+		nExistRow = ds_modUser.FindRow("MOD_USER_ID",ds_apolAddCmmsMgmt.GetColumn(idx,"MOD_USER_ID"));
+		if( nExistRow == -1 ){
+		//alert("새로 작성");
+			ds_modUser.AddRow();
+		    ds_modUser.SetColumn(ds_modUser.lastrow,"MOD_USER_ID",ds_apolAddCmmsMgmt.GetColumn(idx,"MOD_USER_ID"));
+		    ds_modUser.SetColumn(ds_modUser.lastrow,"MOD_USER_NM",ds_apolAddCmmsMgmt.GetColumn(idx,"MOD_USER_NM"));
+		}
+
+	}
+	//ds_modUser.Sort("MOD_USER_NM");
+
+}
+
+
+
+/*******************************************************************************
+* 함수명 : f_lastYnSet
+* 기능명 : 정책 리스트 중 최종 이력 유무를 세팅
+           (상세 페이지에서 최종 이력만 갱신, 삭제 가능함. 그외는 수정만 가능함)
+*******************************************************************************/
+function f_lastYnSet()
+{
+
+	var	iCnt = 1;
+	ds_org.clearData();
+	ds_org.addRow();
+	ds_org.setColumn(0, "COMM_CD_VAL", "");
+	ds_org.setColumn(0, "COMM_CD_VAL_NM", "전체");
+	for( var idx =0 ; idx<=ds_apolAddCmmsMgmt.RowCount(); idx++ ){
+		if(ds_apolAddCmmsMgmt.GetColumn(idx,"APOL_ID") != ds_apolAddCmmsMgmt.GetColumn(idx+1,"APOL_ID")){
+		    ds_apolAddCmmsMgmt.SetColumn(idx,"LAST_YN","Y");
+		} else {
+		    ds_apolAddCmmsMgmt.SetColumn(idx,"LAST_YN","N");
+		}
+		if(idx == ds_apolAddCmmsMgmt.RowCount()) {
+		    ds_apolAddCmmsMgmt.SetColumn(idx,"LAST_YN","Y");
+		}
+		if(idx < ds_apolAddCmmsMgmt.RowCount()){
+			if(ds_apolAddCmmsMgmt.GetColumn(idx,"MOD_DVS") != ds_apolAddCmmsMgmt.GetColumn(idx-1,"MOD_DVS")){
+				ds_org.addRow();
+				ds_org.setColumn(icnt, "COMM_CD_VAL", ds_apolAddCmmsMgmt.GetColumn(idx,"MOD_DVS"));
+				ds_org.setColumn(icnt, "COMM_CD_VAL_NM", ds_apolAddCmmsMgmt.GetColumn(idx,"MOD_DVS_NM"));
+				icnt++;
+			}
+		}
+
+	}
+	
+
+}
+
+
+
+
+//==============================================================================
+// 5. 공통 조회 함수
+//==============================================================================
+/*******************************************************************************
+* 함수명 : df_search
+* 기능명 : 공통 조회 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function df_search(sArg)
+{
+
+    if (uf_isNull(div_search.edt_orgNm.Text)== true) {
+        alert("작성조직을 선택하세요.");
+        div_search.edt_orgNm.Text = "전체";
+		return false;
+    }
+    if (uf_isNull(div_search.edt_agencyCdNm.Text)== true) {
+        alert("적용대리점을 선택하세요.");
+        div_search.edt_agencyCdNm.Text = "전체";
+		return false;
+    }
+
+
+	if (uf_isNull(sArg)== true) {
+		//var year = substr(TODAY(),0,4);
+		//div_search.cal_polYm.Value = substr(TODAY(),0,6);
+		//var month = substr(TODAY(),4,2);
+		//div_search.cmb_month.Value = month;
+
+		if(ds_condition.GetRowCount() < 1)
+		{
+			ds_condition.AddRow();
+		}
+		ds_condition.SetColumn(0,"POL_YM",substr(TODAY(),0,6));
+	} else if (sArg.id == "btn_search") {
+		ds_condition.SetColumn(0,"POL_YM",div_search.cal_polYm.Value);
+	} else {
+
+		// 리셋시.. 넘어온 파라메터를 데이타셋으로 세팅
+		cf_setArg("ds_condition", sArg);
+		//div_search.cal_polYm.Value = substr(ds_condition.GetColumn(0,"POL_YM"),0,6);
+		//div_search.cmb_year.Value = substr(ds_condition.GetColumn(0,"POL_YM"),0,4);
+		//div_search.cmb_month.Value = substr(ds_condition.GetColumn(0,"POL_YM"),4,2);
+		//alert(ds_condition.getColumn(0, "POL_TS"));
+	}
+	
+	if (uf_isNull(div_search.cal_polYm.Value)== true) {
+	    //적용년월을 선택하세요.
+		alert(cf_getMessage(MSG_00047, "적용년월을"));
+		div_search.cal_polYm.SetFocus();
+		return false;
+	}
+	
+	if (uf_isNull(gds_session.GetColumn(0, "posAgencyId"))== true) {
+		ds_condition.setColumn(0, "ORG_ID", div_search.edt_agencyCd.Text);
+	} else {
+	    ds_condition.setColumn(0, "ORG_ID", gds_session.GetColumn(0, "posAgencyId"));
+	}
+	
+	//trace(ds_condition.SaveXML());
+	var sSvcID = "svcSearch";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_apolAddCmmsMgmt=ds_apolAddCmmsMgmt";
+	var sArg = "sktst.pol.OAP#getAddSaleCmmsList";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	
+}
+
+
+//==============================================================================
+// 7. 공통 수정 함수
+//==============================================================================
+/*******************************************************************************
+* 함수명 : df_update
+* 기능명 : 공통 수정 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function df_update(sButtonID)
+{
+
+}
+
+//==============================================================================
+// 14. 닫기 함수
+//==============================================================================
+/*******************************************************************************
+* 함수명 : df_close
+* 기능명 : 공통 닫기 버튼 클릭
+* 파라미터
+1. sButtonID  : 버튼 아이디
+*******************************************************************************/
+function df_close(sButtonID)
+{
+	this.close();
+}
+
+
+
+/*-----------------------------------------------------------------------
+ * Desc   : 추가판매수수료 리스트 클릭시 이벤트 발생
+ * Auth   : 장화수 (2009.01.15) 
+ *------------------------------------------------------------------------*/
+function grd_ipol_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+
+	var sArg  = "APOL_ID="+quote(ds_apolAddCmmsMgmt.getColumn(nRow,"APOL_ID"));
+		sArg += " POL_YM=" + quote(ds_apolAddCmmsMgmt.getColumn(nRow,"POL_YM")); 
+		sArg += " POL_TS=" + quote(ds_apolAddCmmsMgmt.getColumn(nRow,"POL_TS")); 
+		sArg += " APLY_STA_DTM=" + quote(ds_apolAddCmmsMgmt.getColumn(nRow,"APLY_STA_DTM")); 
+		sArg += " APLY_END_DTM=" + quote(ds_apolAddCmmsMgmt.getColumn(nRow,"APLY_END_DTM")); 
+		sArg += " LAST_YN=" + quote(ds_apolAddCmmsMgmt.getColumn(nRow,"LAST_YN")); 
+	gf_OpenWindow( "100000249", sArg); 
+
+    //trace(gds_menu.FindRow("menuNum","100000135"));
+}
+
+/*******************************************************************************
+* 함수명 : btn_save_OnClick
+* 기능명 :  신규 등록
+*******************************************************************************/
+function btn_insert_OnClick(obj)
+{
+	if (uf_isNull(div_search.cal_polYm.Value)== true) {
+	    //적용년월을 선택하세요.
+		alert(cf_getMessage(MSG_00047, "적용년월을"));
+		div_search.cal_polYm.SetFocus();
+		return false;
+	}
+
+	var sArg  = " APOL_ID="+ quote("");
+		sArg += " POL_YM=" + quote(ds_condition.getColumn(0,"POL_YM"));
+		sArg += " POL_TS=" + quote("");
+		sArg += " APLY_STA_DTM=" + quote("");
+		sArg += " APLY_END_DTM=" + quote("");
+		sArg += " LAST_YN=" + quote("Y");
+	gf_OpenWindow( "100000249", sArg); 
+	
+}
+
+
+
+/*******************************************************************************
+* 함수명 : div_search_btn_org_OnClick
+* 기능명 :  대리점 찾기 팜업 버튼
+*******************************************************************************/
+function div_search_btn_agency_OnClick(obj)
+{
+
+	
+	uf_clearControls("div_search.edt_agencyCd,div_search.edt_agencyUkeyCd");		
+	
+	var sArg  = "org_id="+quote(FV_ORG_ID); 
+	    sArg += " org_cl="+quote(FV_ORG_CL); 
+	
+    if(div_search.edt_agencyCdNm.Text == "전체"){
+       div_search.edt_agencyCdNm = "";
+    }	
+	cf_callAgencyPop(sArg, div_search, "edt_agencyCdNm,edt_agencyCd,edt_agencyUkeyCd");
+	
+	
+	
+}
+
+/*******************************************************************************
+* 함수명 : div_search_edt_agencyCdNm_OnKeyDown
+* 기능명 :  대리점 명칭 입력후 엔터
+*******************************************************************************/
+function div_search_edt_agencyCdNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	uf_clearControls("div_search.edt_agencyCd,div_search.edt_agencyUkeyCd");
+	
+	if(nChar == 13)
+	{
+		var sArg  = "org_id="+quote(FV_ORG_ID); 
+			sArg += " org_cl="+quote(FV_ORG_CL); 
+			
+		cf_callAgencyPop(sArg, div_search, "edt_agencyCdNm,edt_agencyCd,edt_agencyUkeyCd");
+	}
+	
+}
+
+
+/*******************************************************************************
+* 함수명 : div_search_edt_agencyCdNm_OnCharChanged
+* 기능명 :  대리점 명칭 수정시 이벤트
+*******************************************************************************/
+function div_search_edt_agencyCdNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	if(strPreText != strPostText){
+		div_search.edt_agencyUkeyCd.value = "";
+		//div_search.edt_posAgencyNm.value = "";
+	}	
+	
+}
+
+/*******************************************************************************
+* 함수명 : div_search_btn_org_OnClick
+* 기능명 :  조직찾기 팜업 버튼
+*******************************************************************************/
+function div_search_btn_org_OnClick(obj)
+{
+		// 조직 트리 팝업 호출
+		cf_callFullOrgTree("div_search.edt_orgId", "div_search.edt_orgNm");
+	
+}
+
+
+
+
+/*******************************************************************************
+* 함수명 : div_search_edt_orgNm_OnCharChanged
+* 기능명 :  조직 명칭 수정시 이벤트
+*******************************************************************************/
+function div_search_edt_orgNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	if(strPreText != strPostText){
+		div_search.edt_orgId.value = "";
+		//div_search.edt_posAgencyNm.value = "";
+	}	
+	
+}
+
+
+
+/*******************************************************************************
+* 함수명 : div_search_edt_orgNm_OnKeyDown
+* 기능명 :  조직 명칭 입력후 엔터
+*******************************************************************************/
+function div_search_edt_orgNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	//uf_clearControls("div_search.edt_orgId");
+	
+	if(nChar == 13)
+	{
+		// 조직 트리 팝업 호출
+		cf_callFullOrgTree("div_search.edt_orgId", "div_search.edt_orgNm");
+	}
+	
+}
+
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_polYm);
+}
+
+]]></Script>
+</Window>

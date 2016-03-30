@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASPRM00900">
+	<select id="getChgrgUserWeeklyDeal" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /* BASPRM00900_getChgrgUserWeeklyDeal_영업사원별 판매점증감-김연석-김연석 */
+        b.ukey_agency_cd
+     ,  a.deal_co_nm
+     ,  b.sales_user
+     ,  fbas_get_user_nm(b.sales_user)   sale_user_nm
+     ,  sum(nvl(b.prev_stl_cnt, 0))      prev_stl_cnt
+     ,  sum(nvl(b.prev_stl_sale_cnt, 0)) prev_stl_sale_cnt
+     ,  sum(nvl(b.prev_tot_cnt, 0))      prev_tot_cnt
+     ,  sum(nvl(b.prev_tot_sale_cnt, 0)) prev_tot_sale_cnt
+     ,  0 CUR_STL_CNT,  0 CUR_STL_ADD_CNT,  0 CUR_STL_ADD_RATE
+     ,  0 CUR_TOT_CNT,  0 CUR_TOT_ADD_CNT,  0 CUR_TOT_ADD_RATE
+     ,  sum(nvl(b.fst_stl_cnt, 0))       fst_stl_cnt 
+     ,  sum(nvl(b.fst_stl_sale_cnt, 0))  fst_stl_sale_cnt 
+     ,  sum(nvl(b.fst_stl_sale_qty, 0))  fst_stl_sale_qty
+     ,  sum(nvl(b.fst_tot_cnt, 0))       fst_tot_cnt 
+     ,  sum(nvl(b.fst_tot_sale_cnt, 0))  fst_tot_sale_cnt 
+     ,  sum(nvl(b.fst_tot_sale_qty, 0))  fst_tot_sale_qty
+     ,  0 FST_STL_ADD_CNT,  0 FST_STL_ADD_RATE,  0 FST_STL_SALE_AVG
+     ,  0 FST_TOT_ADD_CNT,  0 FST_TOT_ADD_RATE,  0 FST_TOT_SALE_AVG
+     ,  sum(nvl(b.snd_stl_cnt, 0))       snd_stl_cnt 
+     ,  sum(nvl(b.snd_stl_sale_cnt, 0))  snd_stl_sale_cnt 
+     ,  sum(nvl(b.snd_stl_sale_qty, 0))  snd_stl_sale_qty 
+     ,  sum(nvl(b.snd_tot_cnt, 0))       snd_tot_cnt 
+     ,  sum(nvl(b.snd_tot_sale_cnt, 0))  snd_tot_sale_cnt 
+     ,  sum(nvl(b.snd_tot_sale_qty, 0))  snd_tot_sale_qty
+     ,  0 SND_STL_ADD_CNT,  0 SND_STL_ADD_RATE,  0 SND_STL_SALE_AVG
+     ,  0 SND_TOT_ADD_CNT,  0 SND_TOT_ADD_RATE,  0 SND_TOT_SALE_AVG
+     ,  sum(nvl(b.trd_stl_cnt, 0))       trd_stl_cnt 
+     ,  sum(nvl(b.trd_stl_sale_cnt, 0))  trd_stl_sale_cnt 
+     ,  sum(nvl(b.trd_stl_sale_qty, 0))  trd_stl_sale_qty 
+     ,  sum(nvl(b.trd_tot_cnt, 0))       trd_tot_cnt 
+     ,  sum(nvl(b.trd_tot_sale_cnt, 0))  trd_tot_sale_cnt 
+     ,  sum(nvl(b.trd_tot_sale_qty, 0))  trd_tot_sale_qty 
+     ,  0 TRD_STL_ADD_CNT,  0 TRD_STL_ADD_RATE,  0 TRD_STL_SALE_AVG
+     ,  0 TRD_TOT_ADD_CNT,  0 TRD_TOT_ADD_RATE,  0 TRD_TOT_SALE_AVG
+     ,  sum(nvl(b.fth_stl_cnt, 0))       fth_stl_cnt 
+     ,  sum(nvl(b.fth_stl_sale_cnt, 0))  fth_stl_sale_cnt 
+     ,  sum(nvl(b.fth_stl_sale_qty, 0))  fth_stl_sale_qty 
+     ,  sum(nvl(b.fth_tot_cnt, 0))       fth_tot_cnt 
+     ,  sum(nvl(b.fth_tot_sale_cnt, 0))  fth_tot_sale_cnt 
+     ,  sum(nvl(b.fth_tot_sale_qty, 0))  fth_tot_sale_qty 
+     ,  0 FTH_STL_ADD_CNT,  0 FTH_STL_ADD_RATE,  0 FTH_STL_SALE_AVG
+     ,  0 FTH_TOT_ADD_CNT,  0 FTH_TOT_ADD_RATE,  0 FTH_TOT_SALE_AVG
+     ,  sum(nvl(b.ffh_stl_cnt, 0))       ffh_stl_cnt 
+     ,  sum(nvl(b.ffh_stl_sale_cnt, 0))  ffh_stl_sale_cnt 
+     ,  sum(nvl(b.ffh_stl_sale_qty, 0))  ffh_stl_sale_qty 
+     ,  sum(nvl(b.ffh_tot_cnt, 0))       ffh_tot_cnt 
+     ,  sum(nvl(b.ffh_tot_sale_cnt, 0))  ffh_tot_sale_cnt 
+     ,  sum(nvl(b.ffh_tot_sale_qty, 0))  ffh_tot_sale_qty 
+     ,  0 FFH_STL_ADD_CNT,  0 FFH_STL_ADD_RATE,  0 FFH_STL_SALE_AVG
+     ,  0 FFH_TOT_ADD_CNT,  0 FFH_TOT_ADD_RATE,  0 FFH_TOT_SALE_AVG
+     ,  sum(nvl(b.sth_stl_cnt, 0))       sth_stl_cnt 
+     ,  sum(nvl(b.sth_stl_sale_cnt, 0))  sth_stl_sale_cnt 
+     ,  sum(nvl(b.sth_stl_sale_qty, 0))  sth_stl_sale_qty 
+     ,  sum(nvl(b.sth_tot_cnt, 0))       sth_tot_cnt 
+     ,  sum(nvl(b.sth_tot_sale_cnt, 0))  sth_tot_sale_cnt 
+     ,  sum(nvl(b.sth_tot_sale_qty, 0))  sth_tot_sale_qty 
+     ,  0 STH_STL_ADD_CNT,  0 STH_STL_ADD_RATE,  0 STH_STL_SALE_AVG
+     ,  0 STH_TOT_ADD_CNT,  0 STH_TOT_ADD_RATE,  0 STH_TOT_SALE_AVG
+  from  tbas_deal_co_mgmt     a
+  ,  (  select ukey_agency_cd
+             , sales_user
+             , stl_deal_cnt      prev_stl_cnt
+             , stl_sale_deal_cnt prev_stl_sale_cnt
+             , tot_deal_cnt      prev_tot_cnt
+             , tot_sale_deal_cnt prev_tot_sale_cnt
+             , 0                 fst_stl_cnt, 0                 fst_stl_sale_cnt, 0                 fst_stl_sale_qty
+             , 0                 fst_tot_cnt, 0                 fst_tot_sale_cnt, 0                 fst_tot_sale_qty
+             , 0                 snd_stl_cnt, 0                 snd_stl_sale_cnt, 0                 snd_stl_sale_qty
+             , 0                 snd_tot_cnt, 0                 snd_tot_sale_cnt, 0                 snd_tot_sale_qty
+             , 0                 trd_stl_cnt, 0                 trd_stl_sale_cnt, 0                 trd_stl_sale_qty
+             , 0                 trd_tot_cnt, 0                 trd_tot_sale_cnt, 0                 trd_tot_sale_qty
+             , 0                 fth_stl_cnt, 0                 fth_stl_sale_cnt, 0                 fth_stl_sale_qty
+             , 0                 fth_tot_cnt, 0                 fth_tot_sale_cnt, 0                 fth_tot_sale_qty
+             , 0                 ffh_stl_cnt, 0                 ffh_stl_sale_cnt, 0                 ffh_stl_sale_qty
+             , 0                 ffh_tot_cnt, 0                 ffh_tot_sale_cnt, 0                 ffh_tot_sale_qty
+             , 0                 sth_stl_cnt, 0                 sth_stl_sale_cnt, 0                 sth_stl_sale_qty
+             , 0                 sth_tot_cnt, 0                 sth_tot_sale_cnt, 0                 sth_tot_sale_qty
+          from tbas_weekly_deal
+         where deal_cl1   = 'A3'
+           and end_dt     = #FV_PREV_END#
+        union all
+        select ukey_agency_cd
+             , sales_user
+             , 0                 prev_stl_cnt, 0                 prev_stl_sale_cnt
+             , 0                 prev_tot_cnt, 0                 prev_tot_sale_cnt
+             , stl_deal_cnt      fst_stl_cnt, stl_sale_deal_cnt fst_stl_sale_cnt, stl_deal_sale_qty fst_stl_sale_qty
+             , tot_deal_cnt      fst_tot_cnt, tot_sale_deal_cnt fst_tot_sale_cnt, tot_deal_sale_qty fst_tot_sale_qty
+             , 0                 snd_stl_cnt, 0                 snd_stl_sale_cnt, 0                 snd_stl_sale_qty
+             , 0                 snd_tot_cnt, 0                 snd_tot_sale_cnt, 0                 snd_tot_sale_qty
+             , 0                 trd_stl_cnt, 0                 trd_stl_sale_cnt, 0                 trd_stl_sale_qty
+             , 0                 trd_tot_cnt, 0                 trd_tot_sale_cnt, 0                 trd_tot_sale_qty
+             , 0                 fth_stl_cnt, 0                 fth_stl_sale_cnt, 0                 fth_stl_sale_qty
+             , 0                 fth_tot_cnt, 0                 fth_tot_sale_cnt, 0                 fth_tot_sale_qty
+             , 0                 ffh_stl_cnt, 0                 ffh_stl_sale_cnt, 0                 ffh_stl_sale_qty
+             , 0                 ffh_tot_cnt, 0                 ffh_tot_sale_cnt, 0                 ffh_tot_sale_qty
+             , 0                 sth_stl_cnt, 0                 sth_stl_sale_cnt, 0                 sth_stl_sale_qty
+             , 0                 sth_tot_cnt, 0                 sth_tot_sale_cnt, 0                 sth_tot_sale_qty
+          from tbas_weekly_deal
+         where deal_cl1   = 'A3'
+           and end_dt     = #FV_1ST_END#
+        union all
+        select ukey_agency_cd
+             , sales_user
+             , 0                 prev_stl_cnt, 0                 prev_stl_sale_cnt
+             , 0                 prev_tot_cnt, 0                 prev_tot_sale_cnt
+             , 0                 fst_stl_cnt, 0                 fst_stl_sale_cnt, 0                 fst_stl_sale_qty
+             , 0                 fst_tot_cnt, 0                 fst_tot_sale_cnt, 0                 fst_tot_sale_qty
+             , stl_deal_cnt      snd_stl_cnt, stl_sale_deal_cnt snd_stl_sale_cnt, stl_deal_sale_qty snd_stl_sale_qty
+             , tot_deal_cnt      snd_tot_cnt, tot_sale_deal_cnt snd_tot_sale_cnt, tot_deal_sale_qty snd_tot_sale_qty
+             , 0                 trd_stl_cnt, 0                 trd_stl_sale_cnt, 0                 trd_stl_sale_qty
+             , 0                 trd_tot_cnt, 0                 trd_tot_sale_cnt, 0                 trd_tot_sale_qty
+             , 0                 fth_stl_cnt, 0                 fth_stl_sale_cnt, 0                 fth_stl_sale_qty
+             , 0                 fth_tot_cnt, 0                 fth_tot_sale_cnt, 0                 fth_tot_sale_qty
+             , 0                 ffh_stl_cnt, 0                 ffh_stl_sale_cnt, 0                 ffh_stl_sale_qty
+             , 0                 ffh_tot_cnt, 0                 ffh_tot_sale_cnt, 0                 ffh_tot_sale_qty
+             , 0                 sth_stl_cnt, 0                 sth_stl_sale_cnt, 0                 sth_stl_sale_qty
+             , 0                 sth_tot_cnt, 0                 sth_tot_sale_cnt, 0                 sth_tot_sale_qty
+          from tbas_weekly_deal
+         where deal_cl1   = 'A3'
+           and end_dt     = #FV_2ND_END#
+        union all
+        select ukey_agency_cd
+             , sales_user
+             , 0                 prev_stl_cnt, 0                 prev_stl_sale_cnt
+             , 0                 prev_tot_cnt, 0                 prev_tot_sale_cnt
+             , 0                 fst_stl_cnt, 0                 fst_stl_sale_cnt, 0                 fst_stl_sale_qty
+             , 0                 fst_tot_cnt, 0                 fst_tot_sale_cnt, 0                 fst_tot_sale_qty
+             , 0                 snd_stl_cnt, 0                 snd_stl_sale_cnt, 0                 snd_stl_sale_qty
+             , 0                 snd_tot_cnt, 0                 snd_tot_sale_cnt, 0                 snd_tot_sale_qty
+             , stl_deal_cnt      trd_stl_cnt, stl_sale_deal_cnt trd_stl_sale_cnt, stl_deal_sale_qty trd_stl_sale_qty
+             , tot_deal_cnt      trd_tot_cnt, tot_sale_deal_cnt trd_tot_sale_cnt, tot_deal_sale_qty trd_tot_sale_qty
+             , 0                 fth_stl_cnt, 0                 fth_stl_sale_cnt, 0                 fth_stl_sale_qty
+             , 0                 fth_tot_cnt, 0                 fth_tot_sale_cnt, 0                 fth_tot_sale_qty
+             , 0                 ffh_stl_cnt, 0                 ffh_stl_sale_cnt, 0                 ffh_stl_sale_qty
+             , 0                 ffh_tot_cnt, 0                 ffh_tot_sale_cnt, 0                 ffh_tot_sale_qty
+             , 0                 sth_stl_cnt, 0                 sth_stl_sale_cnt, 0                 sth_stl_sale_qty
+             , 0                 sth_tot_cnt, 0                 sth_tot_sale_cnt, 0                 sth_tot_sale_qty
+          from tbas_weekly_deal
+         where deal_cl1   = 'A3'
+           and end_dt     = #FV_3RD_END#
+        union all
+        select ukey_agency_cd
+             , sales_user
+             , 0                 prev_stl_cnt, 0                 prev_stl_sale_cnt
+             , 0                 prev_tot_cnt, 0                 prev_tot_sale_cnt
+             , 0                 fst_stl_cnt, 0                 fst_stl_sale_cnt, 0                 fst_stl_sale_qty
+             , 0                 fst_tot_cnt, 0                 fst_tot_sale_cnt, 0                 fst_tot_sale_qty
+             , 0                 snd_stl_cnt, 0                 snd_stl_sale_cnt, 0                 snd_stl_sale_qty
+             , 0                 snd_tot_cnt, 0                 snd_tot_sale_cnt, 0                 snd_tot_sale_qty
+             , 0                 trd_stl_cnt, 0                 trd_stl_sale_cnt, 0                 trd_stl_sale_qty
+             , 0                 trd_tot_cnt, 0                 trd_tot_sale_cnt, 0                 trd_tot_sale_qty
+             , stl_deal_cnt      fth_stl_cnt, stl_sale_deal_cnt fth_stl_sale_cnt, stl_deal_sale_qty fth_stl_sale_qty
+             , tot_deal_cnt      fth_tot_cnt, tot_sale_deal_cnt fth_tot_sale_cnt, tot_deal_sale_qty fth_tot_sale_qty
+             , 0                 ffh_stl_cnt, 0                 ffh_stl_sale_cnt, 0                 ffh_stl_sale_qty
+             , 0                 ffh_tot_cnt, 0                 ffh_tot_sale_cnt, 0                 ffh_tot_sale_qty
+             , 0                 sth_stl_cnt, 0                 sth_stl_sale_cnt, 0                 sth_stl_sale_qty
+             , 0                 sth_tot_cnt, 0                 sth_tot_sale_cnt, 0                 sth_tot_sale_qty
+          from tbas_weekly_deal
+         where deal_cl1   = 'A3'
+           and end_dt     = #FV_4TH_END#
+        union all
+        select ukey_agency_cd
+             , sales_user
+             , 0                 prev_stl_cnt, 0                 prev_stl_sale_cnt
+             , 0                 prev_tot_cnt, 0                 prev_tot_sale_cnt
+             , 0                 fst_stl_cnt, 0                 fst_stl_sale_cnt, 0                 fst_stl_sale_qty
+             , 0                 fst_tot_cnt, 0                 fst_tot_sale_cnt, 0                 fst_tot_sale_qty
+             , 0                 snd_stl_cnt, 0                 snd_stl_sale_cnt, 0                 snd_stl_sale_qty
+             , 0                 snd_tot_cnt, 0                 snd_tot_sale_cnt, 0                 snd_tot_sale_qty
+             , 0                 trd_stl_cnt, 0                 trd_stl_sale_cnt, 0                 trd_stl_sale_qty
+             , 0                 trd_tot_cnt, 0                 trd_tot_sale_cnt, 0                 trd_tot_sale_qty
+             , 0                 fth_stl_cnt, 0                 fth_stl_sale_cnt, 0                 fth_stl_sale_qty
+             , 0                 fth_tot_cnt, 0                 fth_tot_sale_cnt, 0                 fth_tot_sale_qty
+             , stl_deal_cnt      ffh_stl_cnt, stl_sale_deal_cnt ffh_stl_sale_cnt, stl_deal_sale_qty ffh_stl_sale_qty
+             , tot_deal_cnt      ffh_tot_cnt, tot_sale_deal_cnt ffh_tot_sale_cnt, tot_deal_sale_qty ffh_tot_sale_qty
+             , 0                 sth_stl_cnt, 0                 sth_stl_sale_cnt, 0                 sth_stl_sale_qty
+             , 0                 sth_tot_cnt, 0                 sth_tot_sale_cnt, 0                 sth_tot_sale_qty
+          from tbas_weekly_deal
+         where deal_cl1   = 'A3'
+           and end_dt     = #FV_5TH_END#
+        union all
+        select ukey_agency_cd
+             , sales_user
+             , 0                 prev_stl_cnt, 0                 prev_stl_sale_cnt
+             , 0                 prev_tot_cnt, 0                 prev_tot_sale_cnt
+             , 0                 fst_stl_cnt, 0                 fst_stl_sale_cnt, 0                 fst_stl_sale_qty
+             , 0                 fst_tot_cnt, 0                 fst_tot_sale_cnt, 0                 fst_tot_sale_qty
+             , 0                 snd_stl_cnt, 0                 snd_stl_sale_cnt, 0                 snd_stl_sale_qty
+             , 0                 snd_tot_cnt, 0                 snd_tot_sale_cnt, 0                 snd_tot_sale_qty
+             , 0                 trd_stl_cnt, 0                 trd_stl_sale_cnt, 0                 trd_stl_sale_qty
+             , 0                 trd_tot_cnt, 0                 trd_tot_sale_cnt, 0                 trd_tot_sale_qty
+             , 0                 fth_stl_cnt, 0                 fth_stl_sale_cnt, 0                 fth_stl_sale_qty
+             , 0                 fth_tot_cnt, 0                 fth_tot_sale_cnt, 0                 fth_tot_sale_qty
+             , 0                 ffh_stl_cnt, 0                 ffh_stl_sale_cnt, 0                 ffh_stl_sale_qty
+             , 0                 ffh_tot_cnt, 0                 ffh_tot_sale_cnt, 0                 ffh_tot_sale_qty
+             , stl_deal_cnt      sth_stl_cnt
+             , stl_sale_deal_cnt sth_stl_sale_cnt
+             , stl_deal_sale_qty sth_stl_sale_qty
+             , tot_deal_cnt      sth_tot_cnt
+             , tot_sale_deal_cnt sth_tot_sale_cnt
+             , tot_deal_sale_qty sth_tot_sale_qty
+          from tbas_weekly_deal
+         where deal_cl1   = 'A3'
+           and end_dt     = #FV_6TH_END#   ) b
+ where a.ukey_agency_cd   = b.ukey_agency_cd
+   and a.deal_co_cl1      = 'A1'
+]]><isNotEmpty prepend="AND" property="POS_AGENCY">
+<![CDATA[	   a.deal_co_cd       =  #POS_AGENCY#
+]]></isNotEmpty>
+<![CDATA[   and a.hseq_no          = (select max(hseq_no)
+                               from tbas_deal_co_mgmt
+                              where deal_co_cd = a.deal_co_cd)
+ group by b.ukey_agency_cd,  a.deal_co_nm,  b.sales_user
+ order by 2, 4]]>
+	</select>
+</sqlMap>

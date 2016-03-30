@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="Nexcore Build Batch Project" default="default" basedir="../">	
+
+	<target name="check.projects">		
+
+		<condition property="have.batch.project">
+			<available file="${WORKSPACE_HOME}" type="dir" />
+		</condition>
+		<fail message="ERROR : 필수 프로젝트 [ps-batch-1-0]를 체크아웃 한 후에 사용하시기 바랍니다 !" unless="have.batch.project" />
+
+	</target>
+        
+    <target name="default" depends="check.projects">
+        <property name="build.directory" value="${WORKSPACE_HOME}/build" />
+        <property name="common.directory" value="${WORKSPACE_HOME}/src/common" />
+        <property name="java.directory" value="${WORKSPACE_HOME}/src/java" />
+        <property name="lib.directory" value="${WORKSPACE_HOME}/lib" />
+    	
+       <!--	<property file="${java.directory}/batch.build.properties" />
+        	<property name="FILE_IN_HOME" value="on"/>
+           	<property name="FILE_OUT_HOME" value="on"/>
+           	<property name="LOG_HOME" value="on"/>
+       
+		<echo message="${FILE_IN_HOME}"/>
+        <echo message="${FILE_OUT_HOME}"/>
+        <echo message="${LOG_HOME}"/>
+        -->
+
+	    <property name="batch.common.file" value="st-batch-common.jar" />
+		<property name="batch.common.jar" value="${build.directory}/${batch.common.file}" />
+
+		<delete file="${batch.common.jar}" failonerror="false" />
+
+		<mkdir dir="${build.directory}" />
+
+		<javac srcdir="${common.directory}" destdir="${build.directory}" includes="**/*.java" excludes="**/*Test.java" encoding="utf-8" debug="true">
+			<classpath>
+				<pathelement path="${lib.directory}" />
+			    <fileset dir="${lib.directory}" includes="*.jar" />
+			    <fileset dir="${lib.directory}" includes="*.so" />
+			</classpath>
+		</javac>
+
+		<copy todir="${build.directory}" verbose="true" preservelastmodified="true">
+			<fileset dir="${common.directory}">
+				<exclude name="**/*.java" />
+                <exclude name="**/.svn/**" />
+				<include name="**/*.xsql" />
+				<include name="**/*.xml" />
+			</fileset>
+		</copy>	
+	    	    
+		<jar destfile="${batch.common.jar}" duplicate="add">
+			<fileset dir="${build.directory}">
+			</fileset>
+		</jar>
+
+		<copy todir="${BATCH_HOME}/lib" verbose="true" preservelastmodified="true">
+			<fileset dir="${build.directory}">
+				<include name="${batch.common.file}" />
+			</fileset>
+		</copy>
+        
+        <delete dir="${build.directory}" failonerror="false" />
+		<mkdir dir="${build.directory}" />
+        
+		<javac srcdir="${java.directory}" destdir="${build.directory}" includes="**/*.java" excludes="**/*Test.java" encoding="utf-8" debug="true">
+			<classpath>
+				<pathelement path="${lib.directory}" />
+			    <fileset dir="${lib.directory}" includes="*.jar" />
+			    <fileset dir="${lib.directory}" includes="*.so" />
+			</classpath>
+		</javac>
+        
+		<copy todir="${build.directory}" verbose="true" preservelastmodified="true">
+			<fileset dir="${java.directory}">
+				<exclude name="**/*.java" />
+                <exclude name="**/.svn/**" />
+				<include name="**/*.xml" />
+				<include name="**/*.xsql" />
+			    <include name="**/*.properties" />
+			</fileset>
+		</copy>	
+    	
+		<copy todir="${BATCH_HOME}/build" verbose="true" preservelastmodified="true">
+			<fileset dir="${build.directory}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+
+		<copy todir="${BATCH_HOME}" verbose="true" preservelastmodified="true">
+			<fileset dir="${WORKSPACE_HOME}">
+				<include name="run.xml" />
+			</fileset>
+		</copy>
+
+    </target>
+    
+</project>

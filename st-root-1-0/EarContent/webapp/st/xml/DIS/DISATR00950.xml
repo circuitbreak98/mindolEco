@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="390" Id="DISATR00950" Left="8" OnLoadCompleted="DISATR00950_OnLoadCompleted" PidAttrib="7" Title="개별확정" Top="8" Ver="1.0" Width="260" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_cond">
+				<Contents>
+					<colinfo id="in_mgmt_no" size="256" summ="default" type="STRING"/>
+					<colinfo id="out_mgmt_no" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd" size="256" summ="default" type="STRING"/>
+					<record>
+						<color_cd></color_cd>
+						<in_mgmt_no></in_mgmt_no>
+						<out_mgmt_no></out_mgmt_no>
+						<prod_cd></prod_cd>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_inFixList"></Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="129" LeftMargin="5" OnClick="btn_cancel_OnClick" Style="sty_btn_d" TabOrder="2" Text="취소" Top="358" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="65" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="1" Text="확인" Top="358" Width="60"></Button>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_inFixList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="348" CellMoving="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="340" Id="grd_inFixList" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnHeadClick="grd_inFixList_OnHeadClick" Right="248" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="8" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="240">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="0"/>
+						<col width="0"/>
+						<col width="32"/>
+						<col width="110"/>
+						<col width="0"/>
+						<col width="0"/>
+						<col width="0"/>
+						<col width="0"/>
+						<col width="0"/>
+						<col width="0"/>
+						<col width="17"/>
+						<col width="50"/>
+						<col width="0"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" colspan="2" display="text">
+							<cell col="0" display="checkbox"/>
+							<cell col="1" color="user35" display="text" text="삭제"/>
+						</cell>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="일련번호"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="제조사"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="출고수량"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="입고수량"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="입고예정일자"/>
+						<cell bkcolor="user34" col="10" color="user35" colspan="2" display="text">
+							<cell col="0" display="checkbox"/>
+							<cell col="1" color="user35" display="text" text="확정여부"/>
+						</cell>
+						<cell bkcolor="user34" col="12" color="user35" display="text" text="flag"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="del_ch_yn" colspan="2" display="checkbox" edit="checkbox"/>
+						<cell align="center" col="2" display="text" expr="currow+1"/>
+						<cell align="center" col="3" colid="ser_num" display="text"/>
+						<cell align="center" col="4" colid="mfact_nm" display="text"/>
+						<cell col="5" colid="prod_nm" display="text"/>
+						<cell col="6" colid="color_nm" display="text"/>
+						<cell align="center" col="7" colid="tot_out_qty" display="number"/>
+						<cell align="center" col="8" colid="tot_in_qty" display="number"/>
+						<cell align="center" col="9" colid="in_fix_dt" display="date"/>
+						<cell col="10" colid="in_fix_yn" colspan="2" display="checkbox" edit="checkbox"/>
+						<cell col="12" colid="save_flag" combotext="22" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : DISATR00950
+* 업무명      : 재고
+* 프로그램명  : 번호이동 - 개별확정 
+--------------------------------------------------------------------------------
+* 작성자      : 안희수 
+* 작성일      : 2011.11.03
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_global.js"
+#include "lib::lib_util.js"
+#include "lib::lib_DIS.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_IN_MGMT_NO;
+var FV_OUT_MGMT_NO;
+var FV_PROD_CD;
+var FV_COLOR_CD;
+var FV_STR_DT_FR;
+var FV_STR_DT_TO;
+var FV_IN_PLC_ID;
+var FV_ROW;
+
+var FV_STR_DS_M200;  // 마스터 데이터셋 ID
+var FV_OBJ_DS_M200;  // 마스터 데이터셋 객체
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function DISATR00950_OnLoadCompleted(obj)
+{
+	http.Sync = true;
+    f_getInFixList();
+    http.Sync = false;
+}
+
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	
+	switch(sSvcID)
+	{
+		case "svcInFix":
+
+			for( var z = 0 ; z < parent.ds_saveFixList_3.getRowCount() ; z++){
+			
+				var sCond = "ser_num==\"" + parent.ds_saveFixList_3.GetColumn(z, "ser_num")+"\"";
+				var nSR = ds_inFixList.SearchRow(sCond);
+		
+				if(nSR != -1){
+
+					if(parent.ds_saveFixList_3.GetColumn(z,"in_fix_yn")=="0"){
+						ds_inFixList.SetColumn(nSR,"in_fix_yn","0");
+					}else{
+						ds_inFixList.SetColumn(nSR,"in_fix_yn","1");
+					}
+					//parent.ds_saveFixList_3.SetColumn(nSR,"in_fix_yn",ds_inFixList.GetColumn(nRow,"in_fix_yn"));
+				}
+			}
+		
+			break;
+		case "svcSaveInFix":
+			//div_search.edt_serNum.Value = "";
+			//div_search.chk_addIn.Value = "0";
+			div_search.cmb_inFix.Value = "";
+			div_search_btn_search_OnClick();
+			break;
+		
+		default:
+			break;
+	}
+}
+
+
+
+/*******************************************************************************
+ * @description    : 입고 정보 조회
+*******************************************************************************/
+function f_getInFixList()
+{
+	FV_OBJ_DS_M200 = Object("parent." + FV_STR_DS_M200);
+
+	//var sDsNm = Iif(div_search.chk_addIn.Value=="Y", "ds_inFixSerList", "ds_inFixList");
+	var sDsNm = "ds_inFixList";
+	// 트랜잭션 설정
+	var sSvcID = "svcInFix";
+			
+	cf_setParam(ds_cond, "in_mgmt_no", FV_IN_MGMT_NO);
+	cf_setParam(ds_cond, "out_mgmt_no", FV_OUT_MGMT_NO);
+	cf_setParam(ds_cond, "prod_cd", FV_PROD_CD);
+	cf_setParam(ds_cond, "color_cd", FV_COLOR_CD);
+	cf_setParam(ds_cond, "str_dt_fr", FV_STR_DT_FR);
+	cf_setParam(ds_cond, "str_dt_to", FV_STR_DT_TO);
+	cf_setParam(ds_cond, "in_plc_id", FV_IN_PLC_ID);
+	
+//alert(ds_cond.SaveXML());	
+	var sInDs  = "ds_cond = ds_cond";
+	var sOutDs = "ds_inFixList = InFixList";
+	var sArg   = "sktst.dis.ATR#selectChkFixList";
+
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 확인- 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{	
+	var iInQty = 0;
+	
+	//if(ds_inFixList.GetUpdate()){
+	//alert("111111111");
+		for( var z = 0 ; z < ds_inFixList.getRowCount() ; z++){
+		
+			var sCond = "ser_num==\"" + ds_inFixList.GetColumn(z, "ser_num")+"\"";
+	
+			var nSR = parent.ds_saveFixList_3.SearchRow(sCond);
+	
+			if(nSR != -1){
+			
+				if(ds_inFixList.GetColumn(z,"in_fix_yn")=="0"){
+					parent.ds_saveFixList_3.SetColumn(nSR,"in_fix_yn","0");
+				}else{
+					parent.ds_saveFixList_3.SetColumn(nSR,"in_fix_yn","1");
+					iInQty++;
+				}
+				//parent.ds_saveFixList_3.SetColumn(nSR,"in_fix_yn",ds_inFixList.GetColumn(nRow,"in_fix_yn"));
+			}
+		}
+			
+		parent.ds_inFixList.setColumn(FV_ROW, "tot_in_qty", iInQty);
+	//}
+	
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 취소- 이벤트
+*******************************************************************************/
+function btn_cancel_OnClick(obj)
+{
+	this.Close();
+}
+
+
+/*******************************************************************************
+ * @description    : 그리드 헤더 클릭 이벤트
+*******************************************************************************/
+function grd_inFixList_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{
+
+	if(nCell == 9) 
+    {
+		if(grd_inFixList.GetSubCellProp("Head", 9, 0, "text") == "0"
+		   || grd_inFixList.GetSubCellProp("Head", 9, 0, "text") == "")
+		{
+		// 일괄 체크 
+			grd_inFixList.SetSubCellProp("Head", 9, 0, "text", "1");
+			
+			for(var i=0; i<ds_inFixList.rowcount; i++)
+			{
+				ds_inFixList.SetColumn(i, "in_fix_yn", "1");
+			}
+		}
+		else
+		{
+			// 전체 체크 해제
+			grd_inFixList.SetSubCellProp("Head", 9, 0, "text", "0");
+			
+			for(var i=0; i<ds_inFixList.rowcount; i++)
+			{
+				ds_inFixList.SetColumn(i, "in_fix_yn", "0");
+			}
+		}
+    }
+    else
+    {
+        cf_markGridSort(obj,nCell,nX,nY,nPivotIndex);
+    }
+}
+
+]]></Script>
+</Window>

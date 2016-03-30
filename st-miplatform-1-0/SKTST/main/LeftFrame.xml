@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form BKColor="white" Height="631" Id="btn_print" Left="8" OnLoadCompleted="form_OnLoadCompleted" OnSize="btn_print_OnSize" PidAttrib="7" Title="좌측" Top="8" Ver="1.0" Width="197" WorkArea="true">
+		<Image FillType="STRETCH" Height="960" Id="Image0" ImageID="left_bg" Left="1" TabOrder="2" Width="198"></Image>
+		<Image FillType="STRETCH" Height="48" Id="Image1" ImageID="left_menu_bg" Left="1" TabOrder="4" Width="197"></Image>
+		<Tab Border="Flat" BorderColor="#e5e5e5" Height="961" Id="Tab0" Left="5" MouseOverColor="default" OnChanged="Tab0_OnChanged" SelColor="default" TabOrder="3" Top="-1" Width="187">
+			<Contents>
+				<TabPage BorderColor="black" Height="926" Id="tab1" ImageID="left_menu_tab" Left="2" TabOrder="7" Top="33" Width="183">
+					<TreeView BindDataset="gds_leftMenu" Border="None" Color="#262626" Expand="FALSE" Font="돋움,9" Height="540" Id="tre_menu" ImageID="left_menu_tree" InnerImageCount="3" Left="9" LevelColumn="treeStep" OnClick="Tab0_tab1_tre_menu_OnClick" TabOrder="1" TEXTColumn="menuShotNm" Top="24" Width="169"></TreeView>
+					<Image FillType="STRETCH" Height="26" Id="Image0" ImageID="left_menu_btn_bg" Left="4" TabOrder="2" Top="-3" Width="187"></Image>
+				</TabPage>
+				<TabPage BorderColor="black" Height="926" Id="tab2" ImageID="left_mymenu_tab" Left="2" TabOrder="7" Top="33" Width="183">
+					<Image Height="26" Id="Image0" ImageID="left_menu_btn_bg" TabOrder="1" Top="-3" Width="187"></Image>
+					<List Border="None" CodeColumn="menu_num" DataColumn="menu_nm" Height="565" Id="lst_selectedTarget" InnerDataset="gds_myMenu" Left="9" MultiSelect="1" OnClick="Tab0_tab2_lst_selectedTarget_OnClick" Style="sty_ipt_form" TabOrder="2" Top="24" UserData="공지대상" Width="150"></List>
+				</TabPage>
+			</Contents>
+		</Tab>
+		<Button Align="Right" Cursor="HAND" Height="14" Id="btn_add" ImageID="left_menu_btn_edit" Left="151" OnClick="Tab0_tab1_btn_add_OnClick" TabOrder="5" Text="Button0" ToolTipText="마이메뉴&#32;추가" Top="34" Width="31"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : LeftFrame
+* 업무명      : 프레임
+* 프로그램명  : 좌측 
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::FormResize.js"
+ 
+//==============================================================================
+// 2. 폼 변수 정의
+//==============================================================================
+var nWidth=1024;	//폼너비
+var nHeight=768;  //폼높이
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+    //Alert(GetDeviceInfo("CXScreen")); //화면의 가로크기
+    //Alert(GetDeviceInfo("CYScreen")); //화면의 세로크기
+
+	Tab0.tab1.tre_menu.Width = 197;
+    http.Sync = true;
+	Tab0.tab1.tre_menu.height = GetDeviceInfo("CYScreen")-223;
+	Gfn_ResizeInit(197,nHeight); //임시 수정
+	//Gfn_ResizeInit(nWidth,nHeight);
+	gds_menu.row = 0;
+	http.Sync = false;
+}
+
+
+/*******************************************************************************
+ * @description    : 메뉴 클릭 -  이벤트
+*******************************************************************************/
+function Tab0_tab1_tre_menu_OnClick(obj,nOldRow,nNewRow)
+{
+	var oTreDs = object(obj.BindDataset);
+
+	if(obj.IsLeaf(nNewRow))
+	{	
+		if(oTreDs.GetColumn(nNewRow, "menuNum") == "100000029"){
+			docBottom.edt_tmp.value = "";
+		}
+		
+		gf_OpenMenu(oTreDs.GetColumn(nNewRow, "menuNum"), oTreDs);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 왼쪽 메뉴 보이기 / 숨김
+ * @param bHide    : true , false
+*******************************************************************************/
+function f_showLeftMenu(bHide)
+{
+	this.visible = bHide;
+	var oBtn = docTop.btn_hide;
+	if(oBtn.ImageID == "btn_gl_hide")
+	{
+		oBtn.ImageID = "btn_gl_show";
+	}
+	else
+	{
+		oBtn.ImageID = "btn_gl_hide";
+	}	
+}
+
+/*******************************************************************************
+ * @description    : 마이 메뉴 추가
+*******************************************************************************/
+function Tab0_tab1_btn_add_OnClick(obj)
+{
+	var sArg = "";
+	var nX = GetDeviceInfo("CXScreen");
+	var nY = GetDeviceInfo("CYScreen");
+	var nLeft = nX/4;
+	//var nTop = nY/2;
+	var sResult = dialog("main::myMenu.xml", sArg, -1, -1, "OpenStyle=Max CloseFlag=false", nLeft);
+
+	/*
+	//return;
+	//Tab0.tab1.tre_menu.Expand = true;
+	return;
+	var nRow = object(Tab0.tab1.tre_menu.BindDataset).currow;
+	if(Tab0.tab1.tre_menu.IsLeaf(nRow))
+	{
+		var sMenuName = gds_menu.GetColumn(nRow, "menuShotNm");
+		if(confirm(cf_getMessage(MSG_00994, sMenuName)) == true)
+		{
+			// 파라메터 설정
+			cf_setParam(ds_input, "id", Edit5.Text); 
+			cf_setParam(ds_input, "name", Edit6.Text); 
+			cf_setParam(ds_input, "memo", Edit7.Text); 
+			
+			// 트랜잭션 설정
+			var sSvcID = "svcInsertMenu";
+			var sInDs = "nc_input_fieldDs=ds_input";
+			var sOutDs = "";
+			var sArg = "framework.demo.Hello#insertHello";
+			
+			// 공통 트랜잭션 호출
+			cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+		}
+	}
+	else
+	{
+		alert(MSG_00995);
+		return;
+	}
+	*/
+}
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcInsertMenu")
+	{
+		//trace(ds_single.SaveXML());
+	}
+	
+	if(sSvcID == "svcList")
+	{
+		//trace("aaa");
+	}
+}
+
+/*******************************************************************************
+ * @description    : 마이 메뉴 취득 - 이벤트
+*******************************************************************************/
+function Tab0_OnChanged(obj,nOldIndex,nNewindex)
+{
+	if(gds_myMenu.GetRowCount() < 1)
+	{
+		var sSvcID = "svcList";
+		var sInDs = "";
+		var sOutDs = "gds_myMenu=output";		
+		var sArg = "sktst.adm.MNU#getMyMenu";
+	
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 마이 메뉴 선택 - 이벤트
+*******************************************************************************/
+function Tab0_tab2_lst_selectedTarget_OnClick(obj)
+{
+	gf_openMenu(gds_myMenu.GetColumn(obj.index, "menu_num"));
+}
+
+function btn_print_OnSize(obj,nCx,nCy,nState)
+{
+	//trace("nCx==" + nCx + " ,nCy==" + nCy );
+    if(nCx < 197) {
+       nCx = 197;
+    }
+	nWidth = nCx;
+	nHeight = nCy;
+	
+	// Tab0.tab1.tre_menu.Width = nCx-23;
+	// Tab0.tab1.tre_menu.height = nCy-223;
+	
+	//window.width = nCx;
+    //window.height = nCy;
+
+    //ResizeScroll();
+	//Gfn_ResizeInit(nCx,nCy);
+}
+]]></Script>
+</Window>

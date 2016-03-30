@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="ACCBOS00100" Left="8" OnLoadCompleted="ACCBOS00100_OnLoadCompleted" PidAttrib="7" Title="채권관리&#32;현황" Top="8" Ver="1.0" Width="1512" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="ACC_MTH" size="256" summ="default" type="STRING"/>
+					<colinfo id="ORG_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CL" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_dealCoCl"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="DEAL_CL_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CO_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRE_CHAG_DPST_ACC_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRE_ETC_DPST_ACC_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TOT_CHAG_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TOT_ETC_DPST_ACC_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRE_SKT_CHAG_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRE_SKT_PRP_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRE_CASH_SALE_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SKT_CHAG_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SKT_PRP_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_SALE_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TOT_SKT_CHAG_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TOT_SKT_PRP_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TOT_CASH_SALE_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DPST_SKT_CHAG_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DPST_SKT_PRP_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DPST_CASH_SALE_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHAG_DPST_ACC_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="ETC_DPST_ACC_BAMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SETOFF_SKT_CHAG_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SETOFF_SKT_PRP_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SETOFF_CASH_SALE_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SKT_CHAG_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SKT_PRP_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CASH_SALE_AMT" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="1004">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static0" Left="4" Style="sty_lb_Search" TabOrder="1" Text="조회월" Top="7" VAlign="Middle" Width="68"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="919" LeftMargin="5" OnClick="btn_search_OnClick" Style="sty_btn_a" TabOrder="2" Text="조회" Top="7" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static7" Left="461" Style="sty_lb_Search" TabOrder="4" Text="거래처구분" Top="7" VAlign="Middle" Width="76"></Static>
+				<Combo Border="Flat" CodeColumn="COMM_CD_VAL" DataColumn="COMM_CD_VAL_NM" Height="20" Id="cmb_dealCoCl" Left="540" Style="sty_ipt_form" TabOrder="3" Top="6" Width="97"></Combo>
+				<Static Align="Right" Height="20" Id="Static1" Left="173" Style="sty_lb_Search" TabOrder="5" Text="대리점" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyNm" Left="237" LeftMargin="2" OnCharChanged="div_search_edt_agencyNm_OnCharChanged" OnKeyDown="div_search_edt_agencyNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="7" Width="88"></Edit>
+				<Button Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="324" OnClick="btn_agency_OnClick" TabOrder="7" Text="Button0" Top="7" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="343" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Width="103"></Edit>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="19" TabOrder="9" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="179" TabOrder="10" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_dealCd" Left="807" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="7" Width="103"></Edit>
+				<Button Height="21" Id="btn_dealCo" ImageID="btn_i_detail" Left="788" OnClick="div_search_btn_dealCo_OnClick" TabOrder="13" Text="Button0" Top="7" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_dealNm" Left="701" LeftMargin="2" OnCharChanged="div_search_edt_dealNm_OnCharChanged" OnKeyDown="div_search_edt_dealNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="14" Top="7" Width="88"></Edit>
+				<Static Align="Right" Height="20" Id="Static2" Left="637" Style="sty_lb_Search" TabOrder="11" Text="정산처" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCd" Left="449" MaxLength="10" Style="sty_ipt_form" TabOrder="15" TabStop="FALSE" Top="7" UpperOnly="TRUE" Visible="FALSE" Width="7"></Edit>
+				<MaskEdit Border="Flat" Height="20" Id="cal_acc_mth" Left="76" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="16" Top="7" Type="STRING" Width="77"></MaskEdit>
+				<Button Cursor="HAND" Height="22" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="135" OnClick="btn_monthCalendar_OnClick" TabOrder="17" TabStop="FALSE" Text="Button3" Top="7" Width="17"></Button>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="채권관리&#32;현황" Top="60" Width="192"></Image>
+		<Button Cursor="HAND" Height="21" Id="Button56" ImageID="btn_i_exceldown_w" Left="995" OnClick="btn_excel_OnClick" TabOrder="3" Text="Button1" ToolTipText="Excel&#32;Download" Top="60" Width="19"></Button>
+		<Grid BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="576" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="489" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" Right="1014" RowHeight="21" Style="sty_Grid" TabOrder="4" TabStop="true" Top="87" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col fix="left" width="35"/>
+						<col fix="left" width="95"/>
+						<col fix="left" width="120"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" rowspan="2" text="번호" wordwrap="word"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" rowspan="2" text="거래처구분" wordwrap="word"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" rowspan="2" text="입금처"/>
+						<cell bkcolor="user34" col="3" color="user35" colspan="2" display="text" text="이월&#32;입금정산&#32;잔액"/>
+						<cell bkcolor="user34" col="5" color="user35" colspan="2" display="text" text="당월&#32;입금금액"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" row="1" text="요금계좌"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" row="1" text="기타계좌"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" row="1" text="요금계좌"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" row="1" text="기타계좌"/>
+						<cell bkcolor="user34" col="7" color="user35" colspan="2" display="text" text="입금합계"/>
+						<cell bkcolor="user34" col="9" color="user35" colspan="3" display="text" text="이월채권"/>
+						<cell bkcolor="user34" col="12" color="user35" colspan="3" display="text" text="당월채권"/>
+						<cell bkcolor="user34" col="15" color="user35" colspan="3" display="text" text="채권합계"/>
+						<cell bkcolor="user34" col="18" color="user35" colspan="3" display="text" text="당월&#32;입금정산&#32;금액"/>
+						<cell bkcolor="user34" col="21" color="user35" colspan="2" display="text" text="당월&#32;입금정산잔액"/>
+						<cell bkcolor="user34" col="23" color="user35" colspan="3" display="text" text="당월&#32;수수료&#32;상계"/>
+						<cell bkcolor="user34" col="26" color="user35" colspan="3" display="text" text="당월&#32;채권잔액"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" row="1" text="요금계좌"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" row="1" text="기타계좌"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" row="1" text="SKT요금"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" row="1" text="SKT예수금"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" row="1" text="현금매출"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" row="1" text="SKT요금"/>
+						<cell bkcolor="user34" col="13" color="user35" display="text" row="1" text="SKT예수금"/>
+						<cell bkcolor="user34" col="14" color="user35" display="text" row="1" text="현금매출"/>
+						<cell bkcolor="user34" col="15" color="user35" display="text" row="1" text="SKT요금"/>
+						<cell bkcolor="user34" col="16" color="user35" display="text" row="1" text="SKT예수금"/>
+						<cell bkcolor="user34" col="17" color="user35" display="text" row="1" text="현금매출"/>
+						<cell bkcolor="user34" col="18" color="user35" display="text" row="1" text="SKT요금"/>
+						<cell bkcolor="user34" col="19" color="user35" display="text" row="1" text="SKT예수금"/>
+						<cell bkcolor="user34" col="20" color="user35" display="text" row="1" text="현금매출"/>
+						<cell bkcolor="user34" col="21" color="user35" display="text" row="1" text="요금계좌"/>
+						<cell bkcolor="user34" col="22" color="user35" display="text" row="1" text="기타계좌"/>
+						<cell bkcolor="user34" col="23" color="user35" display="text" row="1" text="SKT요금"/>
+						<cell bkcolor="user34" col="24" color="user35" display="text" row="1" text="SKT예수금"/>
+						<cell bkcolor="user34" col="25" color="user35" display="text" row="1" text="현금매출"/>
+						<cell bkcolor="user34" col="26" color="user35" display="text" row="1" text="SKT요금"/>
+						<cell bkcolor="user34" col="27" color="user35" display="text" row="1" text="SKT예수금"/>
+						<cell bkcolor="user34" col="28" color="user35" display="text" row="1" text="현금매출"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell align="left" col="1" colid="DEAL_CL_NM" display="text"/>
+						<cell align="left" col="2" colid="DEAL_CO_NM" display="text"/>
+						<cell align="right" col="3" colid="PRE_CHAG_DPST_ACC_BAMT" display="number"/>
+						<cell align="right" col="4" colid="PRE_ETC_DPST_ACC_BAMT" display="number"/>
+						<cell align="right" col="5" colid="CHAG_DPST_ACC_AMT" display="number"/>
+						<cell align="right" col="6" colid="ETC_DPST_ACC_AMT" display="number"/>
+						<cell align="right" col="7" colid="TOT_CHAG_DPST_ACC_AMT" display="number"/>
+						<cell align="right" col="8" colid="TOT_ETC_DPST_ACC_AMT" display="number"/>
+						<cell align="right" col="9" colid="PRE_SKT_CHAG_AMT" display="number"/>
+						<cell align="right" col="10" colid="PRE_SKT_PRP_AMT" display="number"/>
+						<cell align="right" col="11" colid="PRE_CASH_SALE_AMT" display="number"/>
+						<cell align="right" col="12" colid="SKT_CHAG_BAMT" display="number"/>
+						<cell align="right" col="13" colid="SKT_PRP_BAMT" display="number"/>
+						<cell align="right" col="14" colid="CASH_SALE_BAMT" display="number"/>
+						<cell align="right" col="15" colid="TOT_SKT_CHAG_BAMT" display="number"/>
+						<cell align="right" col="16" colid="TOT_SKT_PRP_BAMT" display="number"/>
+						<cell align="right" col="17" colid="TOT_CASH_SALE_BAMT" display="number"/>
+						<cell align="right" col="18" colid="DPST_SKT_CHAG_AMT" display="number"/>
+						<cell align="right" col="19" colid="DPST_SKT_PRP_AMT" display="number"/>
+						<cell align="right" col="20" colid="DPST_CASH_SALE_AMT" display="number"/>
+						<cell align="right" col="21" colid="CHAG_DPST_ACC_BAMT" display="number"/>
+						<cell align="right" col="22" colid="ETC_DPST_ACC_BAMT" display="number"/>
+						<cell align="right" col="23" colid="SETOFF_SKT_CHAG_AMT" display="number"/>
+						<cell align="right" col="24" colid="SETOFF_SKT_PRP_AMT" display="number"/>
+						<cell align="right" col="25" colid="SETOFF_CASH_SALE_AMT" display="number"/>
+						<cell align="right" col="26" colid="SKT_CHAG_AMT" display="number"/>
+						<cell align="right" col="27" colid="SKT_PRP_AMT" display="number"/>
+						<cell align="right" col="28" colid="CASH_SALE_AMT" display="number"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="1" color="user38" display="text"/>
+						<cell align="right" bkcolor="user37" col="2" color="user38" display="text" font="돋움,9,Bold" text="계"/>
+						<cell align="right" bkcolor="user37" col="3" color="user38" display="number" expr='sum(&quot;PRE_CHAG_DPST_ACC_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="4" color="user38" display="number" expr='sum(&quot;PRE_ETC_DPST_ACC_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="5" color="user38" display="number" expr='sum(&quot;CHAG_DPST_ACC_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="6" color="user38" display="number" expr='sum(&quot;ETC_DPST_ACC_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="7" color="user38" display="number" expr='sum(&quot;TOT_CHAG_DPST_ACC_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="8" color="user38" display="number" expr='sum(&quot;TOT_ETC_DPST_ACC_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="9" color="user38" display="number" expr='sum(&quot;PRE_SKT_CHAG_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="10" color="user38" display="number" expr='sum(&quot;PRE_SKT_PRP_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="11" color="user38" display="number" expr='sum(&quot;PRE_CASH_SALE_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="12" color="user38" display="number" expr='sum(&quot;SKT_CHAG_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="13" color="user38" display="number" expr='sum(&quot;SKT_PRP_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="14" color="user38" display="number" expr='sum(&quot;CASH_SALE_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="15" color="user38" display="number" expr='sum(&quot;TOT_SKT_CHAG_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="16" color="user38" display="number" expr='sum(&quot;TOT_SKT_PRP_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="17" color="user38" display="number" expr='sum(&quot;TOT_CASH_SALE_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="18" color="user38" display="number" expr='sum(&quot;DPST_SKT_CHAG_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="19" color="user38" display="number" expr='sum(&quot;DPST_SKT_PRP_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="20" color="user38" display="number" expr='sum(&quot;DPST_CASH_SALE_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="21" color="user38" display="number" expr='sum(&quot;CHAG_DPST_ACC_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="22" color="user38" display="number" expr='sum(&quot;ETC_DPST_ACC_BAMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="23" color="user38" display="number" expr='sum(&quot;SETOFF_SKT_CHAG_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="24" color="user38" display="number" expr='sum(&quot;SETOFF_SKT_PRP_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="25" color="user38" display="number" expr='sum(&quot;SETOFF_CASH_SALE_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="26" color="user38" display="number" expr='sum(&quot;SKT_CHAG_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="27" color="user38" display="number" expr='sum(&quot;SKT_PRP_AMT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="28" color="user38" display="number" expr='sum(&quot;CASH_SALE_AMT&quot;)'/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<MSIE Bottom="594" Height="15" Id="MSIE0" Left="19" Right="34" Top="579" Width="15"></MSIE>
+	</Form>
+	<Script><![CDATA[
+/*******************************************************************************
+* 프로그램ID : ACCBOS00100
+* 업무명      : 정산관리 - 채권관리현황 
+* 프로그램명  : 채권관리현황 조회
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.10.09
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+
+var FV_ORG_ID;         	//조직코드  
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function ACCBOS00100_OnLoadCompleted(obj)
+{
+	FV_ORG_ID 	= gds_session.GetColumn(0, "orgId");	
+
+    // 정산월 셋팅
+	div_search.cal_acc_mth.Value = substr(TODAY(),0,6);
+	
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+    http.Sync = true;
+    
+    // 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	//cf_setCommonCode("ds_dealCoCl", "ZBAS_C_00240");  // 거래처구분
+	cf_setCommonCode("div_search.cmb_dealCoCl", "ZBAS_C_00240", "선택", null, false); // 거래처 구분
+	cf_checkCommonCode();
+	
+	http.Sync = false;
+    
+	// 조회조건에 기본값 설정
+	cf_setInitDataForCmb(div_search.cmb_dealCoCl, "전체");
+    
+	// 그리드 체크박스 설정 및 정렬
+	cf_setGrdChecknSortEvent(grd_list, 0); 
+	
+	//대리점 권한설정
+	uf_enableAgencyByAuth("div_search", "edt_agencyNm,edt_agencyCd,btn_agency", "edt_agencyUkeyCd");
+	uf_enableDealByAuth("div_search", "edt_dealNm,edt_dealCd,btn_dealCo");
+	
+}
+
+
+/*******************************************************************************
+ * @description    : 대리점 검색 팝업
+*******************************************************************************/
+
+function btn_agency_OnClick(obj)
+{
+	
+	var sArg  =  "org_id="+quote(FV_ORG_ID);  // 필수
+	
+	cf_callAgencyPop(sArg, div_search, "edt_agencyNm,edt_agencyCd,edt_agencyUkeyCd");	
+}
+
+
+/*******************************************************************************
+ * @description    : 대리점 key down팝업
+*******************************************************************************/
+function div_search_edt_agencyNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == "13"){
+		var sArg  =  "org_id="+quote(FV_ORG_ID);  // 필수
+		
+		cf_callAgencyPop(sArg, div_search, "edt_agencyNm,edt_agencyCd,edt_agencyUkeyCd");	
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 대리점 OnChar Changed 이벤트
+*******************************************************************************/
+function div_search_edt_ordPlcNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	if(strPreText != strPostText){
+		div_search.edt_ordPlcId.value = "";
+		div_search.edt_ordPlcUkeyId.Text = "";
+	}
+}
+
+
+/*******************************************************************************
+ * @description : 입금처   팝업 
+ ******************************************************************************/
+function div_search_btn_dealCo_OnClick(obj)
+{
+	var dealCd = ds_condition.GetColumn(0, "pos_agency");
+	
+	var sArg  = "deal_co_cl1="+quote("A2,A3,A4,B1,B2"); // 필수 - 복수시 A1,A2,A3 형태의 콤바구분자로 설정
+		sArg += " pos_agency="+quote(dealCd);
+		
+	cf_callDealPop(sArg, div_search, "edt_dealNm,edt_dealCd",0,"Y");
+}
+
+/*******************************************************************************
+ * @description    : 입금처enter- 이벤트
+*******************************************************************************/
+function div_search_edt_dealNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == "13"){	
+
+		var dealCd = ds_condition.GetColumn(0, "pos_agency");
+		
+		var sArg  = "deal_co_cl1="+quote("A2,A3,A4,B1,B2"); // 필수 - 복수시 A1,A2,A3 형태의 콤바구분자로 설정
+			sArg += " pos_agency="+quote(dealCd);
+			
+		cf_callDealPop(sArg, div_search, "edt_dealNm,edt_dealCd",0,"Y");
+	}
+}
+
+
+function div_search_edt_agencyNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	if(strPreText != strPostText){
+		div_search.edt_agencyCd.Text = "";
+		div_search.edt_agencyUkeyCd.Text = "";
+	}
+}
+
+
+function div_search_edt_dealNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	div_search.edt_dealCd.Text = "";
+}
+
+
+
+function btn_search_OnClick(obj)
+{
+	
+	if ( uf_IsNull(div_search.cal_acc_mth.Value) )
+    {
+        alert(cf_getMessage(MSG_00028, "정산월"));
+        div_search.cal_acc_mth.SetFocus();
+        return false;
+    }
+	
+	if(uf_IsNull(div_search.edt_agencyCd.value)){
+
+		alert(cf_getMessage(MSG_00028, "대리점"));
+		div_search.edt_agencyNm.SetFocus();
+		return;
+	}
+	
+	cf_setParam(ds_condition,"ORG_CD",div_search.edt_agencyCd.Text);
+	cf_setParam(ds_condition,"DEAL_CL",div_search.cmb_dealCoCl.Value);
+	cf_setParam(ds_condition,"DEAL_CO_CD",div_search.edt_dealCd.Text);
+	cf_setParam(ds_condition,"ACC_MTH",div_search.cal_acc_mth.Value);
+	
+	
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs  = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_list=rs_list";
+	var sArg   = "sktst.acc.BOS#getMthBondList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg,null,true,true);
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{   
+   if(sSvcID == "svcList"){
+		//return;
+   }
+}
+
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_search.cal_acc_mth);
+}
+
+
+/*******************************************************************************
+ * @description    : 엑셀출력 Event
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	cf_exportExcel(grd_list);
+}
+
+function Button0_OnClick(obj)
+{
+	cf_debug("ds_condition");
+}
+]]></Script>
+</Window>

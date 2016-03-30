@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMCNR00400">
+	<select id="getUserConnectList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ ADMCNR00400_getUserConnectList_김연석_김연석 */
+     #conn_from# as conn_from
+     ,#conn_to# as conn_to
+     ,  fbas_get_org_nm(b.org_id)                       org_nm
+     ,  fbas_get_deal_nm(b.pos_agency, TO_CHAR(sysdate, 'yyyyMMdd'))
+                                                       agency_nm
+     , fbas_get_commcdnm_val('ZBAS_C_00250', user_grp) user_grp
+     , b.user_cd
+     , b.user_id
+     , b.user_nm
+     , count(*)                                        conn_cnt
+     , a.connect_ip
+  from tadm_connect_log  a
+     , tbas_user_mgmt    b
+ where a.user_id    = b.user_id
+   and a.method_id  = 'Login'
+   and a.user_id    not in ('sadm', 'psadm')
+   and a.tran_dt    between #conn_from# and #conn_to#
+]]><isNotEmpty prepend="and" property="pos_agency">
+<![CDATA[       b.pos_agency = #pos_agency#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="and" property="user_grp">
+<![CDATA[       b.user_grp   = #user_grp#
+]]></isNotEmpty>
+<![CDATA[ group by b.org_id, b.pos_agency, user_grp, b.user_cd, b.user_id, b.user_nm, a.connect_ip]]>
+	</select>
+</sqlMap>

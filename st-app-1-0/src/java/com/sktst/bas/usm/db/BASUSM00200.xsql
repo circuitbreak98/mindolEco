@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASUSM00200">
+	<update id="addUser" parameterClass="map" ><![CDATA[INSERT INTO TBAS_USER_MGMT /*+ "BASUSM00200_addUser_조민지-이영진" */
+(
+user_id		 ,u_key_id	 ,user_cd		,user_nm     ,pwd
+,eff_user_yn ,wphon	     ,mbl_phon		,email1		 ,email2
+,user_grp	 ,duty		 ,org_area
+,rmks	     ,org_id	 ,del_yn	    ,upd_cnt	 ,ins_dtm
+,ins_user_id ,mod_dtm	 ,mod_user_id	,pwd_end_dt  ,pos_agency, attc_cat
+, mbl_phon2, mbl_phon3, happy_sms1, happy_sms2, happy_sms3, acc_sms1, acc_sms2
+, portal_user_id, mst_mbl_phone,p_flag)
+VALUES
+(#USER_ID#		 ,#U_KEY_ID#	 ,#USER_CD#		,#USER_NM#      ,#PWD#
+,#EFF_USER_YN#	 ,#WPHON#	     ,#MBL_PHON#	,#EMAIL1#		,#EMAIL2#
+,#USER_GRP#		 ,#DUTY#	 	 ,#ORG_AREA#
+,#RMKS#	         ,#ORG_ID#		 ,'N'	    	,0			    ,to_char(sysdate, 'yyyymmddhh24miss')
+,#onlineContext.userInfo.loginId#,to_char(sysdate, 'yyyymmddhh24miss')
+,#onlineContext.userInfo.loginId#,TO_CHAR(ADD_MONTHS(SYSDATE,3),'yyyyMMdd')
+,#POS_AGENCY#, #ATTC_CAT#, #MBL_PHON2#, #MBL_PHON3#, #HAPPY_SMS1#, #HAPPY_SMS2#, #HAPPY_SMS3#, #ACC_SMS1#, #ACC_SMS2#
+,#PORTAL_USER_ID#, #MST_MBL_PHONE#,'Y'
+)]]>
+	</update>
+	<update id="updateUser" parameterClass="map" ><![CDATA[UPDATE tbas_user_mgmt /*+ "BASUSM00200_updateUser_조민지_이영진" */
+SET user_nm	     = #USER_NM#
+,	user_cd      = #USER_CD#
+,	u_key_id     = #u_key_id#
+,	eff_user_yn	 = #EFF_USER_YN#
+,	wphon	     = #WPHON#
+,	mbl_phon	 = #MBL_PHON#
+,	user_grp	 = #USER_GRP#
+,	pos_agency	 = #POS_AGENCY#
+,	org_area	 = #ORG_AREA#
+,	rmks	     = #RMKS#
+,	org_id	     = #ORG_ID#
+,	email1	     = #EMAIL1#
+,	email2	     = #EMAIL2#
+,	duty	     = #DUTY#
+,	upd_cnt		 = upd_cnt + 1
+,	mod_dtm	     = TO_CHAR(SYSDATE, 'yyyyMMddhhmm')
+,	mod_user_id	 = #onlineContext.userInfo.loginId#
+,   attc_cat     = #ATTC_CAT#
+,   mbl_phon2    = #MBL_PHON2#
+,   mbl_phon3    = #MBL_PHON3#
+,   happy_sms1   = #HAPPY_SMS1#
+,   happy_sms2   = #HAPPY_SMS2#
+,   happy_sms3   = #HAPPY_SMS3#
+,   acc_sms1     = #ACC_SMS1#
+,   acc_sms2     = #ACC_SMS2#
+,   portal_user_id = #PORTAL_USER_ID#
+,   mst_mbl_phone = #MST_MBL_PHONE#
+]]><isEqual property="PWD_CHANGE_YN" compareValue="1"> 
+<![CDATA[,	pwd          = #PWD#
+,   p_flag       = 'Y'
+]]></isEqual> 
+<![CDATA[WHERE user_id = #USER_ID#
+and (select user_grp from tbas_user_mgmt where user_id = #onlineContext.userInfo.loginId#) = 'S00']]>
+	</update>
+	<select id="getUserInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00200_getUserInfo_조민지_이영진" */
+       user_id
+       , portal_user_id
+       , u_key_id
+       , u_key_id as u_key_id_org
+       , user_cd
+       , user_nm
+       , pwd
+       , eff_user_yn
+       , wphon
+       , mbl_phon
+       , email1
+       , email2
+       , user_grp
+       , duty
+       , (SELECT comm_cd_val_nm
+          FROM tbas_comm_cd_dtl
+          WHERE comm_cd_id = 'ZBAS_C_00250'
+          AND comm_cd_val = user_grp
+          AND del_yn = 'N'
+         ) user_grp_nm
+       , org_area
+       , b.deal_co_nm as org_area_nm
+       , a.pos_agency
+       , (SELECT deal_co_nm
+          FROM tbas_deal_co_mgmt
+          WHERE deal_co_cd = a.pos_agency
+          AND del_yn = 'N'
+          AND eff_end_dtm = '99991231235959'
+         ) pos_agency_nm
+       , a.rmks
+       , a.org_id
+       , (SELECT org_nm
+          FROM tbas_org_mgmt
+          WHERE org_id = a.org_id AND del_yn = 'N'
+         ) org_id_nm
+       , (SELECT org_cl
+          FROM tbas_org_mgmt
+          WHERE org_id = a.org_id AND del_yn = 'N'
+         ) org_cl
+       , TO_CHAR(TO_DATE(NVL(pwd_end_dt,'99991231'),'yyyyMMdd'), 'yyyy.MM.dd') pwd_end_dt
+       , a.del_yn
+       , TO_CHAR (a.upd_cnt) upd_cnt
+       , 'N' nc_cud_flag
+       , (CASE WHEN org_area = a.pos_agency AND org_area IS NOT NULL THEN 'Y' ELSE 'N' END) equl_agy
+       , attc_cat
+       , b.deal_co_cl1
+       , b.deal_co_cl2
+       , decode(b.deal_co_cl2, '2', '2차점', '3', '3차점', '') deal_co_cl2_nm
+       , mbl_phon2
+       , mbl_phon3
+       , happy_sms1
+       , happy_sms2
+       , happy_sms3
+       , acc_sms1
+       , acc_sms2
+       , '' PTL_ORG_ID
+       , '' PTL_REL_ORG_ID
+       , '' PTL_EFF_STA_DT
+       , '' PTL_AUDIT_USER_ID
+       , '' PTL_AUDIT_DTM
+       , '' PTL_TRANS_DTM
+       , eff_user_yn PTL_EFF_USER_YN
+       , mst_mbl_phone
+       , '0' PWD_CHANGE_YN
+FROM tbas_user_mgmt a,
+     tbas_deal_co_mgmt b
+WHERE user_id = #user_id#
+  AND a.org_area = b.deal_co_cd(+)
+  AND b.del_yn(+) = 'N'
+  AND b.eff_end_dtm(+) = '99991231235959']]>
+	</select>
+	<select id="getUserId" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00200_getUserId_조민지_이영진" */
+	user_id
+FROM tbas_user_mgmt
+WHERE user_id = #USER_ID#]]>
+	</select>
+	<select id="getUserCd" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00200_getUserCd_조민지_이영진" */
+	user_id
+FROM tbas_user_mgmt
+WHERE user_cd = #USER_CD#
+AND eff_user_yn = 'Y'
+AND del_yn = 'N']]>
+	</select>
+	<select id="getUserUKeyId" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASUSM00200_getUserUKeyId_조민지_이영진" */
+	user_id
+FROM tbas_user_mgmt
+WHERE u_key_id = #U_KEY_ID#
+AND del_yn = 'N']]>
+	</select>
+	<update id="updateIfUkeyApplyYn" parameterClass="map" ><![CDATA[UPDATE						/*+ BASUSM00200_updateIfUkeyApplyYn_조민지_최승호 */
+	tbas_ukey_id_if
+SET
+	aply_yn = 'Y'
+WHERE
+	op_dt = #op_dt#
+AND
+	op_tm = #op_tm#
+AND
+	seq = #seq#]]>
+	</update>
+	<update id="updatePwdReset" parameterClass="map" ><![CDATA[UPDATE tbas_user_mgmt /*+ "BASUSM00200_updatePwdReset_조민지_이영진" */
+SET pwd          = #PWD#
+,   pwd_end_dt   = TO_CHAR(ADD_MONTHS(SYSDATE,3),'yyyyMMdd')
+,	upd_cnt		 = upd_cnt + 1
+,	mod_dtm	     = TO_CHAR(SYSDATE, 'yyyyMMddhhmm')
+,	mod_user_id	 = #onlineContext.userInfo.loginId#
+WHERE user_id = #USER_ID#]]>
+	</update>
+	<select id="getPortalInfoPS" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ "BASUSM00200_getPortalInfoPS_김연석_김연석" */
+       post_org_id ORG_ID
+  from tbas_portal_user
+ where login_id = #PORTAL_USER_ID#]]>
+	</select>
+	<select id="getPortalInfoSale" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ "BASUSM00200_getPortalInfoSale_김연석_김연석" */
+       b.org_id REL_ORG_ID
+     , c.org_id ORG_ID
+  from tbas_deal_co_mgmt a
+     , tbas_portal_org   b
+     , tbas_portal_org   c
+ where a.ukey_agency_cd  = b.org_cd
+   and a.ukey_channel_cd = c.org_cd
+   and a.deal_co_cd      = #ORG_AREA#
+   AND b.sub_org_cd      = 'A000'
+   and a.hseq_no         = (select max(hseq_no)
+                              from tbas_deal_co_mgmt
+                             where deal_co_cd = a.deal_co_cd)]]>
+	</select>
+	<select id="getDealInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ "BASUSM00200_getDealInfo_김연석_김연석" */
+       a.org_id                  ORG_ID
+     , c.org_nm                  ORG_NM
+     , c.org_cl                  ORG_CL
+     , a.deal_co_cd              AGENCY_CD
+     , a.deal_co_nm              AGENCY_NM
+     , ''                        AREA_CD
+     , ''                        AREA_NM
+  from tbas_deal_co_mgmt a
+     , tbas_portal_org   b
+     , tbas_org_mgmt     c
+ where 1=1
+   and a.ukey_agency_cd = b.org_cd
+   and a.org_id         = c.org_id
+   and a.deal_co_cl1    = 'A1'
+   and b.org_id         = #ORG_ID#
+   and a.hseq_no        = (select max(hseq_no)
+                             from tbas_deal_co_mgmt
+                            where deal_co_cd = a.deal_co_cd)]]>
+	</select>
+	<select id="getDealInfoPCode" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ "BASUSM00200_getDealInfoPCode_김연석_김연석" */
+       a.org_id                  ORG_ID
+     , d.org_nm                  ORG_NM
+     , d.org_cl                  ORG_CL
+     , a.pos_agency              AGENCY_CD
+     , fbas_get_deal_nm(a.pos_agency, to_char(sysdate, 'yyyymmddhh24miss'))
+                                 AGENCY_NM
+     , a.deal_co_cd              AREA_CD
+     , a.deal_co_nm              AREA_NM
+  from tbas_deal_co_mgmt a
+     , tbas_portal_org   b
+     , tbas_portal_org   c
+     , tbas_org_mgmt     d
+ where 1=1
+   and a.ukey_agency_cd  = b.org_cd
+   and a.ukey_channel_cd = c.org_cd
+   and a.org_id          = d.org_id
+   and to_char(sysdate, 'yyyymmddHH24MISS')
+       between a.eff_sta_dtm and a.eff_end_dtm
+   and a.deal_end_yn     = 'N'
+   and b.org_id          = #REL_ORG_ID#
+   and c.org_id          = #ORG_ID#
+   and a.hseq_no         = (select max(hseq_no)
+                              from tbas_deal_co_mgmt
+                             where deal_co_cd = a.deal_co_cd)]]>
+	</select>
+	<update id="updateMappingRecv" ><![CDATA[update TBAS_PORTAL_MAPPING_RECV /*+ "BASUSM00200_updateMappingRecv_김연석_김연석" */
+   set ps_apnd_yn  = 'Y'
+     , mod_dtm     = TO_CHAR(SYSDATE, 'yyyyMMddhhmm')
+     , mod_user_id = #onlineContext.userInfo.loginId#
+ where op_dt       = #OP_DT#
+   and op_tm       = #OP_TM#
+   and seq         = #SEQ#]]>
+	</update>
+</sqlMap>

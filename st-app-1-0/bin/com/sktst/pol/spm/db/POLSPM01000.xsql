@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="POLSPM01000">
+	<select id="getTargetGroupList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00700_getGroupList_전미량" */ 
+	   PROD_GROUP_ID,
+	   PROD_GROUP_CD, 
+       FBAS_GET_COMMCDNM_VAL('ZPOL_C_00560',PROD_GROUP_CD) AS PROD_GROUP_NM,
+       EFF_STA_DT, 
+       EFF_END_DT,
+       COUNT(PROD_GROUP_ID) AS GROUP_CNT
+  FROM TPOL_PROD_GROUP_MGMT 
+ WHERE DEL_YN = 'N'
+   AND ((EFF_STA_DT > #EFF_STA_DT#  AND EFF_END_DT > #EFF_END_DT#) 
+          OR (EFF_STA_DT < #EFF_STA_DT#  AND EFF_END_DT < #EFF_END_DT#))
+]]> <isNotEmpty prepend="AND" property="PROD_GROUP_CD">
+<![CDATA[ 	PROD_GROUP_CD = #PROD_GROUP_CD#
+]]> </isNotEmpty>
+<![CDATA[]]> <isNotEmpty prepend="AND" property="APLY_YM">
+<![CDATA[ SUBSTR(EFF_STA_DT,0,6) = #APLY_YM#
+]]> </isNotEmpty>
+<![CDATA[GROUP BY PROD_GROUP_ID, PROD_GROUP_CD, EFF_STA_DT, EFF_END_DT
+ORDER BY PROD_GROUP_CD]]>
+	</select>
+	<select id="getTargetProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00800_getProdList_전미량" */ 
+       '' AS CHK,
+       A.PROD_CD, 
+       PROD_NM, 
+       FBAS_GET_DEAL_NM(MFACT_ID, '') AS MFACT_NM
+  FROM TPOL_PROD_GROUP_MGMT A, 
+       TBAS_PROD_MGMT B 
+ WHERE A.PROD_CD = B.PROD_CD
+   AND PROD_GROUP_ID = #PROD_GROUP_ID#]]>
+	</select>
+</sqlMap>

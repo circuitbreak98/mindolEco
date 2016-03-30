@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMBRD00100">
+	<select id="getBoardList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[
+
+SELECT  /*+ ADMBRD00100_getBoardList_원윤성_정재열 */ 
+        brd.board_num    
+,       brd.title        
+,       brd.ctt          
+,       brd.board_lvl    
+,       brd.inq_cnt      
+,       brd.org_board_num
+,       brd.sup_board_num
+,       brd.doc_id
+,       brd.LVL_SORT_SEQ       
+,       brd.del_yn       
+,       brd.upd_cnt      
+,       brd.ins_dtm      
+,       brd.ins_user_id  
+,       brd.mod_dtm      
+,       brd.mod_user_id  
+,		usr.user_nm||'('||fbas_get_deal_nm(usr.org_area,'')||')' as user_nm
+,       org.org_id
+,       org.org_nm
+,       usr.pos_agency
+,       nvl(brd.doc_id, 'N') file_yn
+FROM    tadm_board     brd
+,       tbas_user_mgmt usr
+,       tbas_org_mgmt  org
+,       (SELECT a.board_num
+         FROM tadm_board     a
+         ,    tbas_user_mgmt b
+		 WHERE 1=1
+         AND a.ins_user_id = b.user_id
+         AND a.board_lvl = '1'
+ ]]>   	  <isEqual property="user_grp" compareValue="D14">
+<![CDATA[   AND (b.user_grp = #user_grp# and b.org_area = #org_area#)
+]]>      </isEqual>
+<![CDATA[]]>      <isNotEqual property="user_grp" compareValue="D14">
+<![CDATA[]]>    <isNotEmpty prepend="AND" property="org_id">
+<![CDATA[       (b.org_id = #org_id#
+            OR #user_grp# IN ('P12','P17')
+            OR #user_grp# = 'ADM')
+]]>    </isNotEmpty>
+<![CDATA[]]>         </isNotEqual>      
+<![CDATA[         AND     a.del_yn = 'N') x
+WHERE 1=1
+AND   brd.ins_user_id = usr.user_id
+AND   usr.org_id = org.org_id
+AND   brd.org_board_num = x.board_num  
+AND   brd.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="title">
+<![CDATA[        brd.title LIKE '%' || #title# || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="ctt">
+<![CDATA[        brd.ctt LIKE '%' || #ctt# || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="user_nm">
+<![CDATA[        usr.user_nm LIKE '%' || #user_nm# || '%'
+]]></isNotEmpty>
+<![CDATA[START WITH　　  brd.board_lvl = '1'                             
+CONNECT BY　　PRIOR brd.board_num　= brd.sup_board_num  
+ORDER SIBLINGS BY brd.org_board_num DESC, brd.sup_board_num , brd.board_lvl, brd.lvl_sort_seq]]>
+	</select>
+	<delete id="deleteBoard" parameterClass="map" ><![CDATA[UPDATE /*+ ADMFAQ00100_deleteBoard_원윤성_정재열*/ 
+       tadm_board
+   SET del_yn      = 'Y',
+	   upd_cnt     = upd_cnt+1,
+	   mod_dtm     = to_char(sysdate,'YYYYMMDDHH24MISS'),
+	   mod_user_id = #onlineContext.userInfo.loginId#
+ WHERE board_num   = #board_num#
+ AND   upd_cnt      = #upd_cnt#]]>
+	</delete>
+	<insert id="addBoard" parameterClass="map" ><![CDATA[INSERT INTO /*+ ADMBORD00100_addBoard_원윤성_정재열 */ 
+            tadm_board
+(board_num    
+,title        
+,ctt          
+,board_lvl    
+,inq_cnt      
+,org_board_num
+,sup_board_num
+,doc_id       
+,del_yn       
+,upd_cnt      
+,ins_dtm      
+,ins_user_id  
+,mod_dtm      
+,mod_user_id  
+,LVL_SORT_SEQ
+)
+VALUES
+(
+ #board_num#        
+,#title#        
+,#ctt#          
+,#board_lvl#    
+,#inq_cnt#      
+,#org_board_num#
+,#sup_board_num#
+,#doc_id#       
+,'N'
+,0
+,to_char(sysdate,'YYYYMMDDHH24MISS')
+,#onlineContext.userInfo.loginId#
+,to_char(sysdate,'YYYYMMDDHH24MISS')
+,#onlineContext.userInfo.loginId#
+,#LVL_SORT_SEQ#
+)]]>
+	</insert>
+	<update id="updateBoard" parameterClass="map" ><![CDATA[
+UPDATE /*+ ADMBRD00100_updateBoard_원윤성_정재열 */ 
+            tadm_board
+SET title       = #title#
+,   ctt         = #ctt#
+,   doc_id      = #doc_id#
+,   mod_dtm     = to_char(sysdate,'YYYYMMDDHH24MISS')
+,   mod_user_id = #onlineContext.userInfo.loginId#
+,   upd_cnt     = upd_cnt + 1
+WHERE board_num = #board_num#
+AND   upd_cnt = #upd_cnt#]]>
+	</update>
+	<select id="getBoardNum" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMBRD00100_getBoardNum_원윤성_정재열 */ 
+       NVL(MAX(board_num)+1,1) board_num
+FROM tadm_board]]>
+	</select>
+	<select id="getBoard" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ ADMBRD00100_getBoard_원윤성_한병곤 */ 
+        brd.board_num    
+,       brd.title        
+,       brd.ctt          
+,       brd.board_lvl    
+,       brd.inq_cnt      
+,       brd.org_board_num
+,       brd.sup_board_num
+,       brd.doc_id
+,       brd.LVL_SORT_SEQ       
+,       brd.del_yn       
+,       brd.upd_cnt      
+,       brd.ins_dtm      
+,       brd.ins_user_id  
+,       brd.mod_dtm      
+,       brd.mod_user_id  
+FROM    tadm_board     brd
+WHERE board_num = #board_num#]]>
+	</select>
+</sqlMap>

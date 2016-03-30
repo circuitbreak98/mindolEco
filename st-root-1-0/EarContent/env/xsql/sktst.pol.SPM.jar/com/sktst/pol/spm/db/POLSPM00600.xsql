@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="POLSPM00600">
+	<select id="getMdlSplstList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00600_getMdlSplstList_이문규" */ 
+       b.splst_id
+      ,b.aply_ym
+      ,b.org_id
+      ,c.org_nm      
+      ,b.sale_typ_cd
+      ,FBAS_GET_COMMCDNM_VAL('ZPOL_C_00030', b.sale_typ_cd) as sale_typ_cd_nm
+      ,a.aply_sta_dtm
+      ,a.aply_end_dtm
+      ,b.mdl_id AS prod_cd
+      ,FBAS_GET_PROD_NM(b.mdl_id) AS prod_nm
+      ,b.sale_prc
+      ,b.sale_cmms
+      ,b.del_yn
+      ,b.upd_cnt
+      ,b.ins_dtm
+      ,b.ins_user_id
+      ,b.mod_dtm
+      ,b.mod_user_id
+FROM   tpol_splst        a
+      ,tpol_splst_mdl    b
+      ,tbas_org_mgmt     c
+WHERE  a.del_yn = 'N'
+AND    a.aply_sta_dtm <= #std_dtm#
+AND    a.aply_end_dtm >= #std_dtm#
+AND    a.org_id      = #org_id#
+]]><isNotEmpty prepend="AND" property="sale_typ_cd">
+<![CDATA[       a.sale_typ_cd = #sale_typ_cd#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       b.mdl_id = #prod_cd#
+]]></isNotEmpty> 
+<![CDATA[AND    a.pol_cl      = '02'
+AND    b.del_yn      = 'N'
+AND    a.splst_id    = b.splst_id
+AND    a.aply_ym     = b.aply_ym
+AND    a.org_id      = b.org_id
+AND    a.sale_typ_cd = b.sale_typ_cd
+AND    c.eff_org_yn  = 'Y'
+AND    c.del_yn      = 'N'
+AND    a.org_id      = c.org_id 
+ORDER BY splst_id, aply_ym, org_id, sale_typ_cd, mdl_id, aply_sta_dtm
+    ]]>
+	</select>
+</sqlMap>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form BKColor="user0" Height="600" Id="MainLeft" Left="8" OnLoadCompleted="MainLeft_OnLoadCompleted" PidAttrib="7" Style="button_style01" Title="MainLeft" Top="8" Ver="1.0" Width="180" WorkArea="true">
+		<Image FillType="STRETCH" Height="580" Id="Image0" ImageID="left_bg" TabOrder="3" Top="12" Width="179"></Image>
+		<Div BKColor="lightslategray" Border="Flat" BorderColor="lightslategray" Color="white" Height="518" Id="div_treemenu" Left="3" TabOrder="1" Text="Div0" Top="56" Visible="FALSE" Width="164">
+			<Contents>
+				<TreeView BindDataset="gds_menulist" BKColor="lightslategray" Border="Flat" BorderColor="lightslategray" Height="538" Id="TreeView_Menu" ImageColumn="image" ImageID="tree_icon" ImageIndex="0" InnerImageCount="2" Left="-2" LevelColumn="lvl" OnClick="div_treemenu_TreeView_Menu_OnClick" TabOrder="1" TEXTColumn="frmtxt" Top="3" Width="165"></TreeView>
+			</Contents>
+		</Div>
+		<Div BKColor="lightslategray" Border="Flat" BorderColor="lightslategray" Height="518" Id="div_btnmenu" Left="-1" TabOrder="2" Text="Div0" Top="52" Width="171">
+			<Contents>
+				<Image Align="Left" FillType="STRETCH" Height="22" Id="img_entry" ImageID="left_menu_bg_01" OnClick="div_btnmenu_OnClick" Static="FALSE" Style="button_style01" TabOrder="2" Text="&#32;&#32;&#32;Person&#32;Entry" Width="168"></Image>
+				<Image Align="Left" FillType="STRETCH" Height="22" Id="img_list" ImageID="left_menu_bg_01" OnClick="div_btnmenu_OnClick" Static="FALSE" Style="button_style01" TabOrder="1" Text="&#32;&#32;&#32;Person&#32;List" Top="23" Width="168"></Image>
+			</Contents>
+		</Div>
+		<Static Height="22" Id="Static0" Left="29" Style="list_title" TabOrder="4" Text="Menu&#32;List" Top="24" VAlign="Middle" Width="78"></Static>
+	</Form>
+	<Script><![CDATA[
+function MainLeft_OnLoadCompleted(obj)
+{
+	global.MainMenu.div_treemenu.Visible = false;
+	global.MainMenu.div_btnmenu.Visible = true;
+}
+
+function div_btnmenu_OnClick(obj)
+{	
+	var btnID = obj.id;
+	
+	lfn_setMenu(right(btnID,5));
+	
+	if (btnID == "img_entry")
+	{
+		gfn_newWindow('entry','DefApp::person_entry.xml');		
+	}
+	else 
+	{
+		if (btnID == "img_list")	
+		{
+			gfn_newWindow('list','DefApp::person_list.xml');	
+		}
+	}
+}
+
+function div_treemenu_TreeView_Menu_OnClick(obj,nOldRow,nNewRow)
+{
+	var frmNM = gds_menulist.GetColumn(nNewRow, "frmid");
+	var frmURL = gds_menulist.GetColumn(nNewRow, "frmurl");
+	
+	lfn_setMenu(frmNM);
+	
+	if (frmNM == null || frmURL == null) return;
+	
+	gfn_newWindow(frmNM, frmURL);
+}
+
+function lfn_setMenu(arg)
+{
+	if (arg == "entry") 
+	{
+		gds_menulist.Row = 1;
+		div_btnmenu.img_entry.ImageID = "left_menu_bg_02";
+		div_btnmenu.img_list.ImageID = "left_menu_bg_01";
+	} 
+	else 
+	{
+		gds_menulist.Row = 2;
+		div_btnmenu.img_entry.ImageID = "left_menu_bg_01";
+		div_btnmenu.img_list.ImageID = "left_menu_bg_02";
+	}
+}
+]]></Script>
+</Window>

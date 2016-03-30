@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASPRM08100">
+	<select id="getDealIfList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  				/*+ BASPRM08100_getDealIfList_조민지_최승호 */ 
+                op_dt,
+                op_tm,
+                seq,
+                
+                rec_typ,
+                org_cd,
+                sub_org_cd,
+                org_nm,
+                biz_num,
+                biz_typ_nm,
+                biz_knd_nm,
+                repve_nm,
+                chrgr_nm,
+                zip,
+                addr,
+                mbl_phon_num,
+                phon_num,
+                fax_num,
+                cntr_org_cd,
+                cntr_sub_org_cd,
+                cntr_org_nm,
+                mkt_div_org_cd,
+                mkt_div_sub_org_cd,
+                mkt_div_org_nm,
+                a_name,
+                cl,
+                
+                aply_yn,
+                ins_dtm,
+                mod_dtm
+FROM    
+	tbas_agn_add_chg_if
+WHERE 1 = 1
+
+/* 처리 일자 */
+]]><isNotEmpty prepend="AND" property="start_date">
+<![CDATA[	op_tm >= #start_date#
+]]></isNotEmpty>
+<![CDATA[
+]]><isNotEmpty prepend="AND" property="end_date">
+<![CDATA[	op_tm <= #end_date#
+]]></isNotEmpty>
+<![CDATA[
+
+/* 반영 여부 */
+]]><isNotEmpty prepend="AND" property="apply_yn">
+<![CDATA[	aply_yn = #apply_yn#
+]]></isNotEmpty>
+	</select>
+</sqlMap>

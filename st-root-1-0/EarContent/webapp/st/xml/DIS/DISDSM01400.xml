@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="520" Id="DISDSM01400" Left="8" OnLoadCompleted="DISDSM01400_OnLoadCompleted" PidAttrib="7" Title="입고일련번호" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_InSerNumOut">
+				<Contents>
+					<colinfo id="inout_dtl_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="inout_dtl_cl_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="inout_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_plc_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_plc_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="prchs_plc_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="prchs_plc_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cl_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="com_mthd" size="256" summ="default" type="STRING"/>
+					<colinfo id="com_mthd_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="ser_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="dis_amt" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_Condition">
+				<Contents></Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_InSerNumOut" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="480" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="445" Id="grd_InSerNumList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="35" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="57"/>
+						<col width="105"/>
+						<col width="125"/>
+						<col width="121"/>
+						<col width="81"/>
+						<col width="119"/>
+						<col width="119"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="구분"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="입고일자"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="매입처"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="제조사"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="상품구분"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="통신방식"/>
+						<cell align="center" bkcolor="user34" col="7" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="일련번호"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" text="단가"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="currow+1"/>
+						<cell align="center" col="1" colid="inout_dtl_cl_nm" display="text"/>
+						<cell col="2" colid="inout_dt" display="text" Mask="@@@@-@@-@@"/>
+						<cell col="3" colid="prchs_plc_nm" display="text"/>
+						<cell align="center" col="4" colid="mfact_nm" display="text"/>
+						<cell align="center" col="5" colid="prod_cl_nm" display="text"/>
+						<cell align="center" col="6" colid="com_mthd_nm" display="text"/>
+						<cell align="right" col="7" colid="prod_nm" display="text"/>
+						<cell align="right" col="8" colid="color_nm" display="text"/>
+						<cell align="right" col="9" colid="ser_num" display="text"/>
+						<cell align="right" col="10" colid="dis_amt" display="number" Mask="##,###,##0"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Height="25" Id="div_page" Left="795" TabOrder="2" Text="Div2" Top="10" Width="33">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_excelDown" ImageID="btn_i_exceldown_w" Left="6" OnClick="div_page_btn_excelDown_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Width="19"></Button>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="756" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="488" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : DISDSM01400
+* 업무명      :  현황관리 - 입고일련번호
+* 프로그램명  : 입고일련번호
+--------------------------------------------------------------------------------
+* 작성자      : 이정현
+* 작성일      : 2009.02.
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+
+// session 변수
+var FV_ORG_CL;    		// 조직구분
+var FV_ORG_ID;    		// 조직ID
+var FV_ORG_NM;    		// 조직명
+var FV_SUP_ORG_ID; 		// 상위조직
+var FV_SUP_ORG_NM;  	// 상위조직명
+var FV_USER_GRP;    	// 사용자그룹
+var FV_ORG_AREA_CL1;    // 근무지 거래처구분
+var FV_ORG_AREA_ID;    // 근무지
+var FV_ORG_AREA_NM;    // 근무지명
+var FV_POS_AGENCY_ID;		// 소속대리점ID
+var FV_POS_AGENCY_NM;   	// 소속대리점명
+var FV_POS_AGENCY_UKEY_ID; // 소속대리점 Ukey ID
+
+// 부모 폼에서 전달하는 값
+var FV_STRD_DT;		    // 기준일자
+var FV_HLD_PLC_ID;	    // 보유처ID
+var FV_MFACT_ID;        // 제조사ID
+var FV_WORK_CL;	        // 업무구분
+var FV_PROD_CD;         // 상품코드
+var FV_PROD_NM;         // 상품명
+var FV_COLOR_CD;        // 색상코드
+var FV_DEAL_CO_CL;      // 거래처구분
+var FV_PROD_CL;         // 상품구분
+var FV_STRD_YM;         // 최근재고마감년월
+var FV_POS_AGENCY;      // 소속대리점
+var FV_FROM_DT;         // 시작일자
+var FV_COM_MTHD;        // 통신방식
+var FV_SALE_GRP;        // 영업그룹
+var FV_CHRGR_USER_ID;   // 영업담당
+var FV_SER_NUM;         // 일련번호
+var FV_INOUT_MGMT_NO;   // 입출고관리번호
+var FV_INOUT_SEQ;       // 입출고순번
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function DISDSM01400_OnLoadCompleted(obj)
+{
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+	
+	// 세션 정보 설정
+	f_setSessionInfo();
+
+	// 로그인 사용자별 거래처 제어
+	f_setDealInfo();
+
+    // 출력 Dataset 초기화
+    ds_InSerNumOut.ClearData();
+
+	// 그리드 체크박스 설정 및 정렬
+	cf_setGrdChecknSortEvent(grd_InSerNumList);
+
+	//입고일련번호 조회 
+	f_getInSerNumList();
+}
+
+/*******************************************************************************
+ * @description    : 세션 정보 설정
+*******************************************************************************/
+function f_setSessionInfo()
+{
+	FV_ORG_CL = gds_session.GetColumn(0,"orgCl");
+	FV_ORG_ID = gds_session.GetColumn(0,"orgId");
+	FV_ORG_NM = gds_session.GetColumn(0,"orgNm");
+	FV_SUP_ORG_ID = gds_session.GetColumn(0,"supOrgId");
+	FV_SUP_ORG_NM = gds_session.GetColumn(0,"supOrgNm");
+	FV_USER_GRP = gds_session.GetColumn(0,"userGrp");
+	FV_ORG_AREA_CL1 = gds_session.GetColumn(0,"orgAreaCl1");
+	FV_ORG_AREA_ID = gds_session.GetColumn(0,"orgAreaId");
+	FV_ORG_AREA_NM = gds_session.GetColumn(0,"orgAreaNm");
+    FV_POS_AGENCY_ID      = gds_session.GetColumn(0,"posAgencyId");   
+    FV_POS_AGENCY_NM      = gds_session.GetColumn(0,"posAgencyNm");     
+    FV_POS_AGENCY_UKEY_ID = gds_session.GetColumn(0,"posAgencyUkeyId");	
+}
+
+/*******************************************************************************
+ * @description    : 로그인 사용자별 거래처 제어
+*******************************************************************************/
+function f_setDealInfo()
+{
+	// 로그인한 사용자의 소속매장이 직영점, 판매점인 경우 
+	if(FV_POS_AGENCY_ID != FV_ORG_AREA_ID)
+	{
+		if (FV_ORG_AREA_CL1 == "A3" || FV_ORG_AREA_CL1 == "B2") // 판매점, 온라인판매점
+		{
+			//칼럼의 사이즈 조절
+			grd_InSerNumList.SetColProp(10,"Width", 0);					
+		}
+		else
+		{
+			//칼럼의 사이즈 조절
+			grd_InSerNumList.SetColProp(10,"Width", 92);					
+		}
+	}	
+}
+
+/*******************************************************************************
+ * @description    : 입고일련번호 조회
+*******************************************************************************/
+function f_getInSerNumList()
+{
+	// 입력 파라메터 설정
+	cf_setParam(ds_Condition, "strd_dt", FV_STRD_DT);  		// 기준일자
+	cf_setParam(ds_Condition, "pos_agency", FV_POS_AGENCY);	// 소속대리점
+	cf_setParam(ds_Condition, "hld_plc_id", FV_HLD_PLC_ID);	// 입출고처
+	cf_setParam(ds_Condition, "mfact_id", FV_MFACT_ID);	    // 제조사
+	cf_setParam(ds_Condition, "prod_cd", FV_PROD_CD);		// 싱품코드
+	cf_setParam(ds_Condition, "color_cd", FV_COLOR_CD);		// 색상코드
+	cf_setParam(ds_Condition, "deal_co_cl", FV_DEAL_CO_CL);	// 거래처구분
+	cf_setParam(ds_Condition, "prod_cl", FV_PROD_CL);		// 색상구분
+	cf_setParam(ds_Condition, "strd_ym", FV_STRD_YM);	    // 최근재고마감년월
+	cf_setParam(ds_Condition, "from_dt", FV_FROM_DT);  	    // 시작일자
+	cf_setParam(ds_Condition, "com_mthd", FV_COM_MTHD);  	// 통신방식
+	cf_setParam(ds_Condition, "sale_grp", FV_SALE_GRP);  	// 영업그룹
+	cf_setParam(ds_Condition, "chrgr_user_id", FV_CHRGR_USER_ID);  	// 영업담당
+	cf_setParam(ds_Condition, "ser_num", FV_SER_NUM);  	    // 일련번호
+	cf_setParam(ds_Condition, "inout_mgmt_no", FV_INOUT_MGMT_NO); // 입출고관리번호
+	cf_setParam(ds_Condition, "inout_seq", FV_INOUT_SEQ);  	// 입출고순번	
+	cf_setParam(ds_Condition, "prod_nm", FV_PROD_NM);        // 모델명
+	
+    // 출력 Dataset 초기화
+    ds_InSerNumOut.ClearData();
+    
+    if (FV_WORK_CL == "IN")
+    {
+		// 트랜잭션 설정
+		var sSvcID = "svcInSerNumList";
+		var sInDs = "nc_input_fieldDs=ds_Condition";
+		var sOutDs = "ds_InSerNumOut=ds_InSerNumOut";
+		var sArg = "sktst.dis.DSM#getInSerNumList";
+		
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);    
+    }
+    
+    if (FV_WORK_CL == "HST_IN")
+    {
+		// 트랜잭션 설정
+		var sSvcID = "svcProdHstInDtlList";
+		var sInDs = "nc_input_fieldDs=ds_Condition";
+		var sOutDs = "ds_InSerNumOut=ds_InSerNumOut";
+		var sArg = "sktst.dis.DSM#getProdHstInDtlList";
+		
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);    
+    }
+
+    if (FV_WORK_CL == "HST_IN_SCHD")
+    {
+		// 트랜잭션 설정
+		var sSvcID = "svcProdHstInSchdDtlList";
+		var sInDs = "nc_input_fieldDs=ds_Condition";
+		var sOutDs = "ds_InSerNumOut=ds_InSerNumOut";
+		var sArg = "sktst.dis.DSM#getProdHstInSchdDtlList";
+		
+		// 공통 트랜잭션 호출
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);    
+    }
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+	if(sSvcID == "svcInSerNumList")
+	{
+		ds_InSerNumOut.Sort("inout_dt:D");
+	}
+}
+
+/*******************************************************************************
+ * @description    : 엑셀 다운로드
+*******************************************************************************/
+function div_page_btn_excelDown_OnClick(obj)
+{
+	cf_exportExcel(grd_InSerNumList, 1);
+}
+
+/*******************************************************************************
+ * @description    : 입고일련번호 OnClick 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.close();
+}]]></Script>
+</Window>

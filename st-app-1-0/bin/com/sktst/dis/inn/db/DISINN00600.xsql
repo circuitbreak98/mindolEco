@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISINN00600">
+	<select id="getInFix" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00600_getInFix_이정현_한병곤" */
+       a.in_cl,
+       (SELECT comm_cd_val_nm 
+          FROM tbas_comm_cd_dtl 
+         WHERE comm_cd_id = 'ZDIS_C_00020'
+           AND comm_cd_val = a.in_cl) as in_cl_nm,         
+       a.in_mgmt_no,
+       a.in_schd_dt,
+       a.prchs_plc_id,
+       FBAS_GET_DEAL_NM(a.prchs_plc_id,a.in_schd_dt) as prchs_plc_nm,       
+       a.in_plc_id,
+       FBAS_GET_DEAL_NM(a.in_plc_id,a.in_schd_dt) as in_plc_nm,                
+       a.rmks,
+       sum(nvl(b.in_fix_qty,0)) as in_fix_qty
+  FROM tdis_in_m a,
+       tdis_in_dtl_d b
+ WHERE a.in_mgmt_no = b.in_mgmt_no
+   AND a.in_mgmt_no = #in_mgmt_no#
+   AND a.del_yn = 'N'
+   AND b.del_yn = 'N'
+ GROUP BY a.in_cl, a.ord_mgmt_no, a.in_mgmt_no, a.in_schd_dt, a.prchs_plc_id, a.in_plc_id, a.rmks ]]>
+	</select>
+	<select id="getInFixDtlGrpList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00600_getInFixDtlGrpList_이정현_한병곤" */
+       prod_cd,
+       prod_nm,
+       bar_cd_typ,
+       prod_cl,
+       (SELECT comm_cd_val_nm
+          FROM tbas_comm_cd_dtl
+         WHERE comm_cd_val = prod_cl
+           AND comm_cd_id = 'ZBAS_C_00010') as prod_cl_nm,    
+       color_cd,
+       (SELECT comm_cd_val_nm
+          FROM tbas_comm_cd_dtl
+         WHERE comm_cd_val = color_cd
+           AND comm_cd_id = 'ZBAS_C_00040') as color_nm, 
+       ser_num,     
+       mfact_nm,
+       in_qty,
+       in_amt,
+       in_plc_id,
+       in_plc_nm,
+       in_fix_qty,
+       in_fix_qty_org,
+       in_fix_yn,
+       recallable_cnt
+  FROM (SELECT b.prod_cd,
+               c.prod_nm,
+               c.bar_cd_typ,
+               c.prod_cl,  
+               b.color_cd,
+               b.ser_num,               
+               FBAS_GET_DEAL_NM(c.mfact_id,a.in_schd_dt) as mfact_nm, 
+               sum(nvl(b.in_qty,0)) as in_qty,
+               b.in_amt,
+               a.in_plc_id,
+               FBAS_GET_DEAL_NM(a.in_plc_id,a.in_schd_dt) as in_plc_nm,                
+               sum(nvl(b.in_fix_qty,0)) as in_fix_qty,
+               sum(nvl(b.in_fix_qty,0)) as in_fix_qty_org,
+               decode(sum(nvl(b.in_fix_qty,0)),sum(nvl(b.in_qty,0)),'1','0') in_fix_yn,
+               sum(decode(d.ser_num,null,0,1)) as recallable_cnt /* 취소가능 갯수.*/
+          FROM tdis_in_m a,
+               tdis_in_dtl_d b,
+               tbas_prod_mgmt c,
+               tdis_dis d
+         WHERE a.in_mgmt_no = b.in_mgmt_no
+           AND a.in_mgmt_no = #in_mgmt_no#
+           AND a.in_plc_id  = #in_plc_id#
+           AND a.del_yn  = 'N'
+           AND b.del_yn  = 'N'
+           AND b.prod_cd = c.prod_cd
+           AND c.prod_cl in ('1','2') /* 단말기/USIM */
+           AND b.prod_cd  = d.prod_cd(+)
+           AND b.color_cd = d.color_cd(+)
+           AND b.ser_num  = d.ser_num(+)
+           AND d.hld_plc_id(+) = #in_plc_id#
+           /* AND d.bad_yn(+) = decode(in_cl,'103','02',(decode(in_cl,'109','02','01'))) */
+           AND d.last_inout_cl(+) = '100'     /*입고*/
+           AND d.last_inout_dtl_cl(+) = #in_cl# 
+           AND d.del_yn(+) = 'N'
+           AND d.dis_st(+) = '01'
+         GROUP BY b.prod_cd, c.prod_nm, c.bar_cd_typ, c.prod_cl, b.color_cd, b.ser_num, c.mfact_id, a.in_plc_id, a.in_schd_dt, b.in_amt 
+        UNION
+        SELECT b.prod_cd,
+               c.prod_nm,
+               '' as bar_cd_typ,
+               c.prod_cl,      
+               b.color_cd, 
+               b.ser_num,
+               FBAS_GET_DEAL_NM(c.mfact_id,a.in_schd_dt) as mfact_nm, 
+               sum(nvl(b.in_qty,0)) as in_qty,
+               sum(nvl(b.in_amt,0)) as in_amt,
+               a.in_plc_id,
+               FBAS_GET_DEAL_NM(a.in_plc_id,a.in_schd_dt) as in_plc_nm,
+               sum(nvl(b.in_fix_qty,0)) as in_fix_qty,
+               sum(nvl(b.in_fix_qty,0)) as in_fix_qty_org,
+               decode(sum(nvl(b.in_fix_qty,0)),sum(nvl(b.in_qty,0)),'1','0') in_fix_yn, /* 전체확정여부 */
+               (case 
+                     when sum(nvl(d.qty,0)) - sum(nvl(b.in_fix_qty,0)) >= 0 then sum(nvl(b.in_fix_qty,0))
+                     when sum(nvl(d.qty,0)) - sum(nvl(b.in_fix_qty,0)) < 0 then sum(nvl(d.qty,0))
+                end) as recallable_cnt /* 취소가능 갯수.*/
+          FROM tdis_in_m a,
+               tdis_in_dtl_d b,
+               tbas_prod_mgmt c,
+               tdis_etc_dis d
+         WHERE a.in_mgmt_no = b.in_mgmt_no
+           AND a.in_mgmt_no = #in_mgmt_no#
+           AND a.in_plc_id  = #in_plc_id#
+           AND a.del_yn  = 'N'
+           AND b.del_yn  = 'N'
+           AND b.prod_cd = c.prod_cd
+           AND c.prod_cl not in ('1','2') /* 기타상품 */
+           AND d.hld_plc_id(+) = #in_plc_id# 
+           AND b.prod_cd   = d.prod_cd(+)
+           AND b.color_cd  = d.color_cd(+)
+           AND d.del_yn(+) = 'N'
+         GROUP BY b.prod_cd, c.prod_nm, c.prod_cl, b.color_cd, b.ser_num,c.mfact_id, a.in_plc_id, a.in_schd_dt)
+ ORDER BY prod_nm, color_cd 
+ ]]>
+	</select>
+	<select id="getInFixProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISINN00600_getInFixProdList_이정현_한병곤" */
+       a.ord_mgmt_no,
+       c.prod_cl,
+       (SELECT comm_cd_val_nm
+          FROM tbas_comm_cd_dtl
+         WHERE comm_cd_val = c.prod_cl
+           AND comm_cd_id = 'ZBAS_C_00010') as prod_cl_nm,
+       c.mfact_id,
+       FBAS_GET_DEAL_NM(c.mfact_id,a.in_schd_dt) as mfact_nm,
+       b.prod_cd,
+       c.prod_nm,
+       b.color_cd,
+       (SELECT comm_cd_val_nm
+          FROM tbas_comm_cd_dtl
+         WHERE comm_cd_val = b.color_cd
+           AND comm_cd_id = 'ZBAS_C_00040') as color_nm,
+       b.ser_num,
+       b.in_qty,
+       b.in_amt,
+       nvl(b.in_fix_qty,0) as in_fix_qty,
+       nvl(b.in_fix_qty,0) as in_fix_qty_org,
+       b.in_fix_dt,
+       b.in_fix_dt as in_fix_dt_org,
+       decode(nvl(b.in_fix_yn,'N'),'Y','1','0') as in_fix_yn,
+       decode(nvl(b.in_fix_yn,'N'),'Y','1','0') as in_fix_yn_org,
+       nvl(d.upd_cnt,0) as upd_cnt,       
+       b.in_seq,
+       decode(decode(d.ser_num,null,0,1),nvl(b.in_fix_qty,0),'Y','N')  as recallable_yn /* 취소가능*/
+  FROM tdis_in_m a,
+       tdis_in_dtl_d b,
+       tbas_prod_mgmt c,
+       tdis_dis d,
+       tdis_etc_dis e
+ WHERE a.in_mgmt_no = b.in_mgmt_no
+   AND a.in_mgmt_no = #in_mgmt_no#
+   AND a.in_plc_id  = #in_plc_id#
+   AND a.del_yn     = 'N'
+   AND b.del_yn     = 'N'          
+   AND b.prod_cd    = c.prod_cd
+   AND b.prod_cd    = d.prod_cd(+)
+   AND b.color_cd   = d.color_cd(+)
+   AND b.ser_num    = d.ser_num(+)
+   AND d.del_yn(+)  = 'N'
+  /* AND d.bad_yn(+)  = decode(in_cl,'103','02',(decode(in_cl,'109','02','01'))) */
+   AND d.hld_plc_id(+)        = #in_plc_id#
+   AND d.last_inout_cl(+)     = '100'    /*입고*/
+   AND d.last_inout_dtl_cl(+) = #in_cl#
+   AND d.dis_st(+) = '01'
+   AND b.prod_cd    = e.prod_cd(+)
+   AND e.hld_plc_id(+)        = #in_plc_id#
+   AND b.color_cd   = e.color_cd(+)
+   AND e.del_yn(+) = 'N']]>
+	</select>
+	<procedure id="saveInFix" parameterClass="map" ><![CDATA[{ call SP_DISINNCOMM_ST /*+ "DISINN00600_saveInFix_이정현_한병곤" */(
+	#ERRCODE,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#ERRMSG,javaType=java.lang.String,jdbcType=VARCHAR,mode=OUT#, 
+	#ACT_FLAG,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#PROC_FLAG,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#IN_MGMT_NO,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#, 
+	#ORD_MGMT_NO,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#PRCHS_MGMT_NO,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#IN_SCHD_DT,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#PRCHS_PLC_ID,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#IN_PLC_ID,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#IN_CL,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#RMKS,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#PROD_CL,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#PROD_CD,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#COLOR_CD,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#IN_SEQ,javaType=java.lang.Integer,jdbcType=NUMBER,mode=IN#,
+	#BAD_YN,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#DIS_ST,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#SER_NUM,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#IN_QTY,javaType=java.lang.Integer,jdbcType=NUMBER,mode=IN#,
+	#IN_AMT,javaType=java.lang.Integer,jdbcType=NUMBER,mode=IN#,
+	#SETTL_COND_CD,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#IN_FIX_DT,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#IN_FIX_YN,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#IN_FIX_QTY,javaType=java.lang.Integer,jdbcType=NUMBER,mode=IN#,
+	#OP_LCL_CD,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#OP_MCL_CD,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#CNCL_YN,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#USER_ID,javaType=java.lang.String,jdbcType=VARCHAR,mode=IN#,
+	#UPD_CNT,javaType=java.lang.Integer,jdbcType=NUMBER,mode=IN#	
+) }]]>
+	</procedure>
+</sqlMap>

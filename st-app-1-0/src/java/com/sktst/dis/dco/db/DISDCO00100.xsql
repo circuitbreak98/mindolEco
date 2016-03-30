@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDCO00100">
+	<select id="selectDealCo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISDCO00100_selectDealCo_이문규 */
+       deal_co_cd code,
+       deal_co_nm value
+FROM 
+       tbas_deal_co_mgmt
+WHERE  deal_co_cl1 = #deal_co_cl#
+AND    del_yn = 'N']]>
+	</select>
+	<select id="selectProdColor" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISDCO00100_selectProdColor_이강수 */
+       b.color_cd 
+FROM   tbas_prod_mgmt a,
+       tbas_prod_color b
+WHERE  a.prod_cd = #prod_cd#
+AND    a.prod_cd = b.prod_cd
+AND    a.del_yn = 'N'
+AND    b.del_yn = 'N']]>
+	</select>
+	<select id="selectComm" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISDCO00100_selectComm_이강수 */
+       b.comm_cd_val code, 
+       b.comm_cd_val_nm value 
+FROM   
+       tbas_comm_cd_lst a, 
+       tbas_comm_cd_dtl b
+WHERE 
+       a.comm_cd_id = #comm_cd_id#
+       and a.del_yn = 'N'
+       and a.comm_cd_id = b.comm_cd_id
+       and b.del_yn = 'N'
+       and b.eff_sta_dt <= to_char(sysdate, 'yyyymmdd')
+       and b.eff_end_dt >= to_char(sysdate, 'yyyymmdd')
+ ]]>
+	</select>
+	<select id="getProdInfoBySerNum" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISDCO00100_getProdInfoBySerNum_이강수 */
+       y.color_cd,
+       y.color_cd as raw_color_cd,
+       y.ser_num,
+       /* y.bad_yn,*/
+       y.dis_st,
+       y.last_inout_cl,
+       y.last_inout_dtl_cl
+  FROM tdis_dis y
+ WHERE y.prod_cd = #prod_cd#
+   AND y.ser_num = #ser_num#
+   AND y.del_yn  = 'N']]>
+	</select>
+	<select id="selectProdInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISDCO00100_selectProdInfo_이강수 */
+       a.prod_cd,
+       a.prod_nm,
+       a.mfact_id,
+       a.prod_cl,
+       a.bar_cd_typ,
+       b.ser_num,
+       b.last_inout_dtl_cl
+FROM   tbas_prod_mgmt a,
+       tdis_dis b
+WHERE  a.prod_cd = #prod_cd#
+AND    a.del_yn  = 'N'
+AND    a.prod_cd = b.prod_cd(+)
+AND    b.del_yn(+)  = 'N'
+AND    b.ser_num(+) = #ser_num#]]>
+	</select>
+</sqlMap>

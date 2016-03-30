@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBAR00300">
+	<select id="getBoxProdLst" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ BASBAR00300_getBoxProdLst_전미량 */
+       '' AS CHK,
+       MAX(A.CON_MGMT_NO) AS CON_MGMT_NO,
+       MAX(CON_DT) AS CON_DT,          
+       MAX(SER_NUM) AS SER_NUM,       
+       FBAS_GET_DEAL_NM(MAX(B.MFACT_ID), '') AS MFACT_NM,
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00020', MAX(B.prod_chrtic_1)) PROD_CHRTIC_1,
+       MAX(B.PROD_NM) AS PROD_NM, 
+       MAX(EQP_ST) AS EQP_ST,
+       NVL(MAX(EQP_ST_DTL_P),MAX(EQP_ST_DTL_C)) AS EQP_ST_DTL,
+       MAX(A.CON_PLC_CD) AS CON_PLC_CD,        
+       FBAS_GET_DEAL_NM(MAX(A.CON_PLC_CD),MAX(A.CON_DT)) AS DEAL_CO_NM,    
+       MAX(A.CUST_NM) AS CUST_NM,    
+       MAX(RES_NO) AS RES_NO,
+       MAX(DTL_1) AS DTL_1,
+       MAX(DTL_2) AS DTL_2,
+       MAX(DTL_3) AS DTL_3,
+       MAX(DTL_4) AS DTL_4,
+       MAX(DTL_5) AS DTL_5,
+       MAX(S_GB) AS S_GB, 
+       MAX(PRCHS_AMT) AS PRCHS_AMT,
+       DECODE(NVL(MAX(PRCHS_AMT),1),1,0,NVL(FBAS_GET_RESERVE_AMT(MAX(A.CON_MGMT_NO)),0)) UBO_AMT,
+       MAX(PRCHS_AMT) + NVL(FBAS_GET_RESERVE_AMT(MAX(A.CON_MGMT_NO)),0) TOT_AMT        ,
+       MAX(IMEI) AS IMEI
+ FROM (
+       SELECT A.CON_MGMT_NO, 
+              CON_DT, 
+              SER_NUM, 
+              CON_PLC_CD, 
+              CUST_NM, 
+              RES_NO, 
+              A.PROD_CD, 
+              EQP_ST, 
+              DECODE(EQP_ST,'N','N','E','E',EQP_ST_DTL) AS EQP_ST_DTL_P,
+              '' AS EQP_ST_DTL_C,
+              FBAS_GET_DTL_YN('P',PRCHS_MGMT_NO,'1') AS DTL_1, 
+              FBAS_GET_DTL_YN('P',PRCHS_MGMT_NO,'2') AS DTL_2, 
+              FBAS_GET_DTL_YN('P',PRCHS_MGMT_NO,'7') AS DTL_3, 
+              FBAS_GET_DTL_YN('P',PRCHS_MGMT_NO,'8') AS DTL_4, 
+              FBAS_GET_DTL_YN('P',PRCHS_MGMT_NO,'4') AS DTL_5,
+              'P' AS S_GB ,
+              PRCHS_AMT, 
+              IMEI
+         FROM TCST_PRCHS_MGMT A
+        WHERE BOX_NO = #BOX_NO# 
+]]>        <isNotEmpty prepend="AND" property="CON_MGMT_NO">
+<![CDATA[   			CON_MGMT_NO LIKE '%'||#CON_MGMT_NO#||'%'
+]]> 		</isNotEmpty>
+<![CDATA[          AND A.DEL_YN = 'N'
+       UNION ALL
+       SELECT A.CON_MGMT_NO, 
+              CON_DT, 
+       		  SER_NUM, 
+       		  CON_PLC_CD, 
+       		  CUST_NM, 
+       		  RES_NO, 
+       		  A.PROD_CD, 
+       		  EQP_ST,
+              '' AS EQP_ST_DTL_P,
+              DECODE(EQP_ST,'N','N','E','E',EQP_ST_DTL) AS EQP_ST_DTL_C,
+              FBAS_GET_DTL_YN('C',CON_MGMT_NO,'1') AS DTL_1, 
+              FBAS_GET_DTL_YN('C',CON_MGMT_NO,'2') AS DTL_2, 
+              FBAS_GET_DTL_YN('C',CON_MGMT_NO,'7') AS DTL_3, 
+              FBAS_GET_DTL_YN('C',CON_MGMT_NO,'8') AS DTL_4, 
+              FBAS_GET_DTL_YN('C',CON_MGMT_NO,'4') AS DTL_5,
+              'C' AS S_GB ,
+              0 AS PRCHS_AMT, 
+              IMEI
+         FROM TCST_CONSULT_MGMT A
+        WHERE BOX_NO = #BOX_NO#
+]]>        <isNotEmpty prepend="AND" property="CON_MGMT_NO">
+<![CDATA[   			CON_MGMT_NO LIKE '%'||#CON_MGMT_NO#||'%'
+]]> 		</isNotEmpty>
+<![CDATA[          AND A.DEL_YN = 'N') A,
+       TBAS_PROD_MGMT B
+ WHERE A.PROD_CD = B.PROD_CD
+ GROUP BY CON_MGMT_NO
+ ORDER BY CON_DT]]>
+	</select>
+	<update id="deleteConsultBoxProd" parameterClass="map" ><![CDATA[UPDATE /*+ BASBAR00300_deleteConsultBoxProd_전미량 */
+       TCST_CONSULT_MGMT
+   SET BOX_NO  = '',
+       UPD_CNT = UPD_CNT + 1 ,
+       MOD_DTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS') ,
+       MOD_USER_ID = #onlineContext.userInfo.loginId# 
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+	<update id="deletePrchsBoxProd" parameterClass="map" ><![CDATA[UPDATE /*+ BASBAR00300_deletePrchsBoxProd_전미량 */
+       TCST_PRCHS_MGMT
+   SET BOX_NO  = '',
+       UPD_CNT = UPD_CNT + 1 ,
+       MOD_DTM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS') ,
+       MOD_USER_ID = #onlineContext.userInfo.loginId# 
+ WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+	<select id="getBoxInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT BARCODE_NO,    
+       BOX_CNT,    
+       PROC_GB , 
+       NVL(PROD_CNT,0) AS PROD_CNT
+  FROM TBAS_BARCODE_LST
+ WHERE BARCODE_NO = #BOX_NO#]]>
+	</select>
+	<update id="updateBoxInfo" parameterClass="map" ><![CDATA[UPDATE TBAS_BARCODE_LST
+   SET PROD_CNT = #PROD_CNT#
+ WHERE BARCODE_NO = #BOX_NO#]]>
+	</update>
+</sqlMap>

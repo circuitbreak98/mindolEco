@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISATR01200">
+	<select id="getProdMovListForCncl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "DISATR01200_getProdMovListForCncl_전미량" */
+       '' AS CHK,
+       D.PROD_CD, 
+       P.PROD_NM, 
+       D.COLOR_CD,
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040',D.COLOR_CD) AS COLOR_NM, 
+       OLD_SER_NUM, 
+       D.SER_NUM, 
+       FBAS_GET_DEAL_NM(B.POS_AGENCY,'') AS POS_AGENCY_NM, 
+       H.OUT_PLC_ID, 
+       FBAS_GET_DEAL_NM(OUT_PLC_ID,'') AS OUT_PLC_NM,
+       H.OUT_MGMT_NO,
+       H.OUT_SEQ ,
+       H.IN_PLC_ID, 
+       FBAS_GET_DEAL_NM(IN_PLC_ID,'') AS IN_PLC_NM, 
+       H.IN_MGMT_NO,
+       H.IN_SEQ,
+       H.INOUT_DT, 
+       D.SALE_YN,
+       D.FIX_SALE_AMT AS SALE_AMT,
+       D.EQP_ST 
+  FROM TDIS_PROD_DIS D, 
+       TBAS_PROD_MGMT P , 
+       TDIS_PROD_INOUT_HST H,
+       TBAS_DEAL_CO_MGMT B 
+ WHERE D.PROD_CD = P.PROD_CD 
+   AND D.PROD_CD = H.PROD_CD 
+   AND D.SER_NUM = H.SER_NUM 
+   AND H.OUT_PLC_ID = B.DEAL_CO_CD 
+   AND B.HSEQ_NO = 
+       (SELECT MAX(HSEQ_NO) 
+         FROM TBAS_DEAL_CO_MGMT 
+        WHERE DEAL_CO_CD = H.OUT_PLC_ID 
+       ) 
+   AND H.INOUT_SEQ = 
+       (SELECT MAX(INOUT_SEQ) 
+         FROM TDIS_PROD_INOUT_HST 
+        WHERE PROD_CD = D.PROD_CD 
+              AND SER_NUM = D.SER_NUM 
+              AND DEL_YN = 'N'
+       ) 
+]]>   <isNotEmpty prepend="AND" property="out_plc_id">
+<![CDATA[       H.OUT_PLC_ID = #out_plc_id#
+]]>   </isNotEmpty>
+<![CDATA[]]>   <isNotEmpty prepend="AND" property="in_plc_id">
+<![CDATA[       H.IN_PLC_ID = #in_plc_id#
+]]>   </isNotEmpty>
+<![CDATA[]]>   <isNotEmpty prepend="AND" property="pos_outPosAgency_id">
+<![CDATA[	H.OUT_PLC_ID IN (SELECT DEAL_CO_CD 
+					   FROM TBAS_DEAL_CO_MGMT 
+					  WHERE EFF_STA_DTM <= FIX_SALE_DT||'235959'
+					    AND EFF_END_DTM >= FIX_SALE_DT||'235959' 
+					    AND DEL_YN = 'N' 
+					    AND POS_AGENCY = #pos_outPosAgency_id#)
+]]>   </isNotEmpty> 
+<![CDATA[]]>   <isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       D.PROD_CD = #prod_cd#
+]]>   </isNotEmpty>
+<![CDATA[]]>   <isNotEmpty prepend="AND" property="old_ser_num">
+<![CDATA[       D.OLD_SER_NUM = #ser_num#
+]]>   </isNotEmpty>
+<![CDATA[]]>   <isNotEmpty prepend="AND" property="ser_num">
+<![CDATA[       D.SER_NUM = #ser_num#
+]]>   </isNotEmpty>
+<![CDATA[   AND D.LAST_INOUT_DT >= #from_out_schd_dt#
+   AND D.LAST_INOUT_DT <= #to_out_schd_dt#
+   AND INOUT_DTL_CL = '302' 
+   AND D.DEL_YN = 'N' 
+   AND P.DEL_YN = 'N']]>
+	</select>
+</sqlMap>

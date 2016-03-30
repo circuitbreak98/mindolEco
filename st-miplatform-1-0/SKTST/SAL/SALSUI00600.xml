@@ -1,0 +1,550 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SALSUI00600" Left="8" OnLoadCompleted="SALSUI00600_OnLoadCompleted" PidAttrib="7" Title="영업관리&#32;U.Key&#32;I/F&#32;현황" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="ifdtmfr" size="256" summ="default" type="STRING"/>
+					<colinfo id="ifdtmto" size="256" summ="default" type="STRING"/>
+					<colinfo id="ukeyagency" size="256" summ="default" type="STRING"/>
+					<colinfo id="saleplc" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_UKeyIfStatus">
+				<Contents>
+					<colinfo id="AGENCY_PS" size="256" summ="default" type="STRING"/>
+					<colinfo id="AGENCY_UKEY" size="256" summ="default" type="STRING"/>
+					<colinfo id="AGENCY_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_PLC_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_PLC_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_UKEY" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHANNEL_UKEY" size="256" summ="default" type="STRING"/>
+					<colinfo id="SCRB_UKEY" size="256" summ="default" type="STRING"/>
+					<colinfo id="DSNET_UKEY" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRPRC_UKEY" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_PROC" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHANNEL_PROC" size="256" summ="default" type="STRING"/>
+					<colinfo id="SCRB_PROC" size="256" summ="default" type="STRING"/>
+					<colinfo id="DSNET_PROC" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRPRC_PROC" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_NON" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHANNEL_NON" size="256" summ="default" type="STRING"/>
+					<colinfo id="SCRB_NON" size="256" summ="default" type="STRING"/>
+					<colinfo id="DSNET_NON" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRPRC_NON" size="256" summ="default" type="STRING"/>
+					<colinfo id="SALE_EXPT" size="256" summ="default" type="STRING"/>
+					<colinfo id="CHANNEL_EXPT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SCRB_EXPT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DSNET_EXPT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PRPRC_EXPT" size="256" summ="default" type="STRING"/>
+					<colinfo id="UKEY_SUB_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="UKEY_CHANNEL_CD" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="40" Id="Div_Condition" Left="10" Style="sty_div_search" TabOrder="1" TabStop="FALSE" Text="Div0" Top="10" Width="1004">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_Search" ImageID="btn_a_2" Left="930" LeftMargin="5" OnClick="Div_Condition_btn_Search_OnClick" Style="sty_btn_a" TabOrder="1" TabStop="FALSE" Text="조회" Top="9" Width="60"></Button>
+				<Static Align="Right" Height="20" Id="Static9" Left="35" Style="sty_lb_Search" TabOrder="3" Text="처리기간" Top="7" VAlign="Middle" Width="60"></Static>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_IfDtFr" Left="99" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="2" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="95"></Calendar>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_IfDtTo" Left="215" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="4" TodayColor="user26" Top="7" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="95"></Calendar>
+				<Static Align="Right" Height="20" Id="Static0" Left="196" Style="sty_lb_info" TabOrder="5" Text="~" Top="7" VAlign="Middle" Width="12"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="315" Style="sty_lb_Search" TabOrder="11" Text="대리점" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_AgencyCdNm" Left="379" MaxLength="10" OnKeyDown="Div_Condition_edt_AgencyCdNm_OnKeyDown" Style="sty_ipt_form" TabOrder="7" Top="7" UpperOnly="TRUE" Width="77"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_AgencyUkeyCd" Left="475" MaxLength="10" Style="sty_ipt_form" TabOrder="9" Top="7" UpperOnly="TRUE" Width="113"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_AgencyCd" Left="555" MaxLength="10" Style="sty_ipt_form" TabOrder="10" Top="7" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+				<Edit BindDataset="ds_input" Border="Flat" Height="20" Id="edt_SalePlc" Left="915" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="9" Visible="FALSE" Width="11"></Edit>
+				<Edit BindDataset="ds_input" Border="Flat" Enable="FALSE" Height="20" Id="edt_SalePlcChannelCd" Left="861" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="17" Top="9" Width="56"></Edit>
+				<Edit BindDataset="ds_input" Border="Flat" Enable="FALSE" Height="20" Id="edt_SalePlcSubCd" Left="804" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="16" Top="9" Width="56"></Edit>
+				<Edit BindDataset="ds_input" Border="Flat" Enable="FALSE" Height="20" Id="edt_SalePlcUkeyCd" Left="747" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="13" Top="9" Width="56"></Edit>
+				<Edit BindDataset="ds_input" Border="Flat" Height="20" Id="edt_SalePlcNm" Left="651" LeftMargin="2" OnKeyDown="Div_Condition_edt_SalePlcNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="15" Top="9" Width="77"></Edit>
+				<Static Align="Right" Height="20" Id="Static3" Left="587" Style="sty_lb_Search" TabOrder="6" Text="판매처" Top="9" VAlign="Middle" Width="60"></Static>
+				<Button BindDataset="ds_DlvFee" Cursor="HAND" Height="20" Id="btn_Agency" ImageID="btn_i_detail_b" Left="455" OnClick="Div_Condition_btn_Agency_OnClick" TabOrder="8" Text="Button0" Top="7" Width="20"></Button>
+				<Button Height="21" Id="btn_SalePlc" ImageID="btn_i_detail" Left="727" OnClick="Div_Condition_btn_SalePlc_OnClick" TabOrder="14" Text="Button0" Top="9" Width="19"></Button>
+				<Image Height="20" Id="Image1" ImageID="bul_mand" Left="326" TabOrder="18" TabStop="FALSE" Top="6" Transparent="TRUE" Width="20"></Image>
+				<Image Height="20" Id="Image0" ImageID="bul_mand" Left="32" TabOrder="19" TabStop="FALSE" Top="6" Transparent="TRUE" Width="20"></Image>
+			</Contents>
+		</Div>
+		<Grid AutoFit="TRUE" BindDataset="ds_UKeyIfStatus" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="593" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" FixedColSizing="TRUE" HeadBorder="Flat" HeadHeight="21" Height="516" Id="grd_UKeyIFList" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_UKeyIFList_OnCellDblClick" OnHeadClick="cf_markGridSort" Right="1014" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="FALSE" Top="77" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="46"/>
+						<col width="120"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="70"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="70"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="70"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="85"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="65"/>
+						<col width="70"/>
+						<col width="65"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" rowspan="2" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" rowspan="2" text="판매처"/>
+						<cell bkcolor="user34" col="2" color="user35" colspan="4" display="text" text="일반판매"/>
+						<cell bkcolor="user34" col="6" color="user35" colspan="4" display="text" text="채널변경"/>
+						<cell bkcolor="user34" col="10" color="user35" colspan="4" display="text" text="약정변경"/>
+						<cell bkcolor="user34" col="14" color="user35" colspan="4" display="text" text="가입비&#32;분납전환"/>
+						<cell bkcolor="user34" col="18" color="user35" colspan="4" display="text" text="SKT&#32;수납대행"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" row="1" text="I/F"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" row="1" text="처리"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" row="1" text="미처리"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" row="1" text="제외"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" row="1" text="I/F"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" row="1" text="처리"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" row="1" text="미처리"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" row="1" text="제외"/>
+						<cell bkcolor="user34" col="10" color="user35" display="text" row="1" text="I/F"/>
+						<cell bkcolor="user34" col="11" color="user35" display="text" row="1" text="처리"/>
+						<cell bkcolor="user34" col="12" color="user35" display="text" row="1" text="미처리"/>
+						<cell bkcolor="user34" col="13" color="user35" display="text" row="1" text="제외"/>
+						<cell bkcolor="user34" col="14" color="user35" display="text" row="1" text="I/F"/>
+						<cell bkcolor="user34" col="15" color="user35" display="text" row="1" text="처리"/>
+						<cell bkcolor="user34" col="16" color="user35" display="text" row="1" text="미처리"/>
+						<cell bkcolor="user34" col="17" color="user35" display="text" row="1" text="제외"/>
+						<cell bkcolor="user34" col="18" color="user35" display="text" row="1" text="I/F"/>
+						<cell bkcolor="user34" col="19" color="user35" display="text" row="1" text="처리"/>
+						<cell bkcolor="user34" col="20" color="user35" display="text" row="1" text="미처리"/>
+						<cell bkcolor="user34" col="21" color="user35" display="text" row="1" text="제외"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="Row+1"/>
+						<cell align="left" col="1" colid="SALE_PLC_NM" display="text"/>
+						<cell align="right" col="2" colid="SALE_UKEY" display="number"/>
+						<cell align="right" col="3" colid="SALE_PROC" display="number"/>
+						<cell align="right" col="4" colid="SALE_NON" display="number"/>
+						<cell align="right" col="5" colid="SALE_EXPT" display="number"/>
+						<cell align="right" col="6" colid="CHANNEL_UKEY" display="number"/>
+						<cell align="right" col="7" colid="CHANNEL_PROC" display="number"/>
+						<cell align="right" col="8" colid="CHANNEL_NON" display="number"/>
+						<cell align="right" col="9" colid="CHANNEL_EXPT" display="number"/>
+						<cell align="right" col="10" colid="DSNET_UKEY" display="number"/>
+						<cell align="right" col="11" colid="DSNET_PROC" display="number"/>
+						<cell align="right" col="12" colid="DSNET_NON" display="number"/>
+						<cell align="right" col="13" colid="DSNET_EXPT" display="number"/>
+						<cell align="right" col="14" colid="SCRB_UKEY" display="number"/>
+						<cell align="right" col="15" colid="SCRB_PROC" display="number"/>
+						<cell align="right" col="16" colid="SCRB_NON" display="number"/>
+						<cell align="right" col="17" colid="SCRB_EXPT" display="number"/>
+						<cell align="right" col="18" colid="PRPRC_UKEY" display="number"/>
+						<cell align="right" col="19" colid="PRPRC_PROC" display="number"/>
+						<cell align="right" col="20" colid="PRPRC_NON" display="number"/>
+						<cell align="right" col="21" colid="PRPRC_EXPT" display="number"/>
+					</body>
+					<summary>
+						<cell align="right" bkcolor="user37" col="0" color="user35" colspan="2" display="text" text="합&#32;&#32;계"/>
+						<cell align="right" bkcolor="user37" col="2" color="user35" display="number" expr='sum(&quot;SALE_UKEY&quot;)'/>
+						<cell align="right" bkcolor="user37" col="3" color="user35" display="number" expr='sum(&quot;SALE_PROC&quot;)'/>
+						<cell align="right" bkcolor="user37" col="4" color="user35" display="number" expr='sum(&quot;SALE_NON&quot;)'/>
+						<cell align="right" bkcolor="user37" col="5" color="user35" display="number" expr='sum(&quot;SALE_EXPT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="6" color="user35" display="number" expr='sum(&quot;CHANNEL_UKEY&quot;)'/>
+						<cell align="right" bkcolor="user37" col="7" color="user35" display="number" expr='sum(&quot;CHANNEL_PROC&quot;)'/>
+						<cell align="right" bkcolor="user37" col="8" color="user35" display="number" expr='sum(&quot;CHANNEL_NON&quot;)'/>
+						<cell align="right" bkcolor="user37" col="9" color="user35" display="number" expr='sum(&quot;CHANNEL_EXPT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="10" color="user35" display="number" expr='sum(&quot;DSNET_UKEY&quot;)'/>
+						<cell align="right" bkcolor="user37" col="11" color="user35" display="number" expr='sum(&quot;DSNET_PROC&quot;)'/>
+						<cell align="right" bkcolor="user37" col="12" color="user35" display="number" expr='sum(&quot;DSNET_NON&quot;)'/>
+						<cell align="right" bkcolor="user37" col="13" color="user35" display="number" expr='sum(&quot;DSNET_EXPT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="14" color="user35" display="number" expr='sum(&quot;SCRB_UKEY&quot;)'/>
+						<cell align="right" bkcolor="user37" col="15" color="user35" display="number" expr='sum(&quot;SCRB_PROC&quot;)'/>
+						<cell align="right" bkcolor="user37" col="16" color="user35" display="number" expr='sum(&quot;SCRB_NON&quot;)'/>
+						<cell align="right" bkcolor="user37" col="17" color="user35" display="number" expr='sum(&quot;SCRB_EXPT&quot;)'/>
+						<cell align="right" bkcolor="user37" col="18" color="user35" display="number" expr='sum(&quot;PRPRC_UKEY&quot;)'/>
+						<cell align="right" bkcolor="user37" col="19" color="user35" display="number" expr='sum(&quot;PRPRC_PROC&quot;)'/>
+						<cell align="right" bkcolor="user37" col="20" color="user35" display="number" expr='sum(&quot;PRPRC_NON&quot;)'/>
+						<cell align="right" bkcolor="user37" col="21" color="user35" display="number" expr='sum(&quot;PRPRC_EXPT&quot;)'/>
+					</summary>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="btn_ExcelExport" ImageID="btn_i_exceldown_w" Left="995" OnClick="Div0_btn_ExcelExport_OnClick" TabOrder="3" TabStop="FALSE" Text="Button1" ToolTipText="Excel&#32;Download" Top="54" Width="19"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALSUI00600
+* 업무명      : 영업관리
+* 프로그램명  : U.Key 연동 현황
+--------------------------------------------------------------------------------
+* 작성자      : 김연석
+* 작성일      : 2009.02.06
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_SAL.js"
+#include "lib::lib_util.js"
+/*******************************************************************************
+// 2. 폼 변수 정의
+*******************************************************************************/
+
+// 글로벌 세션정보
+var FV_USERID;		// 사용자ID
+var FV_USERNM;		// 사용자명
+var FV_ORGID;		// 소속
+var FV_ORGNM;		// 소속명
+var FV_ORGCL;		// 소속구분
+var FV_ORGAREAID;	// 근무지
+var FV_ORGAREANM;	// 근무지명
+var FV_USERGRP;		// 유저그룹
+var	FV_ORGUKEYID;   // 근무지ukeyid
+var	FV_AGENCYID;    // 소속 대리점ID
+var	FV_AGENCYNM;    // 소속 대리점명
+var	FV_AGENCYUKEYID; // 소속 대리점UKEY ID	
+
+/*******************************************************************************
+* 함수명 : df_auth
+* 기능명 : 사용자의 권한별 Button 제어
+*******************************************************************************/
+function lf_auth()
+{
+	sf_setAgencyDealPlcBySession("Div_Condition"
+        , "edt_AgencyCdNm,edt_AgencyCd,edt_AgencyUkeyCd,btn_Agency"
+        , "edt_SalePlcNm,edt_SalePlc,edt_SalePlcUkeyCd,edt_SalePlcSubCd,edt_SalePlcChannelCd,btn_SalePlc");	
+}
+
+/*******************************************************************************
+* 함수명 : lf_search
+* 기능명 : 공통 조회 Button Click
+*******************************************************************************/
+function lf_search(sButton)
+{
+
+}
+
+/*******************************************************************************
+* 함수명 : SALSUI00600_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function SALSUI00600_OnLoadCompleted(obj)
+{
+
+	//조회기간의 초기값 설정
+	Div_Condition.cal_IfDtFr.value = left(GetDate(), 8);
+	Div_Condition.cal_IfDtTo.value = left(GetDate(), 8);
+
+	lf_getSession();
+
+	http.Sync = true;
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+
+	// Grid Combo Setting
+	cf_setCommonCode("grd_UKeyIFList", "ZBAS_C_00350", 3);
+
+	cf_checkCommonCode();
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack 
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+
+}
+
+
+/*******************************************************************************
+ * @description    : 조회 유효성 검사
+*******************************************************************************/
+function f_isValidSearch()
+{
+	var sSaleFr = Div_Condition.cal_IfDtFr.value;
+	var sSaleTo = Div_Condition.cal_IfDtTo.value;
+	var sControls  = "Div_Condition.cal_IfDtFr,Div_Condition.cal_IfDtTo";
+	var sControlNm = "시작일자,종료일자";
+
+	var arrControl   = Split(sControls , ",");
+	var arrControlNm = Split(sControlNm, ",");
+	
+	var nCntCntrl = arrControl.length();
+	
+	for(var i=0; i<nCntCntrl; i++)
+	{
+		//var oCntrl = Object(arrControl[i]);
+		var oCntrl = eval(arrControl[i]);
+		if(oCntrl.Text == "")
+		{	
+			alert(cf_getMessage(MSG_00083, arrControlNm[i]));
+			oCntrl.SetFocus();
+			return false;
+		}
+	}
+	
+	if (substr(Div_Condition.cal_IfDtFr.Value, 0, 6) <> substr(Div_Condition.cal_IfDtTo.Value, 0, 6)) {
+		alert("동일한 월에 대해서만 조회가 가능합니다.");
+		return false;
+	}
+
+	// 대리점은 필수조회조건.
+	if (Div_Condition.edt_AgencyCd.text == "") {
+		alert("대리점은 필수조회 조건 입니다.");
+		return false;
+	}
+
+
+	
+	var nCompared = sf_compare(Div_Condition.cal_IfDtFr.Value,Div_Condition.cal_IfDtTo.Value);
+	if(nCompared == -1)
+	{
+		alert(cf_getMessage(MSG_00095, "종료일자;시작일자"));
+		Div_Condition.cal_saleDtmFrom.SetFocus();
+		return false;
+	}
+	
+	return true;
+}
+
+/*******************************************************************************
+* 함수명 : btnSearch_OnClick
+* 기능명 : 조회 Button을 Click 했을 경우
+*******************************************************************************/
+function Div_Condition_btn_Search_OnClick(obj)
+{
+	if(f_isValidSearch() == false) return;
+
+	var sSaleFr = Div_Condition.cal_IfDtFr.value;
+	var sSaleTo = Div_Condition.cal_IfDtTo.value;
+
+	cf_setParam(ds_condition,"ifdtmfr",sSaleFr);
+	cf_setParam(ds_condition,"ifdtmto",sSaleTo);
+	cf_setParam(ds_condition,"ukeyagency", Div_Condition.edt_AgencyUkeyCd.text );
+	cf_setParam(ds_condition,"saleplc",Div_Condition.edt_SalePlc.value);
+
+	var sSvcID = "svcSearch";
+	var sInDs = "nc_input_fieldDs=ds_condition";  
+	var sOutDs = "ds_UKeyIfStatus=ds_UKeyIfStatus";
+	var sArg = "sktst.sal.SUI#getUKeyIfStatus";
+	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+	
+}
+
+/*******************************************************************************
+ * @description    : 엑셀 출력 - 이벤트
+*******************************************************************************/
+function btn_excel_OnClick(obj)
+{
+	// cf_excel(oGrd, nMode)
+	// oGrd - 엑셀화할 그리드 객체 , nMode - 엑셀 저장 모드 1 or null : 엑셀로드 , 2 : 파일 저장
+	cf_exportExcel(grd_UKeyIFList);
+}
+
+/*******************************************************************************
+ * @description    : 권한 설정
+*******************************************************************************/
+function lf_setAuth()
+{
+	lf_getSession();
+
+	uf_enableAgencyByAuth("Div_Condition" ,"edt_agencyNm,edt_AgencyCd,ds_DlvFee","edt_AgencyUkeyCd");
+	uf_enableDealByAuth("Div_Condition" ,"edt_SalePlcNm,edt_salePlcCd,btn_SalePlc","edt_SalePlcUkeyCd,edt_SalePlcSubCd,edt_SalePlcChannelCd");
+}
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function lf_getSession()
+{
+	FV_USERID    = gds_session.GetColumn(0, "loginid");		// 사용자ID
+	FV_USERNM    = gds_session.GetColumn(0, "usernm");		// 사용자명
+	FV_ORGID     = gds_session.GetColumn(0, "orgid");
+	FV_ORGNM     = gds_session.GetColumn(0, "orgnm");
+	FV_ORGCL     = gds_session.GetColumn(0, "orgcl");
+	FV_ORGAREAID = gds_session.GetColumn(0, "orgareaid");
+	FV_ORGAREANM = gds_session.GetColumn(0, "orgareanm");
+	FV_USERGRP   = gds_session.GetColumn(0, "usergrp");
+	FV_ORGUKEYID = gds_session.GetColumn(0, "orgareaukeyid");        // 근무지ukeyid
+	FV_AGENCYID  = gds_session.GetColumn(0, "posAgencyId");          // 소속 대리점ID
+	FV_AGENCYNM  = gds_session.GetColumn(0, "posAgencyNm");          // 소속 대리점명
+	FV_AGENCYUKEYID = gds_session.GetColumn(0, "posAgencyUkeyId");  // 소속 대리점UKEY ID	
+	
+	
+	if (ToNumber(uf_getAuthCode()) >= 1){
+		Div_Condition_btn_Agency_OnClick();
+	}
+
+}
+
+/*******************************************************************************
+ * @description    :  그리드 더블 클릭 이벤트
+*******************************************************************************/
+function grd_UKeyIFList_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+
+	//사용자 그룹과 선택된 자료의 영업구분 Check...
+	var sSlCl = ds_UKeyIfStatus.GetColumn(ds_UKeyIfStatus.currow, "SL_CL");
+
+	var sSlaeChgCl   = ds_UKeyIfStatus.GetColumn(nRow, "SALE_CHG_HST_CL");
+
+	var sStaDt       = Div_Condition.cal_IfDtFr.Value;
+	var sEndDt       = Div_Condition.cal_IfDtTo.Value;
+
+	var sAgencyNM    = ds_UKeyIfStatus.GetColumn(ds_UKeyIfStatus.currow, "AGENCY_NM");
+	var sAgencyUkey  = ds_UKeyIfStatus.GetColumn(ds_UKeyIfStatus.currow, "AGENCY_UKEY");
+	var sAgencyPs    = ds_UKeyIfStatus.GetColumn(ds_UKeyIfStatus.currow, "AGENCY_PS");
+	var sSaleNM      = ds_UKeyIfStatus.GetColumn(ds_UKeyIfStatus.currow, "SALE_PLC_NM");
+	var sSaleAgency  = ds_UKeyIfStatus.GetColumn(ds_UKeyIfStatus.currow, "AGENCY_UKEY");
+	var sSaleSub     = ds_UKeyIfStatus.GetColumn(ds_UKeyIfStatus.currow, "UKEY_SUB_CD");
+	var sSaleChannel = ds_UKeyIfStatus.GetColumn(ds_UKeyIfStatus.currow, "UKEY_CHANNEL_CD");
+	var sSaleCd      = ds_UKeyIfStatus.GetColumn(ds_UKeyIfStatus.currow, "SALE_PLC_CD");
+
+
+	var sArg     =  "OP_DT_FR="       +quote(sStaDt);
+	    sArg    += " OP_DT_TO="       +quote(sEndDt);
+	    sArg    += " POS_AGENCY_NM="  +quote(sAgencyNM);
+	    sArg    += " POS_AGENCY_UKEY="+quote(sAgencyUkey);
+	    sArg    += " POS_AGENCY_PS="  +quote(sAgencyPs);
+	    sArg    += " SALE_PLC_NM="    +quote(sSaleNM);
+	    sArg    += " UKEY_AGENCY_CD=" +quote(sSaleAgency);
+	    sArg    += " UKEY_SUB_CD="    +quote(sSaleSub); 
+	    sArg    += " UKEY_CHANNEL_CD="+quote(sSaleChannel);
+	    sArg    += " SALE_PLC="       +quote(sSaleCd);
+
+
+	switch(nCell) {
+		case  2 :
+		case  3 :
+		case  4 :
+		case  5 : // 일반판매 인터페이스 관리
+					gf_OpenWindow( "100000236", sArg);  // 소매
+					break;
+		case  6 :
+		case  7 :
+		case  8 :
+		case  9 : // 채널변경 인터페이스 관리
+					gf_OpenWindow( "100000522", sArg);  // 소매
+					break;
+		case 10 :
+		case 11 :
+		case 12 :
+		case 13 : // 약정변경 인터페이스 관리
+					gf_OpenWindow( "100000562", sArg);  // 소매
+					break;
+		case 14 :
+		case 15 :
+		case 16 :
+		case 17 : // 가입비분납전환 인터페이스 관리
+					gf_OpenWindow( "100000550", sArg);  // 소매
+					break;
+		case 18 :
+		case 19 :
+		case 20 :
+		case 21 : // SKT요금수납대행 인터페이스 관리
+					gf_OpenWindow( "100000235", sArg);  // 소매
+					break;
+		default :
+            //alert("정의되지 않은 처리구분입니다.. 시스템관리자에게 문의 바랍니다. [" + sSlaeChgCl + "]");
+	}
+
+}
+
+/*******************************************************************************
+ * @description    :  대리점 키 이벤트
+*******************************************************************************/
+function Div_Condition_edt_AgencyCdNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	sf_clearControls("Div_Condition.edt_AgencyUkeyCd,Div_Condition.edt_AgencyCd,Div_Condition.edt_SalePlcNm,Div_Condition.edt_SalePlcUkeyCd,Div_Condition.edt_SalePlcSubCd,Div_Condition.edt_SalePlcChannelCd,Div_Condition.edt_SalePlc");	
+	
+	if(nChar == 13)
+	{
+		var sArg  = "org_id="+quote(FV_ORGID); 
+			sArg += " org_cl="+quote(FV_ORGCL); 
+		cf_callAgencyPop(sArg, Div_Condition, "edt_AgencyCdNm,edt_AgencyCd,edt_AgencyUkeyCd");
+		
+		if(uf_isNull(FV_STR_POP_RESULT) == true) return;
+
+	}
+}
+
+/*******************************************************************************
+ * @description    :  대리점 버튼 클릭 이벤트
+*******************************************************************************/
+function Div_Condition_btn_Agency_OnClick(obj)
+{
+	sf_clearControls("Div_Condition.edt_AgencyUkeyCd,Div_Condition.edt_AgencyCd,Div_Condition.edt_SalePlcNm,Div_Condition.edt_SalePlcUkeyCd,Div_Condition.edt_SalePlcSubCd,Div_Condition.edt_SalePlcChannelCd,Div_Condition.edt_SalePlc");	
+	
+	var sArg  = "org_id="+quote(FV_ORGID); 
+	    sArg += " org_cl="+quote(FV_ORGCL); 
+	cf_callAgencyPop(sArg, Div_Condition, "edt_AgencyCdNm,edt_AgencyCd,edt_AgencyUkeyCd");
+
+	if(uf_isNull(FV_STR_POP_RESULT) == true) return;
+
+}
+
+/*******************************************************************************
+ * @description    :  판매처 검색 버튼 클릭 이벤트
+*******************************************************************************/
+function Div_Condition_btn_SalePlc_OnClick(obj)
+{
+	sf_clearControls("Div_Condition.edt_SalePlcUkeyCd,Div_Condition.edt_SalePlcSubCd,Div_Condition.edt_SalePlcChannelCd,Div_Condition.edt_SalePlc");	
+	
+	var sPosAgency = Div_Condition.edt_AgencyCd.Text;
+	var sDealCl    = sf_getDealCoCl1(true);
+	
+	if( uf_isNull(sPosAgency) == true)
+	{
+		alert(cf_getMessage(MSG_00083, "대리점"));
+		return;
+	}	
+	
+	var sArg  = "deal_co_cl1="+quote(sDealCl);
+		sArg += " pos_agency="+quote(sPosAgency); // 옵션
+	cf_callDealPop(sArg, Div_Condition, "edt_SalePlcNm,edt_SalePlc,edt_SalePlcUkeyCd,edt_SalePlcSubCd,edt_SalePlcChannelCd");
+}
+
+/*******************************************************************************
+ * @description    :  판매처 검색 키 이벤트
+*******************************************************************************/
+function Div_Condition_edt_SalePlcNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	sf_clearControls("Div_Condition.edt_SalePlcUkeyCd,Div_Condition.edt_SalePlcSubCd,Div_Condition.edt_SalePlcChannelCd,Div_Condition.edt_SalePlc");	
+	if(nChar == 13)
+	{
+		var sPosAgency = Div_Condition.edt_AgencyCd.Text;
+		var sDealCl    = sf_getDealCoCl1(true);
+	
+		if( uf_isNull(sPosAgency) == true)
+		{
+			alert(cf_getMessage(MSG_00083, "대리점"));
+			return;
+		}			
+		var sArg  = "deal_co_cl1="+quote(sDealCl);
+			sArg += " pos_agency="+quote(sPosAgency); // 옵션
+		cf_callDealPop(sArg, Div_Condition, "edt_SalePlcNm,edt_SalePlc,edt_SalePlcUkeyCd,edt_SalePlcSubCd,edt_SalePlcChannelCd");
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 엑셀 출력 - 이벤트
+*******************************************************************************/
+function Div0_btn_ExcelExport_OnClick(obj)
+{
+	cf_exportExcel(grd_UKeyIFList);
+}]]></Script>
+</Window>

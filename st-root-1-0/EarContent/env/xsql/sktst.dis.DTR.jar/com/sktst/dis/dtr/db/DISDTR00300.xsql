@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="DISDTR00300">
+	<select id="selectInProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT mgmt.prod_cl
+     , mgmt.mfact_id
+     , NVL((SELECT sort_seq 
+              FROM tbas_deal_co_mgmt
+             WHERE del_yn = 'N'
+               AND deal_end_yn != 'Y'
+               AND out_stop_yn = 'N'
+               AND deal_co_cd = mgmt.mfact_id
+               AND eff_end_dtm = '99991231235959'
+               AND rownum = 1), '') sort_seq
+     , dis.prod_cd
+     , mgmt.prod_nm
+     , dis.ser_num
+     , dis.dis_st
+     , dis.color_cd 
+     , dis.eqp_st
+     , dis.dis_amt         
+     , '1' cur_cnt
+     , '1' mov_cnt
+     , '0' mov_chk
+     , 'N' out_fix_yn
+     , 'N' in_fix_yn
+     , '0' mov_seq               
+  FROM TDIS_PROD_DIS dis,
+       TBAS_PROD_MGMT mgmt
+ WHERE dis.HLD_PLC_ID =  #out_plc_id#
+   AND dis.DEL_YN = 'N'
+   AND dis.PROD_CD = mgmt.PROD_CD
+   AND mgmt.DEL_YN = 'N'
+   AND dis.last_inout_dt IS NULL
+]]><isNotEmpty prepend="AND" property="ser_num">
+<![CDATA[       UPPER(dis.ser_num) like '%' || UPPER(#ser_num#) || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       UPPER(dis.prod_cd) LIKE '%' || UPPER(#prod_cd#) || '%'
+]]></isNotEmpty>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_cl">
+<![CDATA[       mgmt.prod_cl = #prod_cl#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[       mgmt.mfact_id = #mfact_id#
+]]></isNotEmpty>
+	</select>
+</sqlMap>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="DISINN01500">
+	<select id="getProdDisInfo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT PROD_CD,
+       FBAS_GET_PROD_NM(PROD_CD) AS PROD_NM, 
+       COLOR_CD,
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', COLOR_CD) COLOR_NM,
+       SER_NUM,
+       EQP_ST,
+       FBAS_GET_COMMCDNM_VAL('ZDIS_C_00100', DIS_ST) DIS_ST,
+       OLD_SER_NUM,
+       CON_MGMT_NO,
+       RESERVE_AMT 
+  FROM TDIS_PROD_DIS 
+ WHERE SER_NUM IN 
+       (SELECT MAX(SER_NUM)  
+         FROM TDIS_PROD_DIS 
+        WHERE OLD_SER_NUM = #old_ser_num# 
+       )]]>
+	</select>
+	<select id="getProdDisHstList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT TO_CHAR(INS_DTM,'YYYY-MM-DD HH24:MI:SS') AS INS_DTM
+     , OUT_PLC_NM
+     , IN_PLC_NM
+     , INOUT_DT
+     , INOUT_NM
+     , INOUT_DTL_NM
+     , SER_NUM
+     , INS_USER_NM
+     , CON_MGMT_NO 
+FROM (SELECT TO_DATE(A.INS_DTM,'YYYY-MM-DD HH24:MI:SS') AS INS_DTM, 
+             FBAS_GET_DEAL_NM(A.OUT_PLC_ID,'') AS OUT_PLC_NM,
+             FBAS_GET_DEAL_NM(A.IN_PLC_ID,'') AS IN_PLC_NM,
+             A.INOUT_DT,
+             FBAS_GET_COMMCDNM_VAL('ZDIS_C_00190', A.INOUT_CL) AS INOUT_NM,
+             FBAS_GET_COMMCDNM_VAL('ZDIS_C_00050', A.INOUT_DTL_CL) AS INOUT_DTL_NM,
+             A.SER_NUM,
+             FBAS_GET_USER_NM(A.INS_USER_ID)||'('||A.INS_USER_ID||')' AS INS_USER_NM,
+             CON_MGMT_NO
+        FROM TDIS_PROD_INOUT_HST A, TDIS_PROD_DIS B
+       WHERE A.SER_NUM IN 
+             (SELECT SER_NUM 
+               FROM TDIS_PROD_DIS 
+              WHERE OLD_SER_NUM = #old_ser_num# 
+             ) 
+        AND A.PROD_CD = B.PROD_CD
+        AND A.SER_NUM = B.SER_NUM
+        AND A.DEL_YN = 'N'
+        AND B.DEL_YN = 'N'
+      UNION ALL
+      SELECT TO_DATE(INS_DTM,'YYYY-MM-DD HH24:MI:SS') AS INS_DTM, 
+             '' AS OUT_PLC_NM,
+             FBAS_GET_DEAL_NM(CON_PLC_CD,'') AS IN_PLC_NM,
+             CON_DT,
+             '상담' AS INOUT_NM,
+             FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', PRC_ST) AS INOUT_DTL_NM,
+             '' AS SER_NUM,
+             FBAS_GET_USER_NM(INS_USER_ID)||'('||INS_USER_ID||')' AS INS_USER_NM,
+             CON_MGMT_NO
+      FROM TCST_CONSULT_MGMT
+      WHERE SER_NUM = #old_ser_num#
+      AND DEL_YN = 'N'
+      UNION ALL
+      SELECT TO_DATE(INS_DTM,'YYYY-MM-DD HH24:MI:SS') AS INS_DTM, 
+             '' AS OUT_PLC_NM,
+             FBAS_GET_DEAL_NM(CON_PLC_CD,'') AS IN_PLC_NM,
+             PRCHS_DT,
+             '매입' AS INOUT_NM,
+             FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', PRC_ST) AS INOUT_DTL_NM,
+             '' AS SER_NUM,
+             FBAS_GET_USER_NM(INS_USER_ID)||'('||INS_USER_ID||')' AS INS_USER_NM,
+             CON_MGMT_NO
+      FROM TCST_PRCHS_MGMT
+      WHERE SER_NUM = #old_ser_num#
+      AND DEL_YN = 'N')
+ORDER BY INS_DTM]]>
+	</select>
+</sqlMap>

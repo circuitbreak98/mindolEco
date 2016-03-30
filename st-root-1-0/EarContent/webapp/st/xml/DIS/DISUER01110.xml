@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="중고반납출고상품조회" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_prod">
+				<Contents>
+					<colinfo id="sale_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="cust_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="svc_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="ser_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="deal_co_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cl_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="out_qty" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition"></Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_prod" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="551" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="463" Id="grd_prod" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" OnHeadClick="grd_prod_OnHeadClick" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="88" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="30"/>
+						<col width="42"/>
+						<col width="81"/>
+						<col width="169"/>
+						<col width="100"/>
+						<col width="146"/>
+						<col width="125"/>
+						<col width="109"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="판매일"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="개통번호"/>
+						<cell bkcolor="user34" col="0" color="user35" display="checkbox" edit="checkbox"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="판매처"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="고객명"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="모델"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="일련번호"/>
+					</head>
+					<body>
+						<cell align="center" col="0" cursor="hand" display="checkbox" edit="checkbox"/>
+						<cell align="center" col="1" cursor="hand" display="text" expr="currow+1"/>
+						<cell align="center" col="2" colid="sale_dt" cursor="hand" display="date"/>
+						<cell bkimagealign="left" col="3" colid="deal_co_nm" cursor="hand" display="text"/>
+						<cell align="left" bkimagealign="left" col="4" colid="cust_nm" cursor="hand" display="text" expr='sf_getMasking(cust_nm,&#32;&quot;CustNm&quot;)'/>
+						<cell align="center" col="5" colid="svc_num" cursor="hand" display="text" expr='sf_getMasking(svc_num,&#32;&quot;SvcNum&quot;)'/>
+						<cell align="left" bkimagealign="left" col="6" colid="prod_nm" cursor="hand" display="text"/>
+						<cell align="center" col="7" colid="ser_num" cursor="hand" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Border="Raised" Height="63" Id="div_search" Left="10" Style="sty_div_search" TabOrder="2" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static2" Left="16" Style="sty_lb_Search" TabOrder="13" Text="대리점" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_prodNm" Left="366" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="31" Width="148"></Edit>
+				<Static Align="Right" Height="20" Id="Static5" Left="310" Style="sty_lb_Search" TabOrder="10" Text="모델" Top="31" VAlign="Middle" Width="52"></Static>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_staSaleDt" Left="80" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="1" TodayColor="user26" Top="31" UserData="시작&#32;판매일" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Static Align="Right" Height="20" Id="Static3" Left="8" Style="sty_lb_Search" TabOrder="8" Text="판매일" Top="31" VAlign="Middle" Width="68"></Static>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_search" ImageID="btn_a_2" Left="628" LeftMargin="5" OnClick="div_search_btn_search_OnClick" Style="sty_btn_a" TabOrder="7" Text="조회" Top="31" Width="60"></Button>
+				<Static Align="Center" Height="20" Id="Static0" Left="170" TabOrder="9" Text="~" Top="31" VAlign="Middle" Width="20"></Static>
+				<Calendar Border="Flat" ButtonImageID="btn_i_calendar" DayFont="Default,-1" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_endSaleDt" Left="189" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="2" TodayColor="user26" Top="31" UserData="종료&#32;판매일" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="90"></Calendar>
+				<Static Align="Right" Height="20" Id="Static1" Left="532" Style="sty_lb_Search" TabOrder="11" Text="일련번호" Top="7" VAlign="Middle" Width="92"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_serNum" Left="628" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Width="70"></Edit>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_posAgencyNm" Left="80" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="7" Width="200"></Edit>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="26" TabOrder="14" Top="32" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static4" Left="302" Style="sty_lb_Search" TabOrder="15" Text="판매점" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_salePlcNm" Left="366" LeftMargin="2" OnCharChanged="div_search_edt_salePlcId_OnCharChanged" OnKeyDown="div_search_edt_salePlcId_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="7" Width="130"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_salePlc" ImageID="btn_i_detail" Left="495" OnClick="div_search_btn_salePlc_OnClick" TabOrder="4" Text="Button0" Top="7" Width="19"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_salePlcId" Left="514" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="16" Top="7" Visible="FALSE" Width="10"></Edit>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="696" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="565" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="761" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="4" Text="닫기" Top="565" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : DISDCO01110
+* 업무명      :  재고관리 - 상품입력(중고반납출고)
+* 프로그램명  : 중고반납출고
+--------------------------------------------------------------------------------
+* 작성자      : 한병곤
+* 작성일      : 2009.04.01
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_DIS.js"
+#include "lib::lib_SAL.js"
+ 
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_DSID;       // 데이터셋 ID
+var FV_CALL_FUNCTION;  // 부모창 호출 함수명
+var FV_POS_AGENCY_ID;  // 대리점 id
+var FV_POS_AGENCY_NM;  // 대리점 명.
+var FV_OBJ_DS;
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	FV_OBJ_DS = Object("parent." + FV_STR_DSID);
+	div_search.edt_posAgencyNm.value = FV_POS_AGENCY_NM;
+	
+	// 그리드 체크박스 설정 및 정렬
+	cf_setGrdChecknSortEvent(grd_prod, 0);	
+	
+    // 일자 셋팅.
+    div_search.cal_staSaleDt.Value = sf_getFirstDay();
+    div_search.cal_endSaleDt.Value = Mid(GetDate(),0,8);
+    div_search.cal_staSaleDt.SetFocus(); 	
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+
+}
+
+/*******************************************************************************
+ * @description    : 조회버튼 클릭 - 이벤트
+*******************************************************************************/
+function div_search_btn_search_OnClick(obj)
+{
+    if(!cf_checkObjValues(div_search)){
+        return;
+    }
+        
+    // 넘길 파라메터 설정
+    cf_setParam(ds_condition, "posAgencyId", FV_POS_AGENCY_ID);    
+    cf_setParam(ds_condition, "staSaleDt", div_search.cal_staSaleDt.Value);
+    cf_setParam(ds_condition, "endSaleDt", div_search.cal_endSaleDt.Value);    
+    cf_setParam(ds_condition, "prodNm", div_search.edt_prodNm.Value);
+    cf_setParam(ds_condition, "serNum", div_search.edt_serNum.Value);
+    cf_setParam(ds_condition, "salePlcId", div_search.edt_salePlcId.Value);
+
+    // 트랜잭션 설정
+    var sSvcID = "searchProdList";
+    var sInDs  = "nc_input_fieldDs=ds_condition";
+    var sOutDs = "ds_prod=ds_prod";
+    var sArg   = "sktst.dis.UER#getOldOutProdList";
+    
+    // 공통 트랜잭션 호출
+    cf_Transaction(sSvcID, sInDs, sOutDs, sArg);  	
+}
+
+/*******************************************************************************
+ * @description    : 확인버튼 클릭 - 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	if(ds_prod.FindRow("chk","1") == -1){
+		alert(cf_getMessage(MSG_00047, "상품을"));
+		return;
+	}
+	
+	grd_prod.redraw = false;
+	
+	for(var i= ds_prod.GetRowCount()-1 ; i >= 0 ; i-- ){
+
+		if( "1" != (ds_prod.GetColumn(i,"chk"))){
+			ds_prod.DeleteRow(i);
+		}
+	}		
+	
+	var iDuplicationCnt = 0;
+		
+	// 일련번호 중복을 체크한다.
+	for(var i = 0 ; i < ds_prod.GetRowCount() ; i++ ){
+	
+		FV_OBJ_DS.Filter("prod_cd=='"+ds_prod.GetColumn(i,"prod_cd")+"'&&ser_num=='"+ds_prod.GetColumn(i,"ser_num")+"'");
+		
+		if(FV_OBJ_DS.GetRowCount() > 0 ){		
+	
+			iDuplicationCnt++;
+			ds_prod.SetColumn(i,"dum_yn","Y");
+			
+		}else{
+			ds_prod.SetColumn(i,"dum_yn","N");
+		}
+	}
+		
+	FV_OBJ_DS.UnFilter();
+
+	if(iDuplicationCnt > 0){
+	
+		// "이미 출고예정대상으로 선택된 일련번호가 존재합니다. \n\n중복된 일련번호를 제외하고 처리하시겠습니까?"
+		if(!confirm(cf_getMessage(MSG_00156, "출고예정대상"))){
+			return;
+		}		
+		
+	}		
+	
+	ds_prod.Filter("dum_yn='N'");	
+	f_copyDataSet(FV_OBJ_DS, ds_prod);
+
+	eval("parent."+FV_CALL_FUNCTION+"()");
+	
+	grd_prod.redraw = true;
+	
+	this.Close();	
+}
+
+/*******************************************************************************
+ * @description          : 데이타셋의 카피 - 대상 DS를 기준으로 목적 DS에 정보를 복사
+                          - 없으면 추가한다.
+ * @param oTargetDs      : 목적 DS 객체
+		  oSourceDs      : 대상 DS 객체
+*******************************************************************************/
+function f_copyDataSet(oTargetDs, oSourceDs)
+{
+	oTargetDs.FireEvent = false;
+	var nSourceColCount = oSourceDs.GetColCount();
+	var nSourceRowCount = oSourceDs.GetRowCount();
+	var sChildColId = "";
+	var nTargetRow = 0;
+
+	for(var i=0; i<nSourceRowCount; i++)
+	{		
+	
+		if(oSourceDs.GetColumn(i,"prod_cl") == "9"){
+
+			// target에 존재할 경우 addrow 하지 않고 수량만 업데이트.
+			var iRtn = oTargetDs.FindRow("prod_cd",oSourceDs.GetColumn(i,"prod_cd"));
+			
+			if( iRtn == -1 ){
+			
+				nTargetRow = oTargetDs.AddRow();
+				
+				for(var j=0; j<nSourceColCount; j++)
+				{
+					sChildColId = oSourceDs.GetColID(j);				
+	
+					if(oTargetDs.GetColIndex(sChildColId) == -1)
+					{
+						oTargetDs.AddColumn(sChildColId);
+					}
+					
+					if(oTargetDs.getRowCount() < 1)
+					{
+						nTargetRow = oTargetDs.addRow();
+					}	
+			
+					oTargetDs.SetColumn(nTargetRow, sChildColId, oSourceDs.GetColumn(i, sChildColId));
+				}				
+				
+			}else{
+			
+				oTargetDs.SetColumn(iRtn,"out_qty", toNumber(oTargetDs.GetColumn(iRtn,"out_qty")) + toNumber(oSourceDs.GetColumn(i,"out_qty")));
+			}
+					
+		}else{
+	
+			nTargetRow = oTargetDs.AddRow();
+			
+			for(var j=0; j<nSourceColCount; j++)
+			{
+				sChildColId = oSourceDs.GetColID(j);				
+
+				if(oTargetDs.GetColIndex(sChildColId) == -1)
+				{
+					oTargetDs.AddColumn(sChildColId);
+				}
+				
+				if(oTargetDs.getRowCount() < 1)
+				{
+					nTargetRow = oTargetDs.addRow();
+				}	
+		
+				oTargetDs.SetColumn(nTargetRow, sChildColId, oSourceDs.GetColumn(i, sChildColId));
+			}
+		}
+	}
+
+	
+	oTargetDs.FireEvent = true;
+}
+
+/*******************************************************************************
+ * @description    : 판매점 OnChar Changed 이벤트
+*******************************************************************************/
+function div_search_edt_salePlcId_OnCharChanged(obj,strPreText,strPostText)
+{
+	if(strPreText != strPostText){
+		div_search.edt_salePlcId.value = "";
+	}		
+}
+
+/*******************************************************************************
+ * @description    : 판매점 enter- 이벤트
+*******************************************************************************/
+function div_search_edt_salePlcId_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == "13"){	
+
+		var sArg  = "deal_co_cl1="+quote("A2,A3,B1,B2");
+	        sArg += " eff_dtm="+quote(parent.div_process.cal_outSchdDt.value); // 옵션
+			//sArg += " eff_dtm="+quote("20090306"); // 옵션
+	
+		cf_callDealPop(sArg, div_search, "edt_salePlcNm,edt_salePlcId");
+	}	
+}
+
+/*******************************************************************************
+ * @description    : 판매점click- 이벤트
+*******************************************************************************/
+function div_search_btn_salePlc_OnClick(obj)
+{
+	var sArg  = "deal_co_cl1="+quote("A2,A3,B1,B2");
+        sArg += " eff_dtm="+quote(parent.div_process.cal_outSchdDt.value); // 옵션
+		//sArg += " eff_dtm="+quote("20090306"); // 옵션
+
+	cf_callDealPop(sArg, div_search, "edt_salePlcNm,edt_salePlcId");	
+}
+
+/*******************************************************************************
+ * @description    : 닫기 버튼 click- 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+]]></Script>
+</Window>

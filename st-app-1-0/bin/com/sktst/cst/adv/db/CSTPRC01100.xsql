@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTPRC01100">
+	<select id="getExcelLst" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT M.PROD_CD
+     , FBAS_GET_PROD_NM(M.PROD_CD) PROD_NM
+     , SER_NUM
+     , CUST_NM
+     , CON_DT
+     , CON_PLC_CD
+     , FBAS_GET_DEAL_NM(M.CON_PLC_CD,M.CON_DT) CON_PLC_NM
+     , SVC_DT
+     , DECODE( EQP_ST,'A','01',DECODE( EQP_ST,'B','02',DECODE( EQP_ST,'C','03',DECODE( EQP_ST,'D','04',DECODE( EQP_ST,'E','05',DECODE( EQP_ST,'N','06')))))) AS EQP_ST
+     , COLOR_CD
+     , LOST_YN
+     , RETURN_YN
+     , LEASE_YN
+     , USIM_YN
+     , OTHER_YN
+     , SVC_NO
+     , SVC_MGMT_NO
+     , IMEI
+     , CHAG_DEDT_YN
+     , PRCHS_AMT
+     , DECODE(PRC_ST,'13','03',DECODE(PRC_ST,'14','04',DECODE(PRC_ST,'31','07'))) AS PRC_ST
+     , CASE 
+     	WHEN PRC_ST IN ('01', '02','12') THEN '01'
+        WHEN PRC_ST IN ('11') THEN '02'
+        WHEN PRC_ST IN ('13', '20','23','2A') THEN '03'
+        WHEN PRC_ST IN ('14', '28','29','2B','2C','2D','2F') THEN '04'
+        WHEN PRC_ST IN ('21', '25','2E') THEN '05'
+        WHEN PRC_ST IN ('22', '24','26','27') THEN '06'
+        WHEN PRC_ST IN ('31', '32','33') THEN '07'
+       END PRC_ST
+     , CHECK_DT
+     , '' AS TEMP_1
+     , '' AS TEMP_2
+     , RES_NO
+     , CUST_NM
+     , BANK_CD
+     , FBAS_GET_COMMCDNM_VAL('ZBAS_C_00060', M.BANK_CD) AS BANK_NM
+     , ACC_NO
+     , TEL_NO
+     , ZIP_CD1
+     , ZIP_CD2
+     , ADDR
+     , DTL_ADDR 
+     , '' AS TEMP_3
+     , M.RMKS
+     , SUBSTR(CON_MGMT_NO,2) AS CON_MGMT_NO
+     , DTL_1
+     , DTL_2
+     , DTL_3
+     , DTL_4
+     , DTL_5
+     , DTL_6
+     , DTL_7
+  FROM TCST_PRCHS_MGMT M, 
+     ( SELECT PRCHS_MGMT_NO
+            , SUM(DTL_1) AS DTL_1
+            , MAX(DTL_2) AS DTL_2
+            , MAX(DTL_3) AS DTL_3
+            , MAX(DTL_4) AS DTL_4
+            , MAX(DTL_5) AS DTL_5
+            , MAX(DTL_6) AS DTL_6
+            , MAX(DTL_7) AS DTL_7
+         FROM (
+              SELECT PRCHS_MGMT_NO
+                   , DECODE(DTL.DTL_CL,'1', HLD_QTY, DECODE(DTL.DTL_CL,'2', HLD_QTY , 0)) AS DTL_1
+                   , DECODE(DTL.DTL_CL,'4', 'Y', 'N') AS DTL_2
+                   , DECODE(DTL.DTL_CL,'5', 'Y', 'N') AS DTL_3
+                   , DECODE(DTL.DTL_CL,'6', 'Y', 'N') AS DTL_4
+                   , DECODE(DTL.DTL_CL,'7', 'Y', 'N') AS DTL_5
+                   , DECODE(DTL.DTL_CL,'8', 'Y', 'N') AS DTL_6
+                   , DECODE(DTL.DTL_CL,'9', 'Y', 'N') AS DTL_7
+                FROM TCST_PRCHS_DTL DTL
+               WHERE DTL.DEL_YN = 'N'
+                 AND HLD_QTY != 0
+              )
+       GROUP BY PRCHS_MGMT_NO
+     ) D
+WHERE M.PRCHS_MGMT_NO = D.PRCHS_MGMT_NO
+  AND CON_MGMT_NO LIKE 'T%'
+  AND M.CON_DT BETWEEN #FROM_DT# AND #TO_DT#
+]]><isEqual prepend="AND" property="PRC_ST" compareValue="13"> 
+<![CDATA[   M.PRC_ST IN ('13','14')
+]]></isEqual> 
+<![CDATA[]]><isEqual prepend="AND" property="PRC_ST" compareValue="31"> 
+<![CDATA[   M.PRC_ST = '31'
+]]></isEqual>   
+<![CDATA[]]><isNotEmpty prepend="AND" property="PROD_CD">   
+<![CDATA[   M.PROD_CD = #PROD_CD#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="SER_NUM">
+<![CDATA[   M.SER_NUM = #SER_NUM#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="CUST_NM">      
+<![CDATA[   M.CUST_NM LIKE '%'||#CUST_NM#||'%'
+]]></isNotEmpty>
+	</select>
+</sqlMap>

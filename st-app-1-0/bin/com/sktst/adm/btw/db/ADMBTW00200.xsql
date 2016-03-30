@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMBTW00200">
+	<select id="getGeneralAdjust" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT
+        deal_cl
+      , pcode
+      , sale_plc
+      , sale_dtm
+      , sale_chg_dtm
+      , sl_cl_cd
+      , settl_cond_cd
+      , sl_cl
+      , sale_chg_hst_cl
+      , ds_net
+      , sale_dtl_typ
+      , settl_cond
+      , eqp_mdl
+      , eqp_ser_num
+      , eqp_chulgo
+      , allot_sale
+      , cash_sale
+      , agrmt_amt
+      , range_amt
+      , bf_agrmt_amt
+      , af_agrmt_amt
+      , DECODE(settl_cond_cd, 'A', NVL(allot_adj_prc, 0), NVL(cash_adj_prc, 0)) adj_amt
+      , DECODE(settl_cond_cd, 'A', CASE WHEN allot_sale >= 0
+                                        THEN allot_sale + NVL(allot_adj_prc, 0)
+                                        ELSE allot_sale - NVL(allot_adj_prc, 0)
+                                   END, 0)     new_allot_sale
+      , DECODE(sl_cl_cd, '02', 0, '04', 0 /* 도매'02' / 온라인 도매'04'는 현금판매일 경우 현금판매가 Zero */
+                      , DECODE(settl_cond_cd, 'A', 0
+                                   , CASE WHEN cash_sale >= 0
+                                          THEN cash_sale + NVL(cash_adj_prc, 0)
+                                          ELSE cash_sale - NVL(cash_adj_prc, 0)
+                                     END))       new_cash_sale
+FROM 
+   ( 
+        SELECT
+                fbas_get_commcdnm_val('ZBAS_C_00240', b.deal_co_cl1)     deal_cl
+              , b.ukey_channel_cd pcode
+              , b.deal_co_nm      sale_plc
+              , b.sale_dtm        sale_dtm
+              , b.sale_chg_dtm    sale_chg_dtm
+              , b.sl_cl           sl_cl_cd
+              , b.settl_cond      settl_cond_cd
+              , fbas_get_commcdnm_val('ZSAL_C_00260', b.sl_cl)           sl_cl
+              , fbas_get_commcdnm_val('ZSAL_C_00110', b.sale_chg_hst_cl) sale_chg_hst_cl
+              , fbas_get_commcdnm_val('ZPOL_C_00110', b.ds_net_cd)       ds_net
+              , fbas_get_commcdnm_val('ZPOL_C_00040', b.sale_dtl_typ)    sale_dtl_typ
+              , fbas_get_commcdnm_val('ZSAL_C_00030', b.settl_cond)      settl_cond
+              , fbas_get_prod_nm(b.eqp_mdl_cd)                           eqp_mdl
+              , b.eqp_ser_num     eqp_ser_num
+              , b.allot_sale      allot_sale
+              , b.cash_sale       cash_sale
+              , b.eqp_chulgo      eqp_chulgo
+              , b.agrmt_amt       agrmt_amt
+              , b.range_amt       range_amt
+              , b.bf_agrmt_amt    bf_agrmt_amt
+              , 0                 af_agrmt_amt
+              , ( SELECT NVL(a.allot_adj_prc,0)
+                    FROM tadm_btw_adjust a
+                  WHERE a.apply_month  = #apply_month#
+                    AND abs(b.bf_agrmt_amt)   >=  a.from_amt
+                    AND abs(b.bf_agrmt_amt)   <    a.to_amt 
+                ) as allot_adj_prc
+              , ( SELECT NVL(a.cash_adj_prc,0)
+                    FROM tadm_btw_adjust a
+                  WHERE a.apply_month  = #apply_month#
+                    AND abs(b.bf_agrmt_amt)   >=  a.from_amt
+                    AND abs(b.bf_agrmt_amt)   <    a.to_amt 
+                ) as cash_adj_prc
+          FROM 
+             ( 
+               SELECT 
+                      sale.deal_co_cl1
+                    , sale.ukey_channel_cd
+                    , sale.deal_co_nm
+                    , sale.sale_dtm
+                    , sale.sale_chg_dtm
+                    , sale.sl_cl
+                    , sale.sale_chg_hst_cl
+                    , sale.ds_net_cd
+                    , sale.sale_dtl_typ
+                    , sale.settl_cond
+                    , sale.eqp_mdl_cd
+                    , sale.eqp_ser_num
+                    , sale.allot_sale
+                    , sale.cash_sale
+                    , DECODE(settl_cond, 'A', (SELECT fix_crdt_prchs_prc
+                                                FROM TPOL_UPLST          a
+                                                   , TPOL_UPLST_APLY_MDL b
+                                               WHERE a.uplst_id      = b.uplst_id
+                                                 AND a.pol_ym        = b.pol_ym
+                                                 AND a.pol_ts        = b.pol_ts
+                                                 AND a.del_yn        = 'N'
+                                                 AND a.aply_sta_dtm >= #apply_month# || '010000'
+                                                 AND a.aply_end_dtm <= #apply_month# || '312359' 
+                                                 AND sale.eqp_mdl_cd         =  b.mdl_id
+                                                 AND sale.sale_chg_dtm BETWEEN  aply_sta_dtm || '00'     AND aply_end_dtm || '59'
+                                              )
+                                            , (SELECT fix_cash_prchs_prc
+                                                FROM TPOL_UPLST          a
+                                                   , TPOL_UPLST_APLY_MDL b
+                                               WHERE a.uplst_id      = b.uplst_id
+                                                 AND a.pol_ym        = b.pol_ym
+                                                 AND a.pol_ts        = b.pol_ts
+                                                 AND a.del_yn        = 'N'
+                                                 AND a.aply_sta_dtm >= #apply_month# || '010000'
+                                                 AND a.aply_end_dtm <= #apply_month# || '312359' 
+                                                 AND sale.eqp_mdl_cd         =  b.mdl_id
+                                                 AND sale.sale_chg_dtm BETWEEN  aply_sta_dtm || '00'     AND aply_end_dtm || '59'
+                                              )
+                            ) as eqp_chulgo
+                    , sale.agrmt_amt
+                    , nvl(btw.range_amt, 270000) range_amt
+                    , decode(sale.settl_cond, 'A', CASE WHEN  sale.allot_sale >= 0
+                                                        THEN   (SELECT fix_crdt_prchs_prc
+                                                                  FROM TPOL_UPLST          a
+                                                                     , TPOL_UPLST_APLY_MDL b
+                                                                 WHERE a.uplst_id      = b.uplst_id
+                                                                   AND a.pol_ym        = b.pol_ym
+                                                                   AND a.pol_ts        = b.pol_ts
+                                                                   AND a.del_yn        = 'N'
+                                                                   AND a.aply_sta_dtm >= #apply_month# || '010000'
+                                                                   AND a.aply_end_dtm <= #apply_month# || '312359' 
+                                                                   AND sale.eqp_mdl_cd         =  b.mdl_id
+                                                                   AND sale.sale_chg_dtm BETWEEN  aply_sta_dtm || '00'     AND aply_end_dtm || '59'
+                                                                )  - sale.allot_sale + sale.agrmt_amt
+                                                        ELSE  ((SELECT fix_crdt_prchs_prc
+                                                                  FROM TPOL_UPLST          a
+                                                                     , TPOL_UPLST_APLY_MDL b
+                                                                 WHERE a.uplst_id      = b.uplst_id
+                                                                   AND a.pol_ym        = b.pol_ym
+                                                                   AND a.pol_ts        = b.pol_ts
+                                                                   AND a.del_yn        = 'N'
+                                                                   AND a.aply_sta_dtm >= #apply_month# || '010000'
+                                                                   AND a.aply_end_dtm <= #apply_month# || '312359' 
+                                                                   AND sale.eqp_mdl_cd         =  b.mdl_id
+                                                                   AND sale.sale_chg_dtm BETWEEN  aply_sta_dtm || '00'     AND aply_end_dtm || '59'
+                                                                ) + sale.agrmt_amt) * (-1) - sale.allot_sale
+                                                   END, 
+                                                   decode(sale.sl_cl, '02', 0, '04', 0, CASE WHEN  sale.cash_sale >= 0
+                                                                                             THEN   (SELECT fix_cash_prchs_prc
+                                                                                                       FROM TPOL_UPLST          a
+                                                                                                          , TPOL_UPLST_APLY_MDL b
+                                                                                                      WHERE a.uplst_id      = b.uplst_id
+                                                                                                        AND a.pol_ym        = b.pol_ym
+                                                                                                        AND a.pol_ts        = b.pol_ts
+                                                                                                        AND a.del_yn        = 'N'
+                                                                                                        AND a.aply_sta_dtm >= #apply_month# || '010000'
+                                                                                                        AND a.aply_end_dtm <= #apply_month# || '312359' 
+                                                                                                        AND sale.eqp_mdl_cd         =  b.mdl_id
+                                                                                                        AND sale.sale_chg_dtm BETWEEN aply_sta_dtm || '00'
+                                                                                                                                  AND aply_end_dtm || '59'
+                                                                                                     )                          - sale.cash_sale
+                                                                                             ELSE   (SELECT fix_cash_prchs_prc
+                                                                                                       FROM TPOL_UPLST          a
+                                                                                                          , TPOL_UPLST_APLY_MDL b
+                                                                                                      WHERE a.uplst_id      = b.uplst_id
+                                                                                                        AND a.pol_ym        = b.pol_ym
+                                                                                                        AND a.pol_ts        = b.pol_ts
+                                                                                                        AND a.del_yn        = 'N'
+                                                                                                        AND a.aply_sta_dtm >= #apply_month# || '010000'
+                                                                                                        AND a.aply_end_dtm <= #apply_month# || '312359' 
+                                                                                                        AND sale.eqp_mdl_cd         =  b.mdl_id
+                                                                                                        AND sale.sale_chg_dtm BETWEEN aply_sta_dtm || '00'
+                                                                                                                                  AND aply_end_dtm || '59'
+                                                                                                     ) * (-1)                   - sale.cash_sale
+                                                                                        END))  bf_agrmt_amt
+                 FROM ( 
+                          WITH    W_DEAL_CO_MGMT AS 
+                          ( 
+                          SELECT  DC.POS_AGENCY
+                                 ,DC.STL_PLC
+                                 ,DC.DEAL_CO_CD 
+                                 ,DC.DEAL_CO_NM
+                                 ,DC.DEAL_CO_CL1
+                                 ,DC.CHRGR_USER_ID
+                                 ,DC.EFF_STA_DTM
+                                 ,DC.EFF_END_DTM
+                                 ,dc.UKEY_AGENCY_CD
+                                 ,dc.UKEY_CHANNEL_CD
+                                 ,dc.UKEY_SUB_CD
+                           FROM   TBAS_DEAL_CO_MGMT DC
+                          WHERE   DC.DEL_YN     = 'N'
+                           AND   DC.POS_AGENCY =  #pos_agency#        /* 소속대리점 */
+                          ) /* 거래처 */                  
+                          ,    W_GENERAL_SALE AS 
+                          (  
+                          SELECT  /*+ leading(wa) use_hash(tb) */
+                                  WA.POS_AGENCY
+                                 ,WA.STL_PLC
+                                 ,WA.DEAL_CO_CD 
+                                 ,WA.DEAL_CO_NM
+                                 ,WA.DEAL_CO_CL1
+                                 ,WA.CHRGR_USER_ID
+                                 ,WA.UKEY_AGENCY_CD
+                                 ,WA.UKEY_CHANNEL_CD
+                                 ,WA.UKEY_SUB_CD
+                                 ,TB.SVC_MGMT_NUM
+                                 ,TB.SL_CL
+                                 ,TB.GNRL_SALE_NO
+                                 ,TB.GNRL_SALE_CHG_SEQ
+                                 ,TB.SALE_DTM
+                                 ,TB.SALE_CHG_DTM
+                                 ,TB.SALE_CHG_HST_CL
+                                 ,TB.ACC_CHG_HST_CL
+                                 ,TB.SALE_CHG_PLC
+                                 ,TB.SALE_PLC
+                                 ,TB.DS_NET_CD
+                                 ,TB.AGRMT_PRD_CD
+                                 ,TB.ETC_PROD_SALE_YN         /* 기타상품판매여부*/
+                                 ,TB.CUST_NM                   /* 고객명*/
+                                 ,TB.SVC_NUM                  /*개통번호*/
+                                 ,TB.SL_NET_CD                 /* 영업망*/
+                                 ,TB.SALE_DTL_TYP             /* 판매유형*/
+                                 ,TB.SETTL_COND               /* 단말기결제조건*/
+                                 ,TB.USIM_ALLOT_CL            /* USIM결제조건*/  
+                            FROM   W_DEAL_CO_MGMT WA  
+                                 ,TSAL_GENERAL_SALE TB
+                           WHERE  1=1    
+                             AND tb.sale_dtl_typ    like 'S1%'
+                             AND tb.acc_chg_hst_cl    IN ('01', '02', '07')
+                             AND tb.del_yn             = 'N'
+                             AND tb.sale_chg_dtm BETWEEN #apply_month# || '01000000' AND #apply_month# || '31235959'
+                             AND tb.svc_mgmt_num       > 0
+                             AND WA.deal_co_cd           = tb.sale_plc
+                             AND tb.sale_chg_dtm BETWEEN WA.eff_sta_dtm AND WA.eff_end_dtm
+                             AND ( tb.sl_cl IN ('01', '03', '05') OR
+                                  (tb.sl_cl IN ('02', '04') AND settl_cond = 'A'))
+                          )
+                          SELECT  
+                             a.deal_co_cl1
+                           , a.ukey_channel_cd
+                           , a.deal_co_nm
+                           , a.sale_plc
+                           , a.sale_dtm
+                           , a.sale_chg_dtm
+                           , a.sl_cl
+                           , a.sale_chg_hst_cl
+                           , a.ds_net_cd
+                           , a.sale_dtl_typ
+                           , a.settl_cond
+                           , b.eqp_mdl_cd
+                           , b.eqp_ser_num
+                           , decode(b.eqp_mdl_cd, 'CGW4', 121200
+                                                , 'CGW5', 121200
+                                                , 'CGW6', 121200
+                                                , 'CGW9', 121200
+                                                , 'CGWA', 121200
+                                                , 'SSPG', 140000
+                                                , 'SSN7', 140000, 160800) agrmt_amt
+                           , NVL(d.eqp_allot_sale_prc, 0) - NVL(d.bf_eqp_allot_sale_prc, 0) allot_sale
+                           , DECODE(a.sl_cl , '02', 0, '04', 0
+                                            , DECODE(a.acc_chg_hst_cl, '01', CASE WHEN (NVL(c.eqp_cash_sale_prc,  0) - NVL(c.bf_eqp_cash_sale_prc,  0)) < 0
+                                                                                  THEN  0
+                                                                                  ELSE  NVL(c.eqp_cash_sale_prc,  0) - NVL(c.bf_eqp_cash_sale_prc,  0)
+                                                                             END
+                                                                     , '02', CASE WHEN (NVL(c.eqp_cash_sale_prc,  0) - NVL(c.bf_eqp_cash_sale_prc,  0)) < 0
+                                                                                  THEN  0
+                                                                                  ELSE  NVL(c.eqp_cash_sale_prc,  0) - NVL(c.bf_eqp_cash_sale_prc,  0)
+                                                                             END
+                                                                     , '07', CASE WHEN (NVL(c.eqp_cash_sale_prc,  0) - NVL(c.bf_eqp_cash_sale_prc,  0)) < 0
+                                                                                  THEN  NVL(c.eqp_cash_sale_prc,  0) - NVL(c.bf_eqp_cash_sale_prc,  0)
+                                                                                  ELSE  0
+                                                                             END
+                                                                     , 0 ))  cash_sale
+                        FROM   W_GENERAL_SALE a
+                           , TSAL_EQUIPMENT_SALE  b
+                           , TSAL_CASH_SALE       c
+                           , TSAL_ALLOT_SALE      d
+                       WHERE a.gnrl_sale_no       = b.gnrl_sale_no
+                         AND a.gnrl_sale_no       = c.gnrl_sale_no
+                         AND a.gnrl_sale_no       = d.gnrl_sale_no
+                         AND a.gnrl_sale_chg_seq  = b.gnrl_sale_chg_seq
+                         AND a.gnrl_sale_chg_seq  = c.gnrl_sale_chg_seq
+                         AND a.gnrl_sale_chg_seq  = d.gnrl_sale_chg_seq
+                         AND b.eqp_mdl_cd IS NOT  NULL
+                         AND b.eqp_old_sale_yn    = 'N'
+                         )  sale
+                         , TADM_BTW_RANGE         btw
+                WHERE btw.apply_month        = #apply_month#
+            ) b
+         WHERE  1=1
+) x
+WHERE  1=1
+ORDER BY 4, 5]]>
+	</select>
+	<select id="getBTWAdjust" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT from_amt
+     , to_amt
+     , nvl(allot_adj_prc, 0) allot_adj_prc
+     , nvl(cash_adj_prc,  0) cash_adj_prc
+     , 0 bf_cash_cnt
+     , 0 bf_cash_rate
+     , 0 bf_allot_cnt
+     , 0 bf_allot_rate
+     , 0 bf_cnt
+     , 0 bf_rate
+     , 0 af_cash_cnt
+     , 0 af_cash_rate
+     , 0 af_allot_cnt
+     , 0 af_allot_rate
+     , 0 af_cnt
+     , 0 af_rate
+  FROM (SELECT from_amt
+             , to_amt
+             , allot_adj_prc
+             , cash_adj_prc
+          FROM TADM_BTW_ADJUST
+         WHERE apply_month = #apply_month#
+        UNION ALL
+        SELECT 0             from_amt
+             , MIN(from_amt) to_amt
+             , 0 allot_adj_prc
+             , 0 cash_adj_prc
+          FROM TADM_BTW_ADJUST
+         WHERE apply_month = #apply_month# ) x
+ ORDER BY 1, 2]]>
+	</select>
+</sqlMap>

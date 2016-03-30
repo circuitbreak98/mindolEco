@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="500" Id="SALSMG00200" Left="8" OnLoadCompleted="SALSMG00200_OnLoadCompleted" PidAttrib="7" Title="부진재고&#32;상세조회" Top="8" Ver="1.0" Width="870" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_general">
+				<Contents>
+					<colinfo id="rmks" size="256" summ="default" type="STRING"/>
+					<colinfo id="last_inout_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="mktg_dt" size="256" summ="default" type="STRING"/>
+					<record>
+						<last_inout_dt></last_inout_dt>
+						<mktg_dt></mktg_dt>
+						<rmks></rmks>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_cond">
+				<Contents>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="ser_num" size="256" summ="default" type="STRING"/>
+					<record>
+						<color_cd></color_cd>
+						<prod_cd></prod_cd>
+						<ser_num></ser_num>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_prodCpnt">
+				<Contents>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="ser_num" size="256" summ="default" type="STRING"/>
+					<record>
+						<color_cd></color_cd>
+						<prod_cd></prod_cd>
+						<ser_num></ser_num>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_inSale"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_outSale">
+				<Contents></Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="64" Id="div_eqpInfo" Left="8" Style="sty_div_input" TabOrder="1" Text="Div0" Top="41" Width="824">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static3" Left="297" Style="sty_lb_Basic" TabOrder="0" Text="일련번호" Top="7" VAlign="Middle" Width="64"></Static>
+				<Edit BindDataset="ds_general" Border="Flat" Column="old_ser_num" Enable="FALSE" Height="20" Id="edt_serNm" Left="366" MaxLength="15" Style="sty_ipt_form" TabOrder="1" Top="7" UpperOnly="TRUE" Width="133"></Edit>
+				<Static Align="Right" Height="20" Id="Static1" Left="14" Style="sty_lb_Basic" TabOrder="2" Text="모델" Top="7" VAlign="Middle" Width="57"></Static>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="556" Style="sty_lb_Basic" TabOrder="4" Text="색상" Top="7" VAlign="Middle" Width="55"></Static>
+				<Static Align="Right" Height="21" Id="Static2" Left="546" Style="sty_lb_Basic" TabOrder="5" Text="단말기등급" Top="32" VAlign="Middle" Width="72"></Static>
+				<Static Align="Right" Height="20" Id="Static5" Left="2" Style="sty_lb_Basic" TabOrder="7" Text="출시일자" Top="32" VAlign="Middle" Width="69"></Static>
+				<Calendar BindDataset="ds_general" Border="Flat" ButtonImageID="btn_i_calendar" Column="mktg_dt" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_mktg_dt" Left="78" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" OnChanged="div_conInfo2_Calendar0_OnChanged" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="6" TabStop="FALSE" TodayColor="user26" Top="29" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="95"></Calendar>
+				<Edit BindDataset="ds_general" Border="Flat" Column="eqp_st" Enable="FALSE" Height="20" Id="edt_eqpSt" Left="622" MaxLength="15" Style="sty_ipt_form" TabOrder="8" Top="32" UpperOnly="TRUE" Width="133"></Edit>
+				<Edit BindDataset="ds_general" Border="Flat" Column="color_nm" Enable="FALSE" Height="20" Id="edtColorNm" Left="622" MaxLength="15" Style="sty_ipt_form" TabOrder="9" Top="8" UpperOnly="TRUE" Width="133"></Edit>
+				<Edit BindDataset="ds_general" Border="Flat" Column="prod_cd" Enable="FALSE" Height="20" Id="edt_mdlCd" ImeMode="none" Left="78" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="6" Width="54"></Edit>
+				<Button Enable="FALSE" Height="21" Id="btn_mdl" ImageID="btn_i_detail" Left="132" TabOrder="11" Text="Button0" Top="6" Width="19"></Button>
+				<Edit BindDataset="ds_general" Border="Flat" Column="prod_nm" Enable="FALSE" Height="20" Id="edt_mdlNm" Left="150" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="12" TabStop="FALSE" Top="6" Width="103"></Edit>
+				<Edit BindDataset="ds_general" Border="Flat" Column="color_cd" Enable="FALSE" Height="20" Id="edt_colorCd" Left="757" LeftMargin="2" RightMargin="2" Style="sty_ipt_form" TabOrder="13" Top="8" Visible="FALSE" Width="41"></Edit>
+				<Static Align="Right" Height="20" Id="Static4" Left="270" Style="sty_lb_Basic" TabOrder="14" Text="상품일련번호" Top="31" VAlign="Middle" Width="91"></Static>
+				<Edit BindDataset="ds_general" Border="Flat" Column="ser_num" Enable="FALSE" Height="20" Id="edt_prodSerNm" Left="366" MaxLength="15" Style="sty_ipt_form" TabOrder="15" Top="31" UpperOnly="TRUE" Width="133"></Edit>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_prodCpnt" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="228" ColSizing="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="30" Height="116" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" Right="832" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="112" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="824">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="66"/>
+						<col width="215"/>
+						<col width="128"/>
+						<col width="149"/>
+						<col width="144"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="상품"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="일련번호"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="기준수량"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="seq" display="text"/>
+						<cell align="left" col="1" colid="cpnt_prod_cd" display="text"/>
+						<cell align="left" col="2" colid="cpnt_color_cd" display="text" edit="number" limit="10"/>
+						<cell align="center" col="3" colid="cpnt_ser_num" display="text"/>
+						<cell align="center" checklength="Byte" col="4" colid="in_qty" display="number" limit="100"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="16" LeftMargin="15" Style="sty_img_tit" TabOrder="4" TabStop="FALSE" Text="입고내역" Top="239" Width="192"></Image>
+		<Div Border="Raised" Height="64" Id="div_inputCard" Left="8" Style="sty_div_input" TabOrder="3" Text="Div0" Top="264" Width="824">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static9" Left="-6" Style="sty_lb_Basic" TabOrder="1" Text="입고일자" Top="6" VAlign="Middle" Width="80"></Static>
+				<Static Align="Right" Height="20" Id="Static0" Left="219" Style="sty_lb_Basic" TabOrder="2" Text="입고상세구분" Top="7" VAlign="Middle" Width="80"></Static>
+				<Edit BindDataset="ds_general" Border="Flat" Column="last_inout_dtl_cl_nm" Enable="FALSE" Height="20" Id="Edit0" Left="302" LeftMargin="2" MaxLength="10" RightMargin="2" Style="sty_ipt_form" TabOrder="3" Top="8" Width="113"></Edit>
+				<Calendar BindDataset="ds_general" Border="Flat" ButtonImageID="btn_i_calendar" Column="last_inout_dt" DayFont="Default,-1" Enable="FALSE" HeaderBorder="NONE" HeaderFont="Default,-1" HeadStyle="sty_calendar_head" Height="20" Id="cal_mktg_dt" Left="77" LeftMargin="2" MonthPopupBorder="RAISED" NullValue="&#32;" OnChanged="div_conInfo2_Calendar0_OnChanged" RightMargin="2" SaturdayTextColor="user28" Style="sty_calendar" SundayTextColor="user27" TabOrder="4" TabStop="FALSE" TodayColor="user26" Top="8" WeeksFont="Default,-1" WeekStyle="sty_calendar_week" Width="113"></Calendar>
+				<Static Align="Right" Height="20" Id="Static2" Left="14" Style="sty_lb_Basic" TabOrder="5" Text="이익금" Top="30" VAlign="Middle" Width="60"></Static>
+				<MaskEdit Border="Flat" DisableColor="#373c4a" Enable="FALSE" Height="19" Id="msk_mar" Left="77" LeftMargin="2" Mask="0" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="32" Value="0" Width="113"></MaskEdit>
+				<MaskEdit Border="Flat" DisableColor="#373c4a" Enable="FALSE" Height="19" Id="msk_saleCmms" Left="302" LeftMargin="2" Mask="0" RightMargin="2" Style="sty_ipt_form" TabOrder="8" Top="32" Value="0" Width="113"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static3" Left="239" Style="sty_lb_Basic" TabOrder="7" Text="수수료" Top="30" VAlign="Middle" Width="60"></Static>
+				<MaskEdit Border="Flat" DisableColor="#373c4a" Enable="FALSE" Height="19" Id="msk_salePrc" Left="485" LeftMargin="2" Mask="0" RightMargin="2" Style="sty_ipt_form" TabOrder="10" Top="32" Value="0" Width="113"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static4" Left="422" Style="sty_lb_Basic" TabOrder="9" Text="원가" Top="30" VAlign="Middle" Width="60"></Static>
+				<MaskEdit Border="Flat" DisableColor="#373c4a" Enable="FALSE" Height="19" Id="msk_saleTot" Left="678" LeftMargin="2" Mask="0" RightMargin="2" Style="sty_ipt_form" TabOrder="12" Top="30" Value="0" Width="113"></MaskEdit>
+				<Static Align="Right" Height="20" Id="Static5" Left="614" Style="sty_lb_Basic" TabOrder="11" Text="판매가" Top="30" VAlign="Middle" Width="60"></Static>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="773" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="5" Text="닫기" Top="456" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="6" Text="단말기정보" Top="17" Width="192"></Image>
+		<Image Align="Left" Height="25" Id="Image6" ImageID="bul_tit" Left="16" LeftMargin="15" Style="sty_img_tit" TabOrder="7" Text="비고" Top="352" Width="192"></Image>
+		<Div Border="Raised" Height="71" Id="div_rmks" Left="8" Style="sty_div_input" TabOrder="8" Text="Div0" Top="377" Width="824">
+			<Contents>
+				<TextArea BindDataset="ds_general" Border="Flat" Column="rmks" Enable="FALSE" Height="56" Id="edt_rmks" Left="7" Style="sty_ipt_form" TabOrder="6" Top="5" VScroll="TRUE" Width="800"></TextArea>
+			</Contents>
+		</Div>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALSMG00200
+* 업무명      : 영업현황
+* 프로그램명  : 부진재고 상세조회 
+--------------------------------------------------------------------------------
+* 작성자      : 안희수
+* 작성일      : 20011.10.25
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_global.js"
+#include "lib::lib_util.js"
+#include "lib::lib_SAL.js"
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+// 글로벌 세션정보
+var FV_USER_ID;					// 사용자ID
+var FV_USER_NM;					// 사용자명
+
+var	FV_ORG_ID;					// 소속 
+var	FV_ORG_NM;					// 소속명
+var	FV_ORG_CL;					// 소속구분
+
+var FV_ROW;
+var FV_PROD_CD;
+var FV_COLOR_CD;
+var FV_SER_NUM;
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SALSMG00200_OnLoadCompleted(obj)
+{
+
+	cf_setAuth(pFrmNum);   // 권한 공통
+
+	f_getSession();
+	f_paramDataSet();
+	f_Search();	//상세조회 
+
+}
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function f_getSession()
+{
+	FV_USER_ID    = gds_session.GetColumn(0, "loginid");	// 사용자ID
+	FV_USER_NM    = gds_session.GetColumn(0, "usernm");		// 사용자명
+}
+
+
+/*******************************************************************************
+ * @description    : 판매관리화면에서 데이터 가져옴. 
+*******************************************************************************/
+function f_paramDataSet(){
+
+	FV_PROD_CD = parent.ds_prodDisList.GetColumn(FV_ROW, "prod_cd");
+	FV_COLOR_CD = parent.ds_prodDisList.GetColumn(FV_ROW, "color_cd");
+	FV_SER_NUM = parent.ds_prodDisList.GetColumn(FV_ROW, "ser_num");
+}
+
+/*******************************************************************************
+ * @description    : 권한 설정
+*******************************************************************************/
+function f_setAuth()
+{	
+}
+
+/*******************************************************************************
+ * @description    :  callBack
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	switch(sSvcID)
+	{
+		case "svcList":
+			// 구성품 가져오기 
+			lf_getProdDisDtl();
+			break;
+		
+		case "getTdisProdCpnt":
+				// 판매가 셋팅 
+			http.Sync = true;
+			
+			sf_getSalesAmt("ds_inSale"
+							, "ds_outSale"					// 결과 받을 Dataset
+							, "02"							// 거래구분 (01:B/B, 02:B/C)
+							, ds_general.GetColumn(0,"hld_plc_id")	// 거래처 코드
+							, FV_PROD_CD
+							, FV_SER_NUM
+							, ds_general.GetColumn(0,"last_inout_dt"));
+					
+			var iMar = 0;			// 마진 
+			var iSaleCmms = 0;		// 수수료 
+			var iSaleProc =  0;		// 판매원가 
+			var iSaleAmt = 0;		// 판매금액 * vat 
+
+			iMar = ToInteger(ds_outSale.GetColumn(0, "MAR"));
+			iSaleCmms = ToInteger(ds_outSale.GetColumn(0, "SALE_CMMS"));
+			iSaleProc = ToInteger(ds_outSale.GetColumn(0, "SALE_PRC"));
+			iSaleAmt = iMar + iSaleCmms + iSaleProc;
+
+			div_inputCard.msk_mar.Value = iMar;
+			div_inputCard.msk_saleCmms.Value = iSaleCmms;
+			div_inputCard.msk_salePrc.Value = iSaleProc;
+			div_inputCard.msk_saleTot.Value = iSaleAmt + ((iSaleAmt) * 0.1);
+				
+			http.Sync = false;
+			
+			break;
+			
+		default:
+		break;
+
+	}    
+}
+
+/*******************************************************************************
+ * @description    : 조회시 필수입력 체크 
+*******************************************************************************/
+function lf_searchValidChk(){
+
+	if( uf_isEmpty(FV_PROD_CD) || uf_isEmpty(FV_COLOR_CD) || uf_isEmpty(FV_SER_NUM))
+	{
+		alert("상품코드,색상코드,일련번호를 확인해주십시요");
+		return;
+	}
+	
+	return true;
+}
+
+
+/*******************************************************************************
+ * @description    : 조회
+*******************************************************************************/
+function f_Search()
+{
+
+	// 필수입력체크 
+	if ( !lf_searchValidChk() ) {
+        return;
+    }
+
+	cf_setParam(ds_cond, "prod_cd"	, FV_PROD_CD);
+	cf_setParam(ds_cond, "color_cd"	, FV_COLOR_CD);
+	cf_setParam(ds_cond, "ser_num"	, FV_SER_NUM);
+
+	var sSvcID = "svcList";
+	var sInDs  = "nc_input_fieldDs=ds_cond";
+	var sOutDs = "ds_general=ProdDisDetailList";
+	var sArg   = "sktst.sal.SMG#getProdDisDetailList";  
+//alert(ds_payInfo.SaveXML());	
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+
+	//return;
+}
+
+
+/*******************************************************************************
+ * @description    :  닫기
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.Close();
+}
+
+
+/*******************************************************************************
+ * @description    :  구성품 가져오기 
+*******************************************************************************/
+function lf_getProdDisDtl()
+{
+    ds_prodCpnt.Clear();    
+
+	var sSvcID 	= "getTdisProdCpnt";
+	var sInDs  	= "nc_input_fieldDs=ds_cond";
+	var sOutDs 	= "ds_prodCpnt=ProdCpntList";
+	var sArg	= "sktst.sal.BCS#getTdisProdCpnt";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);	
+
+}
+
+]]></Script>
+</Window>

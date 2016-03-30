@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="SALSCO00200">
+<select id="getChrgrIdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALSCO00200_getChrgrIdList-김연석-정재열 */
+	   user_id user_id	/* 사용자 ID*/
+	 , u_key_id || ' ' || user_nm user_nm	/* 사용자 명 */
+FROM   tbas_user_mgmt
+WHERE  1=1
+AND    eff_user_yn = 'Y'
+]]><isNotEmpty prepend="AND" property="org_area">
+<![CDATA[       org_area = #org_area#	/* 소매일 경우*/
+]]></isNotEmpty>
+<![CDATA[]]><isEmpty prepend="" property="org_area">
+<![CDATA[
+]]><isNotEmpty prepend="AND" property="sale_dtm">
+<![CDATA[       pos_agency = (SELECT pos_agency	/* 도매일 경우 */
+                   FROM   tbas_deal_co_mgmt
+                   WHERE  deal_co_cd = #sale_plc#
+                   AND    eff_sta_dtm <= #sale_dtm#
+                   AND    eff_end_dtm >= #sale_dtm#
+                   AND    del_yn ='N')
+]]></isNotEmpty>                   
+<![CDATA[]]><isEmpty prepend="AND" property="sale_dtm">
+<![CDATA[       pos_agency = (SELECT pos_agency	/* 도매일 경우 */
+                   FROM   tbas_deal_co_mgmt
+                   WHERE  deal_co_cd = #sale_plc#
+                   AND    hseq_no = (SELECT MAX(hseq_no)
+                                     FROM   tbas_deal_co_mgmt
+                                     WHERE  deal_co_cd = #sale_plc#)
+                   AND    del_yn ='N')
+]]></isEmpty>
+<![CDATA[]]></isEmpty>
+<![CDATA[AND    del_yn = 'N'
+ORDER BY user_nm
+,        user_id     
+ ]]>
+	</select>
+<select id="getAllChgrgIdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALSCO00200_getAllChgrgIdList-김연석-정재열 */
+	   user_id user_id	/* 사용자 ID*/
+	 , u_key_id || ' ' || user_nm user_nm	/* 사용자 명 */
+FROM   tbas_user_mgmt
+ORDER BY user_nm
+,        user_id     
+ ]]>
+	</select>
+	<select id="getDealStlPlcByDealCoCd" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT	/*+ SALSCO10200_getDealStlPlcByDealCoCd-조민지-정재열 */
+       a.stl_plc stl_plc			      /* 정산처*/
+     , b.deal_co_nm stl_plc_nm            /* 정산처명*/
+	 , b.ukey_agency_cd ukey_agency_cd    /* UkeyCD*/
+	 , b.ukey_sub_cd ukey_sub_cd  		  /* SubCD*/
+	 , b.ukey_channel_cd ukey_channel_cd  /* ChannelCD*/
+     , a.deal_end_yn deal_end_yn	      /* 거래종료 여부 */
+     , a.pay_stop_yn pay_stop_yn	      /* 수납정지 여부*/
+     , a.sale_stop_yn sale_stop_yn	      /* 판매정지 여부     */
+     , a.out_stop_yn out_stop_yn	      /* 출고정지 여부*/
+     , a.pos_agency	pos_agency		      /* 소속 대리점 */
+     , FBAS_GET_DEAL_NM(a.pos_agency, #deal_dtm#) as pos_agency_nm /*소속 대리점명*/
+     , a.dis_hld_plc
+FROM   tbas_deal_co_mgmt a /* 판매처*/
+     , tbas_deal_co_mgmt b /* 정산처*/
+WHERE  a.stl_plc = b.deal_co_cd
+AND    a.eff_sta_dtm <= #deal_dtm#
+AND    a.eff_end_dtm >= #deal_dtm#
+AND    a.deal_co_cd = #deal_co_cd#
+AND    b.eff_sta_dtm <= #deal_dtm#
+AND    b.eff_end_dtm >= #deal_dtm#
+AND    a.del_yn = 'N'
+AND    b.del_yn = 'N']]>
+	</select>
+</sqlMap>

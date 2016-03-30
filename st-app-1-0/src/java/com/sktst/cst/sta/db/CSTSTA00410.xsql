@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="CSTSTA00410">
+	<select id="getProdPrcStDetail" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', NVL(b.PRC_ST,a.PRC_ST)) PRC_NM
+     , NVL(b.PRC_ST, a.PRC_ST) PRC_ST
+     , FBAS_GET_AGENCY_NM(c.POS_AGENCY,a.CON_DT) AGENCY_NM      
+     , FBAS_GET_DEAL_NM(a.CON_PLC_CD,a.CON_DT) CON_PLC_NM
+     , NVL(b.PROD_CD, a.PROD_CD) PROD_CD
+     , a.CON_MGMT_NO
+     , NVL(b.SER_NUM, a.SER_NUM) SER_NUM
+     , b.EQP_ST
+     , b.PRCHS_AMT
+     , NVL(b.BOX_NO, a.BOX_NO) BOX_NO
+     , a.CON_DT
+  FROM TCST_CONSULT_MGMT a
+     , TCST_PRCHS_MGMT b
+     , TBAS_DEAL_CO_MGMT c
+ WHERE a.CON_MGMT_NO = b.CON_MGMT_NO(+)
+   AND a.CON_PLC_CD = c.DEAL_CO_CD
+   AND c.EFF_STA_DTM <= b.CON_DT||'235959'
+   AND c.EFF_END_DTM >= b.CON_DT||'235959'
+   AND a.CON_DT BETWEEN #CON_FROM_DT# AND #CON_TO_DT#
+   AND a.DEL_YN = 'N'
+   AND b.DEL_YN(+) = 'N'
+   AND c.DEL_YN = 'N']]>
+	</select>
+</sqlMap>

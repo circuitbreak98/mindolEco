@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="BASCDM08100">
+	<select id="getProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT					/*+ BASCDM08100_getProdList_조민지_최승호 */ 
+				op_dt,
+                op_tm,
+                seq,
+                
+                prod_id,
+                prod_nm,
+                svc_prod_cd,
+                 
+                CASE WHEN prod_st = 'E1000' THEN '1'
+                	 WHEN prod_st = 'F1000' THEN '2'
+                	 WHEN prod_st = 'G1000' THEN '3'	 
+                END AS prod_st,
+                
+                mktg_dt,
+                scrb_stop_dt,
+                wdrl_dt,
+                comb_prod_yn,
+                aply_yn,
+                exist,
+                
+                ins_dtm,
+                mod_dtm
+FROM
+	tbas_add_prod_cd_if
+WHERE 1 = 1
+
+/* 처리 일자 */
+]]><isNotEmpty prepend="AND" property="start_date">
+<![CDATA[	op_dt >= #start_date#
+]]></isNotEmpty>
+<![CDATA[
+]]><isNotEmpty prepend="AND" property="end_date">
+<![CDATA[	op_dt <= #end_date#
+]]></isNotEmpty>
+<![CDATA[
+
+/* 반영 여부 */
+]]><isNotEmpty prepend="AND" property="apply_yn">
+<![CDATA[	aply_yn = #apply_yn#
+]]></isNotEmpty>
+<![CDATA[	                
+order by op_dt desc,op_tm desc]]>
+	</select>
+	<select id="getModelList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT														/*+ BASCDM08100_getModelList_조민지_최승호 */ 
+                a.op_dt,
+                a.op_tm,
+                a.seq,
+                
+                a.mfact_cd ,			
+				b.deal_co_cd AS MFACT_ID,            		/* 제조사 코드 */                
+                
+                a.eqp_mdl_nm AS PROD_NM,					/* 모델명 */
+                CASE WHEN a.eqp_cl_cd = 'C' THEN '1'
+                	 WHEN a.eqp_cl_cd = 'D' THEN '1'
+                	 WHEN a.eqp_cl_cd = 'W' THEN '1'
+                	 WHEN a.eqp_cl_cd = 'U' THEN '2'
+                	 WHEN a.eqp_cl_cd = 'A' THEN '9'	 
+                END AS prod_cl, 							/* 상품구분 */
+                
+                CASE WHEN a.eqp_cl_cd = 'C' THEN '11'
+                	 WHEN a.eqp_cl_cd = 'D' THEN '11'
+                	 WHEN a.eqp_cl_cd = 'W' THEN '12'
+                	 WHEN a.eqp_cl_cd = 'U' THEN '21'
+                	 WHEN a.eqp_cl_cd = 'A' THEN '99'	 
+                END AS prod_dtl_cl, 						/* 상품상세구분 */
+                 					
+                a.eqp_mdl_cd AS prod_cd,					/* 모델 코드 */ 
+                a.link_color_cnt,
+                a.link_color_cd,
+                a.dstrb_eqp_yn,
+                a.aply_yn,
+                a.mktg_dt,
+                a.end_dt,
+                a.exist,                
+                a.ins_dtm,
+                a.mod_dtm,
+                a.cdma_cl
+FROM
+	tbas_eqp_mdl_if a, 
+	(
+		SELECT deal_co_cd, biz_cd, MAX(hseq_no)
+		FROM tbas_deal_co_mgmt       
+		WHERE del_yn = 'N'
+		AND eff_end_dtm = '99991231235959'
+		AND deal_co_cl1 = '20'       
+		GROUP BY deal_co_cd, biz_cd
+	) b
+	
+WHERE a.mfact_cd = b.biz_cd
+
+/* 처리 일자 */
+]]><isNotEmpty prepend="AND" property="start_date">
+<![CDATA[	a.op_dt >= #start_date#
+]]></isNotEmpty>
+<![CDATA[
+]]><isNotEmpty prepend="AND" property="end_date">
+<![CDATA[	a.op_dt <= #end_date#
+]]></isNotEmpty>
+<![CDATA[
+
+/* 반영 여부 */
+]]><isNotEmpty prepend="AND" property="apply_yn">
+<![CDATA[	a.aply_yn = #apply_yn#
+]]></isNotEmpty>
+<![CDATA[
+]]><isEmpty prepend="AND" property="apply_yn">
+<![CDATA[	a.aply_yn in ('Y','N')
+]]></isEmpty>
+<![CDATA[	                
+order by op_dt desc,op_tm desc]]>
+	</select>
+	<select id="getCommList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT					/*+ BASCDM08100_getCommList_조민지_최승호 */ 
+                op_dt,
+                op_tm,
+                seq,
+                
+                cd_val,
+                cd_val_nm,
+                cd_id,
+                aply_yn,
+                exist,
+                
+                ins_dtm,
+                mod_dtm
+FROM
+	tbas_comm_cd_if
+WHERE 1 = 1
+
+/* 처리 일자 */
+]]><isNotEmpty prepend="AND" property="start_date">
+<![CDATA[	op_dt >= #start_date#
+]]></isNotEmpty>
+<![CDATA[
+]]><isNotEmpty prepend="AND" property="end_date">
+<![CDATA[	op_dt <= #end_date#
+]]></isNotEmpty>
+<![CDATA[
+
+/* 반영 여부 */
+]]><isNotEmpty prepend="AND" property="apply_yn">
+<![CDATA[	aply_yn = #apply_yn#
+]]></isNotEmpty>
+<![CDATA[	                
+order by op_dt desc,op_tm desc]]>
+	</select>
+	<update id="updateIfModelApplyYn" parameterClass="map" ><![CDATA[UPDATE						/*+ BASCDM08100_updateIfModelApplyYn_조민지_최승호 */ 			
+	tbas_eqp_mdl_if
+SET
+	aply_yn = 'Y'
+WHERE
+	op_dt = #op_dt#
+AND
+	op_tm = #op_tm#
+AND
+	seq = #seq#]]>
+	</update>
+	<insert id="addProd" parameterClass="map" ><![CDATA[INSERT INTO									/* BASCDM08100_addProd_조민지_최승호 */
+tbas_supl_svc_mgmt
+(    
+	 supl_svc_cd,							/* 부가서비스코드 */
+	 supl_svc_cl,  							/* 부가서비스구분 */
+	 supl_svc_nm, 							/* 부가서비스명 */	
+	 rgst_cl,								/* 등록구분 */	
+	 del_yn, 								/* 삭제여부 */	
+	 upd_cnt, 								/* 업데이트 카운트 */		
+	 ins_dtm, 								/* 입력일시 */	
+	 ins_user_id, 							/* 입력자 */	
+	 mod_dtm, 								/* 수정일시 */	
+	 mod_user_id,							/* 수정자 */		
+	 prod_st,								/* 상품상태 */	
+	 mktg_dt,								/* 출시일 */		
+	 scrb_stop_dt,							/* 가입중단일 */	
+	 wdrl_dt,								/* 퇴출일 */	
+	 use_yn,                                /* 사용여부 */
+	 comb_prod_yn                           /* 결합상품여부 */
+)	
+VALUES
+(
+ 	#prod_id#,
+ 	#svc_prod_cd#, 
+ 	#prod_nm#, 
+ 	'1',
+	'N', 
+	0, 
+	TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM'), 
+	#onlineContext.userInfo.loginId#, 
+	TO_CHAR(SYSDATE, 'yyyymmddhh24miss'), 
+	#onlineContext.userInfo.loginId#,
+	#PROD_ST#,
+	#MKTG_DT#,
+	#scrb_stop_dt#,
+	#WDRL_DT#,
+	'N',
+	#comb_prod_yn#
+)]]>
+	</insert>
+	<update id="updateProd" parameterClass="map" ><![CDATA[UPDATE 											/*+ BASCDM08100_updateProd_조민지_전현주 */ 
+	tbas_supl_svc_mgmt
+SET 	
+	supl_svc_nm = #prod_nm#,
+	supl_svc_cl = #svc_prod_cd#,
+	rgst_cl = '1',
+	prod_st = #PROD_ST#,
+	mktg_dt = #MKTG_DT#,
+	scrb_stop_dt = #SCRB_STOP_DT#,
+	wdrl_dt = #WDRL_DT#,
+	upd_cnt = upd_cnt + 1,
+	mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM'),
+	mod_user_id = #onlineContext.userInfo.loginId#
+WHERE 
+	supl_svc_cd = #prod_id#]]>
+	</update>
+	<insert id="addCommCd" parameterClass="map" ><![CDATA[INSERT INTO 							/* BASCDM08100_addCommCd_조민지_최승호 */
+	TBAS_COMM_CD_DTL				
+(
+	 comm_cd_id
+	,comm_cd_val
+	,comm_cd_val_nm
+	,prt_seq
+	,eff_sta_dt
+	,eff_end_dt
+	,rgst_cl
+	,del_yn
+	,upd_cnt
+	,ins_dtm
+	,ins_user_id
+	,mod_dtm
+	,mod_user_id
+)
+VALUES
+(
+	#cd_id#
+	,#cd_val#
+	,#cd_val_nm#
+	,
+	(
+		SELECT 
+			COUNT(comm_cd_id)+1
+		FROM
+			tbas_comm_cd_dtl
+		WHERE
+			del_yn = 'N' 
+		AND
+			comm_cd_id = #cd_id#
+	)
+	,to_char(sysdate, 'yyyymmdd')
+	,'99991231'
+	,'1'
+	,'N' 
+	,'0' 
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM') 
+	,#onlineContext.userInfo.loginId#
+	,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,#onlineContext.userInfo.loginId#
+)]]>
+	</insert>
+	<update id="updateCommCd" parameterClass="map" ><![CDATA[UPDATE 												/*+ BASCDM08100_updateCommCd_조민지_조민지 */ 
+	tbas_comm_cd_dtl
+SET 
+	 comm_cd_val_nm = #cd_val_nm#
+	,upd_cnt = upd_cnt + 1
+	,mod_dtm = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MM')
+	,mod_user_id = #onlineContext.userInfo.loginId#
+WHERE 
+	comm_cd_val = #cd_val#
+AND	
+	comm_cd_id = #cd_id#]]>
+	</update>
+	<update id="updateIfProdApplyYn" parameterClass="map" ><![CDATA[UPDATE						/*+ BASCDM08100_updateIfProdApplyYn_조민지_최승호 */ 			
+	tbas_add_prod_cd_if
+SET
+	aply_yn = 'Y'
+WHERE
+	op_dt = #op_dt#
+AND
+	op_tm = #op_tm#
+AND
+	seq = #seq#]]>
+	</update>
+	<update id="updateIfCommCdApplyYn" parameterClass="map" ><![CDATA[UPDATE						/*+ BASCDM08100_updateIfCommCdApplyYn_조민지_최승호 */ 			
+	tbas_comm_cd_if
+SET
+	aply_yn = 'Y'
+WHERE
+	op_dt = #op_dt#
+AND
+	op_tm = #op_tm#
+AND
+	seq = #seq#]]>
+	</update>
+	<select id="getUkeyList" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT					/*+ BASCDM08100_getUkeyList_조민지_최승호 */ 
+                op_dt,
+                op_tm,
+                seq,
+                
+                org_cd,
+                sub_org_cd,
+                ukey_id,
+                ukey_id_nm,
+                login_id,
+                
+                aply_yn,
+                ins_dtm,
+                mod_dtm
+FROM
+	tbas_ukey_id_if
+WHERE 1 = 1
+
+/* 처리 일자 */
+]]><isNotEmpty prepend="AND" property="start_date">
+<![CDATA[	op_dt >= #start_date#
+]]></isNotEmpty>
+<![CDATA[
+]]><isNotEmpty prepend="AND" property="end_date">
+<![CDATA[	op_dt <= #end_date#
+]]></isNotEmpty>
+<![CDATA[
+
+/* 반영 여부 */
+]]><isNotEmpty prepend="AND" property="apply_yn">
+<![CDATA[	aply_yn = #apply_yn#
+]]></isNotEmpty>
+<![CDATA[	                
+order by op_dt desc,op_tm desc]]>
+	</select>
+	<select id="getUkeyPop" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT							/*+ BASUSM08100_getUkeyPop_조민지_최승호 */ 
+				op_dt,	
+				op_tm,
+				seq,
+
+                org_cd,
+                sub_org_cd,
+                ukey_id,
+                ukey_id_nm,
+                login_id,
+                
+                aply_yn
+FROM
+	tbas_ukey_id_if
+WHERE
+	aply_yn = 'N'
+AND
+	org_cd = 
+	(
+
+		SELECT 
+			ukey_agency_cd 
+
+		FROM 
+			tbas_deal_co_mgmt
+		WHERE
+			deal_co_cd = #pos_agency#
+		AND
+			del_yn = 'N'
+		AND
+			eff_end_dtm = '99991231235959'
+	)
+	
+	
+/* U.KEY ID 명 */
+]]><isNotEmpty prepend="AND" property="user_nm">
+<![CDATA[	ukey_id_nm LIKE '%$user_nm$%'
+]]></isNotEmpty>
+<![CDATA[]]>
+	</select>
+</sqlMap>

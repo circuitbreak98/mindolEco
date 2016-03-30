@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="560" Id="BASBAR00100" Left="8" OnLoadCompleted="BASBAR00100_OnLoadCompleted" PidAttrib="7" Title="바코드&#32;관리" Top="8" Ver="1.0" Width="792" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_barcode">
+				<Contents>
+					<colinfo id="BARCODE_NO" size="256" summ="default" type="STRING"/>
+					<colinfo id="BOX_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROC_GB" size="256" summ="default" type="STRING"/>
+					<colinfo id="S_GB" size="256" summ="default" type="STRING"/>
+					<record>
+						<BARCODE_NO></BARCODE_NO>
+						<BOX_CNT></BOX_CNT>
+						<PROC_GB></PROC_GB>
+						<S_GB></S_GB>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_barCodeNo">
+				<Contents>
+					<colinfo id="BARCODE_NO" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROC_GB_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROC_GB" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="64" Id="div_box" Left="8" Style="sty_div_search" TabOrder="1" Text="질의내용" Top="8" Width="776">
+			<Contents>
+				<Static Align="Right" Border="None" Height="20" Id="Static0" Left="9" Style="sty_lb_Search" TabOrder="0" Text="업무구분" Top="30" VAlign="Middle" Width="64"></Static>
+				<Image Align="Left" Height="24" Id="Image0" ImageID="bul_tit" Left="6" LeftMargin="15" Style="sty_img_tit" TabOrder="1" TabStop="FALSE" Text="Box&#32;Barcode&#32;생성" Top="5" Width="224"></Image>
+				<Combo Border="Flat" Height="22" Id="cmb_procGb1" Left="78" OnChanged="div_box_cmb_procGb1_OnChanged" Style="sty_ipt_form" TabOrder="2" Top="29" Width="90"></Combo>
+				<Combo Border="Flat" Height="22" Id="cmb_procGb2" Left="168" Style="sty_ipt_form" TabOrder="3" Top="28" Width="90"></Combo>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_PrcCrypto" ImageID="btn_c_6" Left="651" LeftMargin="5" OnClick="div_box_btn_PrcCrypto_OnClick" Style="sty_btn_c" TabOrder="5" Text="바코드출력" Top="28" Width="111"></Button>
+				<Edit Align="RIGHT" BindDataset="ds_barcode" Border="Flat" Column="BOX_CNT" Height="20" Id="edt_boxcnt" Left="352" MaxLength="11" Number="TRUE" Style="sty_ipt_form" TabOrder="4" Top="30" UpperOnly="TRUE" Width="113"></Edit>
+				<Static Align="Right" Border="None" Height="20" Id="Static1" Left="278" Style="sty_lb_Search" TabOrder="7" Text="수량" Top="31" VAlign="Middle" Width="64"></Static>
+			</Contents>
+		</Div>
+		<Report Bottom="447" Height="303" Id="Report1" Left="7" Right="400" Top="144" Visible="FALSE" Width="393"></Report>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID 	: BASBAR00100
+* 업무명      	: 기준정보관리 - 바코드 관리 - 바코드 등록
+* 프로그램명  	: 바코드 등록
+--------------------------------------------------------------------------------
+* 작성자      	: 전미량(jeonmiryang)
+* 작성일      	: 2012.03.06
+--------------------------------------------------------------------------------
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+function BASBAR00100_OnLoadCompleted(obj)
+{
+	http.Sync = true;
+	// 공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	
+	cf_setCommonCode("div_box.cmb_procGb1", "ZBAS_C_00550", "");
+	cf_setCommonCode("div_box.cmb_procGb2", "ZBAS_C_00620", "");
+	
+	cf_checkCommonCode();
+	div_box.cmb_procGb2.Index = 0;
+//	div_box.cmb_procGb2.Enable = false;
+	div_box.cmb_procGb2.Enable = true;	
+	
+	http.Sync = false;	
+}
+
+/*******************************************************************************
+ * @description    :  업무구분 1 선택 시
+*******************************************************************************/
+function div_box_cmb_procGb1_OnChanged(obj,strCode,strText,nOldIndex,nNewIndex)
+{
+	var procGb1 = div_box.cmb_procGb1.Value;
+	http.Sync = true;
+	if(procGb1 == 'AC'){
+		div_box.cmb_procGb2.Enable = true;
+		cf_setCommonCodeDsEnv();
+		cf_setCommonCode("div_box.cmb_procGb2", "ZBAS_C_00560", "");
+		cf_checkCommonCode();
+		div_box.cmb_procGb2.Index = 0;
+	} else if(procGb1 == 'DP'){
+		div_box.cmb_procGb2.Enable = true;
+		cf_setCommonCodeDsEnv();
+		cf_setCommonCode("div_box.cmb_procGb2", "ZBAS_C_00570", "");
+		cf_checkCommonCode();
+		div_box.cmb_procGb2.Index = 0;
+	} else if(procGb1 == 'IO'){
+		div_box.cmb_procGb2.Enable = true;
+		cf_setCommonCodeDsEnv();
+		cf_setCommonCode("div_box.cmb_procGb2", "ZBAS_C_00620", "");
+		cf_checkCommonCode();
+		div_box.cmb_procGb2.Index = 0;		
+	} else{
+		
+		div_box.cmb_procGb2.InnerDataset = "";
+		div_box.cmb_procGb2.Value = "";
+		div_box.cmb_procGb2.Enable = false;
+	}
+	http.Sync = false;	
+}
+
+/*******************************************************************************
+ * @description    :  바코드 출력 버튼 클릭 시
+*******************************************************************************/
+function div_box_btn_PrcCrypto_OnClick(obj)
+{
+	http.Sync = true;
+	
+	if ( !lf_saveValidationCheck() ) {
+		return;
+	}
+	
+	var procGb1 = div_box.cmb_procGb1.Value;
+	var procGb2 = div_box.cmb_procGb2.Value;
+
+	if(procGb1 == 'AC' || procGb1 == 'DP' || procGb1 == 'IO'){
+		ds_barcode.SetColumn(0,"PROC_GB",procGb2);
+	} else{
+		ds_barcode.SetColumn(0,"PROC_GB",procGb1);
+	}
+
+	ds_barcode.SetColumn(0,"S_GB",SubStr(procGb1,0,1));
+
+	f_saveBarCode();
+
+	http.Sync = false;	
+}
+
+
+/*******************************************************************************
+ * @description    :  바코드 출력시 validation check
+*******************************************************************************/
+function lf_saveValidationCheck()
+{
+	var procGb1 = div_box.cmb_procGb1.Value;
+	var edt_boxcnt = div_box.edt_boxcnt.Value;
+	
+    if (uf_IsNull(procGb1)){
+		alert("업무구분을 선택 하십시오");
+		return false;
+	}
+	if (uf_IsNull(edt_boxcnt)){
+		alert("수량을 입력 하십시오");
+		return false;
+	}
+
+    return true;
+}
+
+/*******************************************************************************
+ * @description    :  바코드 저장
+*******************************************************************************/
+function f_saveBarCode()
+{
+	var sSvcID 	= "addBarCode";
+	var sInDs  	= "nc_input_fieldDs=ds_barcode";
+	var sOutDs 	= "ds_barCodeNo=nc_output_fieldDs";
+	var sArg	= "sktst.bas.BAR#addBarCode";
+		               
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg, null, true, true);
+	
+}
+
+/*******************************************************************************
+ * @description    :  callBack
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if (sSvcID == "addBarCode") {
+		//alert("저장되었습니다. : " + ds_barCodeNo.GetColumn(0,"BARCODE_NO"));
+		f_printBarCodeRD();
+	}
+}
+
+function f_printBarCode(){
+	var sBarCode = '';    //바코드 번호
+	var pWidth   = 900;  //pixel 단위(10cm)
+    var pHeight  = 1100;   //pixel 단위(6cm)
+    var pPageStartHeight = 0;  //Page별 시작 위치
+    
+	if(TEC_DO0.IsDriver == 1) {  // 드라이버 설치 여부 확인
+		TEC_DO0.SetCutter(0, 0, 0, 0.0);  // Default 지정한것임.	
+	        
+		https.Sync = true;
+		
+		
+		sBarCode    = "  " + ds_barCodeNo.GetColumn(0,"BARCODE_NO") + " ";
+		
+		TEC_DO0.SetPaper(pWidth, pHeight); 
+        TEC_DO0.PrinterOpen();
+        //TEC_DO0.PreviewOpen();
+        
+        pPageStartHeight = pHeight * 0;  // 출력위치(Height) 셋팅
+		
+		TEC_DO0.PrintText(0, 700, "TEC-BarFont Code128", 70, 0, 0, sBarCode);
+		TEC_DO0.PrinterClose();	
+		//TEC_DO0.PreviewClose();		
+		https.Sync = false;
+	
+	}
+}
+
+function f_printBarCodeRD(){
+	
+	http.Sync = true;
+	
+	var str1 = div_box.cmb_procGb1.Text;
+	var str2 = div_box.cmb_procGb2.Text;
+	
+	ds_barCodeNo.AddColumn("PROC_GB_NM");
+	
+	if(div_box.cmb_procGb1.Value == 'AC' || div_box.cmb_procGb1.Value == 'DP'){
+		ds_barCodeNo.SetColumn(0,"PROC_GB_NM",str1 +" ( "+str2+" )");
+	}else{
+		ds_barCodeNo.SetColumn(0,"PROC_GB_NM",str1);
+	}
+	
+	var dsArry = Array();
+	
+	dsArry[0] = ds_barCodeNo;
+	
+	//url_str.Text = gv_url + "MRD/BAS/BASBAR00100.mrd";
+
+	sXML = f_dsToXml(dsArry);
+	
+	Report1.setRdata(sXML);
+	Report1.AutoAdjust = false;
+	Report1.ZoomRatio = 100;
+	//Report1.FileOpen(gv_url + "MRD/BAS/BASBAR00100.mrd", "");
+	Report1.FileOpen("https://www.ecopims.com/MRD/BAS/BASBAR00100.mrd", "");
+	Report1.CMPrint ();
+	
+	http.Sync = false;
+}
+
+/*******************************************************************************
+ * @description    : 데이터셋을 XML 문자열로 바꾼다.
+ * @param sSvcID   : 데이터셋 배열
+ *        delStr   : 구분 문자열
+*******************************************************************************/
+function f_dsToText(dsArr, delStr)
+{
+	var returnStr;
+	var dsLength;	// 배열의 전체 개수 (데이터셋의 개수)
+	var dsColCnt;	// 각 데이터셋의 컬럼 개수.
+	var dsRowCnt;	// 각 데이터셋의 로우 개수.
+	dsLength = length(dsArr);
+	
+	// 데이터셋 배열의 크기가 1보다 작을 경우..
+	if(dsLength < 1)
+	{
+		returnStr = "";
+	}
+	else
+	{
+		var tmpStr = "";
+		for(i=0; i<dsLength; i++)
+		{
+			dsColCnt = dsArr[i].getColCount();
+			dsRowCnt = dsArr[i].getRowCount();
+			for(j=0; j<dsRowCnt; j++)
+			{
+				for(k=0; k<dsColCnt; k++)
+				{
+					// 각 필드의 값을 문자열로 연결.
+					tmpStr += dsArr[i].getColumn(j, dsArr[i].GetColIDXbyorder(k));
+					tmpStr += delStr;		// 각 필드 사이에 구분자 값을 입력
+				}
+				tmpStr += chr(13) + chr(10);	// 각 데이터 로우 사이에 개행 문자 삽입.
+			}
+	
+			// 데이터셋이 두 개 이상일 경우 구분하기 위한 문자 삽입 (RD에서 필요)
+			if(dsLength>1)
+			{
+				tmpStr += "//EOR//";		
+				tmpStr += chr(13) + chr(10);	// 개행 문자 삽입.
+			}
+		}
+		returnStr = tmpStr;
+	}
+	
+	return returnStr;
+}
+
+/*******************************************************************************
+ * @description    : DS to XML
+ * @param arrObj   : 데이터셋 배열
+*******************************************************************************/
+function f_dsToXml(arrObj){
+	var strTemp = "";
+	
+	var dsobj = split(arrObj,",");
+	var ds_cnt = length(dsobj);
+				
+	strTemp += '<?xml version="1.0" encoding="euc-kr"?>' + chr(10);
+	strTemp += '<root>';
+	
+	for (i=0; i<toNumber(ds_cnt); i++){
+	    var sTmp = replace(dsobj[i], "[", "");
+	    sTmp = replace(sTmp, "]", "");
+	    sTmp = replace(sTmp, "Dataset:", "");
+		strTemp += object(sTmp).saveXML(object(sTmp).id, "A", false);
+	}
+	
+	strTemp += chr(10) + '</root>';
+	
+	return strTemp;
+}]]></Script>
+</Window>

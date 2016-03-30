@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="208" Id="POLFPO00500_01" Left="8" OnLoadCompleted="POLFPO00500_01_OnLoadCompleted" PidAttrib="7" Title="추가지원" Top="8" Ver="1.0" Width="330" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_copyPayAdd">
+				<Contents>
+					<colinfo id="SALE_TYP_CD_MIN" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADD_SUPT_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADD_SUPT_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SELECTED" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_addSuptTypCd">
+				<Contents>
+					<colinfo id="ADD_SUPT_CD" size="256" summ="default" type="STRING"/>
+					<colinfo id="ADD_SUPT_AMT" size="256" summ="default" type="STRING"/>
+					<colinfo id="SELECTED" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_addCd">
+				<Contents>
+					<colinfo id="COMM_CD_VAL" size="256" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" DomainID="cofirm" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="101" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="1" TabStop="FALSE" Text="확인" Top="173" Transparent="TRUE" Width="60"></Button>
+		<Image Align="Left" Cursor="HAND" DomainID="cancel" Height="25" Id="btn_close" ImageID="btn_d_2" Left="169" LeftMargin="5" OnClick="btn_close_OnClick" Static="FALSE" Style="sty_btn_d" TabOrder="2" TabStop="FALSE" Text="취소" Top="173" Transparent="TRUE" Width="60"></Image>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_addSuptTypCd" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="163" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FixedColSizing="TRUE" HeadBorder="Flat" HeadHeight="22" Height="128" Id="grd_addMoney" InputPanel="FALSE" Left="10" LineColor="user33" LineType="ExVERT" MinWidth="100" OnHeadClick="grd_addMoney_OnHeadClick" Right="320" RowHeight="21" ScrollCell="true" Style="sty_Grid" TabOrder="3" TabStop="true" Top="35" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="310">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="30"/>
+						<col width="261"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="checkbox" font="돋움,9,Bold"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="추가지원유형"/>
+					</head>
+					<body>
+						<cell col="0" colid="SELECTED" display="checkbox" edit="checkbox" Valign="Center"/>
+						<cell align="center" checklength="Byte" col="1" colid="ADD_SUPT_CD" combocol="COMM_CD_VAL" combodataset="ds_addCd" combotext="COMM_CD_VAL_NM" display="combo"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="IMG_Pop_title0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="4" TabStop="FALSE" Text="추가지원" Top="10" Width="296"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : POLFPO00500 
+* 업무명      : 정책관리
+* 프로그램명  : 판매지원금 지급정보 추가지원유형
+--------------------------------------------------------------------------------
+* 작성자      : 장화수
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :  
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+//-----------------------------------------------------------------------------
+// 전역변수
+//-----------------------------------------------------------------------------
+
+var SALE_TYP_CD_MIN;
+
+/*******************************************************************************
+* 함수명 : POLFPO00500_01_OnLoadCompleted
+* 기능명 : OnLoadCompleted 이벤트
+*******************************************************************************/
+function POLFPO00500_01_OnLoadCompleted(obj)
+{
+
+	ds_addCd.Copy(parent.ds_addCd); //부모 데이터셋 Copy
+	ds_addSuptTypCd.Copy(parent.ds_addSuptTypCd); //부모 데이터셋 Copy
+	ds_copyPayAdd.Copy(parent.ds_addSaleAmt); //부모 데이터셋 Copy
+	ds_copyPayAdd.Filter("SALE_TYP_CD_MIN=='" + SALE_TYP_CD_MIN + "'");
+
+	for( var i=0; i<ds_addSuptTypCd.rowcount; i++ ){	
+		var idx = ds_copyPayAdd.FindRow("ADD_SUPT_CD",ds_addSuptTypCd.GetColumn(i,"ADD_SUPT_CD"));
+		if(idx != -1 ){
+			ds_addSuptTypCd.SetColumn(i,"SELECTED","1");
+		}		
+	}
+	
+}
+
+
+
+function btn_close_OnClick(obj,nX,nY)
+{
+	close();	
+}
+
+function btn_confirm_OnClick(obj)
+{
+	//부모데이터셋 초기화.
+	for(var idx=parent.ds_addSaleAmt.rowcount; idx>=0; idx--) {
+		if(parent.ds_addSaleAmt.GetColumn(idx,"SALE_TYP_CD_MIN") == SALE_TYP_CD_MIN){
+			parent.ds_addSaleAmt.DeleteRow(idx);
+		}
+	}
+    var sCnt = 0;
+	for ( var idx=0; idx < ds_addSuptTypCd.rowcount; idx++ ) {
+		if(ds_addSuptTypCd.GetColumn(idx,"SELECTED") == 1){
+			parent.ds_addSaleAmt.AddRow();
+			parent.ds_addSaleAmt.SetColumn(parent.ds_addSaleAmt.lastRow,"SALE_TYP_CD_MIN",SALE_TYP_CD_MIN);
+			parent.ds_addSaleAmt.SetColumn(parent.ds_addSaleAmt.lastRow,"ADD_SUPT_CD",ds_addSuptTypCd.GetColumn(idx,"ADD_SUPT_CD"));
+			parent.ds_addSaleAmt.SetColumn(parent.ds_addSaleAmt.lastRow,"ADD_SUPT_AMT",ds_addSuptTypCd.GetColumn(idx,"ADD_SUPT_AMT"));
+			parent.ds_addSaleAmt.SetColumn(parent.ds_addSaleAmt.lastRow,"SELECTED","1");
+			sCnt++;
+		}
+	}
+	for(var idx=parent.ds_payInfo.rowcount; idx>=0; idx--) {
+		if(parent.ds_payInfo.GetColumn(idx,"SALE_TYP_CD_MIN") == SALE_TYP_CD_MIN){
+			break;
+		}
+	}
+	if( sCnt > 0 ) {
+		parent.ds_payInfo.SetColumn(idx,"ADD_SUPRT_YN","Y");
+	} else {
+		parent.ds_payInfo.SetColumn(idx,"ADD_SUPRT_YN","N");
+	}
+	parent.ds_addSaleAmt.Filter("SALE_TYP_CD_MIN=='" + SALE_TYP_CD_MIN + "'");
+	close();
+	
+}
+
+/*-----------------------------------------------------------------------------------
+ * Method : dvGrRate_grRate_OnHeadClick
+ * Desc   : grid헤더 클릭시 Sort
+ *----------------------------------------------------------------------------------*/
+function grd_addMoney_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{	
+	if( nCell==0 )
+	{
+		cf_gridcheckAll(obj,ds_addSuptTypCd);  //전부 체크
+	}
+}
+
+
+function cf_gridCheckAll(grid,ds)
+{
+	// Check Box 전체 선택
+	var nCount = ds.rowcount;
+	if( grid.GetCellProp("head", 0, "Text") == "1" ) {
+		for ( var irow=0; irow < nCount; irow++ ) {
+			ds.SetColumn(irow,"SELECTED","0");
+			grid.SetCellProp("head",0,"text","0");				
+		}
+	} else {
+		for ( var irow=0; irow < nCount; irow++ ){
+			ds.SetColumn(irow,"SELECTED","1");
+			grid.SetCellProp("head",0,"text","1");				
+		}
+	}
+}
+
+
+
+]]></Script>
+</Window>

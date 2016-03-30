@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="POLSPM00100">
+	<select id="getPolSplst" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* POLSPM00100_getPolSpLst_가격표관리_이문규 */ 
+  a.splst_id
+ ,a.aply_ym
+ ,a.org_id
+ ,b.org_nm
+ ,a.sale_typ_cd
+ ,c.comm_cd_val_nm as sale_typ_cd_nm
+ ,a.aply_sta_dtm
+ ,a.aply_end_dtm
+ ,a.rmks
+ ,a.del_yn
+ ,a.upd_cnt
+ ,a.ins_dtm
+ ,a.ins_user_id
+ ,a.mod_dtm
+ ,a.mod_user_id
+ ,FBAS_GET_USER_NM(a.mod_user_id) AS mod_user_nm  
+ ,a.pol_cl
+ ,d.comm_cd_val_nm as pol_cl_nm
+FROM  TPOL_SPLST a
+     ,tbas_org_mgmt b
+     ,tbas_comm_cd_dtl c
+     ,tbas_comm_cd_dtl d
+WHERE a.aply_ym = #aply_ym#
+AND   a.del_yn = 'N'
+AND   b.eff_org_yn = 'Y'
+AND   b.del_yn = 'N'
+AND   a.org_id = b.org_id     
+AND   a.sale_typ_cd = c.comm_cd_val
+AND   c.comm_cd_id  = 'ZPOL_C_00030'
+AND   a.pol_cl = d.comm_cd_val
+AND   d.comm_cd_id  = 'ZPOL_C_00540'
+          
+]]><isNotEmpty prepend="AND" property="org_id">
+<![CDATA[    a.org_id = #org_id#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="sale_typ_cd">
+<![CDATA[    a.sale_typ_cd = #sale_typ_cd#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="pol_cl">
+<![CDATA[    a.pol_cl = #pol_cl#
+]]></isNotEmpty>
+<![CDATA[]]><isEqual prepend="AND" property="HIST_YN" compareValue="N">
+<![CDATA[    TO_CHAR(SYSDATE,'YYYYMMDDHH24MI') BETWEEN 
+				a.aply_sta_dtm AND a.aply_end_dtm
+]]></isEqual>   
+<![CDATA[ORDER BY a.org_id, a.sale_typ_cd, a.pol_cl, a.aply_sta_dtm 		    ]]>
+	</select>
+</sqlMap>

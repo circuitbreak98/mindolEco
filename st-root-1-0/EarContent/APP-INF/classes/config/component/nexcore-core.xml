@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 프레임워크 코어 컴포넌트를 정의한다. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">
+
+    <bean id="nc.core.IAccessLog"
+        class="com.sktst.common.log.PsAccessLog"
+        init-method="init">
+        <description>
+            <![CDATA[사용자 접근(로그인/로그아웃) 관련 로깅]]>
+        </description>
+    </bean>
+
+    <bean id="nc.core.ITransactionLog"
+        class="nexcore.framework.core.log.impl.TransactionLog"
+        init-method="init">
+        <description>
+            <![CDATA[(웹 기본)트랜잭션 요청에 대한 내역 로깅]]>
+        </description>
+    </bean>
+
+    <bean id="nc.core.IChannelTransactionLog"
+        class="nexcore.framework.core.log.impl.ChannelTransactionLog"
+        init-method="init">
+        <description>
+            <![CDATA[(채널)트랜잭션 요청에 대한 내역 로깅]]>
+        </description>
+    </bean>
+
+    <bean id="nc.core.IPerformanceLog"
+        class="nexcore.framework.core.log.impl.PerformanceLog"
+        init-method="init">
+        <description>
+            <![CDATA[성능 로깅]]>
+        </description>
+    </bean>
+
+    <bean id="nc.core.IAsyncLog"
+        class="nexcore.framework.core.log.impl.AsyncLog"
+        init-method="init">
+        <description>
+            <![CDATA[후행 처리 로깅]]>
+        </description>
+    </bean>
+
+    <bean id="nc.core.ISchedulingLog"
+        class="nexcore.framework.core.scheduling.SchedulingLog"
+        init-method="init">
+        <description>
+            <![CDATA[스케쥴링 작업용 로깅]]>
+        </description>
+    </bean>
+
+    <bean id="nc.biz.IRecordLogManager"
+        class="nexcore.framework.core.log.impl.DatabaseRecordLogManager">
+        <description>
+            <![CDATA[레코드 기록/갱신 관리]]>
+        </description>
+        <property name="sqlManager" ref="nc.db.ISqlManager" />
+    </bean>
+
+    <bean id="nc.core.ICacheManager"
+        class="nexcore.framework.core.cache.internal.EhCacheManager"
+        init-method="init" destroy-method="destroy">
+        <description>캐쉬 처리를 위한 컴포넌트</description>
+        <property name="configuration">
+            <bean
+                class="nexcore.framework.core.cache.internal.DefaultCacheConfiguration">
+                <property name="maxElementsInMemory" value="100000" />
+                <property name="overflowToDisk" value="false" />
+                <property name="memoryEvictionPolicy" value="LRU" />
+                <property name="predefinedCaches">
+                    <list>
+                        <props>
+                            <prop key="name">code</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">configuration</prop>
+                            <prop key="maxElementsInMemory">100</prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">message</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">label</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">menu</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">screen</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">parameter</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">locale-parameter</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">was-instance</prop>
+                            <prop key="maxElementsInMemory">1000</prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LFU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">button</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">componentMeta</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">methodMeta</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">centerCut</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">batch-run-status</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                        <props>
+                            <prop key="name">batchJobClasses</prop>
+                            <prop key="maxElementsInMemory">10000</prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LFU</prop>
+                        </props>
+                        <props>
+                            <!-- 거래 제어 컴포넌트에서 사용하는 Cache Name -->
+                            <prop key="name">txcontrol</prop>
+                            <prop key="maxElementsInMemory">
+                                100000
+                            </prop>
+                            <prop key="overflowToDisk">false</prop>
+                            <prop key="memoryEvictionPolicy">LRU</prop>
+                        </props>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="nc.core.ICodeManager"
+        class="nexcore.framework.core.code.internal.CachedCodeManager">
+        <description>코드 제공을 위한 컴포넌트(캐쉬 사용)</description>
+        <property name="cacheManager" ref="nc.core.ICacheManager" />
+        <property name="sqlManager" ref="nc.db.ISqlManager" />
+    </bean>
+
+    <bean id="nc.core.IConfigurationManager"
+        class="nexcore.framework.core.parameter.internal.DefaultConfigurationManager"
+        init-method="init">
+        <description>시스템 환경설정 제공을 위한 컴포넌트(파일 로드 및 자체 캐싱)</description>
+        <property name="cacheManager" ref="nc.core.ICacheManager" />
+        <property name="cacheName" value="configuration" />
+        <property name="sqlManager" ref="nc.db.ISqlManager" />
+        <property name="fileConfigurationLoader">
+            <bean
+                class="nexcore.framework.core.parameter.internal.FileConfigurationLoader">
+                <property name="baseName"
+                    value="config/parameter/configuration" />
+                <property name="encoding" value="UTF-8" />
+            </bean>
+        </property>
+        <property name="databaseConfigurationLoader">
+            <bean
+                class="nexcore.framework.core.parameter.internal.SqlConfigurationLoader">
+                <property name="sqlManager" ref="nc.db.ISqlManager" />
+            </bean>
+        </property>
+        <property name="onChangeExecutors">
+            <map>
+                <entry key="log.loglevel.__fwklog">
+                    <bean
+                        class="nexcore.framework.core.parameter.internal.FwkLogChangeExecutor">
+                        <property name="log4jManager"
+                            ref="nc.core.ILog4jManager" />
+                    </bean>
+                </entry>
+                <entry key="log.loglevel.__devlog">
+                    <bean
+                        class="nexcore.framework.core.parameter.internal.DevLogChangeExecutor">
+                        <property name="log4jManager"
+                            ref="nc.core.ILog4jManager" />
+                    </bean>
+                </entry>
+            </map>
+        </property>
+        <!--        <property name="log4jManager" ref="nc.core.ILog4jManager" />-->
+    </bean>
+
+    <bean id="nc.core.IBizParamManager"
+        class="nexcore.framework.core.parameter.internal.CachedParamManager"
+        init-method="init">
+        <description>업무 파라미터 제공을 위한 컴포넌트(캐쉬 사용)</description>
+        <property name="cacheManager" ref="nc.core.ICacheManager" />
+        <property name="sqlManager" ref="nc.db.ISqlManager" />
+        <property name="cacheName" value="parameter" />
+        <property name="preload" value="true" />
+        <property name="refreshManager" ref="nc.core.IRefreshManager" />
+    </bean>
+
+    <bean id="nc.core.ILocaleParamManager"
+        class="nexcore.framework.core.parameter.internal.CachedLocaleParamManager"
+        init-method="init">
+        <description>로케일별 업무 파라미터 제공을 위한 컴포넌트(캐쉬 사용)</description>
+        <property name="cacheManager" ref="nc.core.ICacheManager" />
+        <property name="sqlManager" ref="nc.db.ISqlManager" />
+        <property name="cacheName" value="locale-parameter" />
+        <property name="preload" value="true" />
+    </bean>
+
+    <bean id="nc.core.IWasInstanceManager"
+        class="nexcore.framework.core.parameter.internal.DefaultWasInstanceManager"
+        init-method="init" destroy-method="destroy">
+        <description>WAS 인스턴스 정보 제공을 위한 컴포넌트</description>
+        <property name="cacheManager" ref="nc.core.ICacheManager" />
+        <property name="sqlManager" ref="nc.db.ISqlManager" />
+    </bean>
+    
+    <bean id="nc.core.IRefreshManager"
+        class="nexcore.framework.core.refresh.internal.DefaultRefreshManager">
+        <description>WAS 인스턴스들에 대한 원격 refresh를 위한 컴포넌트</description>
+        <property name="wasInstanceManager" ref="nc.core.IWasInstanceManager" />
+        <property name="remoteBeanInvoker" ref="nc.core.IRemoteBeanInvoker" />
+        <property name="remoteSystems" value="*,-localhost" />
+    </bean>
+    
+    <bean id="nc.core.IRemoteBeanInvoker"
+        class="nexcore.framework.core.remote.internal.EjbRemoteBeanInvoker">
+        <description>WAS 인스턴스들에 대한 원격 호출를 위한 컴포넌트</description>
+    </bean>
+
+    <bean id="nc.core.IMessageManager"
+        class="nexcore.framework.core.message.internal.DefaultMessageManager"
+        init-method="init">
+        <description>
+            <![CDATA[메시지 관리 컴포넌트]]>
+        </description>
+        <property name="cacheManager" ref="nc.core.ICacheManager" />
+        <property name="sqlManager" ref="nc.db.ISqlManager" />
+        <property name="cacheName" value="message" />
+        <property name="preload" value="false" />
+        <property name="nullEscape" value="info" />
+        <!-- preload : init이나 refresh할 때 모든 캐싱 정보를 리셋만 할지(false), 
+            모두 다시 읽어들일지(true)를 결정 -->
+        <!-- nullEscape : 주어진 id와 locale정보에 대해 메시지가 없을 경우 
+            null을 리턴할지(null), id와 locale정보만을 담은 간단한 메시지를 리턴할지(info), 
+            예외를 던질 것인지(exception)를 결정 -->
+    </bean>
+
+    <bean id="nc.core.ILabelManager"
+        class="nexcore.framework.core.label.internal.CachedLabelManager"
+        init-method="init">
+        <description>
+            <![CDATA[레이블 관리 컴포넌트]]>
+        </description>
+        <property name="cacheManager" ref="nc.core.ICacheManager" />
+        <property name="sqlManager" ref="nc.db.ISqlManager" />
+        <property name="cacheName" value="label" />
+        <property name="preload" value="true" />
+    </bean>
+
+
+    <bean id="nc.core.ICenterCutManager"
+        class="nexcore.framework.core.cc.internal.DefaultCenterCutManager"
+        init-method="init" destroy-method="destroy">
+        <description>센터컷 관리 컴포넌트</description>
+        <property name="cacheManager" ref="nc.core.ICacheManager" />
+    </bean>
+
+    <bean id="nc.core.ITemplateEngine"
+        class="nexcore.framework.core.template.internal.DefaultTemplateEngine"
+        init-method="init" destroy-method="destroy">
+        <description>템플릿 엔진 컴포넌트</description>
+        <property name="defaultEncoding" value="UTF-8" />
+    </bean>
+
+    <bean id="nc.core.ITimedResourceWatcher"
+        class="nexcore.framework.core.cache.internal.TimedResourceWatcher"
+        init-method="init" destroy-method="destroy">
+        <description>
+            <![CDATA[주기적으로 파일의 변경사항을 모니터링하는 컴포넌트]]>
+        </description>
+        <property name="interval" value="5000" />
+        <property name="delay" value="20000" />
+    </bean>
+
+
+    <!-- IServiceLocator -->
+    <bean id="nc.core.IServiceLocator"
+        class="nexcore.framework.core.service.internal.DefaultServiceLocator"
+        init-method="init" destroy-method="destroy">
+        <description>
+            서비스 컴포넌트 위치에 따른 IServiceDelegator를 반환한다.
+        </description>
+    </bean>
+
+
+    <bean id="nc.core.IBizComponentMetaDataRegistry"
+        class="nexcore.framework.core.component.internal.BizComponentMetaDataRegistry"
+        init-method="init" destroy-method="destroy">
+        <description>
+            <![CDATA[컴포넌트 정보파일을 메모리 객체로 로딩하는 컴포넌트]]>
+        </description>
+        <property name="configurationManager"
+            ref="nc.core.IConfigurationManager" />
+        <property name="cacheManager" ref="nc.core.ICacheManager" />
+        <property name="loader">
+            <bean
+                class="nexcore.framework.core.component.internal.FileMetaDataLoader" />
+        </property>
+        <property name="timedResourceWatcher"
+            ref="nc.core.ITimedResourceWatcher" />
+    </bean>
+
+    <bean id="nc.core.IUserThreadManager"
+        class="nexcore.framework.core.service.internal.DefaultUserThreadManager"
+        init-method="init" destroy-method="destroy">
+        <description>
+            <![CDATA[ThreadLocal을 이용하여 RequestID를 관리하는 컴포넌트]]>
+        </description>
+    </bean>
+
+    <bean id="nc.core.ITxControlManager"
+        class="nexcore.framework.core.service.txcontrol.internal.DefaultTxControlManager"
+        init-method="init" destroy-method="destroy">
+        <description>
+            <![CDATA[거래 제어(Transaction control)를 수행하는 컴포넌트]]>
+        </description>
+        <property name="sqlManager" ref="nc.db.ISqlManager" />
+        <property name="cacheManager" ref="nc.core.ICacheManager" />
+        <property name="cacheName" value="txcontrol" />
+    </bean>
+
+    <bean id="nc.core.ILog4jManager"
+        class="nexcore.framework.core.log.impl.Log4jManager">
+        <description>
+            <![CDATA[ Log4j 설정 및 logger 로그레벨을 관리하는 컴포넌트 ]]>
+        </description>
+    </bean>
+
+    <bean id="nc.analysis.ISourceAnalyzer"
+        class="nexcore.framework.analysis.structure.internal.SourceAnalyzer"
+        init-method="init" destroy-method="destroy">
+        <description>
+            <![CDATA[ 컴포넌트 소스, 웹 소스 파일을 읽어 소스정보 구조분석 테이블에 저장한다.  ]]>
+        </description>
+        <property name="sqlManager" ref="nc.db.ISqlManager" />
+        <property name="bizComponentMetaDataRegistry"
+            ref="nc.core.IBizComponentMetaDataRegistry" />
+    </bean>
+
+    <bean id="nc.core.ICryptoManager"
+        class="nexcore.framework.core.crypt.internal.CryptoManager"
+        init-method="init">
+        <description>
+            <![CDATA[암호화 컴포넌트]]>
+        </description>
+        <property name="keySaver">
+            <bean
+                class="nexcore.framework.core.crypt.internal.FileKeySaver">
+                <property name="keyFile" value="SecreteKey.ser" />
+            </bean>
+        </property>
+<!--
+        <property name="keyAlgorithm" value="DES" />
+        <property name="transformation" value="DES/ECB/PKCS5Padding" />
+-->        
+        <property name="keyAlgorithm" value="AES" />
+        <property name="transformation" value="AES" />
+
+        <property name="encoding" value="UTF-8" />
+        <!-- 문자열을 인코드/디코드할 때 쓰는 기준 인코딩 -->
+    </bean>
+
+
+    <bean id="nc.core.ICryptoManager_md5"
+        class="nexcore.framework.core.crypt.internal.Md5CryptoManager">
+        <description>
+            <![CDATA[MD5 암호화 컴포넌트]]>
+        </description>
+        <property name="encoding" value="UTF-8" />
+    </bean>
+
+    <bean id="nc.core.ICryptoFactoryManager"
+        class="nexcore.framework.core.crypt.internal.CryptoFactoryManager">
+        <description>
+            <![CDATA[암호화 컴포넌트 접근 포인트]]>
+        </description>
+        <property name="cryptos">
+            <map>
+                <entry key="cipher" value-ref="nc.core.ICryptoManager" />
+                <entry key="md5" value-ref="nc.core.ICryptoManager_md5" />
+            </map>
+        </property>
+    </bean>
+
+
+</beans>

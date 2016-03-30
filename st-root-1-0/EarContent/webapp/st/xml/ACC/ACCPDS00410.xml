@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="333" Id="ACCPDS00410" Left="8" OnLoadCompleted="ACCPDS00410_OnLoadCompleted" PidAttrib="7" Title="매입할인일련번호조회" Top="8" Ver="1.0" Width="415" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_list_tmp">
+				<Contents>
+					<colinfo id="prod_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="mfact_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="prod_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="color_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="ser_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="amt" size="256" summ="default" type="STRING"/>
+					<colinfo id="inout_dtl_cl" size="256" summ="default" type="STRING"/>
+					<colinfo id="inout_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="rgst_seq" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_fix_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="in_fix_yn_tmp" size="256" summ="default" type="STRING"/>
+					<colinfo id="avg_prchs_dc_amt" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_serNumList" OnColumnChanged="ds_serNumList_OnColumnChanged">
+				<Contents></Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_serNumList" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="290" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="254" Id="grd_serNumList" InputPanel="FALSE" Left="9" LineColor="user33" MinWidth="100" OnHeadClick="grd_serNumList_OnHeadClick" Right="404" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="36" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="395">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="17"/>
+						<col width="28"/>
+						<col width="55"/>
+						<col width="89"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="checkbox" edit="checkbox"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="색상"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="일련번호"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="입고구분"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="입고일"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="IN_FIX_YN" display="checkbox" edit="checkbox"/>
+						<cell align="center" col="1" display="number" expr="currow+1"/>
+						<cell align="center" col="2" colid="COLOR_NM" display="text"/>
+						<cell align="center" col="3" colid="SER_NUM" display="text"/>
+						<cell align="center" col="4" colid="INOUT_DTL_CL" display="text"/>
+						<cell align="center" col="5" colid="INOUT_DT" display="date"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_cancel" ImageID="btn_d_2" Left="201" LeftMargin="5" OnClick="btn_cancel_OnClick" Style="sty_btn_d" TabOrder="3" Text="취소" Top="299" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="137" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="2" Text="확인" Top="299" Width="60"></Button>
+		<Button Cursor="HAND" Height="21" Id="Button56" ImageID="btn_i_exceldown_w" Left="384" OnClick="btn_excel_OnClick" TabOrder="4" Text="Button1" ToolTipText="Excel&#32;Download" Top="9" Width="19"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : ACCPDS00410
+* 업무명      : 매입채무 - 매입할인등록
+* 프로그램명  : 매입할인등록
+--------------------------------------------------------------------------------
+* 작성자      : 전현주
+* 작성일      : 2009.02.02
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+var FV_IN_FIX_CNT;
+var FV_IN_LIST_ROW;
+var FV_IN_DEBT_FLAG;
+
+function ACCPDS00410_OnLoadCompleted(obj)
+{
+	FV_IN_DEBT_FLAG = sDebtFlag;
+    
+    if(FV_IN_DEBT_FLAG != "0"){
+		grd_serNumList.Editable = "false";
+		btn_confirm.Enable = "false";
+    }
+    
+    //cf_setGrdChecknSortEvent(grd_serNumList);
+      
+	f_getSerNumList();
+}
+
+
+/*******************************************************************************
+ * @description    : 일련번호 조회
+*******************************************************************************/
+function f_getSerNumList()
+{
+	 var sMfactIDOrg = sMfactCd;
+     var sProdCdOrg = sProdCd;
+     
+     var bln = true;
+    
+    if(ds_list.rowcount >0){
+		
+		ds_list.Filter("prod_cd='"+sProdCdOrg+"'&&mfact_cd='"+sMfactIDOrg+"'");
+		
+		ds_serNumList.Assign(ds_list);
+		
+		ds_list.unFilter();
+    }
+    
+    if(toNumber(ds_serNumList.rowcount) !=
+		toNumber(ds_prchs_detail.GetColumn(sNrow,"PRCHS_QTY"))){
+		
+		alert('매입수량을 확인하십시오. ');
+		this.Close();
+    }
+    
+    
+    //cf_copyDataSet(ds_serNumList, ds_list_tmp);
+		
+    // FV_IN_FIX_CNT = ds_serNumList.CaseSum("in_fix_yn=='1'", "in_fix_yn");
+    // FV_IN_LIST_ROW = sNrow;
+    ds_serNumList.row = 0;
+}
+
+
+/*******************************************************************************
+ * @description    : 취소- 이벤트
+*******************************************************************************/
+function btn_cancel_OnClick(obj)
+{
+	this.Close();
+}
+
+
+function btn_confirm_OnClick(obj)
+{    
+    
+    	
+    FV_IN_FIX_CNT = ds_serNumList.CaseSum("in_fix_yn=='1'", "in_fix_yn");
+    FV_IN_LIST_ROW = sNrow;
+    
+	if(ds_serNumList.rowcount >0){
+	
+		for(var i=0; i<ds_serNumList.rowcount; i++)
+		{
+
+				var sProdCd = ds_serNumList.GetColumn(i, "prod_cd");
+				var sColorCd = ds_serNumList.GetColumn(i, "color_cd");
+				var sSerNum = ds_serNumList.GetColumn(i, "ser_num");
+				var sInFixYn = ds_serNumList.GetColumn(i, "in_fix_yn");
+				var sInFixYnTmp = ds_serNumList.GetColumn(i, "in_fix_yn_tmp");
+				parent.ds_list.SetColumn(ds_list.FindRow("key_data",sProdCd+sColorCd+sSerNum), "in_fix_yn", sInFixYn);
+				parent.ds_list.SetColumn(ds_list.FindRow("key_data",sProdCd+sColorCd+sSerNum), "in_fix_yn_tmp", sInFixYnTmp);
+				
+				// for(var j=0; j<parent.ds_list.rowcount; j++){
+					// var sProdCdOrg = parent.ds_list.GetColumn(j, "prod_cd");
+					////var sColorCdOrg = parent.ds_list.GetColumn(j, "color_cd");
+					// var sSerNumOrg = parent.ds_list.GetColumn(j, "ser_num");
+					
+					////if(sProdCdOrg == sProdCd && sColorCdOrg == sColorCd && sSerNumOrg == sSerNum)
+					// if(sProdCdOrg == sProdCd && sSerNumOrg == sSerNum)
+					// {
+						// parent.ds_list.SetColumn(j, "in_fix_yn", sInFixYn);
+						// parent.ds_list.SetColumn(j, "in_fix_yn_tmp", sInFixYnTmp);
+					// }
+				// }
+			//}
+			
+		} 
+		
+		
+	}
+	 
+	parent.ds_prchs_detail.SetColumn(FV_IN_LIST_ROW, "prchs_dc_qty", FV_IN_FIX_CNT);
+    this.Close();
+}
+
+
+function grd_serNumList_OnHeadClick(obj,nCell,nX,nY,nPivotIndex)
+{    
+    if(nCell == 0){
+		var sValue = '0';
+		obj.Redraw = false;
+			
+		var sChkValue = obj.GetCellProp("head", nCell, "text");		
+		
+		if (sChkValue == 1) sValue='0';
+		else sValue='1';	
+				
+		obj.SetCellProp("head", nCell, "text", sValue);			
+		
+		for(var i = 0 ; i < ds_serNumList.rowcount ; i++){
+			
+				ds_serNumList.SetColumn(i,"in_fix_yn",sValue);
+		}
+		
+		obj.Redraw = true;
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 데이터셋 변경 이벤트
+*******************************************************************************/
+
+function ds_serNumList_OnColumnChanged(obj,nRow,strColumnID,varOldValue,varNewValue,nPivotIndex)
+{
+	FV_IN_FIX_CNT = ds_serNumList.CaseSum("in_fix_yn=='1'", "in_fix_yn");
+}
+
+
+
+function Button0_OnClick(obj)
+{
+	cf_debug("ds_list");
+}
+
+function Button1_OnClick(obj)
+{
+	cf_debug("ds_list_tmp");
+}
+
+function btn_excel_OnClick(obj)
+{
+	cf_exportExcel(grd_serNumList);
+}
+]]></Script>
+</Window>

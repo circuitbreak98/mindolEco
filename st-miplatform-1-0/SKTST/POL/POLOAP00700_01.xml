@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="530" Id="POLOAP00700" Left="8" OnLoadCompleted="POLOAP00700_OnLoadCompleted" PidAttrib="7" Title="모델별&#32;차등&#32;수수료&#32;등록" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_mdlPrCmmsGrd" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="475" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="443" Id="grd_mdlPrCmmsGrd" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" Right="1012" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="32" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="1004">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="101"/>
+						<col width="95"/>
+						<col width="100"/>
+						<col width="67"/>
+						<col width="68"/>
+						<col width="75"/>
+						<col width="67"/>
+						<col width="58"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" expandsize="15" text="제조사"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" expandsize="15" text="모델"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="상품특성1"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="상품특성2"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="010신규"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="K-MNP"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="L-MNP"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="약정보상"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="할부보상"/>
+						<cell bkcolor="user34" col="9" color="user35" display="text" text="일반기변"/>
+					</head>
+					<body>
+						<cell col="0" display="text"/>
+						<cell col="1" display="text"/>
+						<cell col="2" display="text"/>
+						<cell col="3" display="text"/>
+						<cell align="center" col="4" display="number" edit="integer"/>
+						<cell align="right" col="5" display="number" edit="integer"/>
+						<cell align="right" col="6" display="number" edit="integer"/>
+						<cell align="right" col="7" display="number" edit="integer"/>
+						<cell align="right" col="8" display="number" edit="integer"/>
+						<cell align="right" col="9" display="number" edit="integer"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="img_mdlPrMnyGrd" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="모델별&#32;차등&#32;수수료&#32;입력" Top="10" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_close" ImageID="btn_d_2" Left="955" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="4" Text="취소" Top="490" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_confirm" ImageID="btn_c_2" Left="890" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="3" Text="확인" Top="490" Width="60"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : POLOAP00700  
+* 업무명      : 온라인도매가격표정책관리
+* 프로그램명  : 일반장려금 지급정보 모델별 장려금 입력
+--------------------------------------------------------------------------------
+* 작성자      : 장화수
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    : 
+수정 내역 :
+*******************************************************************************/
+
+/*******************************************************************************
+// 1. 전 처리기
+*******************************************************************************/
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+ 
+//-----------------------------------------------------------------------------
+// 전역변수
+//-----------------------------------------------------------------------------
+
+var SEQ;         //지급정보 순번
+var GRD_INS_YN;  //차등입력여부
+//var oCnt;  //그리드 크기를 결정하기위한 판매유형 갯수
+
+
+function POLOAP00700_OnLoadCompleted(obj)
+{
+	cf_setGrdChecknSortEvent(grd_mdlPrCmmsGrd);	// 그리드 정렬
+
+	// 권한 설정
+	cf_setAuth(pFrmNum);
+
+	f_crteDataSetGrd("ds_mdlPrCmmsGrd");  //DataSet 생성
+	
+
+	
+}
+
+
+
+
+//############################################################################################################
+// 차등입력
+//############################################################################################################
+/*******************************************************************************
+* 함수명 : f_crteDataSetGrd
+* 기능명 : 차등입력 DataSet 생성 
+*******************************************************************************/
+function f_crteDataSetGrd(aDs)
+{
+
+
+   if( IsValidObject(object(aDs)) == false )  // 데이타셋이 존재하지 않을때만 생성
+	{
+	
+		Create("Dataset", aDs);
+
+		object(aDs).AddColumn("SEQ");
+		object(aDs).AddColumn("DEAL_CO_NM");
+		object(aDs).AddColumn("PROD_CD");
+		object(aDs).AddColumn("PROD_NM");
+		object(aDs).AddColumn("PROD_CHRTIC_1_CD");
+		object(aDs).AddColumn("PROD_CHRTIC_2_CD");
+		object(aDs).AddColumn("PROD_CHRTIC_1_NM");
+		object(aDs).AddColumn("PROD_CHRTIC_2_NM");
+		
+        //oCnt=0;
+		for( nRow = 0; nRow < ds_saleTyp.GetRowCount(); nRow++ )
+		{
+			//alert("sColums"+ds_saleTyp.GetColumn(nRow,"SELECT2"));
+		
+		    if (ds_saleTyp.GetColumn(nRow,"SELECT1") == 1) {
+				if(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_1") != ds_saleTyp.GetColumn(nRow-1,"SALE_TYP_CD_1")){
+					object(aDs).AddColumn(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_1"));
+					//alert("sColums"+ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_1"));
+				}
+		    } else if (ds_saleTyp.GetColumn(nRow,"SELECT2") == 1) {
+				if(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_2") != ds_saleTyp.GetColumn(nRow-1,"SALE_TYP_CD_2")){
+					object(aDs).AddColumn(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_2"));
+					//alert("sColums"+ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_2"));
+				}
+
+		    } else if (ds_saleTyp.GetColumn(nRow,"SELECT3") == 1) {
+				object(aDs).AddColumn(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_3"));
+				//oCnt++;
+		    }
+		}
+   }
+
+
+
+	
+	f_drawGridGrd(); // Grid 그리기
+	
+
+}
+
+
+/*******************************************************************************
+* 함수명 : f_drawGridGrd
+* 기능명 : 차등입력 rid 그리기 
+*******************************************************************************/
+function f_drawGridGrd()
+{
+
+	var grdName   = "grd_mdlPrCmmsGrd";
+
+    //var sContents    = '		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_mdlPrCmmsGrd" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="478" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="443" Id="grd_mdlPrCmmsGrd" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="1" TabStop="true" Top="35" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">\n';
+    var sContents    = '			<contents>\n';
+	var sContColums  = '				<format id="Default">\n';
+	    sContColums	+= '					<columns>\n';
+	    sContColums	+= '						<col width="100"/>\n';
+	    sContColums	+= '						<col width="100"/>\n';
+	    sContColums	+= '						<col width="101"/>\n';
+	    sContColums	+= '						<col width="95"/>\n';
+    var iCnt = 0;
+		for( nRow = 0; nRow < ds_saleTyp.GetRowCount(); nRow++ )
+		{
+		    if (ds_saleTyp.GetColumn(nRow,"SELECT1") == 1) {
+				if(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_1") != ds_saleTyp.GetColumn(nRow-1,"SALE_TYP_CD_1")){
+	    sContColums	+= '						<col width="110"/>\n';
+				}
+		    } else if (ds_saleTyp.GetColumn(nRow,"SELECT2") == 1) {
+				if(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_2") != ds_saleTyp.GetColumn(nRow-1,"SALE_TYP_CD_2")){
+	    sContColums	+= '						<col width="110"/>\n';
+				}
+
+		    } else if (ds_saleTyp.GetColumn(nRow,"SELECT3") == 1) {
+	    sContColums	+= '						<col width="110"/>\n';
+		    }
+
+		}
+
+	    sContColums	+= '					</columns>\n';
+	var sContHeads   = '					<head>\n';
+		sContHeads  += '						<cell bkcolor="user34" col="0" color="user35" display="text" expandimage="btn_grid_sort_down" expandshow="true" expandsize="15" text="제조사"/>\n';
+		sContHeads  += '						<cell bkcolor="user34" col="1" color="user35" display="text" expandimage="btn_grid_sort_up" expandshow="true" expandsize="15" text="모델"/>\n';
+		sContHeads  += '						<cell bkcolor="user34" col="2" color="user35" display="text" text="상품특성1"/>\n';
+		sContHeads  += '						<cell bkcolor="user34" col="3" color="user35" display="text" text="상품특성2"/>\n';
+	var nERow = 0;
+	var iCol = 4;
+		for( nRow = 0; nRow < ds_saleTyp.GetRowCount(); nRow++ )
+		{
+		    if (ds_saleTyp.GetColumn(nRow,"SELECT1") == 1) {
+				if(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_1") != ds_saleTyp.GetColumn(nRow-1,"SALE_TYP_CD_1")){
+	            nERow = ds_saleTypCdMax.FindRow("COMM_CD_VAL",ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_1"));
+		sContHeads  += '						<cell bkcolor="user34" col="'+iCol+'" color="user35" display="text" text="'+ds_saleTypCdMax.GetColumn(nERow,"COMM_CD_VAL_NM")+'"/>\n';
+		        iCol ++;
+				}
+		    } else if (ds_saleTyp.GetColumn(nRow,"SELECT2") == 1) {
+				if(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_2") != ds_saleTyp.GetColumn(nRow-1,"SALE_TYP_CD_2")){
+	            nERow = ds_saleTypCdMid.FindRow("COMM_CD_VAL",ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_2"));
+		sContHeads  += '						<cell bkcolor="user34" col="'+iCol+'" color="user35" display="text" text="'+ds_saleTypCdMid.GetColumn(nERow,"COMM_CD_VAL_NM")+'"/>\n';
+		        iCol ++;
+				}
+
+		    } else if (ds_saleTyp.GetColumn(nRow,"SELECT3") == 1) {
+	            nERow = ds_saleTypCdMin.FindRow("COMM_CD_VAL",ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_3"));
+		sContHeads  += '						<cell bkcolor="user34" col="'+iCol+'" color="user35" display="text" text="'+ds_saleTypCdMin.GetColumn(nERow,"COMM_CD_VAL_NM")+'"/>\n';
+		        iCol ++;
+		    }
+		}
+		sContHeads  += '					</head>\n';
+	var sContBodys   = '					<body>\n';
+		sContBodys  += '						<cell col="0" colid="DEAL_CO_NM" display="text"/>\n';
+		sContBodys  += '						<cell col="1" colid="PROD_NM" display="text"/>\n';
+		sContBodys  += '						<cell col="2" colid="PROD_CHRTIC_1_NM" display="text"/>\n';
+		sContBodys  += '						<cell col="3" colid="PROD_CHRTIC_2_NM" display="text"/>\n';
+	var iCol = 4;
+		for( nRow = 0; nRow < ds_saleTyp.GetRowCount(); nRow++ )
+		{
+		    if (ds_saleTyp.GetColumn(nRow,"SELECT1") == 1) {
+				if(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_1") != ds_saleTyp.GetColumn(nRow-1,"SALE_TYP_CD_1")){
+		sContBodys  += '						<cell align="right" col="'+iCol+'" colid="'+ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_1")+'" display="number" edit="integer"/>\n';
+		        iCol ++;
+				}
+		    } else if (ds_saleTyp.GetColumn(nRow,"SELECT2") == 1) {
+				if(ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_2") != ds_saleTyp.GetColumn(nRow-1,"SALE_TYP_CD_2")){
+		sContBodys  += '						<cell align="right" col="'+iCol+'" colid="'+ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_2")+'" display="number" edit="integer"/>\n';
+		        iCol ++;
+				}
+
+		    } else if (ds_saleTyp.GetColumn(nRow,"SELECT3") == 1) {
+		sContBodys  += '						<cell align="right" col="'+iCol+'" colid="'+ds_saleTyp.GetColumn(nRow,"SALE_TYP_CD_3")+'" display="number" edit="integer"/>\n';
+		        iCol ++;
+		    }
+		}
+		sContBodys  += '					</body>\n';
+		sContents    = sContents + sContColums + sContHeads + sContBodys;
+	    sContents	+= '				</format>\n';
+	    sContents	+= '			</contents>\n';
+	    //sContents	+= '		</Grid>\n';
+
+	var objGrid = object(grdName);	
+	objGrid.Contents = sContents;
+	objGrid.AutoEnter = TRUE;
+
+	var colCnt = objGrid.GetColCount(); //그리드 컬럼 갯수
+	var formSize = Iif((colCnt*110)+200 > 1004, 1004, (colCnt*110)+200);    //(컬럼갯수 * 컬럼width) +200
+	
+	this.window.width = formSize;       //윈도우 사이즈 제조정
+	
+	objGrid.Width = formSize-16;  //그리드 크기
+
+	objGrid.left = (objGrid.Left+(this.Width-objGrid.Right))/2; //그리드 left
+	
+	btn_confirm.Left = (objGrid.left+objGrid.Width)-60*2; // 확인버튼
+	btn_close.Left = objGrid.left+objGrid.Width-60;       //취소 버튼
+	
+	f_searchGrd();  //조회
+
+}
+
+
+/*******************************************************************************
+* 함수명 : f_searchGrd
+* 기능명 : 차등입력 조회 
+*******************************************************************************/
+function f_searchGrd()
+{
+	grd_mdlPrCmmsGrd.Redraw = false;
+
+	var nExistRow = ds_mdlPrCmms.FindRow("SEQ",SEQ);
+	var nERow = 0;
+	
+	if( nExistRow == -1 ){
+		//alert("새로 작성");
+		//alert(ds_aplyModel.GetRowCount());
+
+		for( nRow = 0; nRow < ds_aplyModel.GetRowCount(); nRow++ )
+		//for( nRow = ds_aplyModel.GetRowCount()-1; nRow >= 0; nRow-- )
+		{
+			ds_mdlPrCmmsGrd.AddRow();
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "SEQ", SEQ);
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "DEAL_CO_NM", ds_aplyModel.GetColumn(nRow,"DEAL_CO_NM"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_CD", ds_aplyModel.GetColumn(nRow,"PROD_CD"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_NM", ds_aplyModel.GetColumn(nRow,"PROD_NM"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_CHRTIC_1_CD", ds_aplyModel.GetColumn(nRow,"PROD_CHRTIC_1_CD"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_CHRTIC_2_CD", ds_aplyModel.GetColumn(nRow,"PROD_CHRTIC_2_CD"));
+			nERow = ZBAS_C_00020_2.FindRow("COMM_CD_VAL",ds_aplyModel.GetColumn(nRow,"PROD_CHRTIC_1_CD"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_CHRTIC_1_NM", ZBAS_C_00020_2.GetColumn(nERow,"COMM_CD_VAL_NM"));
+			nERow = ZBAS_C_00030_3.FindRow("COMM_CD_VAL",ds_aplyModel.GetColumn(nRow,"PROD_CHRTIC_2_CD"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_CHRTIC_2_NM", ZBAS_C_00030_3.GetColumn(nERow,"COMM_CD_VAL_NM"));
+			for( iRow = 0; iRow < ds_saleTyp.GetRowCount(); iRow++ )
+			{
+				if (ds_saleTyp.GetColumn(iRow,"SELECT1") == 1) {
+					if(ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_1") != ds_saleTyp.GetColumn(iRow-1,"SALE_TYP_CD_1")){
+						ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_1"), "0");
+					}
+				} else if (ds_saleTyp.GetColumn(iRow,"SELECT2") == 1) {
+					if(ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_2") != ds_saleTyp.GetColumn(iRow-1,"SALE_TYP_CD_2")){
+						ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_2"), "0");
+					}
+		
+				} else if (ds_saleTyp.GetColumn(iRow,"SELECT3") == 1) {
+						ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_3"), "0");
+				}
+			}
+		
+		}
+
+
+	} else {   //이미 입력된 모델별장려금 정보가 있다면...
+		//alert("수정");
+		//ds_mdlPrCmms.Filter("SEQ=='" + SEQ + "'");
+		var sFilterDs      = "";
+		for( nRow = 0; nRow < ds_aplyModel.GetRowCount(); nRow++ )
+		//for( nRow = ds_aplyModel.GetRowCount()-1; nRow >= 0; nRow-- )
+		{
+	
+			ds_mdlPrCmmsGrd.AddRow();
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "SEQ", SEQ);
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "DEAL_CO_NM", ds_aplyModel.GetColumn(nRow,"DEAL_CO_NM"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_CD", ds_aplyModel.GetColumn(nRow,"PROD_CD"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_NM", ds_aplyModel.GetColumn(nRow,"PROD_NM"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_CHRTIC_1_CD", ds_aplyModel.GetColumn(nRow,"PROD_CHRTIC_1_CD"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_CHRTIC_2_CD", ds_aplyModel.GetColumn(nRow,"PROD_CHRTIC_2_CD"));
+			nERow = ZBAS_C_00020_2.FindRow("COMM_CD_VAL",ds_aplyModel.GetColumn(nRow,"PROD_CHRTIC_1_CD"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_CHRTIC_1_NM", ZBAS_C_00020_2.GetColumn(nERow,"COMM_CD_VAL_NM"));
+			nERow = ZBAS_C_00030_3.FindRow("COMM_CD_VAL",ds_aplyModel.GetColumn(nRow,"PROD_CHRTIC_2_CD"));
+			ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, "PROD_CHRTIC_2_NM", ZBAS_C_00030_3.GetColumn(nERow,"COMM_CD_VAL_NM"));
+			for( iRow = 0; iRow < ds_saleTyp.GetRowCount(); iRow++ )
+			{
+				if (ds_saleTyp.GetColumn(iRow,"SELECT1") == 1) {
+					if(ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_1") != ds_saleTyp.GetColumn(iRow-1,"SALE_TYP_CD_1")){
+						sFilterDs  = "";
+						sFilterDs += " SEQ='" + SEQ + "' &&";
+						sFilterDs += " PROD_CD='" + ds_aplyModel.GetColumn(nRow,"PROD_CD") + "' &&";
+						sFilterDs += " SALE_TYP_CD_MIN='" + ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_3") + "'";
+						ds_mdlPrCmms.Filter(sFilterDs);
+						
+						ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_1"), ds_mdlPrCmms.GetColumn(0,"PR_CMMS"));
+					}
+				} else if (ds_saleTyp.GetColumn(iRow,"SELECT2") == 1) {
+					if(ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_2") != ds_saleTyp.GetColumn(iRow-1,"SALE_TYP_CD_2")){
+						sFilterDs  = "";
+						sFilterDs += " SEQ='" + SEQ + "' &&";
+						sFilterDs += " PROD_CD='" + ds_aplyModel.GetColumn(nRow,"PROD_CD") + "' &&";
+						sFilterDs += " SALE_TYP_CD_MIN='" + ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_3") + "'";
+						ds_mdlPrCmms.Filter(sFilterDs);
+						
+						ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_2"), ds_mdlPrCmms.GetColumn(0,"PR_CMMS"));
+					}
+		
+				} else if (ds_saleTyp.GetColumn(iRow,"SELECT3") == 1) {
+						sFilterDs  = "";
+						sFilterDs += " SEQ='" + SEQ + "' &&";
+						sFilterDs += " PROD_CD='" + ds_aplyModel.GetColumn(nRow,"PROD_CD") + "' &&";
+						sFilterDs += " SALE_TYP_CD_MIN='" + ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_3") + "'";
+						ds_mdlPrCmms.Filter(sFilterDs);
+						
+						ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_3"), ds_mdlPrCmms.GetColumn(0,"PR_CMMS"));
+				}
+			}
+		
+		}
+
+	
+	}
+
+	
+	grd_mdlPrCmmsGrd.Redraw = true;
+	ds_mdlPrCmms.UnFilter();
+	
+    //버튼 권한 관리
+    //관리자는 모든 권한, 아니면...  권한별 세팅
+	//alert(gds_session.GetColumn(0, "usergrp"));
+	if (gds_session.GetColumn(0, "usergrp") == "P12" || gds_session.GetColumn(0, "usergrp") == "P17") {
+	} else {
+		if(uf_isNull(ds_addSaleCmms.GetColumn(0,"APOL_ID"))== false) {   //리스트 클릭시 수정모드
+			//저장, 삭제 버튼을 로그인한 사용자와 작성한자의 조직이 틀리면... 
+			if( ds_addSaleCmms.getColumn(0,"MOD_DVS") != gds_session.GetColumn(0, "orgid") ) { 
+				btn_save.Visible   = false;
+				btn_delete.Visible = false;
+			} else {
+				btn_save.Visible   = true;
+			}
+		}
+	}
+
+	    if (cf_idAuthSet(gds_session.GetColumn(0, "loginId")) == "OK") {
+            btn_save.Visible   = true;
+            btn_delete.Visible   = true;
+	    }
+
+
+}
+
+
+
+
+/*******************************************************************************
+* 함수명 : btn_confirm_OnClick
+* 기능명 : 확인 버튼 
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+
+	var nExistRow = ds_mdlPrCmms.FindRow("SEQ",SEQ);
+	var nERow = 0;
+	
+	if( nExistRow > -1 ){
+		for( nRow = ds_mdlPrCmms.GetRowCount(); nRow >= 0; nRow-- )
+		{	
+	        if (ds_mdlPrCmms.GetColumn(nRow,"SEQ") == SEQ) {
+				ds_mdlPrCmms.DeleteRow(nRow);
+	        }	        	
+		
+		}
+	}
+
+	for( nRow = 0; nRow < ds_mdlPrCmmsGrd.GetRowCount(); nRow++ )
+	//for( nRow = ds_mdlPrCmmsGrd.GetRowCount()-1; nRow >= 0; nRow-- )
+	{
+
+			for( iRow = 0; iRow < ds_saleTyp.GetRowCount(); iRow++ )
+			//for( iRow = ds_saleTyp.GetRowCount(); iRow >= 0; iRow-- )
+			{
+				if (ds_saleTyp.GetColumn(iRow,"SELECT3") == 1) {
+						//ds_mdlPrCmmsGrd.SetColumn(ds_mdlPrCmmsGrd.lastrow, ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_3"), "0");
+						ds_mdlPrCmms.AddRow();
+						//ds_mdlPrCmms.SetColumn(ds_mdlPrCmmsGrd.lastrow, "MDL_PR_CMMS_ID", MDL_PR_CMMS_ID);
+						ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "SEQ", SEQ);
+						ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "GRD_INS_YN", GRD_INS_YN);
+						ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "DEAL_CO_NM", ds_mdlPrCmmsGrd.GetColumn(nRow,"DEAL_CO_NM"));
+						ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "PROD_CD", ds_mdlPrCmmsGrd.GetColumn(nRow,"PROD_CD"));
+						ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "PROD_NM", ds_mdlPrCmmsGrd.GetColumn(nRow,"PROD_NM"));
+						ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "PROD_CHRTIC_1_NM", ds_mdlPrCmmsGrd.GetColumn(nRow,"PROD_CHRTIC_1_NM"));
+						ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "PROD_CHRTIC_2_NM", ds_mdlPrCmmsGrd.GetColumn(nRow,"PROD_CHRTIC_2_NM"));
+	
+						ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "SALE_TYP_CD_MIN", ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_3"));
+						if(ds_saleTyp.GetColumn(iRow,"SELECT1") == 1) {
+							ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "PR_CMMS", ds_mdlPrCmmsGrd.GetColumn( nRow,ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_1") ));
+						} else if(ds_saleTyp.GetColumn(iRow,"SELECT2") == 1) {
+							ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "PR_CMMS", ds_mdlPrCmmsGrd.GetColumn( nRow,ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_2") ));
+						} else if(ds_saleTyp.GetColumn(iRow,"SELECT3") == 1) {
+							ds_mdlPrCmms.SetColumn(ds_mdlPrCmms.lastrow, "PR_CMMS", ds_mdlPrCmmsGrd.GetColumn( nRow,ds_saleTyp.GetColumn(iRow,"SALE_TYP_CD_3") ));
+						}
+
+				}
+
+			}
+
+
+	
+	}
+
+    ds_mdlPrCmmsGrd.ClearData();
+
+	close();
+	
+}
+
+
+
+
+
+/*******************************************************************************
+* 함수명 : btn_close_OnClick
+* 기능명 : 취소버튼 
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+    ds_mdlPrCmmsGrd.ClearData();
+
+	close();		
+}
+
+]]></Script>
+</Window>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="180" Id="ADMAUM00110" Left="8" OnLoadCompleted="ADMAUM00110_OnLoadCompleted" PidAttrib="7" Title="권한동기화" Top="8" Ver="1.0" Width="320" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="qna_num" size="256" summ="default" type="STRING"/>
+					<colinfo id="title" size="256" summ="default" type="STRING"/>
+					<colinfo id="que_ctt" size="256" summ="default" type="STRING"/>
+					<colinfo id="type_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="ans_ctt" size="256" summ="default" type="STRING"/>
+					<colinfo id="ans_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="doc_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="del_yn" size="256" summ="default" type="STRING"/>
+					<colinfo id="upd_cnt" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="ins_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="mod_dtm" size="256" summ="default" type="STRING"/>
+					<colinfo id="mod_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="write_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="write_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="answer_user_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="answer_dt" size="256" summ="default" type="STRING"/>
+					<colinfo id="write_org_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="write_org_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="answer_org_id" size="256" summ="default" type="STRING"/>
+					<colinfo id="answer_org_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="write_user_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="answer_user_nm" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_conditionSync">
+				<Contents>
+					<colinfo id="USER_GRP_BF" size="256" summ="default" type="STRING"/>
+					<colinfo id="USER_GRP_AF" size="256" summ="default" type="STRING"/>
+					<record>
+						<USER_GRP_AF></USER_GRP_AF>
+						<USER_GRP_BF></USER_GRP_BF>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_grntUserGrp">
+				<Contents>
+					<colinfo id="CODE" size="256" summ="default" type="STRING"/>
+					<colinfo id="VAL" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_AuthSync"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_NotGrntUserGrp">
+				<Contents>
+					<colinfo id="CODE" size="256" summ="default" type="STRING"/>
+					<colinfo id="VAL" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="79" Id="div_process" Left="8" Style="sty_div_dataview" TabOrder="1" Text="Div0" Top="28" Width="299">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static2" Left="15" Style="sty_lb_Basic" TabOrder="3" Text="From&#32;사용자그룹" Top="13" VAlign="Middle" Width="108"></Static>
+				<Static Align="Right" Height="20" Id="Static0" Left="15" Style="sty_lb_Basic" TabOrder="4" Text="To&#32;사용자그룹" Top="37" VAlign="Middle" Width="108"></Static>
+				<Combo BindDataset="ds_conditionSync" Border="Flat" CodeColumn="CODE" Column="USER_GRP_BF" DataColumn="VAL" Height="20" Id="cbo_usrGrp" InnerDataset="ds_grntUserGrp" Left="130" Style="sty_ipt_form" TabOrder="1" Top="12" Width="146"></Combo>
+				<Combo BindDataset="ds_conditionSync" Border="Flat" CodeColumn="code" Column="USER_GRP_AF" DataColumn="val" Height="20" Id="cbo_copyUser" InnerDataset="ds_NotGrntUserGrp" Left="130" Style="sty_ipt_form" TabOrder="2" Top="37" Width="146"></Combo>
+			</Contents>
+		</Div>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="24" Id="btn_close" ImageID="btn_d_2" Left="151" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="3" Text="닫기" Top="144" Width="61"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="88" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="2" Text="저장" Top="144" Width="60"></Button>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="14" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="권한&#32;동기화" Top="4" Width="192"></Image>
+		<Image Align="Left" Height="20" Id="Image1" ImageID="bul_caution" Left="9" LeftMargin="20" Style="sty_lb_info" TabOrder="5" Text="권한이&#32;부여되지&#32;않은&#32;그룹에&#32;대한&#32;동기화만&#32;가능합니다." Top="112" Width="308"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  :  ADMAUM00110
+* 업무명      :  ADMIN-권한관리
+* 프로그램명  :  권한동기화
+--------------------------------------------------------------------------------
+* 작성자      : shimyunjung
+* 작성일      : 2009.01.20 
+*******************************************************************************/
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+
+#include "lib::lib_commF.js"
+#include "lib::lib_DIS.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+
+function ADMAUM00110_OnLoadCompleted(obj)
+{
+	//http.Sync = true;
+	// 공통 코드를 위한 데이타셋 설정
+	//cf_setCommonCodeDsEnv();
+	//cf_setCommonCode("div_process.cbo_usrGrp", "ZBAS_C_00250");
+	//cf_setCommonCode("div_process.cbo_copyUser", "ZBAS_C_00250");
+	// 설정된 코드를 기반으로 공통 코드를 추가 및 데이타 바인딩
+	//cf_checkCommonCode();
+	
+	//http.Sync = false;
+	
+	ds_conditionSync.SetColumn(0, "USER_GRP_BF", userGroup);
+	
+	fn_search();
+	
+}
+
+ 
+/*******************************************************************************
+ * @description    : 조회 
+*******************************************************************************/
+function fn_search ()
+{
+	var sSvcID 	= "getUserGrp";
+	var sInDs  	= "";
+	var sOutDs 	= "ds_grntUserGrp=ds_grntUserGrp ds_NotGrntUserGrp=ds_NotGrntUserGrp";
+	var sArg	= "sktst.adm.AUM#getUserGrp";
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+* 함수명 : f_callBack   
+* 기능명 : 트랜잭션 콜백 
+* 파라미터
+1. sSvcID  : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+ 
+	if (sSvcID == "getUserGrp") {
+	
+		if (ds_NotGrntUserGrp.rowcount == 0) {
+	 
+			alert(MSG_01028); //"추가된 사용자 그룹이 없습니다. ";
+			this.Close();
+		} 
+	} else if (sSvcID == "saveAuthSync") {
+	
+		
+		Parent.ds_condition.SetColumn(0, "USER_GRP", ds_conditionSync.GetColumn(0, "USER_GRP_AF"));
+		Parent.ds_condition.SetColumn(0, "MENU_GROUP", "");
+
+		alert(MSG_00990 + "\n< " + div_process.cbo_copyUser.Text + " > 사용자그룹의 권한을 조회합니다."); //정상적으로 처리되었습니다
+		this.Close();
+ 
+	}
+}
+
+
+function btn_close_OnClick(obj)
+{
+	this.close();
+}
+
+function btn_save_OnClick(obj)
+{
+	if (div_process.cbo_usrGrp.Index<0) {
+	
+		div_process.cbo_usrGrp.SetFocus();
+		alert("From 사용자그룹을 선택하세요.");
+		return false;
+		
+	} else if (div_process.cbo_copyUser.Index<0) {
+	
+		div_process.cbo_copyUser.SetFocus();
+		alert("To 사용자그룹을 선택하세요.");
+		return false;
+		
+	} else if(Confirm("권한 동기화 실행시 \n< "+div_process.cbo_usrGrp.Text+ 
+			   " > 사용자그룹의 '모든 화면'에 대한 권한이 \n< "+div_process.cbo_copyUser.Text +
+			   " > 사용자그룹의 권한으로 동기화됩니다.\n수행하시겠습니까?")) {
+			   
+		var sSvcID 	= "saveAuthSync";
+		var sInDs  	= "ds_conditionSync=ds_conditionSync";
+		var sOutDs 	= "ds_Auth=ds_Auth";
+		var sArg	= "sktst.adm.AUM#saveAuthSync";
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg, "", true, true);
+		
+	}
+}
+]]></Script>
+</Window>

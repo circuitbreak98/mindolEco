@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="POLSPM00500">
+	<select id="getPreferSplstList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "POLSPM00500_getPreferSplstList_이문규" */ 
+       b.splst_id
+      ,b.aply_ym
+      ,b.org_id
+      ,c.org_nm      
+      ,b.sale_typ_cd
+      ,FBAS_GET_COMMCDNM_VAL('ZPOL_C_00030', b.sale_typ_cd) as sale_typ_cd_nm
+      ,a.aply_sta_dtm
+      ,a.aply_end_dtm
+      /*,b.amt_grd_cl */
+      ,(b.amt_from || '-' || b.amt_to) as amt_grd_cl_nm
+      ,b.amt_from
+      ,b.amt_to
+      ,b.prefer_grd_cl
+      ,FBAS_GET_COMMCDNM_VAL('ZBAS_P_00070', b.prefer_grd_cl) as prefer_grd_cl_nm
+      ,b.mar_cl
+      ,FBAS_GET_COMMCDNM_VAL('ZPOL_C_00550', b.mar_cl) as mar_cl_nm
+      ,b.mar_fix_rt
+      ,b.mar_fix_amt
+      ,b.sale_cmms_cl
+      ,FBAS_GET_COMMCDNM_VAL('ZPOL_C_00550', b.sale_cmms_cl) as sale_cmms_cl_nm
+      ,b.sale_cmms_fix_rt
+      ,b.sale_cmms_fix_amt
+      ,b.del_yn
+      ,b.upd_cnt
+      ,b.ins_dtm
+      ,b.ins_user_id
+      ,b.mod_dtm
+      ,b.mod_user_id
+FROM   tpol_splst        a
+      ,tpol_splst_prefer b
+      ,tbas_org_mgmt     c
+WHERE  a.del_yn = 'N'
+AND    a.aply_sta_dtm <= #std_dtm#
+AND    a.aply_end_dtm >= #std_dtm#
+AND    a.org_id      = #org_id#
+]]><isNotEmpty prepend="AND" property="sale_typ_cd">
+<![CDATA[       a.sale_typ_cd = #sale_typ_cd#
+]]></isNotEmpty> 
+<![CDATA[AND    a.pol_cl      = '01'
+AND    b.del_yn      = 'N'
+AND    a.splst_id    = b.splst_id
+AND    a.aply_ym     = b.aply_ym
+AND    a.org_id      = b.org_id
+AND    a.sale_typ_cd = b.sale_typ_cd
+]]><isNotEmpty prepend="AND" property="prefer_grd_cl">
+<![CDATA[       b.prefer_grd_cl  = #prefer_grd_cl#
+]]></isNotEmpty> 
+<![CDATA[AND    c.eff_org_yn  = 'Y'
+AND    c.del_yn      = 'N'
+AND    a.org_id      = c.org_id 
+ORDER BY splst_id, aply_ym, org_id, sale_typ_cd, prefer_grd_cl, amt_seq, aply_sta_dtm
+    ]]>
+	</select>
+</sqlMap>

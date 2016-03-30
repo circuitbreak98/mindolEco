@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SACINQ00800" Left="8" OnLoadCompleted="SACINQ00800_OnLoadCompleted" PidAttrib="7" Title="상품권입금회수내역" Top="8" Ver="1.0" Width="830" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="pos_agency" size="256" summ="default" type="STRING"/>
+					<colinfo id="dpst_yymm" size="256" summ="default" type="STRING"/>
+					<colinfo id="stl_plc" size="256" summ="default" type="STRING"/>
+					<record>
+						<dpst_yymm></dpst_yymm>
+						<pos_agency></pos_agency>
+						<stl_plc></stl_plc>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_result">
+				<Contents>
+					<colinfo id="dpst_yymm" size="256" summ="default" type="STRING"/>
+					<colinfo id="dpst_plc" size="256" summ="default" type="STRING"/>
+					<colinfo id="pm_unc_mb" size="256" summ="default" type="STRING"/>
+					<colinfo id="tm_occu_mb" size="256" summ="default" type="STRING"/>
+					<colinfo id="tm_bond_mb" size="256" summ="default" type="STRING"/>
+					<colinfo id="tm_dpst_mb" size="256" summ="default" type="STRING"/>
+					<colinfo id="unc_mb" size="256" summ="default" type="STRING"/>
+					<colinfo id="erp_trms_dt" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Div Border="Raised" Height="43" Id="div_search" Left="10" Style="sty_div_search" TabOrder="1" Text="Div0" Top="10" Width="810">
+			<Contents>
+				<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="mb_receipt_search" ImageID="btn_a_2" Left="692" LeftMargin="5" OnClick="div_search_mb_receipt_search_OnClick" Style="sty_btn_a" TabOrder="1" Text="조회" Top="8" Width="60"></Button>
+				<Edit Border="Flat" Height="20" Id="edt_AgencyCdNm" ImeMode="none" Left="68" LeftMargin="2" OnKeyDown="div_search_btn_Agency_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="5" Top="7" UserData="대리점" Width="96"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_agency" ImageID="btn_i_detail" Left="161" OnClick="div_search_btn_Agency_OnClick" TabOrder="3" Text="Button0" Top="7" Width="19"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_AgencyUkeyCd" ImeMode="none" Left="180" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="2" Top="7" Width="74"></Edit>
+				<Static Align="Right" Height="20" Id="Static4" Left="6" Style="sty_lb_Search" TabOrder="4" Text="대리점" Top="7" VAlign="Middle" Width="60"></Static>
+				<Static Align="Right" Height="20" Id="Static1" Left="426" Style="sty_lb_Search" TabOrder="8" Text="입금처" Top="7" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Column="deal_nm" Height="20" Id="edt_dealNm" Left="492" LeftMargin="2" OnKeyDown="div_search_edt_dealNm_OnKeyDown" RightMargin="2" Style="sty_ipt_form" TabOrder="9" Top="7" Width="90"></Edit>
+				<Button Cursor="HAND" Height="21" Id="btn_dealCo" ImageID="btn_i_detail" Left="583" OnClick="div_search_btn_dealCo_OnClick" TabOrder="7" Text="Button0" Top="7" Width="19"></Button>
+				<Edit Border="Flat" Column="stl_plc" Enable="FALSE" Height="20" Id="edt_dealCd" ImeMode="none" Left="602" LeftMargin="2" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="6" Top="7" Width="66"></Edit>
+				<Image Height="21" Id="Image0" ImageID="bul_mand" Left="12" TabOrder="10" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static6" Left="263" Style="sty_lb_Search" TabOrder="11" Text="입금월" Top="7" VAlign="Middle" Width="60"></Static>
+				<Image Height="21" Id="Image1" ImageID="bul_mand" Left="272" TabOrder="12" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="404" OnClick="btn_monthCalendar_OnClick" TabOrder="14" Text="Button3" Top="7" Width="17"></Button>
+				<MaskEdit Border="Flat" Column="POL_YM" Height="20" Id="dpst_yymm" Left="327" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" RightMargin="2" Style="sty_ipt_form" TabOrder="13" Top="7" Type="STRING" Width="76"></MaskEdit>
+				<Edit Height="20" Id="edt_agencyCd" Left="253" TabOrder="15" Top="7" Visible="FALSE" Width="8"></Edit>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image3" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="2" Text="상품권&#32;입금회수" Top="60" Width="192"></Image>
+		<Grid AutoFit="TRUE" BindDataset="ds_result" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="547" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="462" Id="grd_list" InputPanel="FALSE" Left="10" LineColor="user33" MinWidth="100" Right="820" RowHeight="21" Style="sty_Grid" TabOrder="3" TabStop="true" Top="85" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="810">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="60"/>
+						<col width="120"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+						<col width="80"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" font="돋움,10,Bold" text="년월" wordwrap="word"/>
+						<cell bkcolor="user34" col="1" color="user35" display="date" font="돋움,10,Bold" text="입금처" wordwrap="word"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" font="돋움,10,Bold" text="전월&#32;미수금" wordwrap="word"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" font="돋움,10,Bold" text="당월발생" wordwrap="word"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" font="돋움,10,Bold" text="당월&#32;입금대상" wordwrap="word"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" font="돋움,10,Bold" text="당월&#32;입금액" wordwrap="word"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" font="돋움,10,Bold" text="미수총액" wordwrap="word"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" font="돋움,10,Bold" text="ERP&#32;전송여부" wordwrap="word"/>
+					</head>
+					<body>
+						<cell align="center" col="0" colid="dpst_yymm" display="text" Mask="@@@@-@@"/>
+						<cell col="1" colid="dpst_plc" display="text"/>
+						<cell col="2" colid="pm_unc_mb" display="number"/>
+						<cell col="3" colid="tm_occu_mb" display="number"/>
+						<cell col="4" colid="tm_bond_mb" display="number"/>
+						<cell col="5" colid="tm_dpst_mb" display="number"/>
+						<cell col="6" colid="unc_mb" display="number"/>
+						<cell align="center" col="7" colid="erp_trms_dt" display="text" Mask="@@@@-@@-@@"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : SACINQ00800
+* 업무명      : 판매회계-판매회계조회
+* 프로그램명  : 상품권입금회수내역
+--------------------------------------------------------------------------------
+* 작성자      : 양현미 
+* 작성일      : 2009.05.04
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_DIS.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_SAL.js"
+
+// 글로벌 세션정보
+var FV_USERID;		// 사용자ID
+var FV_USERNM;		// 사용자명
+var FV_ORGID;		// 소속
+var FV_ORGNM;		// 소속명
+var FV_ORGCL;		// 소속구분
+var FV_ORGAREAID;	// 근무지
+var FV_ORGAREANM;	// 근무지명
+var FV_USERGRP;		// 유저그룹
+var	FV_ORGUKEYID;   // 근무지ukeyid
+var	FV_AGENCYID;    // 소속 대리점ID
+var	FV_AGENCYNM;    // 소속 대리점명
+var	FV_AGENCYUKEYID; // 소속 대리점UKEY ID	
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function lf_getSession()
+{
+	FV_USERID    = gds_session.GetColumn(0, "loginid");		// 사용자ID
+	FV_USERNM    = gds_session.GetColumn(0, "usernm");		// 사용자명
+	FV_ORGID     = gds_session.GetColumn(0, "orgid");
+	FV_ORGNM     = gds_session.GetColumn(0, "orgnm");
+	FV_ORGCL     = gds_session.GetColumn(0, "orgcl");
+	FV_ORGAREAID = gds_session.GetColumn(0, "orgareaid");
+	FV_ORGAREANM = gds_session.GetColumn(0, "orgareanm");
+	FV_USERGRP   = gds_session.GetColumn(0, "usergrp");
+	FV_ORGUKEYID = gds_session.GetColumn(0, "orgareaukeyid");        // 근무지ukeyid
+	FV_AGENCYID  = gds_session.GetColumn(0, "posAgencyId");          // 소속 대리점ID
+	FV_AGENCYNM  = gds_session.GetColumn(0, "posAgencyNm");          // 소속 대리점명
+	FV_AGENCYUKEYID = gds_session.GetColumn(0, "posAgencyUkeyId");  // 소속 대리점UKEY ID	
+	
+	http.Sync = true;
+	 
+	// 소속 대리점이 존재하는지 체크하여 대리점 셋팅.	
+	if(!uf_IsNull(FV_AGENCYID)) {
+	
+		div_search.edt_AgencyCdNm.value = FV_AGENCYNM;			// 대리점명
+		div_search.edt_AgencyUkeyCd.value = FV_AGENCYUKEYID;	// 대리점id	
+		div_search.edt_agencyCd.value = FV_AGENCYID; 			// 히든으로 ps대리점
+		alert("0. div_search.edt_agencyCd.value ===>" + div_search.edt_agencyCd.value);
+
+		div_search.edt_AgencyUkeyCd.Enable = false;	
+		div_search.edt_AgencyCdNm.Enable = false;
+		div_search.btn_agency.Enable = false;
+		
+		// 소속대리점이 있으면서 근무지와 다르면 정산처 셋팅.
+		if( FV_AGENCYID != FV_ORGAREAID ){
+			
+			div_search.edt_dealNm.value = FV_ORGAREANM;
+			div_search.edt_dealCd.value = FV_ORGAREAID;		
+		
+			div_search.edt_dealCd.Enable = false;
+			div_search.edt_dealNm.Enable = false;
+			div_search.btn_dealCo.Enable = false;	
+								
+		} else {
+		
+			div_search.edt_dealCd.Enable = true;
+			div_search.edt_dealNm.Enable = true;
+			div_search.btn_dealCo.Enable = true;	
+		}
+		
+	} else {
+		
+		div_search.edt_AgencyCdNm.Enable = true;
+		//div_search.edt_AgencyUkeyCd.Enable = true;
+		div_search.btn_agency.Enable = true;
+	}
+}
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SACINQ00800_OnLoadCompleted(obj)
+{
+	//Session wjdqh Setting
+	lf_getSession();
+	
+	//공통 코드를 위한 데이타셋 설정
+	cf_setCommonCodeDsEnv();
+	
+	//조회기간의 초기값 설정
+	div_search.dpst_yymm.value = left(GetDate(), 6);
+	
+	// 대리점에 포코싱
+	div_search.edt_AgencyCdNm.SetFocus();
+}
+
+/*******************************************************************************
+ * @description : 조회 
+ ******************************************************************************/
+function div_search_mb_receipt_search_OnClick(obj)
+{		
+		ds_result.ClearData();
+		
+		if(uf_IsNull(div_search.edt_agencyCd.Text)){
+			alert(cf_getMessage(MSG_00121, "대리점;조회"));
+			div_search.edt_AgencyCdNm.SetFocus();
+			return;
+		}	
+	
+		if(uf_CheckDate(div_search.dpst_yymm.Text, "YYYYMM") == false){
+			alert(cf_getMessage(MSG_00121, "입금월;조회"));
+			div_search.dpst_yymm.SetFocus();
+			return;
+		}
+	
+		cf_setParam(ds_condition, "pos_agency", div_search.edt_agencyCd.Value);
+		cf_setParam(ds_condition, "dpst_yymm", div_search.dpst_yymm.Value);
+		cf_setParam(ds_condition, "stl_plc", div_search.edt_dealCd.Value);
+		 
+		var sSvcID 	= "getMbDpstClct";
+		var sInDs  	= "nc_input_fieldDs=ds_condition";
+		var sOutDs 	= "ds_result=ds_result";
+		var sArg	= "sktst.sac.INQ#getMbDpstClct";
+		
+		cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    :  콜백
+*******************************************************************************/
+function f_callBack(sSvcID)
+{	
+		return;	
+}
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	// 월 달력 사용
+	//  argument: msk_month - 달력에서 선택한 값이 지정될 컴포넌트로 vaule영역에 yyyyMM의 값이 설정된다.
+	cf_callMonthCalendar(div_search.dpst_yymm);
+	// 달력선택후 혹시 수기로 달 조정시 ENABLE시키기 위해 필요함.
+	div_search.dpst_yymm.Enable=true;
+	div_search.dpst_yymm.Readonly=false;
+}
+
+/*******************************************************************************
+ * @description    :  대리점  팝업
+*******************************************************************************/
+function div_search_btn_Agency_OnClick(obj)
+{
+	sf_clearControls("div_search.edt_agencyCd, div_search.edt_AgencyUkeyCd");
+	sf_clearControls("div_search.edt_dealNm, div_search.edt_dealCd");
+	
+	var sArg  = "org_id="+quote(FV_ORGID); 
+	    sArg += " org_cl="+quote(FV_ORGCL); 
+	    
+	cf_callAgencyPop(sArg, div_search, "edt_AgencyCdNm, edt_AgencyCd, edt_AgencyUkeyCd");
+}
+
+/*******************************************************************************
+ * @description    :  대리점 키 이벤트
+*******************************************************************************/
+function div_search_btn_Agency_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{	
+	sf_clearControls("div_search.edt_agencyCd, div_search.edt_AgencyUkeyCd");
+
+	if(nChar == 13)
+	{
+		var sArg  = "org_id="+quote(FV_ORGID); 
+			sArg += " org_cl="+quote(FV_ORGCL); 
+
+		cf_callAgencyPop(sArg, div_search, "edt_AgencyCdNm, edt_AgencyCd, edt_AgencyUkeyCd");
+	}
+}
+
+/*******************************************************************************
+ * @description : 입금처  팝업 
+ ******************************************************************************/
+function div_search_btn_dealCo_OnClick(obj)
+{
+	sf_clearControls("div_search.edt_dealCd");
+		
+	var sArg  = "deal_co_cl1="+quote("A2,A3,B1,B2"); // 필수 - 복수시 A1,A2,A3 형태의 콤바구분자로 설정
+		sArg += " pos_agency="+quote(div_search.edt_agencyCd.Text); // 소속 대리점	옵션
+		
+	cf_callDealPop(sArg, div_search, "edt_dealNm, edt_dealCd");
+}
+
+
+/*******************************************************************************
+ * @description    :  입금처 키 이벤트
+*******************************************************************************/
+function div_search_edt_dealNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	sf_clearControls("div_search.edt_dealCd");
+	
+	if(nChar == 13)
+	{
+		var sArg  = "deal_co_cl1="+quote("A2,A3,B1,B2"); // 필수 - 복수시 A1,A2,A3 형태의 콤바구분자로 설정
+			sArg += " pos_agency="+quote(div_search.edt_agencyCd.Text);
+			
+		cf_callDealPop(sArg, div_search, "edt_dealNm, edt_dealCd");	
+
+	}
+}
+]]></Script>
+</Window>

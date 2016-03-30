@@ -1,0 +1,431 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="600" Id="SALSCO02500" Left="8" OnLoadCompleted="SALSCO02500_OnLoadCompleted" PidAttrib="7" Title="영업사원별&#32;개통목표&#32;등록" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_input"></Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_list">
+				<Contents>
+					<colinfo id="TARGET_YYYYMM" size="256" summ="default" type="STRING"/>
+					<colinfo id="POS_AGENCY" size="256" summ="default" type="STRING"/>
+					<colinfo id="USER_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="USER_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="MBL_PHONE" size="256" summ="default" type="STRING"/>
+					<colinfo id="RESULT_NEW" size="256" summ="default" type="STRING"/>
+					<colinfo id="TARGET_NEW" size="256" summ="default" type="STRING"/>
+					<colinfo id="RESULT_CHG" size="256" summ="default" type="STRING"/>
+					<colinfo id="TARGET_CHG" size="256" summ="default" type="STRING"/>
+					<colinfo id="RESULT_TOT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TARGET_TOT" size="256" summ="default" type="STRING"/>
+					<colinfo id="DEAL_CNT" size="256" summ="default" type="STRING"/>
+					<colinfo id="TARGET_DEAL" size="256" summ="default" type="STRING"/>
+					<colinfo id="PROCESS_GBN" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="560" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="480" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnHeadClick="cf_markGridSort" Right="784" RowHeight="21" Style="sty_Grid" TabOrder="2" TabStop="true" Top="80" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="776">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="36"/>
+						<col width="89"/>
+						<col width="109"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+						<col width="100"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="영원사원명"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="전화번호"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="전월&#32;신규실적"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="*&#32;당월&#32;신규목표"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="전월&#32;기변실적"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="*당월&#32;기변목표"/>
+						<cell bkcolor="user34" col="7" color="user35" display="text" text="전월실적&#32;합계"/>
+						<cell bkcolor="user34" col="8" color="user35" display="text" text="당월목표&#32;합계"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell align="center" col="1" colid="USER_NM" display="text"/>
+						<cell col="2" colid="MBL_PHONE" display="text"/>
+						<cell align="right" col="3" colid="RESULT_NEW" display="number"/>
+						<cell align="right" col="4" colid="TARGET_NEW" display="number" edit="number"/>
+						<cell align="right" col="5" colid="RESULT_CHG" display="number"/>
+						<cell align="right" col="6" colid="TARGET_CHG" display="number" edit="number"/>
+						<cell align="right" col="7" colid="RESULT_TOT" display="number" limit="8"/>
+						<cell align="right" col="8" display="number" expr="TARGET_NEW&#32;+&#32;TARGET_CHG"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Div Height="21" Id="div_fuc" Left="988" TabOrder="1" Text="Div2" Top="54" Width="29">
+			<Contents>
+				<Button Cursor="HAND" Height="21" Id="btn_excel" ImageID="btn_i_exceldown_w" Left="1" OnClick="div_fuc_btn_excel_OnClick" TabOrder="1" Text="Button1" ToolTipText="Excel&#32;Download" Top="1" Width="19"></Button>
+			</Contents>
+		</Div>
+		<Image Align="Left" Height="25" Id="Image1" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="3" TabStop="FALSE" Text="판매정보" Top="-127" Width="192"></Image>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="25" Id="btn_save" ImageID="btn_c_2" Left="950" LeftMargin="5" OnClick="btn_save_OnClick" Style="sty_btn_c" TabOrder="5" Text="저장" Top="565" Visible="FALSE" Width="60"></Button>
+		<Div Border="Raised" Height="40" Id="div_input" Left="10" Style="sty_div_input" TabOrder="4" Text="Div0" Top="10" Width="1000">
+			<Contents>
+				<Static Align="Right" Height="20" Id="Static5" Left="174" Style="sty_lb_Basic" TabOrder="0" Text="대리점" Top="6" VAlign="Middle" Width="60"></Static>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCdNm" Left="237" MaxLength="10" OnCharChanged="div_input_edt_agencyCdNm_OnCharChanged" OnKeyDown="div_input_edt_agencyCdNm_OnKeyDown" Style="sty_ipt_form" TabOrder="2" Top="6" UpperOnly="TRUE" Width="86"></Edit>
+				<Button BindDataset="ds_DlvFee" Cursor="HAND" Height="20" Id="btn_agency" ImageID="btn_i_detail_b" Left="322" OnClick="div_input_btn_agency_OnClick" TabOrder="3" Text="Button0" Top="6" Width="20"></Button>
+				<Edit Border="Flat" Enable="FALSE" Height="20" Id="edt_agencyUkeyCd" Left="340" MaxLength="10" Style="sty_ipt_form" TabOrder="4" TabStop="FALSE" Top="6" UpperOnly="TRUE" Width="68"></Edit>
+				<Edit Border="Flat" Height="20" Id="edt_agencyCd" Left="411" MaxLength="10" Style="sty_ipt_form" TabOrder="5" TabStop="FALSE" Top="6" UpperOnly="TRUE" Visible="FALSE" Width="8"></Edit>
+				<Image Height="20" Id="Image3" ImageID="bul_mand" Left="182" TabOrder="0" TabStop="FALSE" Top="7" Transparent="TRUE" Width="20"></Image>
+				<Image Height="20" Id="Image4" ImageID="bul_mand" Left="21" TabOrder="7" Top="8" Transparent="TRUE" Width="20"></Image>
+				<Static Align="Right" Height="20" Id="Static6" Left="25" Style="sty_lb_Search" TabOrder="8" Text="목표년월" Top="7" VAlign="Middle" Width="60"></Static>
+				<MaskEdit Border="Flat" Enable="FALSE" Height="20" Id="cal_StrdYM" Left="89" LeftMargin="2" Mask="@@@@-@@" MaxLength="6" Readonly="TRUE" RightMargin="2" Style="sty_ipt_form" TabOrder="9" Top="7" Type="STRING" Width="53"></MaskEdit>
+				<Button Cursor="HAND" Height="20" Id="btn_monthCalendar" ImageID="btn_i_calendar" Left="142" OnClick="btn_monthCalendar_OnClick" TabOrder="10" TabStop="FALSE" Text="Button3" Top="8" Width="17"></Button>
+				<Button Align="Left" ButtonStyle="TRUE" Height="21" Id="btn_Search" ImageID="btn_a_2" Left="429" LeftMargin="5" OnClick="div_input_btn_Search_OnClick" Style="sty_btn_a" TabOrder="11" Text="조회" Top="6" Width="60"></Button>
+			</Contents>
+		</Div>
+		<Grid AutoEnter="TRUE" AutoFit="TRUE" BindDataset="ds_list" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="560" ColSizing="TRUE" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="480" Id="Grid0" InputPanel="FALSE" Left="785" LineColor="user33" MinWidth="100" OnHeadClick="cf_markGridSort" Right="1008" RowHeight="21" Style="sty_Grid" TabOrder="6" TabStop="true" Top="80" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="223">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="100"/>
+						<col width="85"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="관리판매점&#32;수"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="*&#32;개설&#32;목표"/>
+					</head>
+					<body>
+						<cell align="right" col="0" colid="DEAL_CNT" display="number"/>
+						<cell align="right" col="1" colid="TARGET_DEAL" display="number" edit="number"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="10" LeftMargin="15" Style="sty_img_tit" TabOrder="7" Text="영업사원별&#32;개통&#32;목표" Top="57" Width="192"></Image>
+		<Image Align="Left" Height="25" Id="Image2" ImageID="bul_tit" Left="786" LeftMargin="15" Style="sty_img_tit" TabOrder="8" Text="영업사원별&#32;판매점개설&#32;목표" Top="57" Width="192"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : SALRES00200
+* 업무명      : 소매영업 - 공기기판매
+* 프로그램명  : 공기기판매
+--------------------------------------------------------------------------------
+* 작성자      : 정재열
+* 작성일      : 2009.01.20
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js"
+#include "lib::lib_commPopup.js"
+#include "lib::lib_global.js"
+#include "lib::lib_util.js"
+#include "lib::lib_SAL.js"
+
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+
+// 글로벌 세션정보
+var FV_USER_ID;	// 사용자ID
+var FV_USER_NM;		// 사용자명
+
+var	FV_ORG_ID;				// 소속 
+var	FV_ORG_NM;				// 소속명
+var	FV_ORG_CL;				// 소속구분
+var	FV_AGENCY_ID;           // 소속 대리점ID
+var	FV_AGENCY_NM;           // 소속 대리점명
+var	FV_AGENCY_UKEY_ID;      // 소속 대리점UKEY ID	
+
+var	FV_DUTY;					// 사용자 직책
+var	FV_ORG_AREA_CL1;			// 근무지 구분	
+var	FV_ORG_AREA_ID;				// 근무지 ID
+var	FV_ORG_AREA_NM;				// 근무지명
+var	FV_ORG_AREA_POS_AGENCY_CD;	// 근무지 
+var	FV_ORG_AREA_UKEY_ID;     // 근무지ukeyid
+var	FV_ORG_AREA_SUB_CD;      // 근무지subcd
+var	FV_ORG_AREA_CHANNEL_CD;  // 근무지 channelcd	
+var	FV_USER_GRP;			 // 유저그룹
+
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function SALSCO02500_OnLoadCompleted(obj)
+{
+	f_getSession();
+
+	cf_setAuth(pFrmNum);	// 권한 공통
+	cf_setGrdChecknSortEvent(grd_list);	// 그리드 정렬
+
+	div_input.cal_StrdYM.Value = substr(ToDay(), 0, 6);
+}
+
+
+/*******************************************************************************
+ * @description    : 공통 닫기 함수
+*******************************************************************************/
+function df_close()
+{
+	this.Close();
+}
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+
+	switch(sSvcID)
+	{
+	case "svcList":	// 조회
+
+		break;
+
+	case "saveTarget":		// 저장
+		f_list();
+		break;
+
+	default:
+		break;
+
+	}
+}
+/*******************************************************************************
+ 공통 스크립트 영역 끝
+*******************************************************************************/
+
+
+//#############################################################################
+// 서비스
+//#############################################################################
+
+
+/*******************************************************************************
+ * @description    :  데이터 리스트 취득
+*******************************************************************************/
+function f_list()
+{
+	ds_input.Clear();
+
+	cf_setParam(ds_input, "TARGET_YYYYMM", div_input.cal_StrdYM.Value);		// 목표 년월
+	cf_setParam(ds_input, "POS_AGENCY",    div_input.edt_agencyCd.Text);	// 대리점
+	
+	// 트랜잭션 설정
+	var sSvcID = "svcList";
+	var sInDs  = "nc_input_fieldDs=ds_input";
+	var sOutDs = "ds_list=ds_list";
+	var sArg   = "sktst.sal.SCO#getChrgrTargetList";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+
+//#############################################################################
+// 함수 
+//#############################################################################
+
+
+/*******************************************************************************
+ * @description    : 글로벌 섹션 정보
+*******************************************************************************/
+function f_getSession()
+{
+	FV_USER_ID        = gds_session.GetColumn(0, "loginid");	// 사용자ID
+	FV_USER_NM        = gds_session.GetColumn(0, "usernm");		// 사용자명
+
+	FV_ORG_ID         = gds_session.GetColumn(0, "orgid");				// 소속 
+	FV_ORG_NM         = gds_session.GetColumn(0, "orgnm");				// 소속명
+	FV_ORG_CL         = gds_session.GetColumn(0, "orgcl");				// 소속구분
+	FV_AGENCY_ID      = gds_session.GetColumn(0, "posAgencyId");        // 소속 대리점ID
+	FV_AGENCY_NM      = gds_session.GetColumn(0, "posAgencyNm");        // 소속 대리점명
+	FV_AGENCY_UKEY_ID = gds_session.GetColumn(0, "posAgencyUkeyId");    // 소속 대리점UKEY ID	
+	
+	FV_ORG_AREA_ID            = gds_session.GetColumn(0, "orgareaid");			// 근무지 ID
+	FV_ORG_AREA_NM            = gds_session.GetColumn(0, "orgareanm");			// 근무지명
+	FV_ORG_AREA_POS_AGENCY_CD = gds_session.GetColumn(0, "orgareaposagencycd");	// 근무지 
+	FV_ORG_AREA_UKEY_ID       = gds_session.GetColumn(0, "orgareaukeyid");      // 근무지ukeyid
+	FV_ORG_AREA_SUB_CD        = gds_session.GetColumn(0, "orgareaukeysubcd");   // 근무지subcd
+	FV_ORG_AREA_CHANNEL_CD    = gds_session.GetColumn(0, "orgareaukeychannelcd");  // 근무지 channelcd	
+	FV_USER_GRP               = gds_session.GetColumn(0, "usergrp");			// 유저그룹
+	FV_ORG_AREA_CL1           = gds_session.GetColumn(0, "orgareacl1");			// 근무지 구분
+	FV_DUTY                   = gds_session.GetColumn(0, "duty");	   		    // 직책
+	
+}
+
+
+
+
+/*******************************************************************************
+ * @description    : 권한 설정
+*******************************************************************************/
+function f_setAuth()
+{
+	f_getSession();
+	
+	// 대리점 화면권한 설정
+	uf_enableAgencyByAuth("div_input", "edt_agencyCdNm,edt_agencyCd,btn_agency", "edt_agencyUkeyCd");
+}
+
+
+
+/*******************************************************************************
+ * @description    :  List 에 변경된 데이터가 있는지 
+*******************************************************************************/
+function f_isChangeList()
+{
+	var nRows = ds_list.GetRowCount();
+
+	if(ds_list.GetDelRowCount() > 0)
+	{
+		return true;
+	}
+	for(var i=0; i<nRows;i++)
+	{
+		if(sf_checkRowChangeField("ds_list", i) != "")
+		{
+			return true;
+		}	
+	}
+	return false;
+}
+
+//#############################################################################
+// 이벤트 
+//#############################################################################
+
+
+/*******************************************************************************
+ * @description    : 엑셀 출력 - 이벤트
+*******************************************************************************/
+function div_fuc_btn_excel_OnClick(obj)
+{
+	// cf_excel(oGrd, nMode)
+	// oGrd - 엑셀화할 그리드 객체 , nMode - 엑셀 저장 모드 1 or null : 엑셀로드 , 2 : 파일 저장
+	cf_exportExcel(grd_list);
+}
+
+
+/*******************************************************************************
+ * @description    :  From 닫을 경우 
+*******************************************************************************/
+function SALSCO02500_OnUnloadCompleted(obj)
+{
+	if(ds_list.GetUpdate() == false && ds_payment.GetUpdate() == false) return;
+	
+	if(f_isChangeList() == true)
+	{
+		if(confirm("변경된 데이타가 미반영 상태입니다. 이대로 종료 하시겠습니까?") == true)
+		{
+			return true;
+		}
+		return false;
+	}
+}
+
+/*******************************************************************************
+ * @description    :  대리점 키 이벤트
+*******************************************************************************/
+function div_input_edt_agencyCdNm_OnKeyDown(obj,nChar,bShift,bCtrl, bAlt,LLParam,HLParam)
+{
+	if(nChar == 13)
+	{
+		var sArg  = "org_id="+quote(FV_ORG_ID); 
+			sArg += " org_cl="+quote(FV_ORG_CL); 
+			sArg += " eff_dtm="+quote(f_getDate("NEW")); // 옵션
+			sArg += " deal_status="+quote("4"); // 옵션 판매정지
+			
+		cf_callAgencyPop(sArg, div_input, "edt_agencyCdNm,edt_agencyCd,edt_agencyUkeyCd");
+
+		if(uf_isNull(FV_STR_POP_RESULT) == true) return;
+			
+		//f_getStlPlc();
+		//f_getChgrgIdList();
+	}	
+}
+
+
+/*******************************************************************************
+ * @description    :  대리점 문자값 변경 이벤트
+*******************************************************************************/
+function div_input_edt_agencyCdNm_OnCharChanged(obj,strPreText,strPostText)
+{
+	sf_clearControls("div_input.edt_agencyCd,div_input.edt_agencyUkeyCd");
+
+	f_initSaleChgrgId();	
+}
+
+/*******************************************************************************
+ * @description    :  대리점 키 이벤트
+*******************************************************************************/
+function div_input_btn_agency_OnClick(obj)
+{
+	sf_clearControls("div_input.edt_agencyCd,div_input.edt_agencyUkeyCd");
+	
+	f_initSaleChgrgId();
+	
+	var sArg  = "org_id="+quote(FV_ORG_ID); 
+		sArg += " org_cl="+quote(FV_ORG_CL); 
+		sArg += " eff_dtm="+quote(f_getDate("NEW")); // 옵션
+		sArg += " deal_status="+quote("4"); // 옵션 판매정지
+		
+	cf_callAgencyPop(sArg, div_input, "edt_agencyCdNm,edt_agencyCd,edt_agencyUkeyCd");	
+
+	if(uf_isNull(FV_STR_POP_RESULT) == true) return;
+	
+	
+	//f_getChgrgIdList();
+}
+
+/*******************************************************************************
+ * @description    :  월달력 사용 - 이벤트
+*******************************************************************************/
+function btn_monthCalendar_OnClick(obj)
+{
+	cf_callMonthCalendar(div_input.cal_StrdYM);
+}
+function div_input_btn_Search_OnClick(obj)
+{
+	if (uf_isNull(div_input.cal_StrdYM.Value)) {
+		alert("목표 년월은 필수 입력항목 입니다..");
+		div_input.cal_StrdYM.SetFocus();
+		return;
+	}
+
+	if (uf_isNull(div_input.edt_agencyUkeyCd.Text)) {
+		alert("대리점은 필수 입력항목 입니다..");
+		div_input.edt_agencyUkeyCd.SetFocus();
+		return;
+	}
+
+	f_list();
+}
+
+/*******************************************************************************
+ * @description    :  뭘별 목표 저장
+*******************************************************************************/
+function btn_save_OnClick(obj)
+{
+
+    var sSvcID = "saveTarget";
+	var sInDs  = "nc_input_fieldDs=ds_input  ds_list=ds_list";	    
+	var sOutDs = "";
+	var sArg   = "sktst.sal.SCO#saveChrgrTagetList";	
+
+    http.Sync = true;
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+	http.sync = false;
+	
+	return;	
+}
+]]></Script>
+</Window>

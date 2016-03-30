@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASOGM00100">
+	<select id="getOrgMgmtList" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* BASOGM00100_getOrgMgmtList_조민지_이종혁 */
+       a.org_id,                      
+       a.user_id,                     
+       (SELECT user_nm 
+        FROM   tbas_user_mgmt 
+        WHERE  del_yn='N' 
+        AND    user_id= a.user_id) user_nm,
+       a.org_nm,                       
+       a.org_cl,                      
+       a.org_biz_cl,					 
+       (SELECT comm_cd_val_nm 
+        FROM   tbas_comm_cd_dtl 
+        WHERE  del_yn='N' 
+        AND    comm_cd_id='ZBAS_C_00190'
+        AND    comm_cd_val = a.org_biz_cl
+        AND    eff_sta_dt <= to_char(sysdate, 'yyyymmdd')
+        AND    eff_end_dt >= to_char(sysdate, 'yyyymmdd')) org_biz_cl_nm,				
+       c.comm_cd_val_nm as org_cl_nm, 
+       a.sup_org,                     
+       b.org_nm as sup_org_nm,       
+       decode(nvl(a.eff_org_yn,'N'),'Y','1','0') as eff_org_yn, 
+       a.mbl_phon,                    
+       a.zip_cd1,                     
+       a.zip_cd2,                      
+       a.addr,
+       a.dtl_addr,                         
+       a.rmks,                         
+       a.del_yn,                       
+       a.upd_cnt                      
+FROM   tbas_org_mgmt a,
+       tbas_org_mgmt b,
+       tbas_comm_cd_dtl c
+WHERE  a.sup_org = b.org_id(+)
+AND    c.eff_sta_dt <= TO_CHAR(SYSDATE,'YYYYMMDD')
+AND    c.eff_end_dt >= TO_CHAR(SYSDATE,'YYYYMMDD')
+AND    a.org_cl = c.comm_cd_val   
+AND    a.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="ORG_CL">
+<![CDATA[   a.org_cl = #ORG_CL#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="COMM_CD_ID">
+<![CDATA[   c.comm_cd_id = #COMM_CD_ID#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="ORG_ID">
+<![CDATA[   a.org_id = #ORG_ID#
+]]></isNotEmpty>
+<![CDATA[ORDER BY a.org_id]]>
+	</select>
+	<insert id="addOrg" parameterClass="map" ><![CDATA[INSERT INTO /* BASOGM00100_addOrg_조민지_이종혁 */ TBAS_ORG_MGMT (   
+   org_id, 
+   user_id, 
+   org_nm, 
+   org_cl,
+   org_biz_cl, 
+   sup_org, 
+   u_key_cd, 
+   eff_org_yn, 
+   dept_cd,
+   dept_nm, 
+   mbl_phon, 
+   zip_cd1, 
+   zip_cd2, 
+   addr, 
+   dtl_addr,
+   rmks, 
+   del_yn, 
+   upd_cnt, 
+   ins_dtm, 
+   ins_user_id, 
+   mod_dtm, 
+   mod_user_id) 
+VALUES (
+   #ORG_ID#, 
+   #USER_ID#, 
+   #ORG_NM#, 
+   #ORG_CL#,
+   #ORG_BIZ_CL#, 
+   #SUP_ORG#, 
+   #U_KEY_CD#, 
+   DECODE(#EFF_ORG_YN#,'1','Y','N'),
+   #DEPT_CD#, 
+   #DEPT_NM#, 
+   #MBL_PHON#, 
+   #ZIP_CD1#, 
+   #ZIP_CD2#, 
+   #ADDR#,
+   #DTL_ADDR#,
+   #RMKS#, 
+   'N', 
+   0, 
+   TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS'), 
+   #onlineContext.userInfo.loginId#,
+   TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS'), 
+   #onlineContext.userInfo.loginId#)]]>
+	</insert>
+	<update id="updateOrg" parameterClass="Map" ><![CDATA[UPDATE /*BASOGM00100_updateOrg_조민지_이종혁*/ tbas_org_mgmt
+SET    user_id     = #USER_ID#,
+       org_nm      = #ORG_NM#,
+       org_cl      = #ORG_CL#,
+       org_biz_cl  = #ORG_BIZ_CL#,
+       sup_org     = #SUP_ORG#,
+       u_key_cd    = #U_KEY_CD#,
+       eff_org_yn  = DECODE(#EFF_ORG_YN#,'1','Y','N'),
+       dept_cd     = #DEPT_CD#, 
+   	   dept_nm     = #DEPT_NM#,
+       mbl_phon    = #MBL_PHON#,
+       zip_cd1     = #ZIP_CD1#,
+       zip_cd2     = #ZIP_CD2#,
+       addr        = #ADDR#,
+       dtl_addr    = #DTL_ADDR#,
+       rmks        = #RMKS#,
+       del_yn      = #DEL_YN#,
+       upd_cnt     = UPD_CNT+1,
+       mod_dtm     = TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS'),
+       mod_user_id = #onlineContext.userInfo.loginId#
+WHERE  org_id      = #ORG_ID#]]>
+	</update>
+	<select id="getPartSearch" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*BASOGM00100_getPartSearch_조민지_이종혁*/
+        b.comm_cd_val code 
+       ,b.comm_cd_val_nm org_cl_nm 
+	   ,(SELECT org_id 
+	     FROM   tbas_org_mgmt 
+		 WHERE  org_cl= 0 
+		) as org_id 
+FROM   
+       tbas_comm_cd_lst a, 
+       tbas_comm_cd_dtl b
+WHERE  a.comm_cd_id = #COMM_CD_ID#
+AND    a.del_yn = 'N'
+AND    a.comm_cd_id = b.comm_cd_id
+AND    b.del_yn = 'N'
+AND    b.eff_sta_dt <= to_char(sysdate, 'yyyymmdd')
+AND    b.eff_end_dt >= to_char(sysdate, 'yyyymmdd')]]>
+	</select>
+	<select id="getHqSearch" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*BASOGM00100_getHqSearch_조민지_이종혁*/
+
+	  org_nm value,
+	  org_id id
+	  
+FROM  tbas_org_mgmt 
+
+
+WHERE org_cl=#org_cl#
+	  and del_yn = 'N']]>
+	</select>
+	<select id="getTeamSearch" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*BASOGM00100_getTeamSearch_조민지_이종혁*/
+	   b.org_id id,
+	   b.org_nm value,
+	   b.org_cl code
+
+FROM   tbas_org_mgmt a, /*상위조직  테이블*/
+	   tbas_org_mgmt b	/*팀 테이블*/
+	  
+WHERE  b.sup_org=#org_id#
+AND    a.org_id=b.sup_org
+AND    b.org_cl='2'
+AND    b.del_yn='N']]>
+	</select>
+	<select id="getSupOrgList" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*BASOGM00100_getSupOrgList_조민지_이종혁*/
+		org_id,
+		org_nm 
+		
+FROM    tbas_org_mgmt
+
+WHERE   org_cl=to_char(to_number(#org_cl#)-1)
+		and del_yn='N']]>
+	</select>
+	<select id="getDelSearch" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*BASOGM00100_getDelSearch_조민지_이종혁*/
+	   b.org_id userorg_id,
+	   c.org_id dealorg_id
+
+FROM   tbas_org_mgmt a,
+       tbas_user_mgmt b,
+       tbas_deal_co_mgmt c
+
+WHERE  a.org_id = #org_id#
+and    a.org_id = b.org_id(+)
+and    a.org_id = c.org_id(+)
+and	   b.del_yn(+) = 'N' 
+AND c.eff_end_dtm(+) = '99991231235959'
+and    c.del_yn(+) = 'N']]>
+	</select>
+	<select id="getBizCl" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*BASOGM00100_getBizCl_조민지_이종혁*/
+       b.comm_cd_val ORG_BIZ_CL, 
+       b.comm_cd_val_nm ORG_BIZ_CL_NM 
+FROM   
+       tbas_comm_cd_lst a, 
+       tbas_comm_cd_dtl b
+
+WHERE  a.comm_cd_id =#comm_cd_id#
+AND    a.del_yn = 'N'
+AND    a.comm_cd_id = b.comm_cd_id
+AND    b.del_yn = 'N'
+AND    b.eff_sta_dt <= to_char(sysdate, 'yyyymmdd')
+AND    b.eff_end_dt >= to_char(sysdate, 'yyyymmdd')]]>
+	</select>
+	<select id="getOrgId" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ "BASOGM00100_getOrgId_조민지_이종혁" */
+		org_id
+FROM 	tbas_org_mgmt
+WHERE 	org_id = #ORG_ID#
+AND 	del_yn = 'N']]>
+	</select>
+	<select id="getOrgTree" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT											/*+ BASORG00100_getOrgTree_원윤성_이종혁 */ 
+		 a.org_id			
+		,a.user_id
+		,(SELECT user_nm 
+          FROM   tbas_user_mgmt 
+          WHERE  del_yn='N' 
+          AND    user_id= a.user_id) user_nm
+		,a.org_nm			
+		,a.org_cl
+		,a.org_level	
+		,(SELECT comm_cd_val_nm 
+		  FROM tbas_comm_cd_dtl 
+		  WHERE comm_cd_id = 'ZBAS_C_00080' 
+		  AND comm_cd_val = a.org_cl) as org_cl_nm			
+		,a.org_biz_cl
+		,(SELECT comm_cd_val_nm 
+          FROM   tbas_comm_cd_dtl 
+          WHERE  del_yn='N' 
+          AND    comm_cd_id='ZBAS_C_00190'
+          AND    comm_cd_val = a.org_biz_cl
+          AND    eff_sta_dt <= to_char(sysdate, 'yyyymmdd')
+          AND    eff_end_dt >= to_char(sysdate, 
+                 'yyyymmdd'))   org_biz_cl_nm
+ 		,a.sup_org		
+		,b.org_nm as sup_org_nm
+		,a.mbl_phon                    
+        ,a.zip_cd1                     
+        ,a.zip_cd2                      
+        ,a.addr
+        ,a.dtl_addr                         
+        ,a.rmks
+        ,a.dept_cd
+        ,a.dept_nm                         
+        ,a.del_yn                       
+        ,a.upd_cnt  
+		,decode(nvl(a.eff_org_yn,'N'),'Y','1','0') as eff_org_yn 
+FROM
+		tbas_org_mgmt a,tbas_org_mgmt b
+WHERE 
+		a.sup_org = b.org_id(+)
+AND		a.del_yn = 'N'
+START WITH
+		a.org_cl = 0
+CONNECT BY PRIOR
+		a.org_id = a.sup_org]]>
+	</select>
+</sqlMap>

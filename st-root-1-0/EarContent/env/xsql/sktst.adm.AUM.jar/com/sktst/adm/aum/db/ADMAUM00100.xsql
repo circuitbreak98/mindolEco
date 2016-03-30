@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="ADMAUM00100">
+	<insert id="saveAuth" parameterClass="map" ><![CDATA[MERGE INTO  /*+ ADMAUM00100_saveAuth_조민지_심연정 */tadm_menu_auth
+USING  DUAL
+ON     ( 	menu_num = #menu_num#  
+        AND user_grp = #user_grp# )
+WHEN MATCHED THEN
+UPDATE SET 
+    search_auth_yn  = DECODE(#search_auth_yn#,'1', 'Y', 'N'),
+	save_auth_yn 	= DECODE(#save_auth_yn#,  '1', 'Y', 'N'),
+	del_auth_yn 	= DECODE(#del_auth_yn#,   '1', 'Y', 'N'),
+	req_auth_yn 	= DECODE(#req_auth_yn#,   '1', 'Y', 'N'),
+	aprv_auth_yn 	= DECODE(#aprv_auth_yn#,  '1', 'Y', 'N'),
+	can_auth_yn 	= DECODE(#can_auth_yn#,   '1', 'Y', 'N'),
+	close_auth_yn 	= DECODE(#close_auth_yn#, '1', 'Y', 'N'),
+	print_auth_yn 	= DECODE(#print_auth_yn#, '1', 'Y', 'N'),
+	init_auth_yn 	= DECODE(#init_auth_yn#,  '1', 'Y', 'N'),
+	etc1_auth_yn 	= DECODE(#etc1_auth_yn#,  '1', 'Y', 'N'),
+	etc2_auth_yn 	= DECODE(#etc2_auth_yn#,  '1', 'Y', 'N'),
+	etc3_auth_yn	= DECODE(#etc3_auth_yn#,  '1', 'Y', 'N'),
+	upd_cnt = upd_cnt +1,
+	mod_dtm = to_char(sysdate,'YYYYMMDDHH24MISS'),
+	mod_user_id = #onlineContext.userInfo.loginId#
+WHEN NOT MATCHED THEN	
+INSERT 
+	(
+	menu_num,
+	user_grp,
+	search_auth_yn,
+	save_auth_yn,
+	del_auth_yn,
+	req_auth_yn,
+	aprv_auth_yn,
+	can_auth_yn,
+	close_auth_yn,
+	print_auth_yn,
+	init_auth_yn,
+	etc1_auth_yn,
+	etc2_auth_yn,
+	etc3_auth_yn,
+	del_yn,
+	upd_cnt,
+	ins_dtm,
+	ins_user_id,
+	mod_dtm,
+	mod_user_id
+	)
+VALUES (
+	#menu_num#,
+	#user_grp#,
+	DECODE(#search_auth_yn#,'1', 'Y', 'N'),
+	DECODE(#save_auth_yn#,  '1', 'Y', 'N'),
+	DECODE(#del_auth_yn#,   '1', 'Y', 'N'),
+	DECODE(#req_auth_yn#,   '1', 'Y', 'N'),
+	DECODE(#aprv_auth_yn#,  '1', 'Y', 'N'),
+	DECODE(#can_auth_yn#,   '1', 'Y', 'N'),
+	DECODE(#close_auth_yn#, '1', 'Y', 'N'),
+	DECODE(#print_auth_yn#, '1', 'Y', 'N'),
+	DECODE(#init_auth_yn#,  '1', 'Y', 'N'),
+	DECODE(#etc1_auth_yn#,  '1', 'Y', 'N'),
+	DECODE(#etc2_auth_yn#,  '1', 'Y', 'N'),
+	DECODE(#etc3_auth_yn#,  '1', 'Y', 'N'),
+	'N',
+	0,
+	to_char(sysdate,'YYYYMMDDHH24MISS'),
+	#onlineContext.userInfo.loginId#,
+	to_char(sysdate,'YYYYMMDDHH24MISS'),
+	#onlineContext.userInfo.loginId#
+	)   ]]>
+	</insert>
+	<select id="getAuthFromMenu" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT															/*+ ADMAUM00100_getAuthFromMenu_조민지_최승호 */ 
+	menu_num,													/* 메뉴 번호 */
+	user_grp,													/* 사용자 그룹 */
+	DECODE(search_auth_yn, 'Y', '1', '0') AS search_auth_yn,	/* 조회 권한 */
+    DECODE(save_auth_yn,   'Y', '1', '0') AS save_auth_yn,		/* 저장 권한 */
+    DECODE(del_auth_yn,    'Y', '1', '0') AS del_auth_yn,		/* 삭제 권한 */
+    DECODE(aprv_auth_yn,   'Y', '1', '0') AS aprv_auth_yn,		/* 승인 권한 */
+    DECODE(close_auth_yn,   'Y', '1', '0') AS close_auth_yn,	/* 마감 권한 */
+    DECODE(etc1_auth_yn,   'Y', '1', '0') AS etc1_auth_yn		/* 전송 권한 */
+FROM 
+	tadm_menu_auth a,
+	tbas_comm_cd_dtl b
+WHERE
+	a.del_yn = 'N'
+AND
+	a.menu_num = #menu_num#
+and a.user_grp = b.comm_cd_val
+and comm_cd_id = 'ZBAS_C_00250' 
+and b.del_yn = 'N'	
+ORDER BY 
+	a.user_grp ]]>
+	</select>
+	<select id="getAuth" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMAUM00100_getAuth_조민지_심연정 */ 
+         AA.MENU_NUM                                             
+        ,BB.USER_GRP                                             
+        ,AA.SCREEN_ID                                            
+        ,AA.MENU_NM                                              
+        ,AA.MENU_GROUP
+        ,AA.MENU_DIR  
+        ,AA.SORT_SEQ                                         
+        ,BB.DEL_YN                                               
+        ,BB.INS_USER_ID                                          
+        ,BB.INS_DTM                                              
+        ,BB.MOD_DTM                                              
+        ,BB.MOD_USER_ID                                          
+        ,AA.TOP_MENU_NUM                                         
+        ,DECODE(BB.SEARCH_AUTH_YN, 'Y', '1', '0') AS SEARCH_AUTH_YN  /* 조회 권한 */
+        ,DECODE(BB.SAVE_AUTH_YN,   'Y', '1', '0') AS SAVE_AUTH_YN    /* 저장 권한 */
+        ,DECODE(BB.DEL_AUTH_YN,    'Y', '1', '0') AS DEL_AUTH_YN     /* 삭제 권한 */
+        ,DECODE(BB.APRV_AUTH_YN,   'Y', '1', '0') AS APRV_AUTH_YN    /* 승인 권한 */
+        ,DECODE(BB.CLOSE_AUTH_YN,  'Y', '1', '0') AS CLOSE_AUTH_YN   /* 마감 권한 */
+        ,DECODE(BB.ETC1_AUTH_YN,   'Y', '1', '0') AS ETC1_AUTH_YN    /* 전송 권한 */
+  FROM   (
+        SELECT  
+              B.MENU_NUM
+             ,B.TOP_PREFIX_CD
+             ,C.MENU_NM AS SUP_NM_LVL_3
+             ,D.MENU_NM AS SUP_NM_LVL_2
+             ,E.MENU_NM AS SUP_NM_LVL_1
+             ,DECODE(E.MENU_NM,NULL,'',E.MENU_NM)||
+              CASE WHEN E.MENU_NM IS NOT NULL AND D.MENU_NM IS NOT NULL THEN '>' END ||
+              DECODE(D.MENU_NM,NULL,'',D.MENU_NM)||
+              CASE WHEN D.MENU_NM IS NOT NULL AND C.MENU_NM IS NOT NULL THEN '>' END ||
+              DECODE(C.MENU_NM,NULL,'',C.MENU_NM)   AS MENU_DIR
+             ,B.MENU_NM
+             ,B.TOP_MENU_NUM
+             ,B.MENU_GROUP
+             ,B.MENU_LVL_CD
+             ,B.SORT_SEQ
+             ,B.SCREEN_ID
+             ,B.SUP_MENU_NUM  
+             ,B.USE_YN
+             ,B.REMARK      
+         FROM TADM_MENU B
+             ,TADM_MENU C 
+             ,TADM_MENU D 
+             ,TADM_MENU E             
+        WHERE B.DEL_YN      = 'N'    
+          AND B.MENU_LVL_CD = '4'  
+          AND B.SCREEN_ID IS NOT NULL
+          AND B.SUP_MENU_NUM = C.MENU_NUM(+)
+          AND C.SUP_MENU_NUM = D.MENU_NUM(+)
+          AND D.SUP_MENU_NUM = E.MENU_NUM(+)
+]]>        <isNotEmpty prepend="AND" property="MENU_GROUP">
+<![CDATA[               B.MENU_GROUP   like  substr(#MENU_GROUP#,0,1) || '%'
+]]>        </isNotEmpty>
+<![CDATA[        START WITH 
+              B.MENU_LVL_CD = '1'
+        CONNECT BY PRIOR 
+              B.MENU_NUM = B.SUP_MENU_NUM
+        ORDER SIBLINGS BY 
+              B.SORT_SEQ
+        ) AA
+        ,(select c.*
+            from TADM_MENU_AUTH c
+                 ,TBAS_COMM_CD_DTL d
+           where c.del_yn = 'N'
+             and d.del_yn = 'N'
+             and c.USER_GRP = d.comm_cd_val
+             and d.comm_cd_id = 'ZBAS_C_00250'
+         ) bb
+ WHERE   AA.MENU_NUM     = BB.MENU_NUM(+)
+   AND   BB.USER_GRP(+)  = #USER_GRP#
+   
+   
+  ]]>
+	</select>
+	<select id="getNotGrntUserGrp" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ ADMAUM00100_getNotGrntUserGrp_원윤성_심연정*/
+        DISTINCT(A.COMM_CD_VAL) AS CODE
+       ,A.COMM_CD_VAL_NM AS VAL 
+       ,A.PRT_SEQ
+FROM    TBAS_COMM_CD_DTL A
+        ,TADM_MENU_AUTH B  
+WHERE   A.COMM_CD_ID= 'ZBAS_C_00250'
+AND     b.DEL_YN = 'N'
+AND     A.COMM_CD_VAL NOT IN (SELECT DISTINCT(C.USER_GRP) as COMM_CD_VAL
+                                FROM TADM_MENU_AUTH C
+                               WHERE C.DEL_YN         ='N' 
+                                 AND (  C.SEARCH_AUTH_YN ='Y'
+                                      OR C.SAVE_AUTH_YN   ='Y'
+                                      OR C.DEL_AUTH_YN    ='Y'
+                                      OR C.APRV_AUTH_YN   ='Y'
+                                      OR C.CLOSE_AUTH_YN  ='Y'
+                                      OR C.ETC1_AUTH_YN   ='Y'
+                                      )
+                             )
+ORDER BY  A.PRT_SEQ                                  
+                                    ]]>
+	</select>
+	<select id="getGrntUserGrp" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  /*+ ADMAUM00100_getGrntUserGrp_원윤성_심연정*/
+        DISTINCT(A.COMM_CD_VAL) AS CODE
+       ,A.COMM_CD_VAL_NM AS VAL 
+       ,A.PRT_SEQ
+FROM    TBAS_COMM_CD_DTL A
+WHERE   A.COMM_CD_ID= 'ZBAS_C_00250'
+AND     A.DEL_YN = 'N'
+AND     A.COMM_CD_VAL IN (SELECT DISTINCT(C.USER_GRP)
+                                FROM TADM_MENU_AUTH C
+                               WHERE C.DEL_YN         ='N' 
+                                 AND (  C.SEARCH_AUTH_YN ='Y'
+                                      OR C.SAVE_AUTH_YN   ='Y'
+                                      OR C.DEL_AUTH_YN    ='Y'
+                                 	 OR C.APRV_AUTH_YN   ='Y'
+                                 	 OR C.CLOSE_AUTH_YN  ='Y'
+                                 	 OR C.ETC1_AUTH_YN   ='Y')
+                             )
+order by A.PRT_SEQ                            ]]>
+	</select>
+	<delete id="deleteAuth" parameterClass="map" ><![CDATA[DELETE /*+ ADMAUM00100_deleteAuth_조민지_심연정 */ 
+		TADM_MENU_AUTH
+WHERE 	USER_GRP = #USER_GRP#
+AND 	MENU_NUM = #MENU_NUM#]]>
+	</delete>
+	<insert id="addAuth" parameterClass="map" ><![CDATA[insert into  /*+ ADMAUM00100_addAuth_조민지_심연정 */
+	TADM_MENU_AUTH
+(
+	menu_num,
+	user_grp,
+	search_auth_yn,
+	save_auth_yn,
+	del_auth_yn,
+	req_auth_yn,
+	aprv_auth_yn,
+	can_auth_yn,
+	close_auth_yn,
+	print_auth_yn,
+    init_auth_yn,
+    etc1_auth_yn,
+    etc2_auth_yn,
+    etc3_auth_yn,
+    del_yn,
+    upd_cnt,
+    ins_dtm,
+    ins_user_id,
+    mod_dtm,
+    mod_user_id
+    )
+VALUES (
+    #menu_num#,
+    #user_grp#,
+    DECODE(#search_auth_yn#,'1', 'Y', 'N'),
+    DECODE(#save_auth_yn#,  '1', 'Y', 'N'),
+    DECODE(#del_auth_yn#,   '1', 'Y', 'N'),
+    DECODE(#req_auth_yn#,   '1', 'Y', 'N'),
+    DECODE(#aprv_auth_yn#,  '1', 'Y', 'N'),
+    DECODE(#can_auth_yn#,   '1', 'Y', 'N'),
+    DECODE(#close_auth_yn#, '1', 'Y', 'N'),
+    DECODE(#print_auth_yn#, '1', 'Y', 'N'),
+    DECODE(#init_auth_yn#,  '1', 'Y', 'N'),
+    DECODE(#etc1_auth_yn#,  '1', 'Y', 'N'),
+    DECODE(#etc2_auth_yn#,  '1', 'Y', 'N'),
+    DECODE(#etc3_auth_yn#,  '1', 'Y', 'N'),
+    'N',
+    0,
+    to_char(sysdate,'YYYYMMDDHH24MISS'),
+    #onlineContext.userInfo.loginId#,
+    to_char(sysdate,'YYYYMMDDHH24MISS'),
+    #onlineContext.userInfo.loginId#
+    )   ]]>
+	</insert>
+</sqlMap>

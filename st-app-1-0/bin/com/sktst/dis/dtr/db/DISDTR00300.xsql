@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="DISDTR00300">
+	<select id="selectInProdList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[(SELECT /*+ "DISDTR00300_selectInProdList_이정현_김중일" */
+       b.prod_cl,
+       b.mfact_id,
+       NVL((SELECT sort_seq 
+          FROM tbas_deal_co_mgmt
+         WHERE del_yn = 'N'
+           AND deal_end_yn != 'Y'
+           AND out_stop_yn = 'N'
+           AND deal_co_cd = b.mfact_id
+           AND eff_end_dtm = '99991231235959'
+           AND rownum = 1), '') sort_seq,
+       a.prod_cd,
+       b.prod_nm,
+       a.color_cd,
+       a.ser_num,
+       a.bad_yn,
+       a.dis_st,
+       '1' cur_cnt,
+       '1' mov_cnt,
+       '0' mov_chk,
+       'N' out_fix_yn,
+       'N' in_fix_yn,
+       '0' mov_seq,
+       a.upd_cnt       
+FROM   tdis_dis a,
+       tbas_prod_mgmt b
+WHERE  a.prod_cd = b.prod_cd
+AND    a.del_yn = 'N'
+AND    a.dis_st = '01'
+AND    a.hld_plc_id = #out_plc_id#
+]]><isNotEmpty prepend="AND" property="ser_num">
+<![CDATA[       UPPER(a.ser_num) like '%' || UPPER(#ser_num#) || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       UPPER(a.prod_cd) LIKE '%' || UPPER(#prod_cd#) || '%'
+]]></isNotEmpty>
+<![CDATA[AND    b.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="prod_cl">
+<![CDATA[       b.prod_cl = #prod_cl#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[       b.mfact_id = #mfact_id#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="UNION" property="prod_cd">
+<![CDATA[SELECT b.prod_cl,
+       b.mfact_id,
+       NVL((SELECT sort_seq 
+          FROM tbas_deal_co_mgmt
+         WHERE del_yn = 'N'
+           AND deal_end_yn != 'Y'
+           AND out_stop_yn = 'N'
+           AND deal_co_cd = b.mfact_id
+           AND eff_end_dtm = '99991231235959'
+           AND rownum = 1), '') sort_seq,
+       a.prod_cd,
+       b.prod_nm,
+       a.color_cd,
+       a.ser_num,
+       a.bad_yn,
+       a.dis_st,
+       '1' cur_cnt,
+       '1' mov_cnt,
+       '0' mov_chk,
+       'N' out_fix_yn,
+       'N' in_fix_yn,
+       '0' mov_seq,
+       a.upd_cnt
+FROM   tdis_dis a,
+       tbas_prod_mgmt b
+WHERE  a.prod_cd = b.prod_cd
+AND    a.del_yn = 'N'
+AND    a.dis_st = '01'
+AND    a.hld_plc_id = #out_plc_id#
+]]><isNotEmpty prepend="AND" property="ser_num">
+<![CDATA[       UPPER(a.ser_num) like '%' || UPPER(#ser_num#) || '%'
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       UPPER(b.prod_nm) LIKE '%' || UPPER(#prod_cd#) || '%'
+]]></isNotEmpty>
+<![CDATA[AND    b.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="prod_cl">
+<![CDATA[       b.prod_cl = #prod_cl#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[       b.mfact_id = #mfact_id#
+]]></isNotEmpty>
+<![CDATA[]]></isNotEmpty>
+<![CDATA[)
+UNION ALL
+(
+SELECT d.prod_cl,
+       d.mfact_id,
+       NVL((SELECT sort_seq 
+          FROM tbas_deal_co_mgmt
+         WHERE del_yn = 'N'
+           AND deal_end_yn != 'Y'
+           AND out_stop_yn = 'N'
+           AND deal_co_cd = d.mfact_id
+           AND eff_end_dtm = '99991231235959'
+           AND rownum = 1), '') sort_seq,
+       c.prod_cd,
+       d.prod_nm,
+       c.color_cd,
+       '' ser_num,
+       '01' bad_yn,
+       '01' dis_st,
+       TO_CHAR(c.qty) cur_cnt,
+       TO_CHAR(c.qty) mov_cnt,
+       '0' mov_chk,
+       'N' out_fix_yn,
+       'N' in_fix_yn,
+       '0' mov_seq,
+       c.upd_cnt
+FROM   tdis_etc_dis c,
+       tbas_prod_mgmt d
+WHERE  c.prod_cd = d.prod_cd
+AND    c.del_yn = 'N'
+AND    c.hld_plc_id = #out_plc_id#
+]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       UPPER(c.prod_cd) LIKE '%' || UPPER(#prod_cd#) || '%'
+]]></isNotEmpty>
+<![CDATA[AND    d.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="prod_cl">
+<![CDATA[       d.prod_cl = #prod_cl#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[       d.mfact_id = #mfact_id#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="UNION" property="prod_cd">
+<![CDATA[SELECT d.prod_cl,
+       d.mfact_id,
+       NVL((SELECT sort_seq 
+          FROM tbas_deal_co_mgmt
+         WHERE del_yn = 'N'
+           AND deal_end_yn != 'Y'
+           AND out_stop_yn = 'N'
+           AND deal_co_cd = d.mfact_id
+           AND eff_end_dtm = '99991231235959'
+           AND rownum = 1), '') sort_seq,
+       c.prod_cd,
+       d.prod_nm,
+       c.color_cd,
+       '' ser_num,
+       '01' bad_yn,
+       '01' dis_st,
+       TO_CHAR(c.qty) cur_cnt,
+       TO_CHAR(c.qty) mov_cnt,
+       '0' mov_chk,
+       'N' out_fix_yn,
+       'N' in_fix_yn,
+       '0' mov_seq,
+       c.upd_cnt
+FROM   tdis_etc_dis c,
+       tbas_prod_mgmt d
+WHERE  c.prod_cd = d.prod_cd
+AND    c.del_yn = 'N'
+AND    c.hld_plc_id = #out_plc_id#
+]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[       UPPER(d.prod_nm) LIKE '%' || UPPER(#prod_cd#) || '%'
+]]></isNotEmpty>
+<![CDATA[AND    d.del_yn = 'N'
+]]><isNotEmpty prepend="AND" property="prod_cl">
+<![CDATA[       d.prod_cl = #prod_cl#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[       d.mfact_id = #mfact_id#
+]]></isNotEmpty>
+<![CDATA[]]></isNotEmpty>
+<![CDATA[)]]>
+	</select>
+</sqlMap>

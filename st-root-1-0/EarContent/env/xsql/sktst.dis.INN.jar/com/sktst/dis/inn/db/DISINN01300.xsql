@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://10.40.10.29/sql-map-2.dtd">
+<sqlMap namespace="DISINN01300">
+	<select id="getProdDisList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISINN01300_getProdDisList_전미량 */ 
+       '' AS CHK, 
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00010', B.PROD_CL) PROD_CL, 
+       FBAS_GET_DEAL_NM(B.MFACT_ID,'') AS MFACT_NM, 
+       A.PROD_CD, 
+       B.PROD_NM, 
+       A.COLOR_CD, 
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00040', A.COLOR_CD) COLOR_NM, 
+       A.SER_NUM, 
+       A.OLD_SER_NUM, 
+       FBAS_GET_DEAL_NM(A.HLD_PLC_ID,'') AS HLD_PLC_NM, 
+       A.EQP_ST,
+       C.EQP_ST_DTL AS EQP_ST_DTL ,
+       NVL(A.SALE_YN,'N') AS SALE_YN, 
+       FBAS_GET_DEAL_NM(D.SALE_PRC_PLC,'') AS SALE_PRC_PLC_NM, 
+       (SELECT UKEY_AGENCY_CD 
+         FROM TBAS_DEAL_CO_MGMT 
+        WHERE DEAL_CO_CD = D.SALE_PRC_PLC 
+              AND EFF_END_DTM = '99991231235959' 
+       ) AS SALE_PRC_PLC_UKEY, 
+       DECODE(NVL(A.SALE_YN,'N'),'Y',FIX_SALE_AMT) AS FIX_SALE_AMT, 
+       DECODE(NVL(A.SALE_YN,'N'),'Y',FIX_SALE_DT) AS FIX_SALE_DT, 
+       RESERVE_AMT, 
+       DIS_AMT + RESERVE_AMT AS TOT_DIS_AMT, 
+       DIS_AMT, 
+       A.CON_MGMT_NO, 
+       CASE 
+           WHEN(C.PRC_ST IN ('31','32','33','34','35')) AND (PRCHS_DT >= '20111001') 
+           THEN DECODE(C.REMIT_YN,'Y',C.REMIT_DT,DECODE(C.CHAG_DEDT_OP_YN,'Y', C.CHAG_DEDT_OP_DT,DECODE(C.POL_OP_YN,'Y',C.POL_OP_DT,DECODE(C.CORN_PRCHS_OP_YN,'Y',C.CORN_PRCHS_OP_DT, DECODE(C.SKN_YN,'Y',C.CHECK_DT,''))))) 
+           ELSE C.PRCHS_DT 
+       END PRCHS_DT, 
+       DECODE(C.SKN_YN,'Y','샘플감정',DECODE(C.PRC_ST,'33','정책매입','보통')) AS SKN_ST, 
+       FBAS_GET_COMMCDNM_VAL('ZBAS_C_00490', C.PRC_ST) AS PRC_ST, 
+       C.BOX_NO, 
+       DECODE(last_inout_dtl_cl,'105',LAST_INOUT_DT) AS CNCL_DT, 
+       C.IMEI, 
+       A.CON_SALE_YN, 
+       A.CON_SALE_DT, 
+       A.CON_SALE_CNCL_DT, 
+       FBAS_GET_DEAL_NM(A.CON_SALE_PLC_ID,'') AS CON_SALE_PLC_NM, 
+       FBAS_GET_DEAL_NM(C.CON_PLC_CD,'') AS CON_PLC_NM, 
+       E.HQ_NM, 
+       E.MARKET_NM, 
+       E.POS_AGENCY_NM, 
+       E.UKEY_AGENCY_CD, 
+       C.CON_DT, 
+       F.IN_DT,
+       C.CHECK_DT,
+       C.REMIT_DT,
+       C.CHAG_DEDT_OP_DT
+       FBAS_GET_USER_NM(nvl(C.BOX_USER_ID,F.BOX_USER_ID)) BOX_USER_NM,
+       substr(nvl(C.BOX_DTM,F.BOX_DTM),0,8) BOX_DT,
+       decode(C.DISP_AFTERIMAGE_CL,'A','강','B','약','') DISP_AFTERIMAGE_CL       
+  FROM TDIS_PROD_DIS A, 
+       TBAS_PROD_MGMT B, 
+       TCST_PRCHS_MGMT C, 
+       (SELECT PROD_SER_NUM, 
+              SALE_PRC_PLC, 
+              SALE_DTM 
+         FROM TSAL_EQUIPMENT_SALE ES, 
+              TSAL_GNRL_SALE GS 
+        WHERE ES.GNRL_SALE_NO = GS.GNRL_SALE_NO 
+          AND ES.GNRL_SALE_CHG_SEQ = GS.GNRL_SALE_CHG_SEQ 
+          AND GS.GNRL_SALE_CHG_SEQ = 
+              (SELECT MAX(GNRL_SALE_CHG_SEQ) 
+                 FROM TSAL_GNRL_SALE 
+                WHERE GNRL_SALE_NO = GS.GNRL_SALE_NO 
+                  AND DEL_YN = 'N' 
+              ) 
+          AND GS.DEL_YN = 'N' 
+          AND ES.DEL_YN = 'N' 
+          AND GS.SALE_CNCL_YN = 'N' 
+          AND GS.SALE_CHG_HST_CL != '07'
+       ) D, 
+       (SELECT DEAL.DEAL_CO_CD, 
+              MARK.HQ_NM, 
+              MARK.MARKET_NM, 
+              FBAS_GET_DEAL_NM(DEAL.POS_AGENCY,'') AS POS_AGENCY_NM, 
+              DEAL.UKEY_AGENCY_CD 
+         FROM 
+              (SELECT DEAL_CO_CD, 
+                     POS_AGENCY , 
+                     UKEY_AGENCY_CD 
+                FROM TBAS_DEAL_CO_MGMT D 
+               WHERE HSEQ_NO = 
+                     (SELECT MAX(HSEQ_NO) 
+                       FROM TBAS_DEAL_CO_MGMT 
+                      WHERE DEAL_CO_CD = D.DEAL_CO_CD
+                     ) 
+                 AND D.DEL_YN = 'N'
+              ) DEAL, 
+              (SELECT HQ_NM, 
+                     MARKET_NM, 
+                     UKEY_AGENCY_CD 
+                FROM TBAS_DEAL_CO_MARKETING M 
+               WHERE HSEQ_NO = 
+                     (SELECT MAX(HSEQ_NO) 
+                       FROM TBAS_DEAL_CO_MARKETING 
+                      WHERE UKEY_AGENCY_CD = M.UKEY_AGENCY_CD
+                     ) 
+                 AND M.DEL_YN = 'N'
+              ) MARK 
+        WHERE DEAL.UKEY_AGENCY_CD = MARK.UKEY_AGENCY_CD(+)
+       ) E, 
+       TCST_CONSULT_MGMT F 
+ WHERE A.PROD_CD = B.PROD_CD (+) 
+   AND A.CON_MGMT_NO = C.CON_MGMT_NO 
+   AND A.SER_NUM = D.PROD_SER_NUM(+) 
+   AND A.DEL_YN = 'N' 
+   AND C.DEL_YN = 'N' 
+   AND C.CON_PLC_CD = E.DEAL_CO_CD (+) 
+   AND A.CON_MGMT_NO = F.CON_MGMT_NO 
+   AND F.DEL_YN = 'N'
+]]><isEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[]]><isNotEmpty prepend="AND" property="pos_agency_id">
+<![CDATA[	A.HLD_PLC_ID IN (SELECT DEAL_CO_CD 
+					   FROM TBAS_DEAL_CO_MGMT 
+					  WHERE EFF_STA_DTM <= A.FIX_SALE_DT||'235959'
+					    AND EFF_END_DTM >= A.FIX_SALE_DT||'235959' 
+					    AND DEL_YN = 'N' 
+					    AND POS_AGENCY = #pos_agency_id#)
+]]></isNotEmpty> 
+<![CDATA[]]></isEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[	A.HLD_PLC_ID  = #hld_plc_id#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty property="sale_yn">
+<![CDATA[]]>	<isEqual property="sale_yn" compareValue="N">
+<![CDATA[    	AND A.DIS_ST = '01'
+]]>	</isEqual>
+<![CDATA[	AND NVL(A.SALE_YN,'N')  = #sale_yn#
+]]></isNotEmpty>  
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[	A.PROD_CD  = #prod_cd#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[    B.MFACT_ID = #mfact_id#
+]]></isNotEmpty>  
+<![CDATA[]]><isNotEmpty prepend="AND" property="eqp_st">
+<![CDATA[    A.EQP_ST = #eqp_st#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="g_ser_num">
+<![CDATA[    A.SER_NUM = #g_ser_num#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="ser_num">
+<![CDATA[    A.OLD_SER_NUM = #ser_num#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="con_mgmt_no">
+<![CDATA[    A.CON_MGMT_NO = #con_mgmt_no#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="box_no">
+<![CDATA[    C.BOX_NO = #box_no#
+]]></isNotEmpty>  
+<![CDATA[]]><isNotEmpty prepend="AND" property="saleFromDtm">
+<![CDATA[    SUBSTR(D.SALE_DTM,0,8) >= #saleFromDtm#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="saleToDtm">
+<![CDATA[    SUBSTR(D.SALE_DTM,0,8) <= #saleToDtm#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty property="skn_st">
+<![CDATA[]]>	<isEqual property="skn_st" compareValue="Y">
+<![CDATA[    	AND C.SKN_YN = 'Y'
+]]>	</isEqual>
+<![CDATA[]]>	<isEqual property="skn_st" compareValue="P">
+<![CDATA[    	AND C.SKN_YN = 'N'
+    	AND C.PRC_ST = '33'
+]]>	</isEqual>
+<![CDATA[]]>	<isEqual property="skn_st" compareValue="N">
+<![CDATA[    	AND C.SKN_YN = 'N'
+    	AND C.PRC_ST != '33'
+]]>	</isEqual>
+<![CDATA[]]></isNotEmpty> 
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="Y"> 
+<![CDATA[   AND F.CON_PLC_CD = '11050'
+]]></isEqual>
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="N"> 
+<![CDATA[   AND F.CON_PLC_CD <> '11050'
+]]></isEqual>
+	</select>
+	<select id="getProdDisListCount" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ DISINN01300_getProdDisListCount_전미량 */
+	   NVL(COUNT(*),0) AS PROD_CNT
+  FROM TDIS_PROD_DIS A, 
+       TBAS_PROD_MGMT B, 
+       TCST_PRCHS_MGMT C, 
+       (SELECT PROD_SER_NUM, 
+              SALE_PRC_PLC, 
+              SALE_DTM 
+         FROM TSAL_EQUIPMENT_SALE ES, 
+              TSAL_GNRL_SALE GS 
+        WHERE ES.GNRL_SALE_NO = GS.GNRL_SALE_NO 
+          AND ES.GNRL_SALE_CHG_SEQ = GS.GNRL_SALE_CHG_SEQ 
+          AND GS.GNRL_SALE_CHG_SEQ = 
+              (SELECT MAX(GNRL_SALE_CHG_SEQ) 
+                 FROM TSAL_GNRL_SALE 
+                WHERE GNRL_SALE_NO = GS.GNRL_SALE_NO 
+                  AND DEL_YN = 'N' 
+              ) 
+          AND GS.DEL_YN = 'N' 
+          AND ES.DEL_YN = 'N' 
+          AND GS.SALE_CNCL_YN = 'N' 
+          AND GS.SALE_CHG_HST_CL != '07'
+       ) D, 
+       (SELECT DEAL.DEAL_CO_CD, 
+              MARK.HQ_NM, 
+              MARK.MARKET_NM, 
+              FBAS_GET_DEAL_NM(DEAL.POS_AGENCY,'') AS POS_AGENCY_NM, 
+              DEAL.UKEY_AGENCY_CD 
+         FROM 
+              (SELECT DEAL_CO_CD, 
+                     POS_AGENCY , 
+                     UKEY_AGENCY_CD 
+                FROM TBAS_DEAL_CO_MGMT D 
+               WHERE HSEQ_NO = 
+                     (SELECT MAX(HSEQ_NO) 
+                       FROM TBAS_DEAL_CO_MGMT 
+                      WHERE DEAL_CO_CD = D.DEAL_CO_CD
+                     ) 
+                 AND D.DEL_YN = 'N'
+              ) DEAL, 
+              (SELECT HQ_NM, 
+                     MARKET_NM, 
+                     UKEY_AGENCY_CD 
+                FROM TBAS_DEAL_CO_MARKETING M 
+               WHERE HSEQ_NO = 
+                     (SELECT MAX(HSEQ_NO) 
+                       FROM TBAS_DEAL_CO_MARKETING 
+                      WHERE UKEY_AGENCY_CD = M.UKEY_AGENCY_CD
+                     ) 
+                 AND M.DEL_YN = 'N'
+              ) MARK 
+        WHERE DEAL.UKEY_AGENCY_CD = MARK.UKEY_AGENCY_CD(+)
+       ) E, 
+       TCST_CONSULT_MGMT F 
+ WHERE A.PROD_CD = B.PROD_CD (+) 
+   AND A.CON_MGMT_NO = C.CON_MGMT_NO 
+   AND A.SER_NUM = D.PROD_SER_NUM(+) 
+   AND A.DEL_YN = 'N' 
+   AND C.DEL_YN = 'N' 
+   AND C.CON_PLC_CD = E.DEAL_CO_CD (+) 
+   AND A.CON_MGMT_NO = F.CON_MGMT_NO 
+   AND F.DEL_YN = 'N'
+]]><isEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[]]><isNotEmpty prepend="AND" property="pos_agency_id">
+<![CDATA[	A.HLD_PLC_ID IN (SELECT DEAL_CO_CD 
+					   FROM TBAS_DEAL_CO_MGMT 
+					  WHERE EFF_STA_DTM <= A.FIX_SALE_DT||'235959'
+					    AND EFF_END_DTM >= A.FIX_SALE_DT||'235959' 
+					    AND DEL_YN = 'N' 
+					    AND POS_AGENCY = #pos_agency_id#)
+]]></isNotEmpty> 
+<![CDATA[]]></isEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="hld_plc_id">
+<![CDATA[	A.HLD_PLC_ID  = #hld_plc_id#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty property="sale_yn">
+<![CDATA[]]>	<isEqual property="sale_yn" compareValue="N">
+<![CDATA[    	AND A.DIS_ST = '01'
+]]>	</isEqual>
+<![CDATA[	AND NVL(A.SALE_YN,'N')  = #sale_yn#
+]]></isNotEmpty>  
+<![CDATA[]]><isNotEmpty prepend="AND" property="prod_cd">
+<![CDATA[	A.PROD_CD  = #prod_cd#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="mfact_id">
+<![CDATA[    B.MFACT_ID = #mfact_id#
+]]></isNotEmpty>  
+<![CDATA[]]><isNotEmpty prepend="AND" property="eqp_st">
+<![CDATA[    A.EQP_ST = #eqp_st#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="g_ser_num">
+<![CDATA[    A.SER_NUM = #g_ser_num#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="ser_num">
+<![CDATA[    A.OLD_SER_NUM = #ser_num#
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="con_mgmt_no">
+<![CDATA[    A.CON_MGMT_NO = #con_mgmt_no# 
+]]></isNotEmpty>
+<![CDATA[]]><isNotEmpty prepend="AND" property="box_no">
+<![CDATA[    C.BOX_NO = #box_no#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="saleFromDtm">
+<![CDATA[    SUBSTR(D.SALE_DTM,0,8) >= #saleFromDtm#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty prepend="AND" property="saleToDtm">
+<![CDATA[    SUBSTR(D.SALE_DTM,0,8) <= #saleToDtm#
+]]></isNotEmpty> 
+<![CDATA[]]><isNotEmpty property="skn_st">
+<![CDATA[]]>	<isEqual property="skn_st" compareValue="Y">
+<![CDATA[    	AND C.SKN_YN = 'Y'
+]]>	</isEqual>
+<![CDATA[]]>	<isEqual property="skn_st" compareValue="P">
+<![CDATA[    	AND C.SKN_YN = 'N'
+    	AND C.PRC_ST = '33'
+]]>	</isEqual>
+<![CDATA[]]>	<isEqual property="skn_st" compareValue="N">
+<![CDATA[    	AND C.SKN_YN = 'N'
+    	AND C.PRC_ST != '33'
+]]>	</isEqual>
+<![CDATA[]]></isNotEmpty>  
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="Y"> 
+<![CDATA[   AND F.CON_PLC_CD = '11050'
+]]></isEqual>
+<![CDATA[]]><isEqual property="ECO_FU_YN" compareValue="N"> 
+<![CDATA[   AND F.CON_PLC_CD <> '11050'
+]]></isEqual>
+	</select>
+</sqlMap>

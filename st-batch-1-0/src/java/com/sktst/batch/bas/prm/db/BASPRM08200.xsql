@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASPRM08200">
+	<delete id="deleteWeeklyDeal" parameterClass="map" >
+	<![CDATA[
+	delete /* BASPRM08200_getWeeklyDeal_선처리자료 삭제 */
+      from TBAS_WEEKLY_DEAL
+     where END_DT = #END_DT#
+	]]>
+	</delete>
+    <insert id="addWeeklyDeal" parameterClass="map" >
+	<![CDATA[
+    INSERT INTO /* BASPRM08200_addWeeklyDeal_판매점 증감 기초자료 Insert-김연석-김연석 */
+           TBAS_WEEKLY_DEAL(
+                             END_DT
+                           , LINE_NO
+                           , UKEY_AGENCY_CD
+                           , DEAL_CL1
+                           , SALES_USER
+                           , START_DT
+                           , STL_DEAL_CNT
+                           , STL_SALE_DEAL_CNT
+                           , STL_DEAL_SALE_QTY
+                           , TOT_DEAL_CNT
+                           , TOT_SALE_DEAL_CNT
+                           , TOT_DEAL_SALE_QTY
+                           , DEL_YN
+                           , UPD_CNT
+                           , INS_DTM
+                           , INS_USER_ID
+                           , MOD_DTM
+                           , MOD_USER_ID)
+                      select 
+                             #END_DT#                            end_dt
+                           , decode(ukey_agency_cd, 'D14910', '01'
+                                                  , 'D14911', '02'
+                                                  , 'D14913', '03'
+                                                  , 'D14914', '04'
+                                                  , 'D14915', '05'
+                                                  , 'D14916', '06'
+                                                  , 'D14917', '07'
+                                                  , 'D23695', '09'
+                                                  , 'D23714', '10'
+                                                  , 'D33596', '11'
+                                                  , 'D33598', '12'
+                                                  , 'D33613', '13'
+                                                  , 'D33614', '14'
+                                                  , 'D63363', '15'
+                                                  , 'D63362', '15'
+                                                  , 'D63355', '15'
+                                                  , 'D63357', '16'
+                                                  , 'D43456', '17'
+                                                  , 'D43450', '17', '99')    line_no
+                           , ukey_agency_cd                         ukey_agency_cd
+                           , deal_co_cl1                            deal_cl1
+                           , nvl(chrgr_user_id, 'Null')             sales_user
+                           , #START_DT#                             start_dt
+                           , sum(decode(deal_co_cl2, '2', 1, 0))    stl_deal_cnt
+                           , sum(decode(deal_co_cl2, '2'
+                               , decode(sale_cnt - cncl_cnt, 0
+                               , decode(dis_qty, 0, 0, 1), 1)
+                               , 0))                                stl_sale_deal_cnt
+                           , sum(decode(deal_co_cl2, '2'
+                               , sale_cnt - cncl_cnt, 0))           stl_deal_sale_qty
+                           , count(deal_co_cd)                      tot_deal_cnt
+                           , sum(decode(sale_cnt - cncl_cnt, 0
+                               , decode(dis_qty, 0, 0, 1), 1))      tot_sale_deal_cnt
+                           , sum(sale_cnt - cncl_cnt)               tot_deal_sale_qty
+                           , 'N'                                    del_yn
+                           ,  1                                     upd_cnt
+                           ,  to_char(sysdate, 'yyyyMMddHH24miss')  ins_dtm
+                           , 'BASPRM0820'                           ins_user_id
+                           ,  to_char(sysdate, 'yyyyMMddHH24miss')  mod_dtm
+                           , 'BASPRM0820'                           mod_user_id
+                      from (
+                           select a.ukey_agency_cd
+                                , a.deal_co_cd
+                                , a.deal_co_cl1
+                                , a.deal_co_cl2
+                                , a.chrgr_user_id
+                                , sum(decode(b.acc_chg_hst_cl, '01', 1, '02', 1, 0)) sale_cnt
+                                , sum(decode(b.acc_chg_hst_cl, '07', 1, 0))          cncl_cnt
+                                , sum(nvl(c.dis_qty, 0))                             dis_qty
+                             from 
+                                ( select ukey_agency_cd
+                                       , deal_co_cd
+                                       , deal_co_cl1
+                                       , deal_co_cl2
+                                       , chrgr_user_id
+                                    from tbas_deal_co_mgmt
+                                   where deal_end_yn  =  'N'
+                                     and del_yn       =  'N'
+                                     and deal_co_cl1 in ('A2', 'A3', 'B1', 'B2', 'C1')
+                                     and #END_DT#                between deal_sta_dt and deal_end_dt
+                                     and #END_DT#   || '235959'  between eff_sta_dtm and eff_end_dtm ) a
+                              , ( select sale_plc, acc_chg_hst_cl
+                                    from tsal_general_sale
+                                   where sale_dtm >= #START_DT# || '000000'
+                                     and sale_dtm <= #END_DT#   || '235959'
+                                     and acc_chg_hst_cl in ('01', '02', '07') ) b
+                              , ( select strd_dt, hld_plc_id, sum(curr_dis_qty) dis_qty
+                                    from tdis_dis_day_sum
+                                   where strd_dt  >= #START_DT#
+                                     and strd_dt  <= #END_DT#  
+                                   group by strd_dt, hld_plc_id)  c
+                            where a.deal_co_cd  = b.sale_plc(+)
+                              and a.deal_co_cd  = c.hld_plc_id(+)
+                            group by a.ukey_agency_cd, a.deal_co_cd, deal_co_cl1, a.deal_co_cl2, chrgr_user_id )
+                     group by ukey_agency_cd, deal_co_cl1, chrgr_user_id
+	]]>
+	</insert>
+    <insert id="addMonthlyDeal" parameterClass="map" >
+	<![CDATA[
+    INSERT INTO /* BASPRM08200_addMonthlyDeal_판매점 증감 기초자료 Insert(월말)-김연석-김연석 */
+           TBAS_WEEKLY_DEAL(
+                             END_DT
+                           , LINE_NO
+                           , UKEY_AGENCY_CD
+                           , DEAL_CL1
+                           , SALES_USER
+                           , START_DT
+                           , STL_DEAL_CNT
+                           , STL_SALE_DEAL_CNT
+                           , STL_DEAL_SALE_QTY
+                           , TOT_DEAL_CNT
+                           , TOT_SALE_DEAL_CNT
+                           , TOT_DEAL_SALE_QTY
+                           , DEL_YN
+                           , UPD_CNT
+                           , INS_DTM
+                           , INS_USER_ID
+                           , MOD_DTM
+                           , MOD_USER_ID)
+                      select 
+                             substr(#END_DT#, 1, 6)                end_dt
+                           , decode(ukey_agency_cd, 'D14910', '01'
+                                                  , 'D14911', '02'
+                                                  , 'D14913', '03'
+                                                  , 'D14914', '04'
+                                                  , 'D14915', '05'
+                                                  , 'D14916', '06'
+                                                  , 'D14917', '07'
+                                                  , 'D23695', '09'
+                                                  , 'D23714', '10'
+                                                  , 'D33596', '11'
+                                                  , 'D33598', '12'
+                                                  , 'D33613', '13'
+                                                  , 'D33614', '14'
+                                                  , 'D63363', '15'
+                                                  , 'D63362', '15'
+                                                  , 'D63355', '15'
+                                                  , 'D63357', '16'
+                                                  , 'D43456', '17'
+                                                  , 'D43450', '17', '99')    line_no
+                           , ukey_agency_cd                         ukey_agency_cd
+                           , deal_co_cl1                            deal_cl1
+                           , nvl(chrgr_user_id, 'Null')             sales_user
+                           , #START_DT#                             start_dt
+                           , sum(decode(deal_co_cl2, '2', 1, 0))    stl_deal_cnt
+                           , sum(decode(deal_co_cl2, '2'
+                               , decode(sale_cnt - cncl_cnt, 0
+                               , decode(dis_qty, 0, 0, 1), 1)
+                               , 0))                                stl_sale_deal_cnt
+                           , sum(decode(deal_co_cl2, '2'
+                               , sale_cnt - cncl_cnt, 0))           stl_deal_sale_qty
+                           , count(deal_co_cd)                      tot_deal_cnt
+                           , sum(decode(sale_cnt - cncl_cnt, 0
+                               , decode(dis_qty, 0, 0, 1), 1))      tot_sale_deal_cnt
+                           , sum(sale_cnt - cncl_cnt)               tot_deal_sale_qty
+                           , 'N'                                    del_yn
+                           ,  1                                     upd_cnt
+                           ,  to_char(sysdate, 'yyyyMMddHH24miss')  ins_dtm
+                           , 'BASPRM0820'                           ins_user_id
+                           ,  to_char(sysdate, 'yyyyMMddHH24miss')  mod_dtm
+                           , 'BASPRM0820'                           mod_user_id
+                      from (
+                           select a.ukey_agency_cd
+                                , a.deal_co_cd
+                                , a.deal_co_cl1
+                                , a.deal_co_cl2
+                                , a.chrgr_user_id
+                                , sum(decode(b.acc_chg_hst_cl, '01', 1, '02', 1, 0)) sale_cnt
+                                , sum(decode(b.acc_chg_hst_cl, '07', 1, 0))          cncl_cnt
+                                , sum(nvl(c.dis_qty, 0))                             dis_qty
+                             from 
+                                ( select ukey_agency_cd
+                                       , deal_co_cd
+                                       , deal_co_cl1
+                                       , deal_co_cl2
+                                       , chrgr_user_id
+                                    from tbas_deal_co_mgmt
+                                   where deal_end_yn  =  'N'
+                                     and del_yn       =  'N'
+                                     and deal_co_cl1 in ('A2', 'A3', 'B1', 'B2', 'C1')
+                                     and #END_DT#                between deal_sta_dt and deal_end_dt
+                                     and #END_DT#   || '235959'  between eff_sta_dtm and eff_end_dtm ) a
+                              , ( select sale_plc, acc_chg_hst_cl
+                                    from tsal_general_sale
+                                   where sale_dtm >= #START_DT# || '000000'
+                                     and sale_dtm <= #END_DT#   || '235959'
+                                     and acc_chg_hst_cl in ('01', '02', '07') ) b
+                              , ( select strd_dt, hld_plc_id, sum(curr_dis_qty) dis_qty
+                                    from tdis_dis_day_sum
+                                   where strd_dt  >= #START_DT#
+                                     and strd_dt  <= #END_DT#  
+                                   group by strd_dt, hld_plc_id)  c
+                            where a.deal_co_cd  = b.sale_plc(+)
+                              and a.deal_co_cd  = c.hld_plc_id(+)
+                            group by a.ukey_agency_cd, a.deal_co_cd, deal_co_cl1, a.deal_co_cl2, chrgr_user_id )
+                     group by ukey_agency_cd, deal_co_cl1, chrgr_user_id
+	]]>
+	</insert>
+</sqlMap>

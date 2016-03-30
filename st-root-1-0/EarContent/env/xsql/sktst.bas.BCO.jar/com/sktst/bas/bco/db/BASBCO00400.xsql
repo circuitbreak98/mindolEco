@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO00400">
+	<select id="getZipCodeList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /* 우편번호조회-BASBCO00400-원윤성-한병곤 */
+       ZIP_CD,
+       SI_DO||' '
+       ||SI_GUN_GU
+       ||DECODE(DONG,NULL,'',' '||DONG)
+       ||DECODE(RI,NULL,'',' '||RI)
+       ||DECODE(DO_SEO,NULL,'',' '||DO_SEO)
+       ||DECODE(BUILDING_NUM,NULL,'',' '||BUILDING_NUM)
+       ||DECODE(HOUSE_NUM,NULL,'',' '||HOUSE_NUM) AS FULL_ADDR,
+       SI_DO||' '
+       ||SI_GUN_GU
+       ||DECODE(DONG,NULL,'',' '||DONG)
+       ||DECODE(RI,NULL,'',' '||RI)
+       ||DECODE(DO_SEO,NULL,'',' '||DO_SEO)
+       ||DECODE(NVL(SUBSTR(BUILDING_NUM,0,INSTR(BUILDING_NUM,' ')-1),BUILDING_NUM),NULL,'',' '||NVL(SUBSTR(BUILDING_NUM,0,INSTR(BUILDING_NUM,' ')-1),BUILDING_NUM)) AS ADDR
+  FROM TBAS_ZIP_CD
+ WHERE DONG LIKE #DONG#||'%' 
+    OR ( DONG IS NULL AND BUILDING_NUM LIKE #DONG#||'%')
+ ORDER BY ZIP_CD
+ ]]>
+	</select>
+</sqlMap>

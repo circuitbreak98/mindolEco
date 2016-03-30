@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="BASBCO01200">
+	<select id="getSaleTree" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT						/*+ BASBCO01200_getSaleTree_원윤성_최승호 */ 
+	comm_cd_id,				/* 코드 아이디 */
+	comm_cd_val,			/* 코드 값 */
+	comm_cd_val_nm,			/* 코드 값 명칭 */
+	sub_comm_cd_id			/* 하위 코드 아이디 */
+FROM
+	tbas_comm_cd_dtl
+WHERE 
+	del_yn = 'N'	
+START WITH
+	comm_cd_id = #comm_cd_id#
+CONNECT BY PRIOR
+	sub_comm_cd_id = comm_cd_id]]>
+	</select>
+</sqlMap>

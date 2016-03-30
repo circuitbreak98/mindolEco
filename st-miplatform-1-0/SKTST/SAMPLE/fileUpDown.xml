@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="888" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="파일&#32;업로드&#32;다운로드" Top="8" Ver="1.0" Width="1024" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_file">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents>
+					<colinfo id="SCREEN_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="DOC_ID" size="256" summ="default" type="STRING"/>
+					<colinfo id="FILE_NM" size="256" summ="default" type="STRING"/>
+					<colinfo id="FILE_TYPE" size="256" summ="default" type="STRING"/>
+					<colinfo id="FILE_SIZE" size="256" summ="default" type="STRING"/>
+					<colinfo id="FILE_PASS" size="256" summ="default" type="STRING"/>
+					<colinfo encrypt="base64" id="FILE_CONTENTS" size="16960" summ="default" type="BLOB"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Static Border="None" Color="user8" Font="굴림,10,Bold" Height="22" Id="Static9" Left="24" TabOrder="1" Text="DS&#32;방식&#32;파일&#32;업로드" Top="8" VAlign="Middle" Width="136"></Static>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_upload" ImageID="btn_a_6" Left="704" LeftMargin="5" OnClick="btn_upload_OnClick" Style="sty_btn_b" TabOrder="0" Text="파일상태저장" Top="221" Width="110"></Button>
+		<Image Height="21" Id="Image0" ImageID="bul_mand" Left="6" TabOrder="1" Top="8" Transparent="TRUE" Width="20"></Image>
+		<Grid AutoFit="TRUE" BindDataset="ds_file" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="214" Enable="true" EndLineColor="default" FillArea="TRUE" FillAreaType="Control" HeadBorder="Flat" HeadHeight="22" Height="174" Id="grd_list" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_list_OnCellDblClick" Right="816" RowHeight="21" Style="sty_Grid" TabOrder="4" TabStop="true" Top="40" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="808">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="55"/>
+						<col width="347"/>
+						<col width="71"/>
+						<col width="48"/>
+						<col width="95"/>
+						<col width="105"/>
+						<col width="51"/>
+					</columns>
+					<head>
+						<cell bkcolor="user34" col="0" color="user35" display="text" text="번호"/>
+						<cell bkcolor="user34" col="1" color="user35" display="text" text="파일명"/>
+						<cell bkcolor="user34" col="2" color="user35" display="text" text="크기"/>
+						<cell bkcolor="user34" col="3" color="user35" display="text" text="확장자"/>
+						<cell bkcolor="user34" col="4" color="user35" display="text" text="screen&#32;id"/>
+						<cell bkcolor="user34" col="5" color="user35" display="text" text="doc&#32;id"/>
+						<cell bkcolor="user34" col="6" color="user35" display="text" text="상태"/>
+					</head>
+					<body>
+						<cell align="center" col="0" display="text" expr="row+1"/>
+						<cell col="1" colid="FILE_NM" cursor="expr:decode(FILE_PASS,null,&apos;arrow&apos;,&apos;hand&apos;)" display="text"/>
+						<cell align="center" col="2" colid="FILE_SIZE" display="text"/>
+						<cell align="center" col="3" colid="FILE_TYPE" display="text" expandsize="19"/>
+						<cell align="center" col="4" colid="SCREEN_ID" display="text" expandsize="19"/>
+						<cell align="center" col="5" colid="DOC_ID" display="text" expandsize="19"/>
+						<cell align="center" col="6" colid="DOC_ID" display="text" expandsize="19" expr="decode(rowType,&apos;insert&apos;,&apos;신규&apos;,&apos;기존&apos;)"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Cursor="HAND" Height="21" Id="btn_delete" ImageID="btn_i_subtract_w" Left="798" OnClick="btn_delete_OnClick" TabOrder="5" Text="Button1" ToolTipText="추가된&#32;행삭제" Top="16" Width="19"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_selectFiles" ImageID="btn_a_2" Left="16" LeftMargin="5" OnClick="btn_selectFiles_OnClick" Style="sty_btn_b" TabOrder="6" Text="조회" Top="272" Width="60"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_selectFile" ImageID="btn_a_6" Left="168" LeftMargin="5" OnClick="btn_selectFile_OnClick" Style="sty_btn_b" TabOrder="7" Text="파일선택" Top="8" Width="110"></Button>
+		<Static Border="None" Color="user8" Font="굴림,10,Bold" Height="22" Id="Static0" Left="25" TabOrder="8" Text="업로드한&#32;파일&#32;조회&#32;&#32;-&#32;현재는&#32;테스트용으로&#32;필수&#32;조건을&#32;임시로&#32;세팅" Top="248" VAlign="Middle" Width="655"></Static>
+		<Image Height="21" Id="Image1" ImageID="bul_mand" Left="8" TabOrder="9" Top="248" Transparent="TRUE" Width="20"></Image>
+		<Static Border="None" Color="user8" Font="굴림,10,Bold" Height="22" Id="Static1" Left="8" TabOrder="13" Text="파일명을&#32;더블&#32;클릭시&#32;다운로드&#32;이벤트&#32;발생" Top="216" VAlign="Middle" Width="416"></Static>
+		<Button Align="Left" ButtonStyle="TRUE" Cursor="HAND" Height="21" Id="btn_allDown" ImageID="btn_a_6" Left="290" LeftMargin="5" Style="sty_btn_b" TabOrder="10" Text="전체다운로드" Top="8" Width="110"></Button>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID : fileUpDown
+* 업무명      : 샘플관리
+* 프로그램명  : 
+--------------------------------------------------------------------------------
+* 작성자      : 최승호
+* 작성일      : 2009.01.14
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_commMsg.js
+	
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	//trace(pFrmTitle+" / "+pFrmNum+" / "+pFrmUrl+ " / " +pFrmWinId);
+	// 그리드 체크박스 설정 및 정렬
+	cf_setGrdChecknSortEvent(grd_list);	
+}
+
+/*******************************************************************************
+ * @description    : 파일 선택 - 이벤트
+*******************************************************************************/
+function btn_selectFile_OnClick(obj)
+{
+	// 최초 업로드시에는 doc_id 가 없으며, 서버에서 생성됩니다.
+	// 이후에는 게시물에 등록된 doc_id 를 설정해 주셔야 합니다.
+	var sDocId = ds_file.GetColumn(0, "DOC_ID");  // ex) var sDocId = "1234567890";
+	cf_setUploadFile(ds_file, sDocId);
+}
+
+
+/*******************************************************************************
+ * @description    : 콜백
+ * @param sSvcID   : 서비스 아이디
+*******************************************************************************/
+function f_callBack(sSvcID)
+{
+	if(sSvcID == "svcFileUpload")
+	{
+		trace("success");
+	}
+	
+	if(sSvcID == "svcFileList")
+	{
+		ds_file.AddColumn("FILE_CONTENTS", "Blob", 16960);
+	}
+}
+
+/*******************************************************************************
+ * @description    : 파일 업로드  - 이벤트
+*******************************************************************************/
+function btn_upload_OnClick(obj)
+{
+	// 트랜잭션 설정
+	var sSvcID = "svcFileUpload";
+	var sInDs = "nc_fileDs=ds_file:U";
+	var sOutDs = "";
+	var sArg = "framework.demo.Hello#testFileManager";
+	
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+
+
+/*******************************************************************************
+ * @description    : 첨부 파일 조회  - 이벤트
+*******************************************************************************/
+function btn_selectFiles_OnClick(obj)
+{
+	// 조회를 위한 필수 인자 SCREEN_ID ,  DOC_ID
+	var sScreenId = substr(pFrmUrl, pFrmUrl.indexOf("::")+2);
+	cf_setParam(ds_condition, "SCREEN_ID", sScreenId); 
+	cf_setParam(ds_condition, "DOC_ID", "1234415519874"); 
+
+	// 트랜잭션 설정
+	var sSvcID = "svcFileList";
+	var sInDs = "nc_input_fieldDs=ds_condition";
+	var sOutDs = "ds_file=nc_fileDs";
+	var sArg = "framework.demo.Hello#getFileList";
+	//trace(ds_condition.SaveXML());
+	// 공통 트랜잭션 호출
+	cf_Transaction(sSvcID, sInDs, sOutDs, sArg);
+}
+
+/*******************************************************************************
+ * @description    : 첨부 파일 delete
+*******************************************************************************/
+function btn_delete_OnClick(obj)
+{
+	var oGrdDs = object(grd_list.BindDataset);
+	if(oGrdDs.getRowType(oGrdDs.currow) == "insert")
+	{
+		oGrdDs.DeleteRow(oGrdDs.currow);
+	}
+	else
+	{
+		if(confirm(cf_getMessage(MSG_00102,"")) == true)
+		{
+			oGrdDs.DeleteRow(oGrdDs.currow);
+		}
+	}	
+}
+
+
+/*******************************************************************************
+ * @description    : 파일 다운로드  - 이벤트
+*******************************************************************************/
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	if(nCell == 1)
+	{
+		var oGrdDs = object(obj.BindDataset);
+		var sScreenId = oGrdDs.getColumn(nRow, "SCREEN_ID");
+		var sDocId = oGrdDs.getColumn(nRow, "DOC_ID");
+		var sFileName = oGrdDs.getColumn(nRow, "FILE_NM");
+		var sFileType = oGrdDs.getColumn(nRow, "FILE_TYPE");
+		cf_downLoad(sScreenId, sDocId, sFileName, sFileType);	
+	}
+}
+
+
+/*******************************************************************************
+ * @description    : 파일 전체 다운로드  - 이벤트
+*******************************************************************************/
+function btn_allDown_OnClick(obj)
+{
+	cf_allDownLoad(ds_file);
+}
+]]></Script>
+</Window>

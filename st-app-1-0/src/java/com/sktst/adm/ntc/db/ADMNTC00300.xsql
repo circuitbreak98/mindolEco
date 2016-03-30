@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMNTC00300">
+	<select id="getSmsList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00300_getSmsList_조민지_최승호 */ 
+       tran_dt,                                                 /* 전송일 */
+       tran_cnt,                                                /* 전송차수 */
+       replace(title,chr(13)||chr(10),' ') as title,            /* 제목 */
+       context,                                                 /* 메시지 내용 */
+       tran_count,                                              /* 발송횟수 */
+       user_nm,                                                 /* 발송자 */
+       decode(org_area_nm,null,org_nm,org_nm||'('||org_area_nm||')') as org_nm,
+       msg_ser_num,
+       sms_job_cl,
+       fbas_get_commcdnm_val('ZADM_C_00110', sms_job_cl)             as sms_job_nm
+  FROM (SELECT a.tran_dt || substr(a.mod_dtm, 9, 6) tran_dt,
+               a.tran_cnt,
+               a.title,
+               a.context,			/* 내용 */
+               (SELECT sum(count(tel_no)-count(tel_no)+1)
+                  FROM tadm_sms_tran_dtl 
+                 WHERE tran_dt  = a.tran_dt 
+                   AND tran_cnt = a.tran_cnt
+                 GROUP BY tran_dt, tran_cnt, name, tel_no ) as tran_count,
+               tran_user_id,
+               b.user_nm || '(' || a.rtn_tel_no || ')' user_nm,
+               c.org_nm,
+               fbas_get_deal_nm(b.org_area,tran_dt) as org_area_nm,
+               msg_ser_num,
+               sms_job_cl
+          FROM tadm_sms_tran a,
+               tbas_user_mgmt b,
+               tbas_org_mgmt c
+         WHERE a.tran_user_id = b.user_id
+           AND b.org_id = c.org_id    
+           AND a.del_yn = 'N'  
+           AND c.org_id in (SELECT org_id
+                              FROM tbas_org_mgmt
+                             WHERE del_yn = 'N'
+                             START WITH ORG_ID = #org_id#
+                           CONNECT BY SUP_ORG = PRIOR ORG_ID)                    
+            /* 전송 일  */
+]]>            <isNotEmpty prepend="AND" property="tran_sta_dt">
+<![CDATA[            	a.tran_dt >= #tran_sta_dt#
+]]>            </isNotEmpty>
+<![CDATA[]]>            <isNotEmpty prepend="AND" property="tran_end_dt">
+<![CDATA[            	a.tran_dt <= #tran_end_dt#
+]]>            </isNotEmpty>
+<![CDATA[            /* 제목  */
+]]>            <isNotEmpty prepend="AND" property="tran_title">
+<![CDATA[            	a.title like '%$tran_title$%'
+]]>            </isNotEmpty>
+<![CDATA[            /* 업무구분  */
+]]>            <isNotEmpty prepend="AND" property="sms_job_cl">
+<![CDATA[            	a.sms_job_cl = #sms_job_cl#
+]]>            </isNotEmpty>
+<![CDATA[           )
+ ORDER BY tran_dt desc, tran_cnt desc]]>
+	</select>
+	<select id="getUserByUserGrp" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00300_getUserByUserGrp_조민지_최승호 */ 
+       replace(a.mbl_phon,'-','') as cd,            /* 사용자 전화번호 */
+       a.user_nm as nm,            /* 사용자 이름 */
+       '1' as cl,                    /* 구분 코드 */
+       a.user_grp as grp,            /* 그룹 코드 */
+       FBAS_GET_DEAL_NM(a.org_area,'99991231') as org_area_nm, /* 근무지 */
+       fbas_get_deal_nm(c.pos_agency,'99991231') AS org_nm
+  FROM (select c.user_id,
+               c.user_nm,
+               c.user_grp,
+               c.org_area,
+               c.org_id,
+               (case when mbp = '1' then c.mbl_phon 
+                     when mbp = '2' then c.mbl_phon2 
+                     when mbp = '3' then c.mbl_phon3 end ) as mbl_phon
+          from tbas_user_mgmt c,
+               (select '1' as mbp from dual
+                union all
+                select '2' from dual
+                union all
+                select '3' from dual) b
+         where ((mbp = '1' and mbl_phon is not null) or ( mbp = '2' and mbl_phon2 is not null )  or ( mbp = '3' and mbl_phon3 is not null ))
+           and c.del_yn = 'N'
+           AND c.eff_user_yn = 'Y'
+           AND c.user_grp = #code#) a,
+       tbas_deal_co_mgmt c
+ WHERE a.org_area = c.deal_co_cd(+)
+   AND c.del_yn(+) = 'N'
+   AND c.eff_end_dtm(+) = '99991231235959'  
+]]> <isNotEmpty prepend="AND" property="ORG_ID">
+<![CDATA[    c.pos_agency(+)  = #org_id#
+]]> </isNotEmpty>
+<![CDATA[ ORDER BY a.user_nm]]>
+	</select>
+	<select id="getUserByBizGrp" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT							/*+ ADMNTC00300_getUserByBizGrp_조민지_최승호 */ 
+	replace(b.mbl_phon,'-','')  as cd,	/* 사용자 전화번호 */
+	b.user_nm as nm,		/* 사용자 이름 */
+	'2' as cl,					/* 구분 코드 */
+	a.sale_grp as grp,			/* 그룹 코드 */
+    a.deal_co_nm as org_area_nm,
+    fbas_get_deal_nm(a.pos_agency,'99991231') as org_nm
+FROM
+	tbas_deal_co_mgmt a,
+    (select c.user_id,
+               c.user_nm,
+               c.user_grp,
+               c.org_area,
+               c.org_id,
+               (case when mbp = '1' then c.mbl_phon 
+                     when mbp = '2' then c.mbl_phon2 
+                     when mbp = '3' then c.mbl_phon3 end ) as mbl_phon
+          from tbas_user_mgmt c,
+               (select '1' as mbp from dual
+                union all
+                select '2' from dual
+                union all
+                select '3' from dual) b
+         where ((mbp = '1' and mbl_phon is not null) or ( mbp = '2' and mbl_phon2 is not null )  or ( mbp = '3' and mbl_phon3 is not null ))
+           and c.del_yn = 'N'
+           AND c.eff_user_yn = 'Y')  b
+WHERE b.ORG_AREA = a.deal_co_cd     
+AND 
+	a.del_yn = 'N'    
+AND
+	a.deal_co_cl1 in ('A2','A3','A4','A5','B1','B2','C1')	
+AND
+	a.sale_grp = #code#
+AND
+	a.eff_end_dtm = '99991231235959'
+AND 
+    a.deal_end_yn = 'N'
+]]><isNotEmpty prepend="AND" property="ORG_ID">
+<![CDATA[    a.pos_agency = #org_id#
+]]></isNotEmpty>
+<![CDATA[order by b.user_nm        ]]>
+	</select>
+	<select id="getUserByUserCl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT							/*+ ADMNTC00300_getUserByUserCl_조민지_최승호 */ 
+	replace(a.mbl_phon,'-','') as cd,			/* 사용자 전화번호 */
+	a.user_nm as nm,			/* 사용자 이름 */
+	'3' as cl,					/* 구분 코드 */
+	a.user_grp as grp,			/* 그룹 코드 */
+	FBAS_GET_DEAL_NM(a.org_area,'99991231') as org_area_nm, /* 근무지 */
+	fbas_get_deal_nm(c.pos_agency,'99991231') as org_nm
+FROM
+	(select c.user_id,
+               c.user_nm,
+               c.user_grp,
+               c.org_area,
+               c.org_id,
+               (case when mbp = '1' then c.mbl_phon 
+                     when mbp = '2' then c.mbl_phon2 
+                     when mbp = '3' then c.mbl_phon3 end ) as mbl_phon
+          from tbas_user_mgmt c,
+               (select '1' as mbp from dual
+                union all
+                select '2' from dual
+                union all
+                select '3' from dual) b
+         where ((mbp = '1' and mbl_phon is not null) or ( mbp = '2' and mbl_phon2 is not null )  or ( mbp = '3' and mbl_phon3 is not null ))
+           and c.del_yn = 'N'
+           AND c.eff_user_yn = 'Y'
+           AND c.attc_cat = #code#) a,
+	tbas_deal_co_mgmt c
+WHERE a.org_area = c.deal_co_cd(+)
+AND 
+    c.del_yn(+) = 'N'
+AND 
+    c.eff_end_dtm(+) = '99991231235959'
+]]><isNotEmpty prepend="AND" property="ORG_ID">
+<![CDATA[ 	c.pos_agency = #org_id#
+]]></isNotEmpty>
+<![CDATA[ORDER BY 
+	a.user_nm]]>
+	</select>
+	<select id="getUserByDealCl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT							/*+ ADMNTC00300_getUserByDealCl_조민지_최승호 */ 
+	replace(b.mbl_phon,'-','')  as cd,	/* 사용자 전화번호 */
+	b.user_nm as nm,		/* 사용자 이름 */
+	'2' as cl,					/* 구분 코드 */
+	a.sale_grp as grp,			/* 그룹 코드 */
+    a.deal_co_nm as org_area_nm,
+    fbas_get_deal_nm(a.pos_agency,'99991231') as org_nm
+FROM
+	tbas_deal_co_mgmt a,
+    (select c.user_id,
+               c.user_nm,
+               c.user_grp,
+               c.org_area,
+               c.org_id,
+               (case when mbp = '1' then c.mbl_phon 
+                     when mbp = '2' then c.mbl_phon2 
+                     when mbp = '3' then c.mbl_phon3 end ) as mbl_phon
+          from tbas_user_mgmt c,
+               (select '1' as mbp from dual
+                union all
+                select '2' from dual
+                union all
+                select '3' from dual) b
+         where ((mbp = '1' and mbl_phon is not null) or ( mbp = '2' and mbl_phon2 is not null )  or ( mbp = '3' and mbl_phon3 is not null ))
+           and c.del_yn = 'N'
+           AND c.eff_user_yn = 'Y') b
+WHERE b.ORG_AREA = a.deal_co_cd(+)     
+AND 
+	a.del_yn(+) = 'N'    
+AND
+	a.deal_co_cl1(+) = #code#
+AND
+	a.eff_end_dtm(+) = '99991231235959'
+AND 
+  a.deal_end_yn(+) = 'N'	
+]]><isNotEmpty prepend="AND" property="ORG_ID">
+<![CDATA[  a.pos_agency = #org_id#
+]]> </isNotEmpty>
+<![CDATA[order by b.user_nm]]>
+	</select>
+	<select id="getTranCnt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00300_getTranCnt_김연석_김연석 */
+       sadm_sms_tran_seq.nextval as tran_cnt
+  FROM dual]]>
+	</select>
+	<select id="getSenderTelNo" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT									/*+ ADMNTC00300_getUserByUserGrp_조민지_최승호 */ 
+	a.mbl_phon  as RTN_TEL_NO			/* 사용자 전화번호 */
+	,a.mbl_phon  as RTN_TEL_NM
+FROM
+	tbas_user_mgmt a
+WHERE    
+	a.del_yn = 'N'
+AND    
+	a.eff_user_yn = 'Y'	
+AND
+	a.user_id = #onlineContext.userInfo.loginId#
+AND
+	a.mbl_phon is not null
+UNION ALL
+select a.wphon  as RTN_TEL_NO	
+,a.wphon as RTN_TEL_NM
+ from tbas_user_mgmt a
+ where a.del_yn = 'N'
+ and a.user_id = #onlineContext.userInfo.loginId#	
+ and a.wphon is not null]]>
+	</select>
+	<insert id="addSmsBas" parameterClass="map" ><![CDATA[INSERT INTO 					/*+ ADMNTC00300_addSmsBas_조민지_최승호 */ 
+	tadm_sms_tran
+(
+	tran_dt,					/* 전송일 */
+	tran_cnt,					/* 전송차수 */
+	title,						/* 제목 */
+	context,					/* 내용 */
+	TRAN_USER_ID,				/* 전송자 아이디 */
+	RTN_TEL_NO,					/* 전송자 전화번호 */
+	msg_ser_num,                /* 메시지일련번호 */
+	sms_job_cl,                 /* SMS업무구분 */
+	del_yn,						/* 삭제 여부 - default : N */
+	upd_cnt,					/* 업데이트 카운트 - default : 0 */
+	ins_dtm,					/* 등록일 */
+	ins_user_id,				/* 등록자 */
+	mod_dtm,					/* 수정일 */
+	mod_user_id 				/* 수정자 */	
+)
+VALUES 
+(
+	#tran_dt#,
+	#tran_cnt#,
+	#title#,
+	#context#,
+	
+	#TRAN_USER_ID#,
+	#RTN_TEL_NO#,
+	#msg_ser_num#,
+	#sms_job_cl#,
+	'N',				
+	0,			
+	TO_CHAR(SYSDATE, 'yyyymmddhh24MIss'),			
+	#onlineContext.userInfo.loginId#,								
+	TO_CHAR(SYSDATE, 'yyyymmddhh24MIss'),			
+	#onlineContext.userInfo.loginId#
+)]]>
+	</insert>
+	<insert id="addSmsDtl" parameterClass="map" ><![CDATA[INSERT INTO 					/*+ ADMNTC00300_addSmsDtl_조민지_최승호 */ 
+	tadm_sms_tran_dtl
+(
+	tran_dt,					/* 전송일 */
+	tran_cnt,					/* 전송차수 */
+	seq,						/* 순번 */
+	name,						/* 받는사람 */
+	tel_no,						/* 받는사람 전화번호 */
+	ADDR_CAT,					/* 주소록구분 */
+	
+	del_yn,						/* 삭제 여부 - default : N */
+	upd_cnt,					/* 업데이트 카운트 - default : 0 */
+	ins_dtm,					/* 등록일 */
+	ins_user_id,				/* 등록자 */
+	mod_dtm,					/* 수정일 */
+	mod_user_id,				/* 수정자 */	
+	skt_yn,                     /* SKT 사용자 여부 */
+	cmp_msg_id
+)
+VALUES 
+(
+	#tran_dt#,
+	#tran_cnt#,
+	(SELECT NVL(MAX(seq), 0)+1 FROM tadm_sms_tran_dtl WHERE tran_dt = #tran_dt# AND tran_cnt = #tran_cnt# ),
+	#nm#,
+	#cd#,
+	#cl#,
+	
+	'N',				
+	0,			
+	TO_CHAR(SYSDATE, 'yyyyMMddHH24miss'),			
+	#onlineContext.userInfo.loginId#,									
+	TO_CHAR(SYSDATE, 'yyyyMMddHH24miss'),			
+	#onlineContext.userInfo.loginId#,
+	#skt_yn#,
+	#cmp_msg_id#
+)]]>
+	</insert>
+	<select id="getSmsMsgSerNum" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT  										/*+ ADMNTC00300_getSmsMsgSerNum_조민지_최승호 */ 
+	SADM_SMS_SEQ.NEXTVAL AS MSG_SER_NUM			/* 메세지 일련번호 */
+FROM    
+	DUAL]]>
+	</select>
+	<select id="getSmsDtlList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00300_getSmsDtlList_원윤성_한병곤 */ 
+       a.name,
+       a.tel_no,
+       b.tran_rslt_cd,
+       decode(nvl(b.tran_rslt_cd,'D'),'S','Y',(decode(nvl(b.tran_rslt_cd,'D'),'F','N','전송중'))) as tran_rslt_nm,
+       b.err_cd,
+       comm_cd_val_nm as err_nm
+  FROM tadm_sms_tran_dtl a,
+       tadm_sms_result b,
+       tbas_comm_cd_dtl c
+ WHERE a.tran_dt  = #tran_dt#
+   AND a.tran_cnt = #tran_cnt#
+   AND a.del_yn   = 'N'  
+   AND a.tran_dt  = b.tran_dt(+)
+   AND a.tran_cnt = b.tran_cnt(+)
+   AND decode(length(a.tel_no),10,substr(a.tel_no,0,3)||'0'||substr(a.tel_no,4),a.tel_no) = b.rcv_phon_num(+)
+   AND b.err_cd = c.comm_cd_val(+)
+   AND c.comm_cd_id(+) = 'ZADM_C_00080'    
+ GROUP BY a.name, a.tel_no, b.tran_rslt_cd,b.tran_rslt_cd,b.err_cd, comm_cd_val_nm]]>
+	</select>
+	<select id="getCmpMsgId" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00300_getCmpMsgId_원윤성_한병곤 */
+       sadm_sms_cmp_msg_seq.nextval as cmp_msg_id
+  FROM dual]]>
+	</select>
+	<insert id="addTelinkSms" parameterClass="map" ><![CDATA[INSERT /*+ ADMNTC00300_addTelinkSms_원윤성_한병곤*/ 
+  INTO telink_sms
+           (cmp_msg_id, 
+            cmp_usr_id, 
+            odr_fg, 
+            sms_gb, 
+            used_cd, 
+            msg_gb,
+            snd_dttm, 
+            snd_phn_id,
+            callback, 
+            rcv_phn_id, 
+            snd_msg, 
+            expire_val,
+            sms_st, 
+            rslt_val
+           )
+     VALUES (
+             #CMP_MSG_ID#, 
+             '00000', 
+             '2', 
+             '1', 
+             '00 ', 
+             'A',
+             NVL(#send_time#,TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS')),
+             #RTN_TEL_NO#,
+             #RTN_TEL_NO#, 
+             #CD#, 
+             #CONTEXT#, 
+              0,
+             '0', 
+             99
+            )]]>
+	</insert>
+	<select id="getSmsDtlNewList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ ADMNTC00300_getSmsDtlNewList_원윤성_한병곤 */ 
+       '0' CHK
+     , a.tran_dt
+     , a.tran_cnt
+     , SEQ
+     , NAME
+     , TEL_NO
+     , ADDR_CAT
+     , SKT_YN
+     , CONTEXT
+     , RTN_TEL_NO
+     , nvl(c.rslt_val, 99) tran_rslt_cd
+     , (case when nvl(c.rslt_val, 99) = '-100' then 'Y'
+             when nvl(c.rslt_val, 99) = '99'   then '전송중'
+             else 'N'
+        end) as tran_rslt_nm
+     , fbas_get_commcdnm_val('ZADM_C_00080', nvl(c.rslt_val, 99)) as err_nm
+     , ''  new_tran_dt
+     , '0' new_tran_cnt
+  from TADM_SMS_TRAN     a
+     , TADM_SMS_TRAN_DTL b
+     , TELINK_SMS        c
+ WHERE a.tran_dt    = b.tran_dt
+   AND a.tran_cnt   = b.tran_cnt
+   AND a.tran_dt    = #tran_dt#
+   AND a.tran_cnt   = #tran_cnt#
+   AND a.del_yn     = 'N'
+   AND b.del_yn     = 'N'
+   AND b.cmp_msg_id = c.cmp_msg_id(+)
+   AND b.tel_no     = c.rcv_phn_id(+)
+ ORDER BY name]]>
+	</select>
+	<select id="getMyAddr" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00300_getMyAddr_원윤성_한병곤 */ 
+       'ZBAS_C_00000' as comm_cd_id,
+       addr_group as comm_cd_val,
+       addr_group as comm_cd_val_nm
+  FROM tadm_my_addr_group
+ WHERE user_id = #onlineContext.userInfo.loginId#]]>
+	</select>
+	<select id="getMyAddrBook" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ ADMNTC00300_getMyAddrBook_원윤성_한병곤 */ 
+       REPLACE (d.mbl_phon, '-', '') AS cd,
+       d.user_nm AS nm,
+       d.user_grp as grp,
+       '2' as cl,
+       fbas_get_deal_nm (d.org_area, '99991231') AS org_area_nm, 
+       fbas_get_deal_nm(e.pos_agency,'99991231') AS org_nm
+  FROM tadm_my_addr a,
+       (SELECT c.user_id, c.user_nm, c.user_grp, c.org_area, c.org_id,
+                 (CASE
+                     WHEN mbp = '1'
+                        THEN c.mbl_phon
+                     WHEN mbp = '2'
+                        THEN c.mbl_phon2
+                     WHEN mbp = '3'
+                        THEN c.mbl_phon3
+                  END
+                 ) AS mbl_phon
+            FROM tbas_user_mgmt c,
+                 (SELECT '1' AS mbp
+                    FROM DUAL
+                  UNION ALL
+                  SELECT '2'
+                    FROM DUAL
+                  UNION ALL
+                  SELECT '3'
+                    FROM DUAL) b
+           WHERE (   (mbp = '1' AND mbl_phon IS NOT NULL)
+                  OR (mbp = '2' AND mbl_phon2 IS NOT NULL)
+                  OR (mbp = '3' AND mbl_phon3 IS NOT NULL)
+                 )
+             AND c.del_yn = 'N'
+             AND c.eff_user_yn = 'Y') d,
+       tbas_deal_co_mgmt e
+ WHERE a.addr_user_id = d.user_id     
+   AND d.org_area = e.deal_co_cd
+   AND e.del_yn = 'N'
+   AND e.eff_end_dtm = '99991231235959'
+   AND a.user_id = #onlineContext.userInfo.loginId#
+   AND a.addr_group = #code#]]>
+	</select>
+	<insert id="addReSendSmsTran" parameterClass="map" ><![CDATA[insert into TADM_SMS_TRAN   /*+ ADMNTC00300_addReSendSmsTran_김연석_김연석 */ 
+     ( TRAN_DT
+     , TRAN_CNT
+     , TITLE
+     , TRAN_USER_ID
+     , RTN_TEL_NO
+     , CONTEXT
+     , MSG_SER_NUM
+     , SMS_JOB_CL
+     , DEL_YN
+     , UPD_CNT
+     , INS_DTM
+     , INS_USER_ID
+     , MOD_DTM
+     , MOD_USER_ID
+     )
+select #NEW_TRAN_DT#  as TRAN_DT
+     , #NEW_TRAN_CNT# as TRAN_CNT
+     , TITLE
+     , TRAN_USER_ID
+     , RTN_TEL_NO
+     , CONTEXT
+     , MSG_SER_NUM
+     , SMS_JOB_CL
+     , 'N', 0
+     , TO_CHAR(SYSDATE, 'yyyyMMddHH24miss') as INS_DTM
+	 , #onlineContext.userInfo.loginId#     as INS_USER_ID
+	 , TO_CHAR(SYSDATE, 'yyyyMMddHH24miss') as MOD_DTM
+	 , #onlineContext.userInfo.loginId#     as MOD_USER_ID
+  from TADM_SMS_TRAN
+ where tran_dt  = #TRAN_DT#
+   and tran_cnt = to_number(#TRAN_CNT#)]]>
+	</insert>
+	<select id="getSmsTranDtl" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ ADMNTC00300_addReSendSmsTran_김연석_김연석 */
+       #TRAN_DT#  as TRAN_DT
+     , #TRAN_CNT# as TRAN_CNT
+     , SEQ
+     , NAME
+     , TEL_NO
+     , ADDR_CAT
+     , SKT_YN
+     , CONTEXT
+     , RTN_TEL_NO
+  from TADM_SMS_TRAN     a
+     , TADM_SMS_TRAN_DTL b
+ where a.tran_dt  = b.tran_dt
+   and a.tran_cnt = b.tran_cnt
+   and a.tran_dt  = #OLD_TRAN_DT#
+   and a.tran_cnt = to_number(#OLD_TRAN_CNT#)]]>
+	</select>
+	<insert id="addReSendSmsTranDtl" parameterClass="map" ><![CDATA[insert into TADM_SMS_TRAN_DTL  /*+ ADMNTC00300_addReSendSmsTranDtl_김연석_김연석 */
+     ( TRAN_DT
+     , TRAN_CNT
+     , SEQ
+     , NAME
+     , TEL_NO
+     , ADDR_CAT
+     , SKT_YN
+     , CMP_MSG_ID
+     , DEL_YN
+     , UPD_CNT
+     , INS_DTM
+     , INS_USER_ID
+     , MOD_DTM
+     , MOD_USER_ID
+   ) values (
+       #TRAN_DT#
+     , #TRAN_CNT#
+     , #SEQ#
+     , #NAME#
+     , #TEL_NO#
+     , #ADDR_CAT#
+     , #SKT_YN#
+     , #cmp_msg_id#
+     , 'N', 0
+     , TO_CHAR(SYSDATE, 'yyyyMMddHH24miss')
+	 , #onlineContext.userInfo.loginId#
+	 , TO_CHAR(SYSDATE, 'yyyyMMddHH24miss')
+	 , #onlineContext.userInfo.loginId#)]]>
+	</insert>
+	<select id="getUserByUserNm" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT	/*+ ADMNTC00300_getUserByBizGrp_조민지_최승호 */ 
+	replace(b.mbl_phon,'-','')  as cd,	/* 사용자 전화번호 */
+	b.user_nm as nm,		/* 사용자 이름 */
+	'2' as cl,					/* 구분 코드 */
+	a.sale_grp as grp,			/* 그룹 코드 */
+    a.deal_co_nm as org_area_nm,
+    fbas_get_deal_nm(a.pos_agency,'99991231') as org_nm
+FROM
+	tbas_deal_co_mgmt a,
+    (select c.user_id,
+               c.user_nm,
+               c.user_grp,
+               c.org_area,
+               c.org_id,
+               (case when mbp = '1' then c.mbl_phon 
+                     when mbp = '2' then c.mbl_phon2 
+                     when mbp = '3' then c.mbl_phon3 end ) as mbl_phon
+          from tbas_user_mgmt c,
+               (select '1' as mbp from dual
+                union all
+                select '2' from dual
+                union all
+                select '3' from dual) b
+         where ((mbp = '1' AND mbl_phon is not null) or ( mbp = '2' and mbl_phon2 is not null )  or ( mbp = '3' and mbl_phon3 is not null ))
+           and c.del_yn = 'N'
+           AND c.eff_user_yn = 'Y')  b
+WHERE b.ORG_AREA = a.deal_co_cd     
+AND 
+	a.del_yn = 'N'    
+AND
+	b.user_nm like '%' || #name# || '%'
+AND
+	a.eff_end_dtm = '99991231235959'
+AND 
+    a.deal_end_yn = 'N'
+AND 
+    a.pos_agency = #org_id#
+order by b.user_nm ]]>
+	</select>
+	<select id="getUserByDealCoNm" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT	/*+ ADMNTC00300_getUserByBizGrp_조민지_최승호 */ 
+	replace(b.mbl_phon,'-','')  as cd,	/* 사용자 전화번호 */
+	b.user_nm as nm,		/* 사용자 이름 */
+	'2' as cl,					/* 구분 코드 */
+	a.sale_grp as grp,			/* 그룹 코드 */
+    a.deal_co_nm as org_area_nm,
+    fbas_get_deal_nm(a.pos_agency,'99991231') AS org_nm
+FROM
+	tbas_deal_co_mgmt a,
+    (select c.user_id,
+               c.user_nm,
+               c.user_grp,
+               c.org_area,
+               c.org_id,
+               (case when mbp = '1' then c.mbl_phon 
+                     when mbp = '2' then c.mbl_phon2 
+                     when mbp = '3' then c.mbl_phon3 end ) as mbl_phon
+          from tbas_user_mgmt c,
+               (select '1' as mbp from dual
+                union all
+                select '2' from dual
+                union all
+                select '3' from dual) b
+         where (( mbp = '1' and mbl_phon is not null )  or ( mbp = '2' and mbl_phon2 is not null )  or ( mbp = '3' and mbl_phon3 is not null ))
+           and c.del_yn = 'N'
+           AND c.eff_user_yn = 'Y')  b
+WHERE b.ORG_AREA = a.deal_co_cd     
+AND 
+	a.del_yn = 'N'    
+AND
+	a.deal_co_nm like '%' || #name# || '%'
+AND
+	a.eff_end_dtm = '99991231235959'
+AND 
+    a.deal_end_yn = 'N'
+AND 
+    a.pos_agency = #org_id#
+order by b.user_nm]]>
+	</select>
+</sqlMap>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="535" Id="form" Left="8" PidAttrib="7" Title="New&#32;Form" Top="8" Ver="1.0" Width="800" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="Dataset0">
+				<Contents>
+					<colinfo id="column_1" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_2" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_3" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_4" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_5" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_6" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_7" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_8" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_9" size="255" summ="default" type="STRING"/>
+					<colinfo id="column_10" size="255" summ="default" type="STRING"/>
+					<record>
+						<column_1>aaaa</column_1>
+						<column_10></column_10>
+						<column_2>ssss</column_2>
+						<column_3></column_3>
+						<column_4></column_4>
+						<column_5></column_5>
+						<column_6></column_6>
+						<column_7></column_7>
+						<column_8></column_8>
+						<column_9></column_9>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="dsParam">
+				<Contents>
+					<colinfo id="id" size="256" summ="default" type="STRING"/>
+					<record>
+						<id></id>
+					</record>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="Dataset1">
+				<Contents>
+					<colinfo id="MEMO" size="255" type="STRING"/>
+					<colinfo id="NAME" size="255" type="STRING"/>
+					<colinfo id="ID" size="255" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Button Height="21" Id="Button0" Left="57" OnClick="Button0_OnClick" TabOrder="1" Text="Button0" Top="24" Width="104"></Button>
+		<Grid BindDataset="Dataset0" BkColor2="default" BoldHead="true" Bottom="288" Enable="true" EndLineColor="default" Height="96" Id="Grid0" InputPanel="FALSE" Left="40" LineColor="default" Right="752" TabOrder="2" TabStop="true" Top="192" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="default" WheelScrollRow="1" Width="712">
+			<contents>
+				<columns>
+					<col width="80"/>
+					<col width="80"/>
+					<col width="80"/>
+					<col width="80"/>
+					<col width="80"/>
+					<col width="80"/>
+					<col width="80"/>
+					<col width="80"/>
+					<col width="80"/>
+					<col width="80"/>
+				</columns>
+				<head>
+					<cell col="0" display="text" text="column_1"/>
+					<cell col="1" display="text" text="column_2"/>
+					<cell col="2" display="text" text="column_3"/>
+					<cell col="3" display="text" text="column_4"/>
+					<cell col="4" display="text" text="column_5"/>
+					<cell col="5" display="text" text="column_6"/>
+					<cell col="6" display="text" text="column_7"/>
+					<cell col="7" display="text" text="column_8"/>
+					<cell col="8" display="text" text="column_9"/>
+					<cell col="9" display="text" text="column_10"/>
+				</head>
+				<body>
+					<cell col="0" colid="column_1" display="text"/>
+					<cell col="1" colid="column_2" display="text"/>
+					<cell col="2" colid="column_3" display="text"/>
+					<cell col="3" colid="column_4" display="text"/>
+					<cell col="4" colid="column_5" display="text"/>
+					<cell col="5" colid="column_6" display="text"/>
+					<cell col="6" colid="column_7" display="text"/>
+					<cell col="7" colid="column_8" display="text"/>
+					<cell col="8" colid="column_9" display="text"/>
+					<cell col="9" colid="column_10" display="text"/>
+				</body>
+			</contents>
+		</Grid>
+		<Edit Height="21" Id="Edit0" Left="144" TabOrder="3" Top="296" Width="121"></Edit>
+		<Edit Height="21" Id="Edit1" Left="110" TabOrder="4" Text="Edit1" Top="126" Width="121"></Edit>
+		<Button Height="22" Id="Button1" Left="280" OnClick="Button1_OnClick" TabOrder="5" Text="Button1" Top="296" Width="104"></Button>
+		<Grid BindDataset="Dataset1" BkColor2="default" BoldHead="true" Bottom="488" Enable="true" EndLineColor="default" Height="168" Id="Grid1" InputPanel="FALSE" Left="32" LineColor="default" Right="394" TabOrder="6" TabStop="true" Top="320" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="default" WheelScrollRow="1" Width="362">
+			<contents>
+				<columns>
+					<col width="80"/>
+					<col width="80"/>
+					<col width="80"/>
+				</columns>
+				<head>
+					<cell col="0" display="text" text="MEMO"/>
+					<cell col="1" display="text" text="NAME"/>
+					<cell col="2" display="text" text="ID"/>
+				</head>
+				<body>
+					<cell col="0" colid="MEMO" display="text"/>
+					<cell col="1" colid="NAME" display="text"/>
+					<cell col="2" colid="ID" display="text"/>
+				</body>
+			</contents>
+		</Grid>
+		<Static Align="Right" Height="15" Id="Static0" Left="106" TabOrder="7" Text="ID" Top="300" VAlign="Middle" Width="33"></Static>
+	</Form>
+	<Script><![CDATA[
+function Button0_OnClick(obj)
+{
+	var strParam = "name=" + Quote(Edit0.Text);
+	Transaction("test", 
+				"http://localhost:8088/sample/apitest.jsp", 
+				"nc_input_fieldDs=Dataset0 nc_input_fieldDs1=Dataset0", 
+				"Dataset0=output", 
+				strParam, 
+				"fnCallback");
+}
+
+function fnCallback(svcid, errcd, errmsg)
+{
+	if ( svcid == "testselect")
+	{
+		trace(http.SendHttpStr);
+		trace(http.RecvHttpStr);
+	}
+}
+
+function Button1_OnClick(obj)
+{
+	if ( Length(Edit0.Text) == 0 ) { alert("확인"); return; }
+	
+	dsParam.SetColumn(0, "id", Edit0.Text);
+	
+	var strParam = "nc_trId=" + Quote("framework.demo.Hello#selectHello");
+	Transaction("testselect", 
+				"http://localhost:8088/sample/standard.xmi", 
+				"nc_input_fieldDs=dsParam", 
+				"Dataset1=nc_output_fieldDs", 
+				strParam, 
+				"fnCallback");
+}
+]]></Script>
+</Window>

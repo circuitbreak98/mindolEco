@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<Form Height="446" Id="form" Left="8" OnLoadCompleted="form_OnLoadCompleted" PidAttrib="7" Title="서비스관리번호&#32;상품선택" Top="8" Ver="1.0" Width="800" WorkArea="true">
+		<Datasets>
+			<Dataset DataSetType="Dataset" Id="ds_supProd">
+				<Contents>
+					<colinfo id="supl_svc_cd" size="256" summ="default" type="STRING"/>
+					<colinfo id="supl_svc_nm" size="256" summ="default" type="STRING"/>
+					<colinfo id="supl_svc_cl" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_condition">
+				<Contents></Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_supProdCl">
+				<Contents>
+					<colinfo id="COMM_CD_ID" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL" size="255" summ="default" type="STRING"/>
+					<colinfo id="COMM_CD_VAL_NM" size="255" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+			<Dataset DataSetType="Dataset" Id="ds_svcMgmtNumItem">
+				<Contents>
+					<colinfo id="gnrl_sale_no" size="255" summ="default" type="STRING"/>
+					<colinfo id="SVC_DTM" size="255" summ="default" type="STRING"/>
+					<colinfo id="SALE_DTM" size="255" summ="default" type="STRING"/>
+					<colinfo id="EQP_MDL_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="EQP_MDL_CD_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="EQP_SER_NUM" size="255" summ="default" type="STRING"/>
+					<colinfo id="USIM_MDL_CD" size="255" summ="default" type="STRING"/>
+					<colinfo id="USIM_MDL_CD_NM" size="255" summ="default" type="STRING"/>
+					<colinfo id="USIM_SER_NUM" size="255" summ="default" type="STRING"/>
+					<colinfo id="SL_CL" size="256" summ="default" type="STRING"/>
+					<colinfo id="SL_NET_CD" size="256" summ="default" type="STRING"/>
+				</Contents>
+			</Dataset>
+		</Datasets>
+		<Grid AutoFit="TRUE" BindDataset="ds_svcMgmtNumItem" BkColor2="user32" BoldHead="true" Border="Flat" Bottom="405" Editable="TRUE" Enable="true" EndLineColor="default" FillArea="TRUE" HeadBorder="Flat" HeadHeight="22" Height="373" Id="grd_prodList" InputPanel="FALSE" Left="8" LineColor="user33" MinWidth="100" OnCellDBLClick="grd_list_OnCellDblClick" OnHeadClick="cf_allChecknSort" Right="792" RowHeight="21" Style="sty_Grid" TabOrder="-2" TabStop="FALSE" Top="32" UseDBuff="true" UsePopupMenu="true" UseSelColor="true" Visible="true" VLineColor="user33" WheelScrollRow="1" Width="784">
+			<contents>
+				<format id="Default">
+					<columns>
+						<col width="130"/>
+						<col width="130"/>
+						<col width="130"/>
+						<col width="130"/>
+						<col width="130"/>
+						<col width="130"/>
+					</columns>
+					<head>
+						<cell align="center" bkcolor="user34" col="0" color="user35" display="text" font="돋움,9,Bold" text="개통일자" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="1" color="user35" display="text" font="돋움,9,Bold" text="판매일자" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="2" color="user35" display="text" font="돋움,9,Bold" text="단말기" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="3" color="user35" display="text" font="돋움,9,Bold" text="단말기&#32;일련번호" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="4" color="user35" display="text" font="돋움,9,Bold" text="USIM" Valign="Center"/>
+						<cell align="center" bkcolor="user34" col="5" color="user35" display="text" font="돋움,9,Bold" text="USIM&#32;일련번호" Valign="Center"/>
+					</head>
+					<body>
+						<cell align="left" col="0" colid="SVC_DTM" display="text" Mask="####-##-##&#32;##:##:##"/>
+						<cell col="1" colid="SALE_DTM" display="text" Mask="####-##-##&#32;##:##:##"/>
+						<cell align="left" col="2" colid="EQP_MDL_CD_NM" display="text"/>
+						<cell col="3" colid="EQP_SER_NUM" display="text"/>
+						<cell col="4" colid="USIM_MDL_CD_NM" display="text"/>
+						<cell col="5" colid="USIM_SER_NUM" display="text"/>
+					</body>
+				</format>
+			</contents>
+		</Grid>
+		<Button Align="Left" ButtonStyle="TRUE" Height="24" Id="btn_close" ImageID="btn_d_2" Left="413" LeftMargin="5" OnClick="btn_close_OnClick" Style="sty_btn_d" TabOrder="1" Text="닫기" Top="412" Width="61"></Button>
+		<Button Align="Left" ButtonStyle="TRUE" Height="24" Id="btn_confirm" ImageID="btn_c_2" Left="349" LeftMargin="5" OnClick="btn_confirm_OnClick" Style="sty_btn_c" TabOrder="2" Text="확인" Top="412" Width="61"></Button>
+		<Image Align="Left" Height="25" Id="Image0" ImageID="bul_tit" Left="8" LeftMargin="15" Style="sty_img_tit" TabOrder="4" Text="목록" Top="4" Width="192"></Image>
+	</Form>
+	<Script><![CDATA[/*******************************************************************************
+* 프로그램ID  : DISDCO01000
+* 업무명      : 재고 공통
+* 프로그램명  : 상품 검색
+--------------------------------------------------------------------------------
+* 작성자      : 한병곤 
+* 작성일      : 2009.02.23
+--------------------------------------------------------------------------------
+* 1. 변경이력
+수정자    :
+수정일    :
+수정 내역 :
+*******************************************************************************/
+
+//==============================================================================
+// 공통 스크립트 로딩
+//==============================================================================
+#include "lib::lib_commF.js"
+#include "lib::lib_util.js"
+#include "lib::lib_commPopup.js"
+
+//==============================================================================
+// 폼 변수 정의
+//==============================================================================
+var FV_STR_NAME; // 사용자 이름
+var prod_cd = "";
+var prod_nm = "";
+var ds_Flag = false;
+var ds_Parent = "";
+var row_Parent = "";
+var	F_SvcID = "";
+var FV_CALL_FUNCTION;
+var FV_APPLY_DT;
+var FV_MFACT_ID;	// 제조사
+var FV_PROD_CL;		// 상품구분
+var FV_ROW = 0;
+/*******************************************************************************
+ * @description    : 최초 폼 로드시 발생 - 이벤트
+*******************************************************************************/
+function form_OnLoadCompleted(obj)
+{
+	FV_ROW = row;
+
+	ds_svcMgmtNumItem.Copy(parent.ds_svcMgmtNumItem);
+}
+
+/*******************************************************************************
+ * @description    : 닫기 - 이벤트
+*******************************************************************************/
+function btn_close_OnClick(obj)
+{
+	this.close();
+}
+
+/*******************************************************************************
+ * @description    : 확인 - 이벤트
+*******************************************************************************/
+function btn_confirm_OnClick(obj)
+{
+	setParent();
+}
+
+
+/*******************************************************************************
+ * @description    : 부모창 데이터셋에 선택된 값 설정
+*******************************************************************************/
+function setParent()
+{
+	var nCurRow = ds_svcMgmtNumItem.currow;
+	if(parent.ds_generalSaleIfList != null)
+	{
+		parent.ds_generalSaleIfList.SetColumn( FV_ROW, "EQP_MDL_CD"  ,ds_svcMgmtNumItem.GetColumn(nCurRow, "EQP_MDL_CD"));
+		parent.ds_generalSaleIfList.SetColumn( FV_ROW, "EQP_SER_NUM" ,ds_svcMgmtNumItem.GetColumn(nCurRow, "EQP_SER_NUM"));
+		parent.ds_generalSaleIfList.SetColumn( FV_ROW, "USIM_MDL_CD" ,ds_svcMgmtNumItem.GetColumn(nCurRow, "USIM_MDL_CD"));
+		parent.ds_generalSaleIfList.SetColumn( FV_ROW, "USIM_SER_NUM",ds_svcMgmtNumItem.GetColumn(nCurRow, "USIM_SER_NUM"));
+	}                                         
+	else if(parent.ds_list != null)
+	{
+		parent.ds_list.SetColumn( FV_ROW, "GNRL_SALE_NO"  ,ds_svcMgmtNumItem.GetColumn(nCurRow, "gnrl_sale_no"));	
+		parent.ds_list.SetColumn( FV_ROW, "SL_NET_CD"     ,ds_svcMgmtNumItem.GetColumn(nCurRow, "SL_NET_CD"));			
+		parent.ds_list.SetColumn( FV_ROW, "SL_CD"         ,ds_svcMgmtNumItem.GetColumn(nCurRow, "SL_CD"));			
+		parent.ds_list.SetColumn( FV_ROW, "EQP_MDL_CD"    ,ds_svcMgmtNumItem.GetColumn(nCurRow, "EQP_MDL_CD"));
+		parent.ds_list.SetColumn( FV_ROW, "EQP_SER_NUM"   ,ds_svcMgmtNumItem.GetColumn(nCurRow, "EQP_SER_NUM"));
+		parent.ds_list.SetColumn( FV_ROW, "USIM_MDL_CD"   ,ds_svcMgmtNumItem.GetColumn(nCurRow, "USIM_MDL_CD"));
+		parent.ds_list.SetColumn( FV_ROW, "USIM_SER_NUM"  ,ds_svcMgmtNumItem.GetColumn(nCurRow, "USIM_SER_NUM"));
+
+	}
+	this.Close();	
+
+}
+
+/*******************************************************************************
+ * @description    :  그리드 더블 클릭 했을 경우
+*******************************************************************************/
+function grd_list_OnCellDblClick(obj,nRow,nCell,nX,nY,nPivotIndex)
+{
+	setParent();
+}
+]]></Script>
+</Window>

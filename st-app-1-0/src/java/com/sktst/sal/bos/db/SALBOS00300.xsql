@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALBOS00300">
+	<select id="getOnlineSaleList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALBOS00300_getOnlineSaleList - 김만수 */
+  a.gnrl_sale_no                /* 일반판매번호 */
+  , a.gnrl_sale_chg_seq         /* 일반판매변경 순번 */
+  , '1' prod_yn					/* 처리유무 */
+  , '' if_dtm					/* I/F 일시 */
+  , a.sale_dtm                  /* 판매일시 */
+  , a.inden_num					/* 주문번호 */
+  , a.cust_nm                   /* 고객명 */
+  , a.cust_biz_num              /* 고객주민번호 */
+  , a.cust_cl                   /* 고객구분 */
+  , a.cust_tel_no               /* 고객전화번호 */
+  , a.cust_addr                 /* 고객주소 */
+  , a.sale_plc					/* 판매처코드 */
+  , FBAS_GET_DEAL_NM(a.sale_plc, a.sale_dtm) sale_plc_nm	/* 판매처명*/
+  , a.sale_chg_plc				/* 판매처 변경코드 */
+  , b.prod_ser_num              /* 상품일련번호 */
+  , b.eqp_ser_num               /* 단말기일련번호 */
+  , b.eqp_mdl_cd                /* 단말기모델 */
+  , b.eqp_color_cd              /* 단말기색상 */
+  , (SELECT SUM(sale_amt) FROM tsal_sale_amt WHERE gnrl_sale_no = a.gnrl_sale_no) sale_amt	 /* 판매가 */
+  , c.dis_amt					/* 재고가 */
+  , c.mar_amt					/* 마진 */
+  , c.cmms_amt					/* 수수료 */
+  , c.vat_amt					/* 부가세 */
+  , a.settl_cond				/* 수납구분 */
+  , (SELECT SUM(cash_pay_amt) FROM tsal_payment WHERE  gnrl_sale_no = a.gnrl_sale_no) cash_pay_amt
+  , d.crdtcrd_corp1             /* 신용카드사1 */
+  , (SELECT SUM(crdtcrd_pay_amt1) FROM tsal_payment WHERE  gnrl_sale_no = a.gnrl_sale_no) crdtcrd_pay_amt1
+  , d.crdtcrd_corp2             /* 신용카드사2 */
+  , (SELECT SUM(crdtcrd_pay_amt2) FROM tsal_payment WHERE  gnrl_sale_no = a.gnrl_sale_no) crdtcrd_pay_amt2
+  , a.sale_typ_cd			/* B2C */
+  , a.rmks                      /* 비고 */
+FROM tsal_gnrl_sale  a
+LEFT OUTER JOIN tsal_equipment_sale b
+	ON a.gnrl_sale_no = b.gnrl_sale_no
+	AND a.gnrl_sale_chg_seq = b.gnrl_sale_chg_seq
+	AND b.del_yn = 'N'
+LEFT OUTER JOIN tsal_sale_amt c
+	ON a.gnrl_sale_no = c.gnrl_sale_no
+	AND a.gnrl_sale_chg_seq = c.gnrl_sale_chg_seq
+	AND c.del_yn = 'N'
+LEFT OUTER JOIN tsal_payment  d
+	ON a.gnrl_sale_no = d.gnrl_sale_no
+	AND a.gnrl_sale_chg_seq = d.gnrl_sale_chg_seq
+	AND d.del_yn = 'N'
+WHERE a.sale_dtm BETWEEN #sl_dt_from# AND #sl_dt_to#
+AND	 a.sale_typ_cd = '03'
+AND  a.del_yn = 'N'
+AND a.gnrl_sale_no NOT IN (SELECT gnrl_sale_no 
+    							 FROM tsal_gnrl_sale 
+    							WHERE sale_typ_cd = '03' 
+    							  AND SALE_CNCL_YN = 'Y')
+AND a.gnrl_sale_chg_seq = (SELECT MAX(gnrl_sale_chg_seq) 
+    							  FROM tsal_gnrl_sale 
+    							 WHERE gnrl_sale_no = a.gnrl_sale_no)]]>
+	</select>
+	<update id="saveCrypto" parameterClass="map" ><![CDATA[UPDATE TCST_CONSULT_MGMT SET 
+	RES_NO = #RES_NO#
+	, ACC_NO = #ACC_NO#
+	, TEL_NO = #TEL_NO#
+WHERE CON_MGMT_NO = #CON_MGMT_NO#]]>
+	</update>
+	<select id="getConsultMgmt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT CON_MGMT_NO, RES_NO, ACC_NO, TEL_NO, SVC_NO FROM TCST_CONSULT_MGMT]]>
+	</select>
+	<select id="getPrchsMgmt" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT PRCHS_MGMT_NO, RES_NO, ACC_NO, TEL_NO, SVC_NO FROM TCST_PRCHS_MGMT]]>
+	</select>
+	<update id="saveInputCrypto" parameterClass="map" ><![CDATA[UPDATE TCST_PRCHS_MGMT SET 
+	RES_NO = #RES_NO#
+	, ACC_NO = #ACC_NO#
+	, TEL_NO = #TEL_NO#
+	, SVC_NO = #SVC_NO#
+WHERE PRCHS_MGMT_NO = #PRCHS_MGMT_NO#]]>
+	</update>
+	<update id="saveSalInputCrypto" parameterClass="map" ><![CDATA[UPDATE TSAL_GNRL_SALE SET
+	CUST_BIZ_NUM = #CUST_BIZ_NUM#
+	, CUST_TEL_NO = #CUST_TEL_NO#
+WHERE GNRL_SALE_NO = #GNRL_SALE_NO#
+AND GNRL_SALE_CHG_SEQ = #GNRL_SALE_CHG_SEQ#]]>
+	</update>
+	<select id="getSalGnrlList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT 
+	GNRL_SALE_NO
+	, GNRL_SALE_CHG_SEQ
+	, CUST_BIZ_NUM
+	, CUST_TEL_NO 
+FROM TSAL_GNRL_SALE 
+/*WHERE SALE_TYP_CD IN ('01', '02')*/]]>
+	</select>
+</sqlMap>

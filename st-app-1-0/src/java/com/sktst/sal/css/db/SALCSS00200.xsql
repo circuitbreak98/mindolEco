@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="SALCSS00200">
+	<select id="getSaleMaster" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALCSS00200_getSaleMaster-전미량 */ 
+       GNRL_SALE_NO ,
+       GNRL_SALE_CHG_SEQ||'' AS GNRL_SALE_CHG_SEQ ,
+       SALE_DTM ,
+       SALE_CHGRG_ID ,
+       SALE_CHG_DTM ,
+       SALE_PLC ,
+       FBAS_GET_DEAL_NM(SALE_PLC,SALE_DTM) AS SALE_PLC_NM ,
+       S.STL_PLC ,
+       FBAS_GET_DEAL_NM(S.STL_PLC,SALE_DTM) AS STL_PLC_NM ,
+       S.RMKS ,
+       SALE_PRC_PLC ,
+       FBAS_GET_DEAL_NM(SALE_PRC_PLC,SALE_DTM) AS SALE_PRC_PLC_NM ,
+       D.UKEY_AGENCY_CD,
+       D.UKEY_CHANNEL_CD,
+       D.UKEY_SUB_CD,
+       S.DIS_HLD_PLC,
+       DOC_ID,
+       'MOD' AS FLAG,
+       SALE_TYP_CD,
+       SETTL_COND
+  FROM TSAL_GNRL_SALE S, TBAS_DEAL_CO_MGMT D
+ WHERE GNRL_SALE_NO = #gnrl_sale_no#
+       AND GNRL_SALE_CHG_SEQ = 
+       (SELECT MAX(GNRL_SALE_CHG_SEQ) GNRL_SALE_CHG_SEQ 
+         FROM TSAL_GNRL_SALE TGS 
+        WHERE GNRL_SALE_NO = #gnrl_sale_no#
+       ) 
+   AND S.STL_PLC = D.DEAL_CO_CD
+   AND S.SALE_DTM >= D.EFF_STA_DTM  
+   AND S.SALE_DTM <= D.EFF_END_DTM 
+   AND S.DEL_YN = 'N' 
+   AND D.DEL_YN = 'N'
+ORDER BY GNRL_SALE_NO, GNRL_SALE_CHG_SEQ]]>
+	</select>
+	<select id="getEquipSaleListForRD" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALCSS00200_getEquipSaleListForRD-전미량 */
+	   MFACT_ID,
+       FBAS_GET_DEAL_NM(MFACT_ID,'') AS MFACT_NM,
+       PROD_CD,
+       PROD_NM,
+       COUNT(*) AS CNT,
+       SUM(SALE_AMT/1.1) AS SALE_PRC,
+       SUM((SALE_AMT/1.1)*0.1) AS SALE_VAT_PRC         
+  FROM TSAL_GNRL_SALE TGS
+     , TSAL_EQUIPMENT_SALE TES 
+     , TBAS_PROD_MGMT TPM	  
+ WHERE TGS.GNRL_SALE_NO      = TES.GNRL_SALE_NO
+   AND TGS.GNRL_SALE_CHG_SEQ = TES.GNRL_SALE_CHG_SEQ
+   AND TGS.GNRL_SALE_CHG_SEQ = (SELECT MAX(GNRL_SALE_CHG_SEQ) AS MAX
+                                  FROM TSAL_GNRL_SALE
+                                 WHERE GNRL_SALE_NO = #gnrl_sale_no#
+                                   AND DEL_YN = 'N')
+   AND TGS.GNRL_SALE_NO = #gnrl_sale_no#
+   AND TES.EQP_MDL_CD 	= TPM.PROD_CD
+   AND TGS.DEL_YN 	 	= 'N'
+   AND TES.DEL_YN 	 	= 'N'
+GROUP BY MFACT_ID, PROD_CD, PROD_NM
+ORDER BY MFACT_ID, PROD_NM]]>
+	</select>
+	<select id="getSalePayment" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALCSS00200_getSalePayment-전미량 */
+	TGS.GNRL_SALE_NO
+     , TGS.GNRL_SALE_CHG_SEQ
+     , TP.CASH_PAY_AMT 			AS	BF_CASH_PAY_AMT  
+     , TP1.CASH_PAY_AMT			AS	CASH_PAY_AMT
+     , 0 						AS 	CHG_CASH_PAY_AMT
+     , TSA.DIS_AMT				AS 	BF_DIS_AMT 
+	 , TSA1.DIS_AMT 			AS 	DIS_AMT
+	 , 0						AS 	CHG_DIS_AMT
+  	 , TSA.MAR_AMT				AS 	BF_MAR_AMT
+  	 , TSA1.MAR_AMT				AS 	MAR_AMT
+  	 , 0						AS 	CHG_MAR_AMT
+  	 , TSA.CMMS_AMT				AS	BF_CMMS_AMT 
+  	 , TSA1.CMMS_AMT			AS	CMMS_AMT
+  	 , 0						AS	CHG_CMMS_AMT 
+  	 , TSA.VAT_AMT				AS	BF_VAT_AMT 
+  	 , TSA1.VAT_AMT 			AS 	VAT_AMT
+  	 , 0						AS 	CHG_VAT_AMT
+  	 , TSA.SALE_AMT				AS 	BF_SALE_AMT
+  	 , TSA1.SALE_AMT			AS 	SALE_AMT
+  	 , 0						AS	CHG_SALE_AMT
+  	 , SALE_PRC_PLC
+     , FBAS_GET_DEAL_NM(SALE_PRC_PLC,SALE_CHG_DTM) AS SALE_PRC_PLC_NM
+     , AG.UKEY_AGENCY_CD
+FROM   TSAL_GNRL_SALE TGS
+     , TSAL_PAYMENT TP
+     , TBAS_DEAL_CO_MGMT AG
+     ,(SELECT GNRL_SALE_NO 
+     		,SUM(CASH_PAY_AMT) CASH_PAY_AMT
+       FROM TSAL_PAYMENT
+       WHERE GNRL_SALE_NO = #gnrl_sale_no#
+       		AND DEL_YN = 'N'
+       GROUP BY GNRL_SALE_NO) TP1
+      ,TSAL_SALE_AMT TSA
+      ,(SELECT GNRL_SALE_NO 
+     		,SUM(DIS_AMT) DIS_AMT
+     		,SUM(MAR_AMT) MAR_AMT
+            ,SUM(CMMS_AMT) CMMS_AMT
+            ,SUM(VAT_AMT) VAT_AMT
+            ,SUM(SALE_AMT) SALE_AMT
+       FROM TSAL_SALE_AMT
+       WHERE GNRL_SALE_NO = #gnrl_sale_no#
+       		AND DEL_YN = 'N'
+       GROUP BY GNRL_SALE_NO) TSA1
+WHERE  TGS.GNRL_SALE_NO      = TP.GNRL_SALE_NO
+AND    TGS.GNRL_SALE_CHG_SEQ = TP.GNRL_SALE_CHG_SEQ
+AND    TGS.GNRL_SALE_NO = #gnrl_sale_no#
+AND    TGS.GNRL_SALE_CHG_SEQ = #gnrl_sale_chg_seq#
+AND    TGS.GNRL_SALE_NO = TP1.GNRL_SALE_NO
+AND	   TGS.GNRL_SALE_NO = TSA.GNRL_SALE_NO
+AND    TGS.GNRL_SALE_CHG_SEQ = TSA.GNRL_SALE_CHG_SEQ
+AND	   TSA.GNRL_SALE_NO = TSA1.GNRL_SALE_NO
+AND    TGS.DEL_YN = 'N'
+AND    TP.DEL_YN = 'N'
+AND    TSA.DEL_YN = 'N'
+AND    TGS.SALE_PRC_PLC = AG.DEAL_CO_CD (+)
+AND    AG.EFF_STA_DTM (+) <= TGS.SALE_DTM
+AND    AG.EFF_END_DTM (+) >= TGS.SALE_DTM]]>
+	</select>
+	<select id="getEquipmentSaleList" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALCSS00200_getEquipmentSaleList-전미량 */
+       G.GNRL_SALE_NO, 
+       G.GNRL_SALE_CHG_SEQ||'' AS GNRL_SALE_CHG_SEQ, 
+       G.SALE_CHG_HST_CL, 
+       P.PROD_CL, 
+       E.PROD_SER_NUM AS SER_NUM, 
+       E.EQP_SER_NUM AS OLD_SER_NUM, 
+       P.MFACT_ID, 
+       P.PROD_CD,
+       P.PROD_NM, 
+       E.EQP_COLOR_CD AS COLOR_CD, 
+       FBAS_GET_DEAL_NM(D.HLD_PLC_ID,SALE_DTM) AS HLD_PLC_NM, 
+       D.CON_MGMT_NO, 
+       '1' AS SALE_QTY, 
+       SPLST_YN, 
+       SALE_PRC, 
+       SALE_CMMS, 
+       SALE_MAR, 
+       SALE_UNIT_PRC, 
+       SALE_VAT_PRC, 
+       SALE_AMT ,
+       O.OUT_MGMT_NO,
+       O.OUT_SEQ||'' AS OUT_SEQ,
+       G.SALE_TYP_CD,
+       DECODE(TRMS_YN,'X','Y',TRMS_YN) AS TRMS_YN,
+       D.TRMS_ST,
+       E.SALE_SEQ||'' AS SALE_SEQ,
+       G.SALE_TYP_CD
+  FROM TSAL_GNRL_SALE G, 
+       TSAL_EQUIPMENT_SALE E, 
+       TBAS_PROD_MGMT P, 
+       TDIS_PROD_DIS D,
+       (SELECT OD.SER_NUM, OD.PROD_CD, OD.OUT_MGMT_NO, OD.OUT_SEQ 
+          FROM  TDIS_PROD_OUT_M OM, TDIS_PROD_OUT_DTL_D OD 
+         WHERE  GNRL_SALE_NO = #gnrl_sale_no#
+           AND GNRL_SALE_CHG_SEQ = #gnrl_sale_chg_seq# 
+           AND OM.OUT_MGMT_NO = OD.OUT_MGMT_NO 
+           AND OM.DEL_YN = 'N'
+           AND OD.DEL_YN = 'N')  O
+ WHERE G.GNRL_SALE_NO = E.GNRL_SALE_NO 
+   AND G.GNRL_SALE_CHG_SEQ = E.GNRL_SALE_CHG_SEQ
+   AND E.EQP_MDL_CD = P.PROD_CD 
+   AND E.EQP_MDL_CD = D.PROD_CD 
+   AND E.PROD_SER_NUM = D.SER_NUM 
+   AND G.GNRL_SALE_NO = #gnrl_sale_no#
+   AND G.GNRL_SALE_CHG_SEQ = #gnrl_sale_chg_seq# 
+   AND E.EQP_MDL_CD = O.PROD_CD
+   AND E.PROD_SER_NUM = O.SER_NUM
+   AND G.DEL_YN = 'N' 
+   AND E.DEL_YN = 'N' 
+   AND P.DEL_YN = 'N' 
+   AND D.DEL_YN = 'N']]>
+	</select>
+	<select id="getSaleMgmtSeq" parameterClass="java.lang.String" resultClass="hmap" fetchSize="50" ><![CDATA[SELECT /*+ SALCSS00200_getSaleMgmtSeq-전미량 */
+       #mgmtCd#||to_char(TSAL_S_SEQ.nextval,'FM0000000000') saleMgmtNo
+FROM   dual]]>
+	</select>
+	<insert id="addGnrlSale" parameterClass="map" ><![CDATA[INSERT INTO /*+ SALCSS00200_addGnrlSale-전미량 */
+ TSAL_GNRL_SALE (
+  GNRL_SALE_NO, 
+  GNRL_SALE_CHG_SEQ, 
+  SALE_DTM, 
+  SALE_CHGRG_ID, 
+  SALE_CHG_HST_CL, 
+  ACC_CHG_HST_CL, 
+  SALE_CHG_DTM,
+  SALE_MOD_USER_ID,
+  STL_PLC, 
+  DIS_HLD_PLC, 
+  SALE_PLC, 
+  CUST_CL, 
+  CUST_NM, 
+  CUST_BIZ_NUM, 
+  SETTL_COND, 
+  SALE_CNCL_YN,
+  SALE_CNCL_DTM,
+  SALE_CNCL_CL,
+  DT_CLS_YN, 
+  RMKS, 
+  DEL_YN, 
+  UPD_CNT, 
+  INS_USER_ID, 
+  INS_DTM, 
+  MOD_USER_ID,
+  MOD_DTM, 
+  SALE_TYP_CD,
+  SALE_PRC_PLC,
+  DOC_ID
+)
+values
+(
+  #gnrl_sale_no#, 
+  #gnrl_sale_chg_seq#, 
+  #sale_dtm#, 
+  #sale_chgrg_id#, 
+  #sale_chg_hst_cl#, 
+  #acc_chg_hst_cl#, 
+  #sale_chg_dtm#,
+  #sale_chg_chgrg_id#,
+  #stl_plc#, 
+  #dis_hld_plc#, 
+  #sale_plc#, 
+  '', 
+  '', 
+  '', 
+  #settl_cond#, 
+  #sale_cncl_yn#,
+  #sale_cncl_dtm#,
+  #sale_cncl_cl#,
+  'N', 
+  #rmks#, 
+  NVL(#del_yn#,'N'), 
+  1, 
+  #onlineContext.userInfo.loginId#, 
+  TO_CHAR(sysdate, 'yyyyMMddhh24miss'), 
+  #onlineContext.userInfo.loginId#, 
+  TO_CHAR(sysdate, 'yyyyMMddhh24miss'), 
+  #sale_typ_cd#,
+  #sale_prc_plc#,
+  #doc_id#
+)]]>
+	</insert>
+	<insert id="addSaleAmt" parameterClass="map" ><![CDATA[INSERT INTO /*+ SALCSS00200_addSaleAmt-전미량 */
+	TSAL_SALE_AMT (
+	GNRL_SALE_NO, 
+  	GNRL_SALE_CHG_SEQ, 
+  	BF_DIS_AMT, 
+	DIS_AMT, 
+  	BF_MAR_AMT,
+  	MAR_AMT,
+  	BF_CMMS_AMT, 
+  	CMMS_AMT, 
+  	BF_VAT_AMT, 
+  	VAT_AMT, 
+  	BF_SALE_AMT,
+  	SALE_AMT,
+  	DEL_YN, 
+  	UPD_CNT, 
+  	INS_USER_ID, 
+  	INS_DTM, 
+  	MOD_USER_ID,
+  	MOD_DTM
+	)
+VALUES
+	(
+	#gnrl_sale_no#, 
+  	#gnrl_sale_chg_seq#, 
+  	#bf_dis_amt#, 
+	#chg_dis_amt#, 
+  	#bf_mar_amt#,
+  	#chg_mar_amt#,
+  	#bf_cmms_amt#, 
+  	#chg_cmms_amt#, 
+  	#bf_vat_amt#, 
+  	#chg_vat_amt#, 
+  	#bf_sale_amt#,
+  	#chg_sale_amt#, 
+	'N', 
+  	1, 
+  	#onlineContext.userInfo.loginId#,
+  	TO_CHAR(sysdate, 'yyyyMMddhh24miss'), 
+  	#onlineContext.userInfo.loginId#,
+  	TO_CHAR(sysdate, 'yyyyMMddhh24miss')
+	)]]>
+	</insert>
+	<insert id="addPayment" parameterClass="map" ><![CDATA[INSERT INTO /*+ SALCSS00200_addPayment-전미량 */
+	TSAL_PAYMENT (
+	GNRL_SALE_NO, 
+	GNRL_SALE_CHG_SEQ,
+	BF_CASH_PAY_AMT, 
+	BF_CRDTCRD_CORP1, 
+	BF_CRDTCRD_PAY_AMT1, 
+	BF_CRDTCRD_CORP2, 
+	BF_CRDTCRD_PAY_AMT2,
+	CASH_PAY_AMT, 
+	CRDTCRD_CORP1, 
+	CRDTCRD_PAY_AMT1, 
+	CRDTCRD_CORP2, 
+	CRDTCRD_PAY_AMT2, 
+	DEL_YN, 
+	UPD_CNT, 
+	INS_USER_ID, 
+	INS_DTM, 
+  	MOD_USER_ID,
+  	MOD_DTM
+)
+VALUES
+(
+	#gnrl_sale_no#, 
+	#gnrl_sale_chg_seq#,
+	#bf_cash_pay_amt#, 
+	#bf_crdtcrd_corp1#, 
+	#bf_crdtcrd_pay_amt1#, 
+	#bf_crdtcrd_corp2#, 
+	#bf_crdtcrd_pay_amt2#,
+	#chg_cash_pay_amt#, 
+	#crdtcrd_corp1#, 
+	#chg_crdtcrd_pay_amt1#, 
+	#crdtcrd_corp2#, 
+	#chg_crdtcrd_pay_amt2#, 
+	'N', 
+ 	1, 
+ 	#onlineContext.userInfo.loginId#,
+ 	TO_CHAR(sysdate, 'yyyyMMddhh24miss'), 
+  	#onlineContext.userInfo.loginId#,
+  	TO_CHAR(sysdate, 'yyyyMMddhh24miss')
+)]]>
+	</insert>
+	<select id="getSaleSeq" parameterClass="map" resultClass="java.lang.String" fetchSize="50" ><![CDATA[SELECT NVL(MAX(SALE_SEQ),0) + 1
+  FROM TSAL_EQUIPMENT_SALE
+ WHERE GNRL_SALE_NO = #gnrl_sale_no#
+   AND GNRL_SALE_CHG_SEQ = #gnrl_sale_chg_seq#]]>
+	</select>
+	<insert id="insertEquipmentSaleAll" parameterClass="map" ><![CDATA[INSERT /*+ SALCSS00200_insertEquipmentSaleAll-전미량 */
+  INTO TSAL_EQUIPMENT_SALE 
+       ( 
+           GNRL_SALE_NO,
+           GNRL_SALE_CHG_SEQ,
+           SALE_SEQ,
+           EQP_SER_NUM,
+           EQP_MDL_CD,
+           EQP_COLOR_CD,
+           PROD_SER_NUM,
+           DEL_YN,
+           UPD_CNT,
+           INS_USER_ID,
+           INS_DTM,
+           MOD_USER_ID,
+           MOD_DTM,
+           SALE_PRC,
+           SALE_MAR,
+           SALE_CMMS,
+           SALE_VAT_PRC,
+           SALE_AMT,
+           SALE_UNIT_PRC ,
+           SALE_CNCL_YN ,
+           SALE_CNCL_DTM ,
+           SALE_CNCL_CL
+       ) 
+SELECT GNRL_SALE_NO,
+       #gnrl_sale_chg_seq#,
+       SALE_SEQ,
+       EQP_SER_NUM,
+       EQP_MDL_CD,
+       EQP_COLOR_CD,
+       PROD_SER_NUM,
+       DEL_YN,
+       '1',
+       #onlineContext.userInfo.loginId#,
+       TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS'),
+       #onlineContext.userInfo.loginId#,
+       TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS'),
+       SALE_PRC,
+       SALE_MAR,
+       SALE_CMMS,
+       SALE_VAT_PRC,
+       SALE_AMT,
+       SALE_UNIT_PRC,
+       SALE_CNCL_YN ,
+       SALE_CNCL_DTM ,
+       SALE_CNCL_CL
+  FROM TSAL_EQUIPMENT_SALE
+ WHERE GNRL_SALE_NO = #gnrl_sale_no#
+   AND GNRL_SALE_CHG_SEQ = #gnrl_sale_chg_seq_old#]]>
+	</insert>
+	<update id="updateEquipmentSale" parameterClass="map" ><![CDATA[UPDATE /*+ SALCSS00200_updateEquipmentSaleForCncl-전미량 */
+       TSAL_EQUIPMENT_SALE
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#   
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , SALE_PRC = 0
+     , SALE_MAR = 0
+     , SALE_CMMS = 0
+     , SALE_VAT_PRC = 0
+     , SALE_AMT = 0
+     , SALE_UNIT_PRC = 0
+     , SALE_CNCL_YN = 'Y'
+     , SALE_CNCL_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , SALE_CNCL_CL = '1'
+ WHERE GNRL_SALE_NO = #gnrl_sale_no#
+   AND GNRL_SALE_CHG_SEQ = #gnrl_sale_chg_seq#
+   AND PROD_SER_NUM = #ser_num#]]>
+	</update>
+	<insert id="addEquipmentSale" parameterClass="map" ><![CDATA[INSERT INTO /*+ SALCSS00200_addEquipmentSale-전미량 */
+	TSAL_EQUIPMENT_SALE (
+	GNRL_SALE_NO, 
+	GNRL_SALE_CHG_SEQ,
+	SALE_SEQ, 
+	EQP_SER_NUM, 
+	EQP_MDL_CD, 
+	EQP_COLOR_CD, 
+	PROD_SER_NUM,
+	DEL_YN, 
+	UPD_CNT, 
+	INS_USER_ID, 
+	INS_DTM, 
+  	MOD_USER_ID,
+  	MOD_DTM,
+  	SALE_UNIT_PRC,
+  	SALE_PRC,
+	SALE_MAR,
+	SALE_CMMS,
+	SALE_VAT_PRC,
+	SALE_AMT
+)
+VALUES
+(
+	#gnrl_sale_no#, 
+	#gnrl_sale_chg_seq#,
+	#sale_seq#,
+	#old_ser_num#, 
+	#prod_cd#, 
+	#color_cd#, 
+ 	#ser_num#,
+ 	'N', 
+ 	1, 
+ 	#onlineContext.userInfo.loginId#,
+ 	TO_CHAR(sysdate, 'yyyyMMddhh24miss'), 
+  	#onlineContext.userInfo.loginId#,
+  	TO_CHAR(sysdate, 'yyyyMMddhh24miss'),
+  	#sale_unit_prc#,
+  	#sale_prc#,
+  	#sale_mar#,
+  	#sale_cmms#,
+  	#sale_vat_prc#,
+  	#sale_amt#
+)]]>
+	</insert>
+	<update id="deleteGnrlSale" parameterClass="map" ><![CDATA[UPDATE /*+ SALCSS00200_updateGnrlSaleForDel-전미량 */
+       TSAL_GNRL_SALE
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE GNRL_SALE_NO = #gnrl_sale_no#]]>
+	</update>
+	<update id="deletePayMent" parameterClass="map" ><![CDATA[UPDATE /*+ SALCSS00200_updatePayMentForDel-전미량 */
+       TSAL_PAYMENT
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE GNRL_SALE_NO = #gnrl_sale_no#]]>
+	</update>
+	<update id="deleteSaleAmt" parameterClass="map" ><![CDATA[UPDATE /*+ SALCSS00200_updateSaleAmtForDel-전미량 */
+       TSAL_SALE_AMT
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE GNRL_SALE_NO = #gnrl_sale_no#]]>
+	</update>
+	<update id="deleteEquipmentSale" parameterClass="map" ><![CDATA[UPDATE /*+ SALCSS00200_updateEquipmentSaleForDel-전미량 */
+       TSAL_EQUIPMENT_SALE
+   SET DEL_YN = 'Y'
+     , UPD_CNT = UPD_CNT+1
+     , MOD_DTM = to_char(sysdate,'YYYYMMDDHH24MISS')
+     , MOD_USER_ID = #onlineContext.userInfo.loginId#
+ WHERE GNRL_SALE_NO = #gnrl_sale_no#]]>
+	</update>
+</sqlMap>

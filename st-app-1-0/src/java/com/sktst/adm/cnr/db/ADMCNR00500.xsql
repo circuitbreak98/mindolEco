@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="ADMCNR00500">
+	<select id="getUserConnectDetail" parameterClass="map" resultClass="hmap" fetchSize="50" ><![CDATA[select /*+ ADMCNR00500_getUserConnectDetail_김연석_김연석 */
+       fbas_get_org_nm(b.org_id)                       org_nm
+     , fbas_get_deal_nm(b.pos_agency, TO_CHAR(sysdate, 'yyyyMMdd'))
+                                                       agency_nm
+     , fbas_get_commcdnm_val('ZBAS_C_00250', user_grp) user_grp
+     , b.user_cd
+     , b.user_id
+     , b.user_nm
+     , a.connect_ip
+     , a.tran_dt || substr(a.proc_st_tm,0,6) as  conn_dtm
+  from tadm_connect_log  a
+     , tbas_user_mgmt    b
+ where a.user_id    = b.user_id
+   and a.method_id  = 'Login'
+   and a.user_id    = #user_id#
+   and a.tran_dt    between #conn_from# and #conn_to#
+ order by 7, 8]]>
+	</select>
+</sqlMap>
